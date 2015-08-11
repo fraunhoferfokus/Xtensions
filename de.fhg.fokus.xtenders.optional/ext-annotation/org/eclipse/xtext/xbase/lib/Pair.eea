@@ -1,0 +1,4 @@
+class org/eclipse/xtext/xbase/lib/Pair
+of
+ <K:Ljava/lang/Object;V:Ljava/lang/Object;>(TK;TV;)Lorg/eclipse/xtext/xbase/lib/Pair<TK;TV;>;
+ <K:Ljava/lang/Object;V:Ljava/lang/Object;>(TK;TV;)L1org/eclipse/xtext/xbase/lib/Pair<TK;TV;>;

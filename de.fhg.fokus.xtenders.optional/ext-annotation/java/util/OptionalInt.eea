@@ -1,0 +1,7 @@
+class java/util/OptionalInt
+empty
+ ()Ljava/util/OptionalInt;
+ ()L1java/util/OptionalInt;
+of
+ (I)Ljava/util/OptionalInt;
+ (I)L1java/util/OptionalInt;
