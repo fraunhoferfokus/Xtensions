@@ -1,7 +1,0 @@
-Manifest-Version: 1.0
-Bundle-ManifestVersion: 2
-Bundle-Name: xtend_extension_test
-Bundle-SymbolicName: de.fhg.fokus.xtenders.optional
-Bundle-Version: 1.0.0.qualifier
-Export-Package: de.fhg.fokus.xtenders.optional
-Import-Package: org.eclipse.jdt.annotation;resolution:=optional

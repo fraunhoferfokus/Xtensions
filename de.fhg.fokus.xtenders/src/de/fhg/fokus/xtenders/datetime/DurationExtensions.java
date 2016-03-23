@@ -1,0 +1,145 @@
+package de.fhg.fokus.xtenders.datetime;
+
+import java.time.Duration;
+import org.eclipse.xtext.xbase.lib.Inline;
+
+/**
+ * Operators and shortcut factory notations for {@link Duration} class for use in Xtend.
+ * To use this functions, it is recommended to import this class with an extension import:
+ * <pre><code>
+ * import static extension de.fhg.fokus.xtenders.datetime.DurationExtensions.*
+ * </code></pre>
+ * All functions and operators are inlined to use functions of Duration directly.
+ * This class provides arithmetic and compare operators, as well as factory methods
+ * that can be used in more natural postfix notation, e.g. {@code 2.seconds}.
+ *  
+ * @author Max Bureck
+ */
+public class DurationExtensions {
+
+	/**
+	 * Redirect to {@link Duration#ofNanos(long)}.
+	 * @param ns nanoseconds
+	 * @return result of {@link Duration#ofNanos(long)} call with {@code ns}
+	 */
+	@Inline(value = "Duration.ofNanos($1)", imported = Duration.class)
+	public static Duration nanoseconds(long ns) {
+		return Duration.ofNanos(ns);
+	}
+
+	/**
+	 * Redirect to {@link Duration#ofMillis(long)}.
+	 * @param ms milliseconds
+	 * @return result of {@link Duration#ofMillis(long)} call with {@code ms}
+	 */
+	@Inline(value = "Duration.ofMillis($1)", imported = Duration.class)
+	public static Duration milliseconds(long ms) {
+		return Duration.ofMillis(ms);
+	}
+
+	/**
+	 * Redirect to {@link Duration#ofSeconds(long)}.
+	 * @param s seconds
+	 * @return result of {@link Duration#ofSeconds(long)} call with {@code s}
+	 */
+	@Inline(value = "Duration.ofSeconds($1)", imported = Duration.class)
+	public static Duration seconds(long s) {
+		return Duration.ofSeconds(s);
+	}
+
+	/**
+	 * Redirect to {@link Duration#ofMinutes(long)}.
+	 * @param min minutes
+	 * @return result of {@link Duration#ofMinutes(long)} call with {@code min}
+	 */
+	@Inline(value = "Duration.ofMinutes($1)", imported = Duration.class)
+	public static Duration minutes(long min) {
+		return Duration.ofMinutes(min);
+	}
+
+	/**
+	 * Redirect to {@link Duration#ofHours(long)}.
+	 * @param h hours
+	 * @return result of {@link Duration#ofHours(long)} call with {@code h}
+	 */
+	@Inline(value = "Duration.ofHours($1)", imported = Duration.class)
+	public static Duration hours(long h) {
+		return Duration.ofHours(h);
+	}
+
+	/**
+	 * Redirect to {@link Duration#ofDays(long)}.
+	 * @param d days
+	 * @return result of {@link Duration#ofDays(long)} call with {@code min}
+	 */
+	@Inline(value = "Duration.ofDays($1)", imported = Duration.class)
+	public static Duration days(long d) {
+		return Duration.ofDays(d);
+	}
+
+	/**
+	 * Operator shortcut for {@code a.plus(b)}.
+	 * @param a left hand side of operator
+	 * @param b right hand side of operator
+	 * @return result of {@code a.plus(b)}
+	 */
+	@Inline(value = "$1.plus($2)", imported = Duration.class)
+	public static Duration operator_plus(Duration a, Duration b) {
+		return a.plus(b);
+	}
+
+	@Inline(value = "$1.minus($2)", imported = Duration.class)
+	public static Duration operator_minus(Duration a, Duration b) {
+		return a.minus(b);
+	}
+
+	@Inline(value = "$1.dividedBy($2)", imported = Duration.class)
+	public static Duration operator_divide(Duration a, long b) {
+		return a.dividedBy(b);
+	}
+
+	@Inline(value = "$1.multipliedBy($2)", imported = Duration.class)
+	public static Duration operator_multiply(Duration a, long b) {
+		return a.multipliedBy(b);
+	}
+
+	@Inline(value = "$1.negated()", imported = Duration.class)
+	public static Duration operator_minus(Duration a) {
+		return a.negated();
+	}
+
+	@Inline(value = "$1", imported = Duration.class)
+	public static Duration operator_plus(Duration a) {
+		return a;
+	}
+
+	@Inline(value = "$1.compareTo($2)", imported = Duration.class)
+	public static int operator_spaceship(Duration a, Duration b) {
+		return a.compareTo(b);
+	}
+
+	@Inline(value = "$1.compareTo($2) < 0")
+	public static boolean operator_lessThan(Duration a, Duration b) {
+		return a.compareTo(b) < 0;
+	}
+
+	@Inline(value = "$1.compareTo($2) > 0")
+	public static boolean operator_greaterThan(Duration a, Duration b) {
+		return a.compareTo(b) > 0;
+	}
+
+	@Inline(value = "$1.compareTo($2) == 0")
+	public static boolean operator_tripleEquals(Duration a, Duration b) {
+		return a.compareTo(b) == 0;
+	}
+	
+	@Inline(value = "$1.compareTo($2) <= 0")
+	public static boolean operator_lessEqualsThan(Duration a, Duration b) {
+		return a.compareTo(b) <= 0;
+	}
+	
+	@Inline(value = "$1.compareTo($2) >= 0")
+	public static boolean operator_greaterEqualsThan(Duration a, Duration b) {
+		return a.compareTo(b) >= 0;
+	}
+}

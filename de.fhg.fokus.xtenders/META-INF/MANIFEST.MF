@@ -1,0 +1,18 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Xtenders
+Bundle-SymbolicName: de.fhg.fokus.xtenders
+Bundle-Version: 1.0.0.qualifier
+Export-Package: de.fhg.fokus.xtenders.concurrent,
+ de.fhg.fokus.xtenders.concurrent.circuitbreaker,
+ de.fhg.fokus.xtenders.concurrent.circuitbreaker.impl,
+ de.fhg.fokus.xtenders.datetime,
+ de.fhg.fokus.xtenders.function,
+ de.fhg.fokus.xtenders.optional,
+ de.fhg.fokus.xtenders.range,
+ de.fhg.fokus.xtenders.stream,
+ de.fhg.fokus.xtenders.string
+Import-Package: org.eclipse.jdt.annotation;resolution:=optional
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-Vendor: Fraunhofer FOKUS
+Require-Bundle: org.eclipse.xtend.lib;bundle-version="2.8.4"
