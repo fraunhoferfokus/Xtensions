@@ -2,6 +2,7 @@ package de.fhg.fokus.xtenders.iterator;
 
 import java.util.PrimitiveIterator.OfDouble;
 import java.util.function.DoubleConsumer;
+import java.util.stream.DoubleStream;
 
 public interface DoubleIterable extends Iterable<Double> {
 	
@@ -15,4 +16,8 @@ public interface DoubleIterable extends Iterable<Double> {
 			consumer.accept(next);
 		}
 	}
+	
+//	default DoubleStream stream() {
+//		return PrimitiveIteratorExtensions.stream(iterator())
+//	}
 }

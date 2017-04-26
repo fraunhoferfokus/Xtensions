@@ -11,6 +11,7 @@ class PrimitiveIteratorExtensions {
 	}
 	
 	/**
+	 * Convenience method to turn a primitive iterator into a stream. 
 	 * Best effort transformation from iterator to stream. Does not make any assumptions,
 	 * other than that the elements returned by the iterator are not null.
 	 */
@@ -20,6 +21,7 @@ class PrimitiveIteratorExtensions {
 	}
 	
 	/**
+	 * Convenience method to turn a primitive iterator into a parallel stream. 
 	 * Best effort transformation from iterator to stream. Does not make any assumptions,
 	 * other than that the elements returned by the iterator are not null.
 	 */

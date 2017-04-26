@@ -18,4 +18,9 @@ public interface LongIterable extends Iterable<Long> {
 			consumer.accept(next);
 		}
 	}
+	
+//	default LongStream stream() {
+//	final OfLong iterator = iterator();
+//	return PrimitiveIteratorExtensions.stream(iterator);
+//}
 }
