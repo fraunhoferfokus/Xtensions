@@ -126,17 +126,17 @@ final class CircuitBreakerBuilder<T> implements Cloneable {
 
 	private def CircuitBreakerBuilder<T> selfWithDefaults() {
 		val result = this.clone
-		if (result.name == null) {
+		if (result.name === null) {
 			result.name = UUID.randomUUID.toString
 		}
-		if (result.breakerExecutor == null) {
+		if (result.breakerExecutor === null) {
 			result.breakerExecutor = ForkJoinPool.commonPool
 		}
-		if (result.stateProvider == null) {
+		if (result.stateProvider === null) {
 			val stateBuilder = CircuitBreakerStateBuilder.create
 			result.stateProvider = [stateBuilder.build]
 		}
-		if (result.strategy == null) {
+		if (result.strategy === null) {
 			val strategyBuilder = RetryStrategyBuilder.create
 			result.strategy = [strategyBuilder.build]
 		}
@@ -184,18 +184,18 @@ package final class SimpleCircuitBreaker<T> implements CircuitBreaker<T> {
 	}
 
 	private def (=>Throwable, CompletableFuture<T>)=>void determineLazyLastResort() {
-		if (valueProvider != null)
+		if (valueProvider !== null)
 			[tp, result|result.complete(valueProvider.apply)]
-		else if (exceptionProvider != null)
+		else if (exceptionProvider !== null)
 			[tp, result|result.completeExceptionally(defaultException)]
 		else
 			[tp, result|result.completeExceptionally(tp.apply)]
 	}
 
 	private def (Throwable, CompletableFuture<T>)=>void determineLastResort() {
-		if (valueProvider != null)
+		if (valueProvider !== null)
 			[t, result|result.complete(valueProvider.apply)]
-		else if (exceptionProvider != null)
+		else if (exceptionProvider !== null)
 			[t, result|result.completeExceptionally(defaultException)]
 		else
 			[t, result|result.completeExceptionally(t)]
@@ -261,7 +261,7 @@ package final class SimpleCircuitBreaker<T> implements CircuitBreaker<T> {
 			// if action result is null we complete with NullPointerException
 			// this is somewhat not a regular exception, therefore we don't report
 			// an error to this.beakerState
-			if (actFut == null) {
+			if (actFut === null) {
 				lazyLastResortResultCompletion.apply([new NullPointerException(NULL_FROM_ACTION_MSG)], result)
 				return
 			}
@@ -287,7 +287,7 @@ package final class SimpleCircuitBreaker<T> implements CircuitBreaker<T> {
 		}
 		// react on completion of future returned by action
 		futWithTimeout.whenCompleteAsync([ value, ex |
-			if (ex != null) {
+			if (ex !== null) {
 				// we have an exception, can we retry?
 				tryRetryOnError(ex, executor, action, result, retryStrategy)
 			} else {

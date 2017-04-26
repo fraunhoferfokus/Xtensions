@@ -4,18 +4,14 @@ import java.util.Collection
 import java.util.List
 import java.util.Objects
 import java.util.Set
-import java.util.Spliterator
-import java.util.Spliterators
 import java.util.function.Supplier
-import java.util.regex.Pattern
 import java.util.stream.IntStream
 import java.util.stream.Stream
 import java.util.stream.StreamSupport
 
 import static java.util.stream.Collectors.*
-
-import static extension de.fhg.fokus.xtenders.string.StringSplitExtensions.*
-import static extension de.fhg.fokus.xtenders.string.StringMatchExtensions.*
+import java.util.Optional
+import java.util.function.BinaryOperator
 
 class StreamExtensions {
 
@@ -62,31 +58,11 @@ class StreamExtensions {
 			StreamSupport.stream(it.spliterator, true)
 		}
 	}
-
-	/**
-	 * Creates an {@link IntStream} for processing of all integers of the
-	 * given {@code range}.
-	 * @param range The source providing the elements to the returned IntStream
-	 * @return stream of all integers defined by the range
-	 */
-	static def IntStream intStream(IntegerRange range) {
-		StreamSupport.intStream(new IntRangeSpliterator(range), false)
-	}
-
-	/**
-	 * Creates a parallel {@link IntStream} for processing of all integers of the
-	 * given {@code range}.
-	 * @param range The source providing the elements to the returned IntStream
-	 * @return parallel IntStream of all integers defined by the range
-	 */
-	static def IntStream parallelIntStream(IntegerRange range) {
-		StreamSupport.intStream(new IntRangeSpliterator(range), true)
-	}
-
-	// TODO IntSreams for ExclusiveRange
+	
 	// ////////////////
 	// More filters //
 	// ////////////////
+	
 	static def <T, U> Stream<U> filter(Stream<T> input, Class<? extends U> clazz) {
 		Objects.requireNonNull(input)
 		Objects.requireNonNull(clazz)
@@ -95,12 +71,13 @@ class StreamExtensions {
 
 	static def <T> Stream<T> filterNull(Stream<T> stream) {
 		Objects.requireNonNull(stream)
-		stream.filter[it != null]
+		stream.filter[it !== null]
 	}
 
 	// ///////////////////////////////////
 	// Shortcuts for common collectors //
 	// ///////////////////////////////////
+	
 	static def <T> List<T> toList(Stream<T> stream) {
 		stream.collect(toList)
 	}
@@ -113,85 +90,13 @@ class StreamExtensions {
 		stream.collect(toCollection(collectionFactory))
 	}
 
-	// /////////////////////////////
-	// Stream<Strings> helpers //
-	// /////////////////////////////
-	static def String join(Stream<? extends CharSequence> stream) {
-		stream.collect(joining)
-	}
-
-	static def String join(Stream<? extends CharSequence> stream, CharSequence delimiter) {
-		Objects.requireNonNull(delimiter, "separator string must not be null")
-		stream.collect(joining(delimiter))
-	}
-
-	static def String join(Stream<? extends CharSequence> stream, CharSequence delimiter, CharSequence prefix,
-		CharSequence suffix) {
-		Objects.requireNonNull(delimiter, "separator string must not be null")
-		stream.collect(joining(delimiter, prefix, suffix))
-	}
-
-	static def <S extends CharSequence> Stream<S> matching(Stream<S> stream, String pattern) {
-		Objects.requireNonNull(pattern, "Pattern must not be null")
-		Objects.requireNonNull(stream, "Stream must not be null")
-		val p = Pattern.compile(pattern)
-		stream.matching(p)
-	}
-
-	static def <S extends CharSequence> Stream<S> matching(Stream<S> stream, Pattern pattern) {
-		stream.filter[pattern.matcher(it).matches]
-	}
-
-	static def Stream<String> flatSplit(Stream<? extends CharSequence> stream, String pattern) {
-		val p = Pattern.compile(pattern)
-		stream.flatSplit(p)
-	}
-
-	static def Stream<String> flatSplit(Stream<? extends CharSequence> stream, Pattern pattern) {
-		stream.flatMap[pattern.splitAsStream(it)]
-	}
-
-	static def Stream<String> flatSplit(Stream<? extends CharSequence> stream, String pattern, int limit) {
-		val p = Pattern.compile(pattern)
-		stream.flatSplit(p, limit)
-	}
-
-	static def Stream<String> flatSplit(Stream<? extends CharSequence> stream, Pattern pattern, int limit) {
-		stream.flatMap[splitStream(pattern, limit)]
-	}
-
-	private static def Stream<String> splitStream(CharSequence input, Pattern pattern, int limit) {
-		if (limit == 0) {
-			// take platform native implementation for default behavior
-			pattern.splitAsStream(input)
-		} else {
-			val Supplier<Spliterator<String>> s = [|
-				val characteristics = Spliterator.ORDERED.bitwiseOr(Spliterator.NONNULL)
-				Spliterators.spliteratorUnknownSize(input.splitIt(pattern, limit), characteristics)
-			]
-			StreamSupport.stream(s, 0, false)
-		}
-	}
-
-	static def Stream<String> flatMatches(Stream<String> stream, Pattern pattern) {
-		stream.flatMap[matchStream(pattern)]
-	}
-
-	static def Stream<String> flatMatches(Stream<String> stream, String pattern) {
-		stream.flatMatches(Pattern.compile(pattern))
-	}
-
-	private static def Stream<String> matchStream(String input, Pattern pattern) {
-		// TODO characteristics!!
-		val Supplier<Spliterator<String>> s = [|
-			Spliterators.spliteratorUnknownSize(input.matchIt(pattern), 0)
-		]
-		StreamSupport.stream(s, 0, false)
-	}
-
 // //////////
 // Others //
 // //////////
+
+	/**
+	 * This function returns a stream of the Cartesian product of {@code stream} and the iterable {@code combineWith}.
+	 */ 
 	static def <T, Z> Stream<Pair<T, Z>> combinations(Stream<T> stream, Iterable<Z> combineWith) {
 		Objects.requireNonNull(combineWith);
 		stream.flatMap[t|combineWith.stream.map[t -> it]]
@@ -210,7 +115,28 @@ class StreamExtensions {
 		stream.flatMap[t|streamSupplier.apply.map[t -> it]]
 	}
 
-	static def <T> Stream<T> +(Stream<? extends T> first, Stream<? extends T> second) {
+	/**
+	 * This function returns a stream of the Cartesian product of {@code stream} and the iterable {@code combineWith}.
+	 */ 
+	static def <T, Z, R> Stream<R> combinations(Stream<T> stream, Iterable<Z> combineWith, (T,Z)=>R combiner) {
+		Objects.requireNonNull(combineWith);
+		stream.flatMap[t|combineWith.stream.map[combiner.apply(t,it)]]
+	}
+
+	static def <T, Z, R> Stream<R> combinations(Stream<T> stream, Collection<Z> combineWith, (T,Z)=>R combiner) {
+		Objects.requireNonNull(combineWith);
+		stream.flatMap[t|combineWith.stream.map[combiner.apply(t,it)]]
+	}
+
+	/**
+	 * On every call the given {@code streamSupplier) has to return a stream of the same elements.
+	 */
+	static def <T, Z, R> Stream<R> combinations(Stream<T> stream, ()=>Stream<Z> streamSupplier, (T,Z)=>R combiner) {
+		Objects.requireNonNull(streamSupplier);
+		stream.flatMap[t|streamSupplier.apply.map[combiner.apply(t,it)]]
+	}
+	
+	static def <T> Stream<T> + (Stream<? extends T> first, Stream<? extends T> second) {
 		Stream.concat(first, second)
 	}
 
@@ -229,11 +155,12 @@ class StreamExtensions {
 // 
 // Collector GetOnlyElement => Stream#getOnlyElement() -> Optional<T>
 // Stream<Iterable>#flatten //?? needed?
-// Stream<String>#matches, groups to stream (reading lazy)?
-// Stream<String>#matching(String) and #matching(Pattern)
-// Stream<T>#forEach with index (check parallel!)
+// Stream<T>#forEach with index (check parallel! Use AtomicLong with getAndIncrement )
 // Stream<T>#forEachOrdered indexed (check parallel!)
 // Stream<T>#indexed():Stream<Pair<int,T>> (check parallel!)
-// Stream<T>#zip(Iterable<? extends V>):Stream<Pair<T,V>> document that parallel is not efficient
-// Stream<Pair<X,Y>>#map((X,Y)=>Z), auch für andere?
+// Stream<T>#zip(Iterable<? extends V>):Stream<Pair<T,V>> : call zip(iterable.spliterator())
+// Stream<T>#zip(Stream<V>) : Stream<Pair<T,V>>: call zip(stream.spliterator())
+// Stream<T>#zip(Spliterator<V>) :  Stream<Pair<T,V>> create new based spliterator on both and stream from spliterator, maybe thorw if one source not ordered
+// zip variants with BiFunction<T,V,R> returning Stream<V>
+// Stream<Pair<X,Y>>#squash((X,Y)=>Z), auch fï¿½r andere?
 }

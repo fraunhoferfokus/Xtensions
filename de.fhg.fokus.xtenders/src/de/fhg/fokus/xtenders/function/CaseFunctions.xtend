@@ -64,7 +64,7 @@ class CaseFunctions {
 		val T result
 
 		private new(T t) {
-			this.result = result
+			this.result = t
 		}
 
 		override isMatch() {
@@ -108,7 +108,7 @@ class CaseFunctions {
 	public static def <I, O> (I)=>CaseResult<O> caseNull((I)=>CaseResult<O> switcher, =>O handler) {
 		[
 			switcher.apply(it).orElse [
-				if (it == null)
+				if (it === null)
 					match(handler.apply)
 				else
 					noMatch

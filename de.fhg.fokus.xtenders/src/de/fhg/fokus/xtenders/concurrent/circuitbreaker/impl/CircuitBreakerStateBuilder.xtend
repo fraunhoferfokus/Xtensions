@@ -73,7 +73,7 @@ final class CircuitBreakerStateBuilder implements Cloneable {
 	 */
 	def CircuitBreakerStateBuilder nanoTimeProvider(LongSupplier nanoTimeProvider) {
 		val result = this.clone
-		result.timeSupplier = if(nanoTimeProvider == null) DEFAULT_TIME_SUPPLIER else nanoTimeProvider
+		result.timeSupplier = if(nanoTimeProvider === null) DEFAULT_TIME_SUPPLIER else nanoTimeProvider
 		result
 	}
 
@@ -183,9 +183,9 @@ final class CircuitBreakerStateBuilder implements Cloneable {
 	 * @throws IllegalArgumentException if any of the given classes is {@code null}
 	 */
 	def CircuitBreakerStateBuilder neverRecord(Class<? extends Throwable>... classes) throws IllegalArgumentException {
-		if (classes != null) {
+		if (classes !== null) {
 			classes.forEach [
-				if (it == null) {
+				if (it === null) {
 					throw new IllegalArgumentException("Null is not allowed as class")
 				}
 			]
@@ -211,9 +211,9 @@ final class CircuitBreakerStateBuilder implements Cloneable {
 	 * @throws IllegalArgumentException if any of the given classes is {@code null}
 	 */
 	def CircuitBreakerStateBuilder onlyRecord(Class<? extends Throwable>... classes) {
-		if (classes != null) {
+		if (classes !== null) {
 			classes.forEach [
-				if (it == null) {
+				if (it === null) {
 					throw new IllegalArgumentException("Null is not allowed as class")
 				}
 			]
@@ -263,7 +263,7 @@ final class CircuitBreakerStateBuilder implements Cloneable {
 	 */
 	def CircuitBreakerStateBuilder listenerExecutor(Executor listenerExecutor) {
 		val result = this.clone
-		result.listenerExecutor = if(listenerExecutor == null) ForkJoinPool.commonPool else listenerExecutor
+		result.listenerExecutor = if(listenerExecutor === null) ForkJoinPool.commonPool else listenerExecutor
 		result
 	}
 
@@ -291,7 +291,7 @@ final class CircuitBreakerStateBuilder implements Cloneable {
 	 */
 	def CircuitBreakerState build() {
 		val conf = this.clone
-		if (conf.name == null) {
+		if (conf.name === null) {
 			conf.name = UUID.randomUUID.toString
 		}
 		new SimpleCircuitBreakerState(conf)
@@ -372,7 +372,7 @@ package final class SimpleCircuitBreakerState implements CircuitBreakerState {
 		var curr = 0
 		for (var i = 0; i < from.length; i++) {
 			val el = from.get(i)
-			if (el != null) {
+			if (el !== null) {
 				from.set(curr, el)
 				curr++
 			}
@@ -381,7 +381,7 @@ package final class SimpleCircuitBreakerState implements CircuitBreakerState {
 	}
 
 	private def ErrorPerTimeChecker createPerTimeChecker() {
-		if (perTimeInTime == 0 || perTimeTimeUnit == null) {
+		if (perTimeInTime == 0 || perTimeTimeUnit === null) {
 			null
 		} else {
 			val nanoTime = perTimeTimeUnit.toNanos(perTimeInTime)
@@ -515,7 +515,7 @@ package final class SimpleCircuitBreakerState implements CircuitBreakerState {
 	private def <U> U recoverWith(()=>U action, ()=>U recovery) {
 		try {
 			val U result = action.apply
-			if(result != null) result else recovery.apply
+			if(result !== null) result else recovery.apply
 		} catch (Throwable t) {
 			recovery.apply
 		}
@@ -576,7 +576,7 @@ package final class SimpleCircuitBreakerState implements CircuitBreakerState {
 
 	private def boolean isRecordable(Throwable t) {
 		// since neverRecord trumps onlyRecord we check this first
-		if (neverRecord != null) {
+		if (neverRecord !== null) {
 			for (var i = 0; i < neverRecord.length; i++) {
 				if (neverRecord.get(i).isInstance(t)) {
 					return false
@@ -584,7 +584,7 @@ package final class SimpleCircuitBreakerState implements CircuitBreakerState {
 			}
 		}
 		// now check if only certain exception types are recorded
-		if (onlyRecord != null) {
+		if (onlyRecord !== null) {
 			for (var i = 0; i < onlyRecord.length; i++) {
 				if (onlyRecord.get(i).isInstance(t)) {
 					return true
@@ -599,7 +599,7 @@ package final class SimpleCircuitBreakerState implements CircuitBreakerState {
 
 	// Helper methods to invoke listener
 	private def void notifyOnOpen(String cbName) {
-		if (listener != null) {
+		if (listener !== null) {
 			try {
 				listenerExecutor.execute [
 					listener.onOpen(name, cbName)
@@ -611,7 +611,7 @@ package final class SimpleCircuitBreakerState implements CircuitBreakerState {
 	}
 
 	private def void notifyOnClose(String cbName) {
-		if (listener != null) {
+		if (listener !== null) {
 			try {
 				listenerExecutor.execute [
 					listener.onClose(name, cbName)
@@ -623,7 +623,7 @@ package final class SimpleCircuitBreakerState implements CircuitBreakerState {
 	}
 
 	private def void notifyOnHalfOpen(String cbName) {
-		if (listener != null) {
+		if (listener !== null) {
 			try {
 				listenerExecutor.execute [
 					listener.onHalfOpen(name, cbName)

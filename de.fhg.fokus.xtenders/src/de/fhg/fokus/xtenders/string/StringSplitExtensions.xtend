@@ -5,7 +5,7 @@ import java.util.regex.Pattern
 import java.util.Iterator
 import java.util.NoSuchElementException
 import java.util.Objects
-
+import java.util.stream.Stream
 
 /**
  * Utility class holding static extension functions to split strings.
@@ -139,11 +139,11 @@ class StringSplitExtensions {
 		}
 
 		override hasNext() {
-			next != null
+			next !== null
 		}
 
 		override next() {
-			if (next == null) {
+			if (next === null) {
 				throw new NoSuchElementException
 			}
 			var String result = next
@@ -249,7 +249,7 @@ class StringSplitExtensions {
 			}
 			// if we already found last match, try reading the last part
 			var after = readLastPart()
-			if (after == null) {
+			if (after === null) {
 				// if there is no last part, 
 				upcomingEmptyCount = 0
 				return null
@@ -265,11 +265,11 @@ class StringSplitExtensions {
 		}
 
 		override hasNext() {
-			next != null
+			next !== null
 		}
 
 		override next() {
-			if (next == null) {
+			if (next === null) {
 				throw new NoSuchElementException
 			}
 			var String result = next
@@ -350,8 +350,18 @@ class StringSplitExtensions {
 	 * to unused strings.
 	 * @see String#split(String)
 	 */
-	public static def splitIt(CharSequence toSplit, String pattern) {
+	public static def Iterator<String> splitIt(CharSequence toSplit, String pattern) {
 		toSplit.splitIt(Pattern.compile(pattern))
+	}
+	
+	/**
+	 * This method is a shortcut extension method for <br>
+	 * {@code java.util.regex.Pattern.compile(pattern).splitAsStream(toSplit)}.
+	 * @param toSplit the string to split according to the given {@code pattern}
+	 * @param pattern the pattern used to split the parameter {@code toSplit}
+	 */
+	public static def Stream<String> splitStream(CharSequence toSplit, String pattern) {
+		Pattern.compile(pattern).splitAsStream(toSplit)
 	}
 
 }

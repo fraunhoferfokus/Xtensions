@@ -18,6 +18,7 @@ import java.util.concurrent.Executors
 import java.util.concurrent.ThreadFactory
 import static extension de.fhg.fokus.xtenders.concurrent.internal.DurationToTimeConversion.*
 import java.util.function.BiConsumer
+import org.eclipse.jdt.annotation.NonNull
 
 /**
  * This class provides static methods (many of them to be used as extension methods)
@@ -176,132 +177,6 @@ class CompletableFutureExtensions {
 		]
 	}
 
-	// TODO document
-	static def <R> CompletableFuture<R> withTimeout(CompletableFuture<R> fut, ScheduledExecutorService scheduler,
-		long time, TimeUnit unit) {
-		withTimeout(fut, scheduler, time, unit, [new TimeoutException])
-	}
-
-	// TODO document
-	static def <R> CompletableFuture<R> withTimeout(CompletableFuture<R> fut, ScheduledExecutorService scheduler,
-		long time, TimeUnit unit, =>Throwable exceptionProvider) {
-		Objects.requireNonNull(fut)
-		Objects.requireNonNull(scheduler)
-		Objects.requireNonNull(unit)
-		// if the future is already completed, there is no point in even 
-		// starting a timer
-		if (fut.done) {
-			return fut
-		}
-		val result = new CompletableFuture<R>
-		val task = scheduler.schedule([
-			try {
-				if (!result.done) {
-					result.completeExceptionally(exceptionProvider.apply)
-				}
-			} catch (Throwable t) {
-				// if problem providing exception, simply
-				// complete result with the exception
-				result.completeExceptionally(t)
-			}
-			fut.cancel
-		], time, unit)
-		fut.whenComplete [ r, ex |
-
-			// try forwarding outcome of fut
-			// to result. But result may already be
-			// completed with timeout exception or cancelled
-			if (ex != null) {
-				result.completeExceptionally(ex)
-			} else {
-				result.complete(r)
-			}
-			// remove action from queue, but on scheduler threads,
-			// not on the thread completing the future
-			try {
-				scheduler.execute [
-					// if the future is completed earlier
-					// than cancellation, we can cancel the 
-					// scheduled task
-					task.cancel(true)
-				]
-			} catch (RejectedExecutionException ree) {
-				// so the scheduler is already shut down
-				// or has to many tasks in task list.
-				// In this case we can't cancel our operation
-			}
-		]
-		result.forwardCancellation(fut)
-		result
-	}
-
-	// TODO document
-	static def <R> CompletableFuture<R> withTimeout(CompletableFuture<R> fut, long timeout, TimeUnit unit) {
-		withTimeout(fut, timeout, unit, [new TimeoutException])
-	}
-
-	// TODO document
-	static def <R> CompletableFuture<R> withTimeout(CompletableFuture<R> fut, long timeout, TimeUnit unit,
-		=>Throwable exceptionProvider) {
-		Objects.requireNonNull(fut)
-		Objects.requireNonNull(unit)
-		// if the future is already completed, there is no point in even 
-		// starting a timer
-		if (fut.done) {
-			return fut
-		}
-
-		val result = new CompletableFuture<R>
-		val scheduler = defaultScheduler
-
-		val task = scheduler.schedule([|
-			try {
-				if (!result.done) {
-					result.completeExceptionally(exceptionProvider.apply)
-				}
-			} catch (Throwable t) {
-				// if problem providing exception, simply
-				// complete result with the exception
-				result.completeExceptionally(t)
-			} finally {
-				fut.cancel
-				scheduler.shutdown()
-			}
-			return // make Runnable not Callable
-		], timeout, unit)
-
-		fut.whenComplete [ r, ex |
-
-			// try forwarding outcome of fut
-			// to result. But result may already be
-			// completed with timeout exception or cancelled
-			if (ex != null) {
-				result.completeExceptionally(ex)
-			} else {
-				result.complete(r)
-			}
-
-			// try canceling the task, but on the scheduler threads
-			// not on the thread completing the future
-			try {
-				scheduler.execute [
-					// if the future is completed earlier
-					// than cancellation, we can cancel the 
-					// scheduled task
-					if (task.cancel(true)) {
-						scheduler.shutdown()
-					}
-				]
-			} catch (RejectedExecutionException ree) {
-				// so the scheduler is already shut down
-				// or has to many tasks in task list.
-				// In this case we can't cancel our operation
-			}
-		]
-		result.forwardCancellation(fut)
-		result
-	}
-
 	// Do Not cancel given stage, forward to returned future. after timeout just cancel returned future
 	// TODO static def CompletableFuture<R> orTimeout(CompletionStage<? extends R> fut, long timeout, TimeUnit unit, =>Throwable exceptionProvider)
 	/**
@@ -321,7 +196,7 @@ class CompletableFutureExtensions {
 		Objects.requireNonNull(to)
 
 		from.whenComplete [ o, t |
-			if (t != null) {
+			if (t !== null) {
 				to.completeExceptionally(t)
 			} else {
 				to.complete(o)
@@ -438,7 +313,7 @@ class CompletableFutureExtensions {
 	static def <R> CompletableFuture<R> handleCancellation(CompletableFuture<R> fut, ()=>R handler) {
 		Objects.requireNonNull(fut)
 		Objects.requireNonNull(handler)
-		fut.exceptionally[ex| if(ex instanceof CancellationException) handler.apply else throw ex]
+		fut.exceptionally[ex|if(ex instanceof CancellationException) handler.apply else throw ex]
 	}
 
 	// TODO document
@@ -453,13 +328,14 @@ class CompletableFutureExtensions {
 		Objects.requireNonNull(fut)
 		Objects.requireNonNull(e)
 		Objects.requireNonNull(handler)
-		fut.handleAsync([o, t|
-			if(t != null) {
-				 if(t instanceof CancellationException) 
-				 	handler.apply 
-				 else 
-				 	throw t 
-			} else o
+		fut.handleAsync([ o, t |
+			if (t !== null) {
+				if (t instanceof CancellationException)
+					handler.apply
+				else
+					throw t
+			} else
+				o
 		], e)
 	}
 
@@ -508,11 +384,11 @@ class CompletableFutureExtensions {
 		(Throwable)=>R handler) {
 		Objects.requireNonNull(fut)
 		Objects.requireNonNull(executor)
-		fut.handleAsync([o, t|if(t != null) handler.apply(t) else o], executor)
+		fut.handleAsync([o, t|if(t !== null) handler.apply(t) else o], executor)
 	}
 
-	private static def <T> BiConsumer<T,Throwable> whenCancelledHandler(()=>void handler) {
-		[o, t|if(t != null && t instanceof CancellationException) handler.apply]
+	private static def <T> BiConsumer<T, Throwable> whenCancelledHandler(()=>void handler) {
+		[o, t|if(t !== null && t instanceof CancellationException) handler.apply]
 	}
 
 	/**
@@ -551,8 +427,8 @@ class CompletableFutureExtensions {
 		fut.whenCompleteAsync(whenCancelledHandler(handler), e)
 	}
 
-	private static def <R> BiConsumer<R,Throwable> whenExcpetionHandler((Throwable)=>void handler) {
-		[o, t|if(t != null) handler.apply(t)]
+	private static def <R> BiConsumer<R, Throwable> whenExcpetionHandler((Throwable)=>void handler) {
+		[o, t|if(t !== null) handler.apply(t)]
 	}
 
 	/**
@@ -687,7 +563,7 @@ class CompletableFutureExtensions {
 	private static def <R> recover(R r, Throwable ex, CompletableFuture<R> result,
 		(Throwable)=>CompletionStage<? extends R> recovery) {
 		// did the original
-		if (ex != null) {
+		if (ex !== null) {
 			// error occurred, we need to recover
 			var CompletionStage<? extends R> recoverFut
 			try {
@@ -697,7 +573,7 @@ class CompletableFutureExtensions {
 				return
 			}
 			// did we actually get a future to recover with?
-			if (recoverFut == null) {
+			if (recoverFut === null) {
 				// nope, NPE
 				result.completeExceptionally(new NullPointerException)
 			} else {
@@ -763,6 +639,174 @@ class CompletableFutureExtensions {
 		result
 	}
 
+	public static final class OnTimeoutBuilder {
+		private new() {
+		}
+
+		private var long timeout = 1
+		private var TimeUnit timeUnit = null
+		private var ScheduledExecutorService executor = null
+		private var tryShutdown = true
+		private var =>Throwable exceptionProvider = null
+		private var boolean cancelBackPropagation = false
+		private var boolean cancelOriginalOnTimeout = false
+
+		def void setTimeout(Pair<Long, TimeUnit> timeout) {
+			Objects.requireNonNull(timeout)
+			this.timeout = timeout.key
+			this.timeUnit = timeout.value
+		}
+
+		def void setScheduler(ScheduledExecutorService scheduler) {
+			this.executor = scheduler
+		}
+
+		def void setTryShutdownScheduler(boolean doShutdown) {
+			this.tryShutdown = doShutdown
+		}
+
+		def void setExceptionProvider(=>Throwable exceptionProvider) {
+			this.exceptionProvider = exceptionProvider;
+		}
+
+		def void setBackwardPropagateCancel(boolean cancelPropagation) {
+			this.cancelBackPropagation = cancelPropagation
+		}
+
+		def void setCancelOriginalOnTimeout(boolean cancelOriginalOnTimeout) {
+			this.cancelOriginalOnTimeout = cancelOriginalOnTimeout
+		}
+	}
+
+	static def <R> CompletableFuture<R> orTimeout(CompletableFuture<R> fut, (OnTimeoutBuilder)=>void config) {
+		Objects.requireNonNull(fut)
+		Objects.requireNonNull(config)
+		val configData = new OnTimeoutBuilder
+		config.apply(configData)
+
+		val time = configData.timeout
+		val timeUnit = configData.timeUnit ?: TimeUnit.SECONDS
+		var isDefaultScheduler = false
+		val scheduler = if (configData.executor !== null) {
+				configData.executor
+			} else {
+				isDefaultScheduler = true
+				defaultScheduler
+			}
+		val ()=>Throwable exceptionProvider = configData.exceptionProvider ?: [new TimeoutException]
+		val cancelBackPropagation = configData.cancelBackPropagation
+		val cancelOriginalOnTimeout = configData.cancelOriginalOnTimeout
+		val shutdownScheduler = if (isDefaultScheduler) {
+				true
+			} else {
+				configData.tryShutdown
+			}
+		orTimeout(fut, scheduler, shutdownScheduler, time, timeUnit, exceptionProvider, cancelBackPropagation,
+			cancelOriginalOnTimeout)
+	}
+
+	// TODO flag if cancel backward propagation allowed
+	// TODO document
+	static private def <R> CompletableFuture<R> orTimeout(CompletableFuture<R> fut, ScheduledExecutorService scheduler,
+		boolean shutdownScheduler, long time, TimeUnit unit, =>Throwable exceptionProvider,
+		boolean cancelBackPropagation, boolean cancelOriginalOnTimeout) {
+		// if the future is already completed, there is no point in even 
+		// starting a timer
+		if (fut.done) {
+			return fut
+		}
+
+		val result = new CompletableFuture<R>
+
+		val task = scheduler.schedule([|
+			try {
+				// since exception creation is expensive, we only create exception
+				// if we really need to
+				if (!result.done) {
+					result.completeExceptionally(exceptionProvider.apply)
+				}
+			} catch (Throwable t) {
+				// if problem providing exception, simply
+				// complete result with the exception
+				result.completeExceptionally(t)
+			} finally {
+				if (cancelOriginalOnTimeout) {
+					fut.cancel
+				}
+				if (shutdownScheduler) {
+					scheduler.shutdown()
+				}
+			}
+			return // make Runnable not Callable
+		], time, unit)
+
+		fut.whenComplete [ r, ex |
+
+			// try forwarding outcome of fut
+			// to result. But result may already be
+			// completed with timeout exception or cancelled
+			if (ex !== null) {
+				result.completeExceptionally(ex)
+			} else {
+				result.complete(r)
+			}
+
+			if (scheduler.isShutdown) {
+				return
+			}
+			// try canceling the task, but on the scheduler threads
+			// not on the thread completing the future
+			try {
+				scheduler.execute [
+					// if the future is completed earlier
+					// than cancellation, we can cancel the 
+					// scheduled task
+					val cancelled = task.cancel(true)
+					// if the completion did not happen yet,
+					// we need to 
+					if (cancelled && shutdownScheduler) {
+						scheduler.shutdown()
+					}
+				]
+			} catch (RejectedExecutionException ree) {
+				// so the scheduler is already shut down
+				// or has to many tasks in task list.
+				// In this case we can't cancel our operation
+			}
+		]
+
+		if (cancelBackPropagation) {
+			result.forwardCancellation(fut)
+		}
+		result
+	}
+
+	// ////////////////////////////////
+	// Java 9 forward compatibility //
+	// ////////////////////////////////
+	// TODO variant with flag if cancel backward propagation allowed
+	// TODO document
+	static def <R> CompletableFuture<R> orTimeout(CompletableFuture<R> fut, long timeoutTime, TimeUnit unit) {
+		val ()=>Throwable exceptionProvider = [new TimeoutException]
+		val cancelBackPropagation = false
+		val shutdownScheduler = true
+		val cancelOriginalOnTimeout = false
+		val scheduler = defaultScheduler
+		fut.orTimeout(scheduler, shutdownScheduler, timeoutTime, unit, exceptionProvider, cancelBackPropagation,
+			cancelOriginalOnTimeout)
+	}
+
+	// TODO documentation
+	static def <R> CompletableFuture<R> copy(CompletableFuture<R> it) {
+		thenApply[it]
+	}
+
+// TODO static def <T> CompletableFuture<T> completeOnTimeout​(CompletableFuture<T> it, T value, long timeout, TimeUnit unit)
+// TODO static def <T> CompletableFuture<T> completeAsync​(CompletableFuture<R> it, Supplier<? extends T> supplier, Executor executor)
+// TODO static def <T> CompletableFuture<T> completeAsync​(CompletableFuture<R> it, Supplier<? extends T> supplier)
+// ///////////////
+// Other Ideas //
+// ///////////////
 // TODO handleComposeAsync variants
 // TODO thenAsync? all variants
 // TODO static def <T> CompletableFuture<T> void filter(Predicate<T>) // returns future holding NoSuchElementException if not present (may be cached). Not filtering to null, there are too many methods on CF that can fail on null

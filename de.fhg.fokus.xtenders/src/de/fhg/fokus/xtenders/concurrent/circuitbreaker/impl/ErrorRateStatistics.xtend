@@ -187,7 +187,7 @@ package class ErrorPerTimeChecker implements ErrorStatisticsChecker {
 			throw new IllegalArgumentException(
 				"Time interval in which errors are counted must be greater than 0 nanoseconds.")
 		}
-		if (timeSupplier == null) {
+		if (timeSupplier === null) {
 			throw new IllegalArgumentException("System time supplier must not be null.")
 		}
 		this.maxCount = maxCount

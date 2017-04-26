@@ -5,6 +5,7 @@ import java.util.concurrent.ForkJoinPool
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.Executor
 import java.util.concurrent.ScheduledExecutorService
+import static extension de.fhg.fokus.xtenders.concurrent.internal.DurationToTimeConversion.*
 import static extension de.fhg.fokus.xtenders.concurrent.CompletableFutureExtensions.*
 import java.util.Objects
 
@@ -132,7 +133,7 @@ class AsyncCompute {
 					// result future
 					FutureFutureCompletion<R>: {
 						val resultFut = result.value
-						if (resultFut == null) {
+						if (resultFut === null) {
 							fut.complete(null as R)
 						} else {
 							resultFut.forwardTo(fut)

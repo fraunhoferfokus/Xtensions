@@ -150,7 +150,7 @@ class CompletableFutureAggregations {
 		Objects.requireNonNull(futures)
 		val result = new CompletableFuture<V>()
 		futures.forEach [
-			if (it != null) {
+			if (it !== null) {
 				it.forwardTo(result)
 				result.forwardCancellation(it)
 			}

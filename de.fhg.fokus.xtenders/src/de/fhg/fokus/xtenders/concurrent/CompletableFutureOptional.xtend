@@ -14,7 +14,7 @@ class CompletableFutureOptional {
 	static def <T> CompletableFuture<T> recoverNotPresent(CompletableFuture<T> fut, ()=>T handler) throws NullPointerException {
 		Objects.requireNonNull(fut)
 		Objects.requireNonNull(handler)
-		fut.then[if(it==null) handler.apply else it]
+		fut.then[if(it===null) handler.apply else it]
 	}
 	
 	//static def <T> CompletableFuture<Void> ifNonNull(CompletableFuture<T> fut, (T)=>void mapper){} // use if not interested in null case, otherweise see nonNull
