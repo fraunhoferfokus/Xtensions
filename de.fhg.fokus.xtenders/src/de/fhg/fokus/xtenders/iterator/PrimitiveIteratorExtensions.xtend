@@ -13,8 +13,10 @@ import java.util.stream.DoubleStream
  * The methods are intended to be used as extension methods.
  * The class is not intended to be instantiated.
  */
-class PrimitiveIteratorExtensions {
+final class PrimitiveIteratorExtensions {
+	
 	private new() {
+		throw new IllegalStateException("PrimitiveIteratorExtensions not intended to be instantiated")
 	}
 	
 	//////////////////////////////////

@@ -11,7 +11,9 @@ import org.eclipse.xtext.xbase.lib.Functions.Function6;
 
 public class Recursion {
 	
-	private Recursion() {}
+	private Recursion() {
+		throw new IllegalStateException("MemorizationExtensions not intended to be instantiated");
+	}
 	
 	public static <R> @NonNull Function0<R> recursive (@NonNull Function1<@NonNull Function0<R>, R> recFunc) {
 		class RecFunc implements Function0<R> {

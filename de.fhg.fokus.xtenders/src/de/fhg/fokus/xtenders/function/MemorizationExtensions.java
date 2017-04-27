@@ -18,6 +18,10 @@ import org.eclipse.xtext.xbase.lib.Functions.Function2;
 @Beta
 public final class MemorizationExtensions {
 	
+	private MemorizationExtensions() {
+		throw new IllegalStateException("MemorizationExtensions not intended to be instantiated");
+	}
+	
 	/**
 	 * Thread safety properties for memorized functions.
 	 */
@@ -43,9 +47,6 @@ public final class MemorizationExtensions {
 		 * value is computed.
 		 */
 		SYNC
-	}
-
-	private MemorizationExtensions() {
 	}
 
 	private static final class SyncingMemFunction0<@NonNull R> implements Function0<R> {

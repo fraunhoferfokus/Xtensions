@@ -15,7 +15,11 @@ import org.eclipse.xtext.xbase.lib.Functions.Function4;
 import org.eclipse.xtext.xbase.lib.Functions.Function5;
 import org.eclipse.xtext.xbase.lib.Functions.Function6;
 
-public class FunctionFilterExtensions {
+public final class FunctionFilterExtensions {
+	
+	private FunctionFilterExtensions() {
+		throw new IllegalStateException("FunctionFilterExtensions not intended to be instantiated");
+	}
 	
 	@Pure
 	public static <T,R> @NonNull Function1<T, Optional<R>> filterResult(@NonNull Function1<T, R> self, @NonNull Predicate<R> predicate) {

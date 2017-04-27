@@ -13,7 +13,11 @@ import java.util.function.DoubleConsumer
 /**
  * This class provides extension methods on arrays of the primitive types {@code int}, {@code long}, {@code float}, and {@code double}.
  */
-class PrimitiveArrayExtensions {
+final class PrimitiveArrayExtensions {
+	
+	private new() {
+		throw new IllegalStateException("PrimitiveArrayExtensions not intended to be instantiated")
+	}
 
 	/**
 	 * This method creates an {@link IntIterable} for the given array {@code arr},
