@@ -5,6 +5,9 @@ import java.util.stream.IntStream
 import java.util.stream.StreamSupport
 import java.util.Spliterator
 import java.util.Comparator
+import java.util.PrimitiveIterator
+import java.util.NoSuchElementException
+import de.fhg.fokus.xtenders.iterator.IntIterable
 
 /**
  * This class provides static extension methods to {@link IntegerRange}. To use these methods in Xtend, import this class via <br>
@@ -78,11 +81,70 @@ class RangeExtensions {
 		val spliterator = new IntegerRangeSpliterator(r)
 		StreamSupport.intStream(spliterator, true)
 	}
+	
+	def static PrimitiveIterator.OfInt intIterator(IntegerRange r) {
+		new IntegerRangeIntIterator(r)
+	}
+	
+	def static IntIterable asIntIterable(IntegerRange r) {
+		new IntegerRangeIntIterable(r)
+	}
 
-// TODO IntegerRange#intIterator() -> PrimitiveIterator.OfInt
 // TODO ExclusiveRange#intIterator() -> PrimitiveIterator.OfInt
-// TODO same extensions for ExclusiveRange
+// TODO same extensions for ExclusiveRange ??? 
 // TODO ExclusiveRange#toIntegerRange -> Optional<IntegerRange>
+}
+
+package class IntegerRangeIntIterable implements IntIterable {
+	val IntegerRange range
+	
+	new (IntegerRange range) {
+		this.range = range
+	}
+	
+	override iterator() {
+		new IntegerRangeIntIterator(range)
+	}
+	
+	override forEachInt(IntConsumer consumer) {
+		for(var curr = range.start; curr <= range.end; curr += range.step) {
+			consumer.accept(curr)
+		}
+	}
+	
+	override stream() {
+		RangeExtensions.stream(range)
+	}
+	
+}
+
+package class IntegerRangeIntIterator implements PrimitiveIterator.OfInt {
+	
+	val IntegerRange range
+	var int next;
+	
+	new(IntegerRange range) {
+		this.range = range
+		this.next = range.start
+	}
+	
+	override nextInt() {
+		if (!hasNext()) {
+			throw new NoSuchElementException()
+		}
+		val int value = next
+		next += range.step
+		return value;
+	}
+	
+	override hasNext() {
+		extension val r = range
+		if (step < 0)
+				return next >= end
+			else
+				return next <= end
+	}
+	
 }
 
 /**

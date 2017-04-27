@@ -24,7 +24,7 @@ import org.eclipse.xtext.xbase.lib.Pure;
 import org.eclipse.xtext.xbase.lib.Procedures.Procedure0;
 import org.eclipse.xtext.xbase.lib.Procedures.Procedure1;
 
-import de.fhg.fokus.xtenders.iterator.IntegerIterable;
+import de.fhg.fokus.xtenders.iterator.IntIterable;
 
 
 public class OptionalIntExtensions {
@@ -139,7 +139,7 @@ public class OptionalIntExtensions {
 	}
 
 	@Pure
-	public static <T> @NonNull IntegerIterable toIterable(@NonNull OptionalInt self) {
+	public static <T> @NonNull IntIterable toIterable(@NonNull OptionalInt self) {
 		return () -> iterator(self);
 	}
 
