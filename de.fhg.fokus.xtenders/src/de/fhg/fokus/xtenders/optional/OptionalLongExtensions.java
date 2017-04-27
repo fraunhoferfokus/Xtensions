@@ -1,15 +1,13 @@
 package de.fhg.fokus.xtenders.optional;
 
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.OptionalDouble;
 import java.util.OptionalInt;
 import java.util.OptionalLong;
-import java.util.PrimitiveIterator;
-import java.util.Set;
 import java.util.PrimitiveIterator.OfLong;
+import java.util.Set;
 import java.util.function.LongConsumer;
 import java.util.function.LongFunction;
 import java.util.function.LongPredicate;
@@ -17,22 +15,21 @@ import java.util.function.LongSupplier;
 import java.util.function.LongToDoubleFunction;
 import java.util.function.LongToIntFunction;
 import java.util.function.LongUnaryOperator;
-import java.util.stream.Collector;
+import java.util.stream.LongStream;
 
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.xtext.xbase.lib.Inline;
+import org.eclipse.xtext.xbase.lib.Procedures.Procedure0;
+import org.eclipse.xtext.xbase.lib.Procedures.Procedure1;
 import org.eclipse.xtext.xbase.lib.Pure;
 
 import de.fhg.fokus.xtenders.iterator.LongIterable;
-
-import org.eclipse.xtext.xbase.lib.Procedures.Procedure0;
-import org.eclipse.xtext.xbase.lib.Procedures.Procedure1;
 
 public class OptionalLongExtensions {
 
 	private OptionalLongExtensions() {
 	}
-	
+
 	@FunctionalInterface
 	public interface LongPresenceCheck extends LongConsumer, Procedure1<@NonNull OptionalLong> {
 
@@ -124,32 +121,112 @@ public class OptionalLongExtensions {
 			@NonNull LongToDoubleFunction mapFunc) {
 		return self.isPresent() ? OptionalDouble.of(mapFunc.applyAsDouble(self.getAsLong())) : OptionalDouble.empty();
 	}
-	
+
 	@Pure
-	public static <T> @NonNull LongIterable toIterable(@NonNull OptionalLong self) {
-		return () -> iterator(self);
+	public static <T> @NonNull LongIterable asIterable(@NonNull OptionalLong self) {
+		if (self.isPresent()) {
+			long value = self.getAsLong();
+			return new ValueIterable(value);
+		} else {
+			return EMPTY_ITERABLE;
+		}
 	}
 
-	public static <T> @NonNull OfLong iterator(@NonNull OptionalLong self) {
-		class OptionalLongIterator implements PrimitiveIterator.OfLong {
-			boolean done = !self.isPresent();
+	private static class ValueIterator implements OfLong {
+		final long value;
+		boolean done = false;
 
-			@Override
-			public boolean hasNext() {
-				return !done && self.isPresent();
-			}
-
-			@Override
-			public long nextLong() {
-				if (done) {
-					throw new NoSuchElementException("Last value already read");
-				}
-				done = true;
-				return self.getAsLong();
-			}
-
+		public ValueIterator(long value) {
+			this.value = value;
 		}
-		return new OptionalLongIterator();
+
+		@Override
+		public boolean hasNext() {
+			return !done;
+		}
+
+		@Override
+		public long nextLong() {
+			if (done) {
+				throw new NoSuchElementException();
+			} else {
+				return value;
+			}
+		}
+	}
+
+	/**
+	 * Implementation of {@link LongIterable} for iterating over a single long
+	 * value.
+	 */
+	private static class ValueIterable implements LongIterable {
+
+		final long value;
+
+		public ValueIterable(long value) {
+			super();
+			this.value = value;
+		}
+
+		@Override
+		public OfLong iterator() {
+			return new ValueIterator(value);
+		}
+
+		@Override
+		public void forEachLong(LongConsumer consumer) {
+			consumer.accept(value);
+		}
+
+		@Override
+		public LongStream stream() {
+			return LongStream.of(value);
+		}
+	}
+
+	private static OfLong EMPTY_ITERATOR = new OfLong() {
+
+		@Override
+		public boolean hasNext() {
+			return false;
+		}
+
+		@Override
+		public long nextLong() {
+			throw new NoSuchElementException();
+		}
+		
+		public void forEachRemaining(LongConsumer action) {};
+	};
+
+	private static LongIterable EMPTY_ITERABLE = new LongIterable() {
+
+		@Override
+		public OfLong iterator() {
+			return EMPTY_ITERATOR;
+		}
+
+		@Override
+		public void forEachLong(LongConsumer consumer) {
+		};
+
+		@Override
+		public void forEach(java.util.function.Consumer<? super Long> action) {
+		};
+
+		@Override
+		public LongStream stream() {
+			return LongStream.empty();
+		};
+	};
+
+	public static <T> @NonNull OfLong iterator(@NonNull OptionalLong self) {
+		if (self.isPresent()) {
+			long value = self.getAsLong();
+			return new ValueIterator(value);
+		} else {
+			return EMPTY_ITERATOR;
+		}
 	}
 
 	/**

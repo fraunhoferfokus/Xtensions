@@ -7,8 +7,8 @@ import java.util.OptionalDouble;
 import java.util.OptionalInt;
 import java.util.OptionalLong;
 import java.util.PrimitiveIterator;
-import java.util.Set;
 import java.util.PrimitiveIterator.OfInt;
+import java.util.Set;
 import java.util.function.IntConsumer;
 import java.util.function.IntFunction;
 import java.util.function.IntPredicate;
@@ -16,15 +16,16 @@ import java.util.function.IntSupplier;
 import java.util.function.IntToDoubleFunction;
 import java.util.function.IntToLongFunction;
 import java.util.function.IntUnaryOperator;
-import java.util.stream.Collector;
+import java.util.stream.IntStream;
 
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.xtext.xbase.lib.Inline;
-import org.eclipse.xtext.xbase.lib.Pure;
 import org.eclipse.xtext.xbase.lib.Procedures.Procedure0;
 import org.eclipse.xtext.xbase.lib.Procedures.Procedure1;
+import org.eclipse.xtext.xbase.lib.Pure;
 
 import de.fhg.fokus.xtenders.iterator.IntIterable;
+import de.fhg.fokus.xtenders.iterator.LongIterable;
 
 
 public class OptionalIntExtensions {
@@ -139,8 +140,13 @@ public class OptionalIntExtensions {
 	}
 
 	@Pure
-	public static <T> @NonNull IntIterable toIterable(@NonNull OptionalInt self) {
-		return () -> iterator(self);
+	public static <T> @NonNull IntIterable asIterable(@NonNull OptionalInt self) {
+		if(self.isPresent()) {
+			int value = self.getAsInt();
+			return new ValueIterable(value);
+		} else {
+			return EMPTY_ITERABLE;
+		}
 	}
 
 	public static <T> @NonNull OfInt iterator(@NonNull OptionalInt self) {
@@ -164,6 +170,95 @@ public class OptionalIntExtensions {
 		}
 		return new OptionalIntIterator();
 	}
+	
+	private static class ValueIterator implements java.util.PrimitiveIterator.OfInt {
+		final int value;
+		boolean done = false;
+
+		public ValueIterator(int value) {
+			this.value = value;
+		}
+
+		@Override
+		public boolean hasNext() {
+			return !done;
+		}
+
+		@Override
+		public int nextInt() {
+			if (done) {
+				throw new NoSuchElementException();
+			} else {
+				return value;
+			}
+		}
+	}
+
+	/**
+	 * Implementation of {@link LongIterable} for iterating over a single long
+	 * value.
+	 */
+	private static class ValueIterable implements IntIterable {
+
+		final int value;
+
+		public ValueIterable(int value) {
+			super();
+			this.value = value;
+		}
+
+		@Override
+		public OfInt iterator() {
+			return new ValueIterator(value);
+		}
+
+		@Override
+		public void forEachInt(IntConsumer consumer) {
+			consumer.accept(value);
+		}
+
+		@Override
+		public IntStream stream() {
+			return IntStream.of(value);
+		}
+	}
+
+	private static OfInt EMPTY_ITERATOR = new OfInt() {
+
+		@Override
+		public boolean hasNext() {
+			return false;
+		}
+
+		@Override
+		public int nextInt() {
+			throw new NoSuchElementException();
+		}
+		
+		@Override
+		public void forEachRemaining(IntConsumer action) {};
+	};
+
+	private static IntIterable EMPTY_ITERABLE = new IntIterable() {
+
+		@Override
+		public OfInt iterator() {
+			return EMPTY_ITERATOR;
+		}
+
+		@Override
+		public void forEachInt(IntConsumer consumer) {
+		};
+
+		@Override
+		public void forEach(java.util.function.Consumer<? super Integer> action) {
+		};
+
+		@Override
+		public IntStream stream() {
+			return IntStream.empty();
+		};
+	};
 
 	/**
 	 * Returns an immutable set that either contains the value, held by the

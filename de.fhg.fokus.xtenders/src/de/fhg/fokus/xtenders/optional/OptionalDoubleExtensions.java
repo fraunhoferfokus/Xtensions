@@ -6,9 +6,8 @@ import java.util.Optional;
 import java.util.OptionalDouble;
 import java.util.OptionalInt;
 import java.util.OptionalLong;
-import java.util.PrimitiveIterator;
-import java.util.Set;
 import java.util.PrimitiveIterator.OfDouble;
+import java.util.Set;
 import java.util.function.DoubleConsumer;
 import java.util.function.DoubleFunction;
 import java.util.function.DoublePredicate;
@@ -16,21 +15,22 @@ import java.util.function.DoubleSupplier;
 import java.util.function.DoubleToIntFunction;
 import java.util.function.DoubleToLongFunction;
 import java.util.function.DoubleUnaryOperator;
-import java.util.stream.Collector;
+import java.util.stream.DoubleStream;
 
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.xtext.xbase.lib.Inline;
-import org.eclipse.xtext.xbase.lib.Pure;
 import org.eclipse.xtext.xbase.lib.Procedures.Procedure0;
 import org.eclipse.xtext.xbase.lib.Procedures.Procedure1;
+import org.eclipse.xtext.xbase.lib.Pure;
 
 import de.fhg.fokus.xtenders.iterator.DoubleIterable;
-
+import de.fhg.fokus.xtenders.iterator.LongIterable;
 
 public class OptionalDoubleExtensions {
 
-	private OptionalDoubleExtensions(){}
-	
+	private OptionalDoubleExtensions() {
+	}
+
 	@FunctionalInterface
 	public interface DoublePresenceCheck extends DoubleConsumer, Procedure1<@NonNull OptionalDouble> {
 
@@ -124,30 +124,111 @@ public class OptionalDoubleExtensions {
 		return self.isPresent() ? OptionalDouble.of(op.applyAsDouble(self.getAsDouble())) : OptionalDouble.empty();
 	}
 
-	public static <T> @NonNull DoubleIterable toIterable(@NonNull OptionalDouble self) {
-		return () -> iterator(self);
+	public static <T> @NonNull DoubleIterable asIterable(@NonNull OptionalDouble self) {
+		if (self.isPresent()) {
+			double value = self.getAsDouble();
+			return new ValueIterable(value);
+		} else {
+			return EMPTY_ITERABLE;
+		}
 	}
 
-	public static <T> @NonNull OfDouble iterator(@NonNull OptionalDouble self) {
-		class OptionalLongIterator implements PrimitiveIterator.OfDouble {
-			boolean done = !self.isPresent();
+	private static class ValueIterator implements OfDouble {
+		final double value;
+		boolean done = false;
 
-			@Override
-			public boolean hasNext() {
-				return !done;
-			}
-
-			@Override
-			public double nextDouble() {
-				if (done) {
-					throw new NoSuchElementException("Last value already read");
-				}
-				done = true;
-				return self.getAsDouble();
-			}
-
+		public ValueIterator(double value) {
+			this.value = value;
 		}
-		return new OptionalLongIterator();
+
+		@Override
+		public boolean hasNext() {
+			return !done;
+		}
+
+		@Override
+		public double nextDouble() {
+			if (done) {
+				throw new NoSuchElementException();
+			} else {
+				return value;
+			}
+		}
+	}
+
+	/**
+	 * Implementation of {@link LongIterable} for iterating over a single long
+	 * value.
+	 */
+	private static class ValueIterable implements DoubleIterable {
+
+		final double value;
+
+		public ValueIterable(double value) {
+			super();
+			this.value = value;
+		}
+
+		@Override
+		public OfDouble iterator() {
+			return new ValueIterator(value);
+		}
+
+		@Override
+		public void forEachDouble(DoubleConsumer consumer) {
+			consumer.accept(value);
+		}
+
+		@Override
+		public DoubleStream stream() {
+			return DoubleStream.of(value);
+		}
+	}
+
+	private static OfDouble EMPTY_ITERATOR = new OfDouble() {
+
+		@Override
+		public boolean hasNext() {
+			return false;
+		}
+
+		@Override
+		public double nextDouble() {
+			throw new NoSuchElementException();
+		}
+		
+		@Override
+		public void forEachRemaining(DoubleConsumer action) {};
+	};
+
+	private static DoubleIterable EMPTY_ITERABLE = new DoubleIterable() {
+
+		@Override
+		public OfDouble iterator() {
+			return EMPTY_ITERATOR;
+		}
+
+		@Override
+		public void forEachDouble(DoubleConsumer consumer) {
+		};
+
+		@Override
+		public void forEach(java.util.function.Consumer<? super Double> action) {
+		};
+
+		@Override
+		public DoubleStream stream() {
+			return DoubleStream.empty();
+		};
+	};
+
+	public static <T> @NonNull OfDouble iterator(@NonNull OptionalDouble self) {
+		if (self.isPresent()) {
+			double value = self.getAsDouble();
+			return new ValueIterator(value);
+		} else {
+			return EMPTY_ITERATOR;
+		}
 	}
 
 	/**
@@ -167,5 +248,5 @@ public class OptionalDoubleExtensions {
 			return Collections.emptySet();
 		}
 	}
-	
+
 }
