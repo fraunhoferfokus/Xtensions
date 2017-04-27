@@ -4,8 +4,9 @@ import java.util.PrimitiveIterator
 import java.util.function.IntConsumer
 import java.util.NoSuchElementException
 import java.util.stream.IntStream
-import java.util.PrimitiveIterator.OfInt
 import java.util.Objects
+import java.util.stream.DoubleStream
+import java.util.stream.LongStream
 
 /**
  * This class provides extension methods on arrays of the primitive types {@code int}, {@code long}, {@code float}, and {@code double}.
@@ -22,6 +23,8 @@ class PrimitiveArrayExtensions {
 		}
 	}
 
+	// TODO forEachX and asXIterable for other primitive types 
+
 	/**
 	 * This is a convenience extension method for {@link IntStream#of(int[])}.
 	 */
@@ -30,9 +33,26 @@ class PrimitiveArrayExtensions {
 		IntStream.of(arr)
 	}
 
-// TODO for other primitive types 
+	/**
+	 * This is a convenience extension method for {@link DoubleStream#of(double[])}.
+	 */
+	@Inline(value="DoubleStream.of($1)", imported=DoubleStream)
+	static def DoubleStream stream(double[] arr) {
+		DoubleStream.of(arr)
+	}
+
+	/**
+	 * This is a convenience extension method for {@link LongStream#of(long[])}.
+	 */
+	@Inline(value="LongStream.of($1)", imported=LongStream)
+	static def LongStream stream(long[] arr) {
+		LongStream.of(arr)
+	}
 }
 
+/**
+ * Implementation of {@link IntIterable} for {@code int[]}. 
+ */
 package class IntegerArrayIterable implements IntIterable {
 	new(int[] arr) {
 		this.arr = arr
@@ -57,6 +77,9 @@ package class IntegerArrayIterable implements IntIterable {
 
 }
 
+/**
+ * This class is an implementation of {@link PrimitiveIterator.OfInt} for {@code int[]}.
+ */
 package class IntegerArrayIterator implements PrimitiveIterator.OfInt {
 	val int[] arr
 	var next = 0
