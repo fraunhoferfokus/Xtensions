@@ -17,8 +17,6 @@ import java.util.function.Supplier;
 import java.util.function.ToDoubleFunction;
 import java.util.function.ToIntFunction;
 import java.util.function.ToLongFunction;
-import java.util.stream.Collector;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.eclipse.jdt.annotation.NonNull;
@@ -30,6 +28,7 @@ import org.eclipse.xtext.xbase.lib.Procedures.Procedure0;
 import org.eclipse.xtext.xbase.lib.Procedures.Procedure1;
 import org.eclipse.xtext.xbase.lib.Pure;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
 import de.fhg.fokus.xtenders.range.IntIntConsumer;
@@ -51,36 +50,57 @@ public final class OptionalExtensions {
 		throw new IllegalStateException("OptionalExtensions is not allowed to be instantiated");
 	}
 
-	/**
-	 * This function is basically a factory function for {@link Optional}, that
-	 * returns an optional containing the given value {@code t}, if the
-	 * predicate {@code test} evaluates to {@code true}. If the predicate is
-	 * evaluated to {@code false}, an empty optional will be returned.
-	 * Semantically this method is equal to {@code some(t).filter(test)}, but
-	 * may produce one object instance less.
-	 * 
-	 * @param t
-	 *            value that will be wrapped into an optional if {@code test}
-	 *            evaluates to {@code true}
-	 * @param test
-	 *            check that decides if value {@code t} will be wrapped into an
-	 *            Optional or not.
-	 * @return optional that contains value {@code t}, if {@code test} evaluates
-	 *         to {@code true}.
-	 */
-	@Pure
-	public static <T> @NonNull Optional<T> onlyIf(@NonNull T t, @NonNull Predicate<T> test) {
-		return test.test(t) ? Optional.of(t) : Optional.empty();
-	}
+// TODO onlyIf / onlyIfNullable really needed???
 
-	@Pure
-	public static <T> @NonNull Optional<T> onlyIfNullable(@Nullable T t, @NonNull Predicate<T> test) {
-		if (t == null) {
-			return Optional.empty();
-		} else {
-			return test.test(t) ? Optional.of(t) : Optional.empty();
-		}
-	}
+//	/**
+//	 * This function is basically a factory function for {@link Optional}, that
+//	 * returns an optional containing the given value {@code t}, if the
+//	 * predicate {@code test} evaluates to {@code true}. If the predicate is
+//	 * evaluated to {@code false}, an empty optional will be returned.
+//	 * Semantically this method is equal to {@code some(t).filter(test)}, but
+//	 * may produce one object instance less.
+//	 * 
+//	 * @param t
+//	 *            value that will be wrapped into an optional if {@code test}
+//	 *            evaluates to {@code true}
+//	 * @param test
+//	 *            check that decides if value {@code t} will be wrapped into an
+//	 *            Optional or not.
+//	 * @return optional that contains value {@code t}, if {@code test} evaluates
+//	 *         to {@code true}.
+//	 */
+//	@Pure
+//	public static <T> @NonNull Optional<T> onlyIf(@NonNull T t, @NonNull Predicate<T> test) {
+//		return test.test(t) ? Optional.of(t) : Optional.empty();
+//	}
+//
+//	@Pure
+//	public static <T> @NonNull Optional<T> onlyIfNullable(@Nullable T t, @NonNull Predicate<T> test) {
+//		if (t == null) {
+//			return Optional.empty();
+//		} else {
+//			return test.test(t) ? Optional.of(t) : Optional.empty();
+//		}
+//	}
+	
+
+// TODO is zip usefull???
+		
+//		@Pure
+//		public static <T, U> @NonNull Optional<@NonNull Pair<@NonNull T, @NonNull U>> zip(@NonNull Optional<T> self,
+//				@NonNull Optional<U> other) {
+//			if (self.isPresent() && other.isPresent()) {
+//				return Optional.of(Pair.of(self.get(), other.get()));
+//			} else {
+//				return Optional.empty();
+//			}
+//		}
+
+	
+//	@Inline(value = "$1.isPresent() ? $1.get() : null; if(!$1.isPresent()) return Optional.empty();", imported = Optional.class)
+//	public static <T> T getOrReturn(Optional<T> opt) {
+//		throw new IllegalStateException("Method can only be used inlined");
+//	}
 
 	////////////////////////////
 	// Optional<IntegerRange> //
@@ -204,15 +224,6 @@ public final class OptionalExtensions {
 		return (@NonNull Optional<U>) self.filter(t -> clazz.isInstance(t));
 	}
 
-	@Pure
-	public static <T, U> @NonNull Optional<@NonNull Pair<@NonNull T, @NonNull U>> zip(@NonNull Optional<T> self,
-			@NonNull Optional<U> other) {
-		if (self.isPresent() && other.isPresent()) {
-			return Optional.of(Pair.of(self.get(), other.get()));
-		} else {
-			return Optional.empty();
-		}
-	}
 
 	@FunctionalInterface
 	public interface PresenceCheck<T> extends Procedure1<@NonNull Optional<T>>, Consumer<@NonNull T> {
@@ -272,11 +283,6 @@ public final class OptionalExtensions {
 			consumer.accept(a.get(), b.get());
 		}
 	}
-	
-//	@Inline(value = "$1.isPresent() ? $1.get() : null; if(!$1.isPresent()) return Optional.empty();", imported = Optional.class)
-//	public static <T> T getOrReturn(Optional<T> opt) {
-//		throw new IllegalStateException("Method can only be used inlined");
-//	}
 
 	@Pure
 	@Inline(value = "Optional.ofNullable($1)", imported = Optional.class)
@@ -336,17 +342,17 @@ public final class OptionalExtensions {
 //	}
 
 	@Pure
-	public static <T> @NonNull Iterable<T> toIterable(@NonNull Optional<T> self) {
+	public static <T> @NonNull Iterable<T> asIterable(@NonNull Optional<T> self) {
 		return () -> iterator(self);
 	}
 
 	public static <T> @NonNull Iterator<T> iterator(@NonNull Optional<T> self) {
 		class OptionalIterator implements Iterator<T> {
-			boolean done = false;
+			boolean done = !self.isPresent();
 
 			@Override
 			public boolean hasNext() {
-				return !done && self.isPresent();
+				return !done;
 			}
 
 			@Override
@@ -364,12 +370,7 @@ public final class OptionalExtensions {
 
 	/**
 	 * Returns an immutable set that either contains the value, held by the
-	 * optional, or an empty set, if the optional is empty. If a mutable set is
-	 * needed, use {@link OptionalExtensions#collect(Optional, Collector)
-	 * collect} or the equivalent operator
-	 * {@link OptionalExtensions#operator_tripleGreaterThan(Optional, Collector)
-	 * >>>} with the collector {@link Collectors#toSet() Collectors::toSet}
-	 * instead.
+	 * optional, or an empty immutable set, if the optional is empty.
 	 * 
 	 * @param self
 	 *            Optional value is read from
@@ -382,6 +383,25 @@ public final class OptionalExtensions {
 			return Collections.singleton(self.get());
 		} else {
 			return Collections.emptySet();
+		}
+	}
+	
+	/**
+	 * Returns an immutable list that either contains the value, held by the
+	 * optional, or an empty immutable list, if the optional is empty.
+	 * 
+	 * @param self
+	 *            Optional value is read from
+	 * @return Set containing the value held by the input optional, or an empty
+	 *         set if the input optional is empty.
+	 */
+	@Pure
+	public static <T> @NonNull List<T> toList(@NonNull Optional<T> self) {
+		if (self.isPresent()) {
+			@NonNull T element = self.get();
+			return ImmutableList.of(element);
+		} else {
+			return Collections.emptyList();
 		}
 	}
 	

@@ -32,6 +32,19 @@ final class CircuitBreakerBuilder<T> implements Cloneable {
 	package Executor breakerExecutor = null
 	package =>Throwable exceptionProvider = null
 
+	/** 
+	 * Method creating a CircuitBreakerBuilder, passes it to the given {@code builderBlock} and 
+	 * calls build on the builder afterwards.
+	 */
+	public static def <T> CircuitBreaker<T> build((CircuitBreakerBuilder<T>)=>void builderBlock) {
+		val builder = create()
+		builderBlock.apply(builder)
+		builder.build
+	} 
+
+	/**
+	 * Factory method for builder
+	 */
 	public static def <T> CircuitBreakerBuilder<T> create() {
 		new CircuitBreakerBuilder<T>
 	}

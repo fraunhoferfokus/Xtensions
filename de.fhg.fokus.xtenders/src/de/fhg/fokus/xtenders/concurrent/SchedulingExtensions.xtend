@@ -15,9 +15,10 @@ import static extension de.fhg.fokus.xtenders.concurrent.internal.DurationToTime
  * This class provides static functions that can be used to schedule tasks that
  * are either repeated or delayed by a given amount of time.
  */
-class SchedulingExtensions {
+final class SchedulingExtensions {
 
 	private new() {
+		throw new IllegalStateException("SchedulingExtensions not intended to be instantiated")
 	}
 
 	/**

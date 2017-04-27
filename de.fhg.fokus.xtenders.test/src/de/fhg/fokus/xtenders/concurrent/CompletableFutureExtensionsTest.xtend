@@ -671,10 +671,10 @@ class CompletableFutureExtensionsTest {
 	@Test def void testCancelOnTimeoutResultScheduledBeforeTimeout() {
 		val pool = Executors.newScheduledThreadPool(0)
 		val cf = new CompletableFuture<String>
-		cf.cancelOnTimeout(pool, 5, TimeUnit.MILLISECONDS)
+		cf.cancelOnTimeout(pool, 3, TimeUnit.MILLISECONDS)
 		val expected = "foo"
 		cf.complete(expected)
-		Thread.sleep(6)
+		Thread.sleep(10)
 		val actual = cf.get
 		assertSame("Expecting set result, no timeout.", expected, actual)
 	}

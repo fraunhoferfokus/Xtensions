@@ -169,17 +169,4 @@ public class OptionalLongExtensions {
 			return Collections.emptySet();
 		}
 	}
-
-	public static <T, A, R> R collect(@NonNull OptionalLong self, @NonNull Collector<? super Long, A, R> collector) {
-		A a = collector.supplier().get();
-		if (self.isPresent()) {
-			collector.accumulator().accept(a, self.getAsLong());
-		}
-		// if
-		// collector.characteristics().contains(Characteristics.IDENTITY_FINISH))
-		// == true finisher does not
-		// have to be called. But this will probably take the same time as
-		// calling the finisher every time.
-		return collector.finisher().apply(a);
-	}
 }

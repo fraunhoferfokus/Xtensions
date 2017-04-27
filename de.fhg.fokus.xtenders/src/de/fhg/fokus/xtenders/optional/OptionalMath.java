@@ -7,6 +7,9 @@ import java.util.OptionalLong;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.xtext.xbase.lib.Pure;
 
+import com.google.common.annotations.Beta;
+
+@Beta
 public class OptionalMath {
 
 	/////////////////
