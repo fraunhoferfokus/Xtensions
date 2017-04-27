@@ -150,25 +150,12 @@ public class OptionalIntExtensions {
 	}
 
 	public static <T> @NonNull OfInt iterator(@NonNull OptionalInt self) {
-		class OptionalIntIterator implements PrimitiveIterator.OfInt {
-			boolean done = !self.isPresent();
-
-			@Override
-			public boolean hasNext() {
-				return !done;
-			}
-
-			@Override
-			public int nextInt() {
-				if (done) {
-					throw new NoSuchElementException("Last value already read");
-				}
-				done = true;
-				return self.getAsInt();
-			}
-
+		if(self.isPresent()) {
+			int value = self.getAsInt();
+			return new ValueIterator(value);
+		} else {
+			return EMPTY_ITERATOR;
 		}
-		return new OptionalIntIterator();
 	}
 	
 	private static class ValueIterator implements java.util.PrimitiveIterator.OfInt {

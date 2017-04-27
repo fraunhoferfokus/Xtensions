@@ -150,6 +150,7 @@ public class OptionalLongExtensions {
 			if (done) {
 				throw new NoSuchElementException();
 			} else {
+				done = true;
 				return value;
 			}
 		}

@@ -151,6 +151,7 @@ public class OptionalDoubleExtensions {
 			if (done) {
 				throw new NoSuchElementException();
 			} else {
+				done = true;
 				return value;
 			}
 		}

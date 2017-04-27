@@ -9,6 +9,8 @@ import java.util.OptionalDouble;
 import java.util.OptionalInt;
 import java.util.OptionalLong;
 import java.util.Set;
+import java.util.Spliterator;
+import java.util.Spliterators;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.IntConsumer;
@@ -29,6 +31,7 @@ import org.eclipse.xtext.xbase.lib.Pure;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
+import de.fhg.fokus.xtenders.iterator.PrimitiveArrayExtensions;
 import de.fhg.fokus.xtenders.range.IntIntConsumer;
 import de.fhg.fokus.xtenders.range.RangeExtensions;
 
@@ -341,7 +344,56 @@ public final class OptionalExtensions {
 
 	@Pure
 	public static <T> @NonNull Iterable<T> asIterable(@NonNull Optional<T> self) {
-		return () -> iterator(self);
+		if(self.isPresent()) {
+			@NonNull T value = self.get();
+			class ValueIterable implements Iterable<T> {
+
+				@Override
+				public Iterator<T> iterator() {
+					return new ValueIterator<>(value);
+				}
+				
+				@Override
+				public void forEach(Consumer<? super T> action) {
+					action.accept(value);
+				}
+				
+				@Override
+				public Spliterator<T> spliterator() {
+					return Spliterators.spliterator(new Object[]{value}, Spliterator.IMMUTABLE);
+				}
+			}
+			return new ValueIterable();
+		} else {
+			return Collections.emptySet();
+		}
+	}
+	
+	private static class ValueIterator<T> implements Iterator<T> {
+		
+		final T value;
+		boolean done = false;
+
+		public ValueIterator(T value) {
+			super();
+			this.value = value;
+		}
+
+		@Override
+		public boolean hasNext() {
+			return !done;
+		}
+
+		@Override
+		public T next() {
+			if(done) {
+				throw new NoSuchElementException();
+			} else {
+				done = true;
+				return value;
+			}
+		}
+		
 	}
 
 	public static <T> @NonNull Iterator<T> iterator(@NonNull Optional<T> self) {
