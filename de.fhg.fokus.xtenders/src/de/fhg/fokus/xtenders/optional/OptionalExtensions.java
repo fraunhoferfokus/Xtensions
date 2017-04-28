@@ -31,7 +31,7 @@ import org.eclipse.xtext.xbase.lib.Pure;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
-import de.fhg.fokus.xtenders.iterator.PrimitiveArrayExtensions;
+import de.fhg.fokus.xtenders.function.AdditionalFunctionExtensions;
 import de.fhg.fokus.xtenders.range.IntIntConsumer;
 import de.fhg.fokus.xtenders.range.RangeExtensions;
 
@@ -47,6 +47,7 @@ import de.fhg.fokus.xtenders.range.RangeExtensions;
  */
 public final class OptionalExtensions {
 	
+
 	private OptionalExtensions() {
 		throw new IllegalStateException("OptionalExtensions is not allowed to be instantiated");
 	}
@@ -226,6 +227,10 @@ public final class OptionalExtensions {
 	}
 
 
+	/**
+	 * @see OptionalExtensions#ifPresent(Consumer)
+	 * @param <T>
+	 */
 	@FunctionalInterface
 	public interface PresenceCheck<T> extends Procedure1<@NonNull Optional<T>>, Consumer<@NonNull T> {
 
@@ -256,23 +261,40 @@ public final class OptionalExtensions {
 	// due to problems with the Xtend compiler we cannot use PresenceCheck as
 	// parameter
 	// type and have to accept Consumer instead
+	/**
+	 * This method is a good fit to be used with the {@link AdditionalFunctionExtensions#operator_tripleGreaterThan(Object, org.eclipse.xtext.xbase.lib.Functions.Function1) >>>} operator defined in class {@code AdditionalFunctionExtensions}.<br>
+	 * Example:
+	 * <pre>{@code Optional.of("Hello") >>> ifPresent [
+	 * 	println(it)
+	 * ].elseDo [
+	 * 	println("No value!")
+	 * ]}
+	 * </pre>
+	 * @param either
+	 * @return
+	 */
 	@Pure
 	public static <T> @NonNull PresenceCheck<T> ifPresent(@NonNull Consumer<@NonNull T> either) {
 		return either::accept;
 	}
 
-	public static <T> void notPresent(@NonNull Optional<T> self, @NonNull Procedure0 then) {
+	public static <T> void ifNotPresent(@NonNull Optional<T> self, @NonNull Procedure0 then) {
 		if (!self.isPresent()) {
 			then.apply();
 		}
 	}
 
 	@Pure
-	public static <T> @NonNull Procedure1<@NonNull Optional<T>> notPresent(@NonNull Procedure0 then) {
-		return o -> notPresent(o, then);
+	public static <T> @NonNull Procedure1<@NonNull Optional<T>> ifNotPresent(@NonNull Procedure0 then) {
+		return o -> ifNotPresent(o, then);
 	}
 
-	public static <T> void allPresent(@NonNull List<@NonNull Optional<T>> opts,
+	/**
+	 * If {@code opts} is empty, the {@code consumer} will be called with an empty list.
+	 * @param opts
+	 * @param consumer
+	 */
+	public static <T> void ifAllPresent(@NonNull List<@NonNull Optional<T>> opts,
 			@NonNull Consumer<@NonNull List<@NonNull T>> consumer) {
 		if (opts.stream().allMatch(Optional::isPresent)) {
 			consumer.accept(Lists.transform(opts, o -> o.get()));
@@ -395,27 +417,13 @@ public final class OptionalExtensions {
 		}
 		
 	}
-
+	
 	public static <T> @NonNull Iterator<T> iterator(@NonNull Optional<T> self) {
-		class OptionalIterator implements Iterator<T> {
-			boolean done = !self.isPresent();
-
-			@Override
-			public boolean hasNext() {
-				return !done;
-			}
-
-			@Override
-			public T next() {
-				if (done) {
-					throw new NoSuchElementException("Last value already read");
-				}
-				done = true;
-				return self.get();
-			}
-
+		if(self.isPresent()) {
+			return new ValueIterator<>(self.get());
+		} else {
+			return Collections.emptyIterator();
 		}
-		return new OptionalIterator();
 	}
 
 	/**

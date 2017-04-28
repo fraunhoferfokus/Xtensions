@@ -62,14 +62,14 @@ public class OptionalLongExtensions {
 		return either::accept;
 	}
 
-	public static <T> void longNotPresent(@NonNull OptionalLong self, @NonNull Procedure0 then) {
+	public static <T> void ifNotPresent(@NonNull OptionalLong self, @NonNull Procedure0 then) {
 		if (!self.isPresent()) {
 			then.apply();
 		}
 	}
 
-	public static <T> @NonNull Procedure1<@NonNull OptionalLong> longNotPresent(@NonNull Procedure0 then) {
-		return o -> longNotPresent(o, then);
+	public static <T> @NonNull Procedure1<@NonNull OptionalLong> ifNotPresent(@NonNull Procedure0 then) {
+		return o -> ifNotPresent(o, then);
 	}
 
 	@Inline(value = "$1.orElse($2)", imported = OptionalLong.class)

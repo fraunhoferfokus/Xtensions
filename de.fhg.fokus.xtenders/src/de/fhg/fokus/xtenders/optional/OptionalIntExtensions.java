@@ -6,7 +6,6 @@ import java.util.Optional;
 import java.util.OptionalDouble;
 import java.util.OptionalInt;
 import java.util.OptionalLong;
-import java.util.PrimitiveIterator;
 import java.util.PrimitiveIterator.OfInt;
 import java.util.Set;
 import java.util.function.IntConsumer;
@@ -69,14 +68,14 @@ public class OptionalIntExtensions {
 		return either::accept;
 	}
 
-	public static <T> void intNotPresent(@NonNull OptionalInt self, @NonNull Procedure0 then) {
+	public static <T> void ifNotPresent(@NonNull OptionalInt self, @NonNull Procedure0 then) {
 		if (!self.isPresent()) {
 			then.apply();
 		}
 	}
 
 	public static <T> @NonNull Procedure1<@NonNull OptionalInt> intNotPresent(@NonNull Procedure0 then) {
-		return o -> intNotPresent(o, then);
+		return o -> ifNotPresent(o, then);
 	}
 
 	@Pure

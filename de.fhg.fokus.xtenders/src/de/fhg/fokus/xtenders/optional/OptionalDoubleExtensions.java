@@ -59,19 +59,19 @@ public class OptionalDoubleExtensions {
 	}
 
 	@Pure
-	public static <T> @NonNull DoublePresenceCheck doublePresent(@NonNull DoubleConsumer either) {
+	public static <T> @NonNull DoublePresenceCheck ifPresent(@NonNull DoubleConsumer either) {
 		return either::accept;
 	}
 
-	public static <T> void doubleNotPresent(@NonNull OptionalDouble self, @NonNull Procedure0 then) {
+	public static <T> void ifNotPresent(@NonNull OptionalDouble self, @NonNull Procedure0 then) {
 		if (!self.isPresent()) {
 			then.apply();
 		}
 	}
 
 	@Pure
-	public static <T> @NonNull Procedure1<@NonNull OptionalDouble> doubleNotPresent(@NonNull Procedure0 then) {
-		return o -> doubleNotPresent(o, then);
+	public static <T> @NonNull Procedure1<@NonNull OptionalDouble> ifNotPresent(@NonNull Procedure0 then) {
+		return o -> ifNotPresent(o, then);
 	}
 
 	@Pure

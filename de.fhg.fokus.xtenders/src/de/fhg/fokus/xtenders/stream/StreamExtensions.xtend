@@ -5,13 +5,10 @@ import java.util.List
 import java.util.Objects
 import java.util.Set
 import java.util.function.Supplier
-import java.util.stream.IntStream
 import java.util.stream.Stream
 import java.util.stream.StreamSupport
 
 import static java.util.stream.Collectors.*
-import java.util.Optional
-import java.util.function.BinaryOperator
 
 class StreamExtensions {
 

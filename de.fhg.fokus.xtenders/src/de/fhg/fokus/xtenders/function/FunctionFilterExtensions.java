@@ -3,7 +3,6 @@ package de.fhg.fokus.xtenders.function;
 import static de.fhg.fokus.xtenders.optional.OptionalExtensions.*;
 
 import java.util.Optional;
-import java.util.function.Function;
 import java.util.function.Predicate;
 
 import org.eclipse.jdt.annotation.NonNull;
