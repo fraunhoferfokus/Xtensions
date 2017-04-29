@@ -223,7 +223,7 @@ public final class OptionalExtensions {
 	@SuppressWarnings("unchecked") // we know cast is safe, because value
 									// can
 									// only be taken from Optional
-	public static <T extends U, U> @NonNull Optional<U> orSuper(@NonNull Optional<T> self,
+	public static <U> @NonNull Optional<U> orSuper(@NonNull Optional<? extends U> self,
 			@NonNull Optional<U> alternative) {
 		return self.isPresent() ? (Optional<U>) self : alternative;
 	}
@@ -245,7 +245,7 @@ public final class OptionalExtensions {
 	@SuppressWarnings("unchecked") // we know cast is safe, because value
 									// can
 									// only be taken from Optional
-	public static <T extends U, U> @NonNull Optional<U> orSuper(@NonNull Optional<T> self,
+	public static <U> @NonNull Optional<U> orSuper(@NonNull Optional<? extends U> self,
 			@NonNull Supplier<@NonNull Optional<U>> alternativeSupplier) {
 		return self.isPresent() ? (Optional<U>) self : alternativeSupplier.get();
 	}

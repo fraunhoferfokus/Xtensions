@@ -15,7 +15,6 @@ import java.util.function.DoubleSupplier;
 import java.util.function.DoubleToIntFunction;
 import java.util.function.DoubleToLongFunction;
 import java.util.function.DoubleUnaryOperator;
-import java.util.function.LongFunction;
 import java.util.stream.DoubleStream;
 
 import org.eclipse.jdt.annotation.NonNull;

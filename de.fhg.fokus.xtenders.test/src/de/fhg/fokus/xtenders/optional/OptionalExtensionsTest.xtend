@@ -208,6 +208,72 @@ class OptionalExtensionsTest {
 		
 	}
 	
+	
+	/////////////////
+	// orSuper Supplier //
+	/////////////////
+	
+	@Test def void orSuperEmptyEmpty() {
+		val Optional<String> o = Optional.empty
+		val Optional<Object> o2 = Optional.empty
+		val result = o.orSuper[o2]
+		assertFalse(result.isPresent)
+	}
+	
+	@Test def void orSuperEmptyValue() {
+		val expected = "bar"
+		val Optional<String> o = Optional.empty
+		val Optional<CharSequence> o2 = Optional.of(expected)
+		val result = o.orSuper[o2]
+		assertTrue(result.isPresent)
+		assertSame(expected, result.get)
+	}
+	
+	@Test def void orSuperValueX() {
+		val expected = "bar"
+		val Optional<String> o = Optional.of(expected)
+		val result = o.orSuper[fail();return null]
+		assertTrue(result.isPresent)
+		assertSame(expected, result.get)
+	}
+	
+	/////////////////
+	// orSuper Optional //
+	/////////////////
+	
+	@Test def void orSuperOptionalEmptyEmpty() {
+		val Optional<String> o = Optional.empty
+		val Optional<CharSequence> o2 = Optional.empty
+		val result = o.orSuper(o2)
+		assertFalse(result.isPresent)
+	}
+	
+	@Test def void orSuperOptionalEmptyValue() {
+		val expected = "bar"
+		val Optional<String> o = Optional.empty
+		val Optional<CharSequence> o2 = Optional.of(expected)
+		val result = o.orSuper(o2)
+		assertTrue(result.isPresent)
+		assertSame(expected, result.get)
+	}
+	
+	@Test def void orSuperOptionalValueEmpty() {
+		val expected = "bar"
+		val Optional<String> o = Optional.of(expected)
+		val result = o.orSuper(Optional.<CharSequence>empty)
+		assertTrue(result.isPresent)
+		assertSame(expected, result.get)
+	}
+	
+	@Test def void orSuperOptionalValueValue() {
+		val expected = "bar"
+		val other = "foo"
+		val Optional<String> o = Optional.of(expected)
+		val result = o.orSuper(Optional.<CharSequence>of(other))
+		assertTrue(result.isPresent)
+		assertSame(expected, result.get)
+	}
+	
 	/////////////////////
 	// filter by class //
 	/////////////////////
