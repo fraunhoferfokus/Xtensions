@@ -51,4 +51,7 @@ public interface LongIterable extends Iterable<Long> {
 		final OfLong iterator = iterator();
 		return PrimitiveIteratorExtensions.stream(iterator);
 	}
+	
+	// TODO public static LongIterable generate(final LongSupplier s)
+	// TODO public static LongIterable iterate(final long seed, final LongUnaryOperator f)
 }

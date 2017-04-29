@@ -15,6 +15,7 @@ import java.util.function.DoubleSupplier;
 import java.util.function.DoubleToIntFunction;
 import java.util.function.DoubleToLongFunction;
 import java.util.function.DoubleUnaryOperator;
+import java.util.function.LongFunction;
 import java.util.stream.DoubleStream;
 
 import org.eclipse.jdt.annotation.NonNull;
@@ -122,6 +123,10 @@ public class OptionalDoubleExtensions {
 
 	public static <T> @NonNull OptionalDouble mapDouble(@NonNull OptionalDouble self, @NonNull DoubleUnaryOperator op) {
 		return self.isPresent() ? OptionalDouble.of(op.applyAsDouble(self.getAsDouble())) : OptionalDouble.empty();
+	}
+	
+	public static <T> @NonNull OptionalDouble flatMapDouble(@NonNull OptionalDouble self, @NonNull DoubleFunction<OptionalDouble> mapper) {
+		return self.isPresent() ? mapper.apply(self.getAsDouble()) : self;
 	}
 
 	public static <T> @NonNull DoubleIterable asIterable(@NonNull OptionalDouble self) {

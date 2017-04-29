@@ -715,6 +715,52 @@ class OptionalExtensionsTest {
 		assertTrue(result.get)
 	}
 	
+	
+	@Test def ifAllPresentEmptyOptional() {
+		#[Optional.empty].ifAllPresent [l|
+			fail()
+		]
+	}
+	
+	@Test def ifAllPresentEmptyOptionals() {
+		#[Optional.empty,Optional.empty,Optional.empty].ifAllPresent [l|
+			fail()
+		]
+	}
+	
+	@Test def ifAllPresentNotAllValue() {
+		#[Optional.empty,Optional.of("foo"),Optional.empty].ifAllPresent [l|
+			fail()
+		]
+	}
+	
+	@Test def ifAllPresentWithOnePresent() {
+		val expected = "foo"
+		val AtomicBoolean result = new AtomicBoolean(false)
+
+		#[Optional.of(expected)].ifAllPresent [l|
+			assertEquals(1, l.length)
+			assertSame(expected, l.get(0))
+			result.set(true)
+		]
+		
+		assertTrue(result.get)
+	}
+	
+	@Test def ifAllPresentWithMultiplePresent() {
+		val a = "foo"
+		val b = "bar"
+		val c = "woo"
+		val AtomicBoolean result = new AtomicBoolean(false)
+
+		#[Optional.of(a),Optional.of(b),Optional.of(c)].ifAllPresent [l|
+			assertEquals(#[a,b,c], l)
+			result.set(true)
+		]
+		
+		assertTrue(result.get)
+	}
+	
 //	@Test def void getOrReturn() {
 //		val test = callGetOrReturnNoReturn("foo")
 //		assertEquals("Some foo", test.get())

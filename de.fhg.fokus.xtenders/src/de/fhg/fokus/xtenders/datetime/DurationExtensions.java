@@ -18,7 +18,7 @@ import org.eclipse.xtext.xbase.lib.Inline;
 public class DurationExtensions {
 
 	/**
-	 * Redirect to {@link Duration#ofNanos(long)}.
+	 * Alias for {@link Duration#ofNanos(long)}.
 	 * @param ns nanoseconds
 	 * @return result of {@link Duration#ofNanos(long)} call with {@code ns}
 	 */
@@ -28,7 +28,7 @@ public class DurationExtensions {
 	}
 
 	/**
-	 * Redirect to {@link Duration#ofMillis(long)}.
+	 * Alias for {@link Duration#ofMillis(long)}.
 	 * @param ms milliseconds
 	 * @return result of {@link Duration#ofMillis(long)} call with {@code ms}
 	 */
@@ -38,7 +38,7 @@ public class DurationExtensions {
 	}
 
 	/**
-	 * Redirect to {@link Duration#ofSeconds(long)}.
+	 * Alias for {@link Duration#ofSeconds(long)}.
 	 * @param s seconds
 	 * @return result of {@link Duration#ofSeconds(long)} call with {@code s}
 	 */
@@ -48,7 +48,7 @@ public class DurationExtensions {
 	}
 
 	/**
-	 * Redirect to {@link Duration#ofMinutes(long)}.
+	 * Alias for {@link Duration#ofMinutes(long)}.
 	 * @param min minutes
 	 * @return result of {@link Duration#ofMinutes(long)} call with {@code min}
 	 */
@@ -58,7 +58,7 @@ public class DurationExtensions {
 	}
 
 	/**
-	 * Redirect to {@link Duration#ofHours(long)}.
+	 * Alias for {@link Duration#ofHours(long)}.
 	 * @param h hours
 	 * @return result of {@link Duration#ofHours(long)} call with {@code h}
 	 */
@@ -68,7 +68,7 @@ public class DurationExtensions {
 	}
 
 	/**
-	 * Redirect to {@link Duration#ofDays(long)}.
+	 * Alias for {@link Duration#ofDays(long)}.
 	 * @param d days
 	 * @return result of {@link Duration#ofDays(long)} call with {@code min}
 	 */

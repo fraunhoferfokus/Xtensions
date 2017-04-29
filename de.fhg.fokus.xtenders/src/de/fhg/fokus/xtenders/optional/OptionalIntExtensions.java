@@ -124,9 +124,13 @@ public class OptionalIntExtensions {
 	public static <V> @NonNull Optional<V> map(@NonNull OptionalInt self, @NonNull IntFunction<V> op) {
 		return self.isPresent() ? Optional.ofNullable(op.apply(self.getAsInt())) : Optional.empty();
 	}
-
+	
 	public static <T> @NonNull OptionalInt mapInt(@NonNull OptionalInt self, @NonNull IntUnaryOperator op) {
-		return self.isPresent() ? OptionalInt.of(op.applyAsInt(self.getAsInt())) : OptionalInt.empty();
+		return self.isPresent() ? OptionalInt.of(op.applyAsInt(self.getAsInt())) : self;
+	}
+
+	public static <T> @NonNull OptionalInt flatMapInt(@NonNull OptionalInt self, @NonNull IntFunction<OptionalInt> mapper) {
+		return self.isPresent() ? mapper.apply(self.getAsInt()) : self;
 	}
 
 	public static <T> @NonNull OptionalLong mapLong(@NonNull OptionalInt self, @NonNull IntToLongFunction mapFunc) {

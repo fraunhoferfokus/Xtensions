@@ -8,6 +8,7 @@ import java.util.OptionalInt;
 import java.util.OptionalLong;
 import java.util.PrimitiveIterator.OfLong;
 import java.util.Set;
+import java.util.function.IntFunction;
 import java.util.function.LongConsumer;
 import java.util.function.LongFunction;
 import java.util.function.LongPredicate;
@@ -115,6 +116,10 @@ public class OptionalLongExtensions {
 
 	public static <T> @NonNull OptionalLong mapLong(@NonNull OptionalLong self, @NonNull LongUnaryOperator op) {
 		return self.isPresent() ? OptionalLong.of(op.applyAsLong(self.getAsLong())) : OptionalLong.empty();
+	}
+	
+	public static <T> @NonNull OptionalLong flatMapLong(@NonNull OptionalLong self, @NonNull LongFunction<OptionalLong> mapper) {
+		return self.isPresent() ? mapper.apply(self.getAsLong()) : self;
 	}
 
 	public static <T> @NonNull OptionalDouble mapDouble(@NonNull OptionalLong self,

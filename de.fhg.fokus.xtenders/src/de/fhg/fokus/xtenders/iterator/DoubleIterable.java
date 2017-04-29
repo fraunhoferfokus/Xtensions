@@ -52,4 +52,7 @@ public interface DoubleIterable extends Iterable<Double> {
 		final OfDouble iterator = iterator();
 		return PrimitiveIteratorExtensions.stream(iterator);
 	}
+
+	// TODO public static IntIterable generate(final DoubleSupplier s)
+	// TODO public static IntIterable iterate(final double seed, final DoubleUnaryOperator f)
 }

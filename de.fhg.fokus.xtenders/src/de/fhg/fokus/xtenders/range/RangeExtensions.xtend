@@ -19,6 +19,7 @@ class RangeExtensions {
 	
 	private new() {}
 	
+	// TODO count (of steps)
 	// TODO random access by index
 
 	/**

@@ -26,6 +26,13 @@ class RangeExtensionTests {
 		assertEquals(#[4,5,6,7], list)
 	}
 	
+	@Test def void forEachIntMultiValuesBackwards() {
+		val list = newArrayList
+		val IntConsumer agg = [list.add(it)]
+		(7..4).forEachInt(agg)
+		assertEquals(#[7,6,5,4], list)
+	}
+	
 	@Test def void forEachIntStepMulitValues() {
 		val list = newArrayList
 		val IntConsumer agg = [list.add(it)]
@@ -79,6 +86,14 @@ class RangeExtensionTests {
 			list.add(i -> index)
 		]
 		assertEquals(#[4->0, 5->1, 6->2, 7->3], list)
+	}
+	
+	@Test def void forEachIntIndexMulitValuesBackwards() {
+		val List<Pair<Integer,Integer>> list = newArrayList()
+		(7..4).forEachInt[ i, index|
+			list.add(i -> index)
+		]
+		assertEquals(#[7->0, 6->1, 5->2, 4->3], list)
 	}
 	
 	@Test def void forEachIntIndexStepMulitValues() {

@@ -7,10 +7,15 @@ import java.util.stream.IntStream;
 /**
  * This interface is a specialized version of an {@code Iterable<Integer>}
  * providing a {@link PrimitiveIterator.OfInt} which allows iteration over
- * unboxed primitive values.<br><br>
- * This class is particularly useful to abstract over the use of an
- * {@code int[]} array or an {@link org.eclipse.xtext.xbase.lib.IntegerRange
- * IntegerRange}. See classes {@link PrimitiveArrayExtensions} and
+ * unboxed primitive values.<br>
+ * <br>
+ * This abstraction can be used in situations where an {@link IntStream} would
+ * be appropriate, but the user has to be able to create the stream multiple
+ * times.<br>
+ * <br>
+ * This interface is also useful to abstract over the use of an {@code int[]}
+ * array or an {@link org.eclipse.xtext.xbase.lib.IntegerRange IntegerRange}.
+ * See classes {@link PrimitiveArrayExtensions} and
  * {@link de.fhg.fokus.xtenders.range.RangeExtensions RangeExtensions} how to
  * construct an IntIterable.
  * 
@@ -59,5 +64,7 @@ public interface IntIterable extends Iterable<Integer> {
 		return PrimitiveIteratorExtensions.stream(iterator);
 	}
 
-	// TODO public static IntIterable of(Iterable<Integer>)
+	// TODO public static IntIterable generate(final IntSupplier s)
+	// TODO public static IntIterable iterate(final int seed, final
+	// IntUnaryOperator f)
 }
