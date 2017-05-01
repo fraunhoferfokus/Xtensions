@@ -18,7 +18,6 @@ import java.util.concurrent.Executors
 import java.util.concurrent.ThreadFactory
 import static extension de.fhg.fokus.xtensions.concurrent.internal.DurationToTimeConversion.*
 import java.util.function.BiConsumer
-import org.eclipse.jdt.annotation.NonNull
 
 /**
  * This class provides static methods (many of them to be used as extension methods)

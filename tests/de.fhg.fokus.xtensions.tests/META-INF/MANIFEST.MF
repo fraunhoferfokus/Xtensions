@@ -11,7 +11,7 @@ Require-Bundle: org.eclipse.xtend.lib,
  org.eclipse.xtend.lib.macro
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
-Import-Package: de.fhg.fokus.xtenders.concurrent,
+Import-Package: de.fhg.fokus.xtensions.concurrent,
  de.fhg.fokus.xtensions.concurrent.circuitbreaker,
  de.fhg.fokus.xtensions.concurrent.circuitbreaker.impl,
  de.fhg.fokus.xtensions.datetime,
