@@ -64,7 +64,7 @@ final class TimeoutStrategies {
 		}
 		Objects.requireNonNull(unit, "Timeout TimeUnit must not be null.");
 		
-		val TimeoutStrategy strategy = [ long oldTime, TimeUnit oldUnit, mapper |
+		[ long oldTime, TimeUnit oldUnit, mapper |
 			val newTimeout = if (oldTime == 0) {
 					// on first try, use start timeout
 					startTimoutTime
@@ -81,6 +81,5 @@ final class TimeoutStrategies {
 			val limitedTimeout = Math.min(maxTimoutTime, newTimeout)
 			mapper.apply(limitedTimeout, unit)
 		]
-		strategy
 	}
 }

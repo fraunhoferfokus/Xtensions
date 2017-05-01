@@ -9,6 +9,8 @@
 	<properties>
 		<tycho-version>1.0.0</tycho-version>
 		<xtend-version>2.11.0</xtend-version>
+		<maven.compiler.source>1.8</maven.compiler.source>
+    	<maven.compiler.target>1.8</maven.compiler.target>
 	</properties>
 	
 	<repositories>
