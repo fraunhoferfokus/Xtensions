@@ -5,6 +5,8 @@ import static org.junit.Assert.*
 import static extension de.fhg.fokus.xtensions.range.RangeExtensions.*
 import java.util.function.IntConsumer
 import java.util.List
+import java.util.Arrays
+import java.util.ArrayList
 
 class RangeExtensionTests {
 	
@@ -188,6 +190,74 @@ class RangeExtensionTests {
 		assertNotNull(result)
 		val int[] expected = #[6,4,2]
 		assertArrayEquals(expected,result)
+	}
+	
+	//////////////////////
+	// parallelStream() //
+	//////////////////////
+	
+	@Test def void singeElementParallelStream() {
+		val result = (1..1).parallelStream().toArray
+		assertNotNull(result)
+		val int[] expected = #[1]
+		assertArrayEquals(expected,result)
+	}
+	
+	
+	@Test def void simpleStreamStreamStepOne() {
+		val result = (1..4).stream().toArray
+		assertNotNull(result)
+		val int[] expected = #[1,2,3,4]
+		assertArrayContainsAll(expected,result)
+	}
+	
+	def assertArrayContainsAll(int[] expected, int[] actual) {
+		assertEquals(expected.length, actual.length)
+		val test = new ArrayList(actual.toList)
+		expected.forEach[
+			assertTrue(it + " not in array", test.remove(it))
+		]
+		assertTrue("Too many elements in array: "+ test, test.size == 0)
+	}
+	
+	
+	@Test def void simpleParallelStreamWithStep() {
+		val result = (1..5).withStep(2).parallelStream().toArray
+		assertNotNull(result)
+		val int[] expected = #[1,3,5]
+		assertArrayContainsAll(expected,result)
+	}
+	
+	
+	@Test def void simpleParallelStreamWithStepAndEndOverhang() {
+		val result = (1..6).withStep(2).parallelStream().toArray
+		assertNotNull(result)
+		val int[] expected = #[1,3,5]
+		assertArrayContainsAll(expected,result)
+	}
+	
+	
+	@Test def void simpleParallelBackwardStreamStepOne() {
+		val result = (4..1).parallelStream().toArray
+		assertNotNull(result)
+		val int[] expected = #[4,3,2,1]
+		assertArrayContainsAll(expected,result)
+	}
+	
+	
+	@Test def void simpleBackwardParallelStreamWithStep() {
+		val result = (5..1).withStep(-2).parallelStream().toArray
+		assertNotNull(result)
+		val int[] expected = #[5,3,1]
+		assertArrayContainsAll(expected,result)
+	}
+	
+	
+	@Test def void simpleBackwardParallelStreamWithStepAndEndOverhang() {
+		val result = (6..1).withStep(-2).parallelStream().toArray
+		assertNotNull(result)
+		val int[] expected = #[6,4,2]
+		assertArrayContainsAll(expected,result)
 	}
 	
 	// TODO check range in negative range e.g. (-3..-5)

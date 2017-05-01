@@ -15,7 +15,7 @@ import java.util.Objects
 class StringMatchExtensions {
 	
 	private new() {
-		throw new IllegalStateException('''�StringMatchExtensions� is not intended to be instantiated''')
+		throw new IllegalStateException('''«StringMatchExtensions» is not intended to be instantiated''')
 	}
 	
 	/**

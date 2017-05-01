@@ -9,6 +9,7 @@ import java.util.function.Consumer;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.xtext.xbase.lib.Functions.Function2;
+import org.eclipse.xtext.xbase.lib.Inline;
 
 import static de.fhg.fokus.xtensions.optional.OptionalExtensions.*;
 import static org.eclipse.xtext.xbase.lib.IterableExtensions.*;
@@ -73,6 +74,7 @@ public class CollectionOptionalExtensions {
 	
 	// TODO Map<T>#putOpt(Optional<T>)???
 
+	@Inline(value = "Optional.ofNullable($1.get($2))", imported = Optional.class)
 	public static <K, V> Optional<V> getOpt(@NonNull Map<K, V> self, @Nullable K key) {
 		return maybe(self.get(key));
 	}

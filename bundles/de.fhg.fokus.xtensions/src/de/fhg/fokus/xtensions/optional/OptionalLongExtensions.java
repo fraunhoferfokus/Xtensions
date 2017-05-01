@@ -8,7 +8,6 @@ import java.util.OptionalInt;
 import java.util.OptionalLong;
 import java.util.PrimitiveIterator.OfLong;
 import java.util.Set;
-import java.util.function.IntFunction;
 import java.util.function.LongConsumer;
 import java.util.function.LongFunction;
 import java.util.function.LongPredicate;

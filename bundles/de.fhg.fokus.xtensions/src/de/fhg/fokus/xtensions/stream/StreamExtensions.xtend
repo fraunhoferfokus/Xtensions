@@ -87,9 +87,9 @@ class StreamExtensions {
 		stream.collect(toCollection(collectionFactory))
 	}
 
-// //////////
-// Others //
-// //////////
+	// //////////
+	// Others //
+	// //////////
 
 	/**
 	 * This function returns a stream of the Cartesian product of {@code stream} and the iterable {@code combineWith}.
