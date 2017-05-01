@@ -1,0 +1,23 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Xtenders Test
+Bundle-SymbolicName: de.fhg.fokus.xtensions.tests
+Bundle-Version: 1.0.0.qualifier
+Fragment-Host: de.fhg.fokus.xtensions;bundle-version="1.0.0.qualifier"
+Require-Bundle: org.eclipse.xtend.lib,
+ org.junit;bundle-version="4.12.0",
+ com.google.guava,
+ org.eclipse.xtext.xbase.lib,
+ org.eclipse.xtend.lib.macro
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-ActivationPolicy: lazy
+Import-Package: de.fhg.fokus.xtenders.concurrent,
+ de.fhg.fokus.xtensions.concurrent.circuitbreaker,
+ de.fhg.fokus.xtensions.concurrent.circuitbreaker.impl,
+ de.fhg.fokus.xtensions.datetime,
+ de.fhg.fokus.xtensions.function,
+ de.fhg.fokus.xtensions.optional,
+ de.fhg.fokus.xtensions.range,
+ de.fhg.fokus.xtensions.stream,
+ de.fhg.fokus.xtensions.string
+

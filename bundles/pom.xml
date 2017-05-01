@@ -1,0 +1,15 @@
+<project>
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>de.fhg.fokus</groupId>
+	<artifactId>xtensions.bundles.master</artifactId>
+	<version>1.0.0-SNAPSHOT</version>
+	<name>Xtensions Bundles Build Master</name>
+	<packaging>pom</packaging>
+	
+	<parent>
+		<groupId>de.fhg.fokus</groupId>
+		<artifactId>xtensions.master</artifactId>
+		<version>1.0.0-SNAPSHOT</version>
+	 </parent>
+	
+</project>
