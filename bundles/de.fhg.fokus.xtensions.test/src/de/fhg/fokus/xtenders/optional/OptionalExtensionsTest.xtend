@@ -827,6 +827,42 @@ class OptionalExtensionsTest {
 		assertTrue(result.get)
 	}
 	
+	////////////////
+	// forEachInt //
+	////////////////
+	
+	@Test def forEachIntEmpty() {
+		Optional.<IntegerRange>empty.forEachInt [
+			fail()
+		]
+	}
+	
+	@Test def forEachIntWithValue() {
+		val result = newArrayList
+		Optional.of((1..5).withStep(2)).forEachInt [
+			result.add(it)
+		]
+		assertEquals(#[1,3,5], result)
+	}
+	
+	///////////////////////////////
+	// forEachInt IntIntConsumer //
+	///////////////////////////////
+	
+	@Test def forEachIntIndexEmpty() {
+		Optional.<IntegerRange>empty.forEachInt [i,index|
+			fail()
+		]
+	}
+	
+	@Test def forEachIntIndexWithValue() {
+		val result = newArrayList
+		Optional.of((1..5).withStep(2)).forEachInt [i,index|
+			result.add(index -> i)
+		]
+		assertEquals(#[0->1, 1->3, 2->5], result)
+	}
+	
 //	@Test def void getOrReturn() {
 //		val test = callGetOrReturnNoReturn("foo")
 //		assertEquals("Some foo", test.get())

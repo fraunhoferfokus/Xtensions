@@ -674,7 +674,7 @@ class CompletableFutureExtensionsTest {
 		cf.cancelOnTimeout(pool, 3, TimeUnit.MILLISECONDS)
 		val expected = "foo"
 		cf.complete(expected)
-		Thread.sleep(10)
+		Thread.sleep(20)
 		val actual = cf.get
 		assertSame("Expecting set result, no timeout.", expected, actual)
 	}

@@ -149,7 +149,6 @@ class StreamExtensions {
 
 // TODO
 // Collector IsEmpty => Stream#isEmpty
-// 
 // Collector GetOnlyElement => Stream#getOnlyElement() -> Optional<T>
 // Stream<Iterable>#flatten //?? needed?
 // Stream<T>#forEach with index (check parallel! Use AtomicLong with getAndIncrement )
