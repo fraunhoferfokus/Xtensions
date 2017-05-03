@@ -116,10 +116,40 @@
     <workingSet
         name="${scope.project.name}">
       <predicate
-          xsi:type="predicates:AndPredicate">
+          xsi:type="predicates:OrPredicate">
         <operand
-            xsi:type="predicates:RepositoryPredicate"
-            project="de.fhg.fokus.xtensions.releng"/>
+            xsi:type="predicates:LocationPredicate"
+            pattern=".*/bundles/.*"/>
+        <operand
+            xsi:type="predicates:LocationPredicate"
+            pattern=".*/tests/.*"/>
+      </predicate>
+    </workingSet>
+    <workingSet
+        name="${scope.project.name}-incubation">
+      <predicate
+          xsi:type="predicates:OrPredicate">
+        <operand
+            xsi:type="predicates:LocationPredicate"
+            pattern=".*/bundles-incubation/.*"/>
+        <operand
+            xsi:type="predicates:LocationPredicate"
+            pattern=".*/tests-incubation/.*"/>
+      </predicate>
+    </workingSet>
+    <workingSet
+        name="${scope.project.name}-releng">
+      <predicate
+          xsi:type="predicates:OrPredicate">
+        <operand
+            xsi:type="predicates:LocationPredicate"
+            pattern=".*/releng/.*"/>
+        <operand
+            xsi:type="predicates:LocationPredicate"
+            pattern=".*/p2/.*"/>
+        <operand
+            xsi:type="predicates:LocationPredicate"
+            pattern=".*/features/.*"/>
       </predicate>
     </workingSet>
     <description>The dynamic working sets for ${scope.project.label}</description>

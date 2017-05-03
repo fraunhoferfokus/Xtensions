@@ -211,6 +211,7 @@ final class CircuitBreakerStateBuilder implements Cloneable {
 	 * @throws IllegalArgumentException if any of the given classes is {@code null}
 	 */
 	def CircuitBreakerStateBuilder onlyRecord(Class<? extends Throwable>... classes) {
+		Objects.requireNonNull(classes)
 		if (classes !== null) {
 			classes.forEach [
 				if (it === null) {

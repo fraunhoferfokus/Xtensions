@@ -4,11 +4,11 @@ Bundle-Name: Xtenders
 Bundle-SymbolicName: de.fhg.fokus.xtensions
 Bundle-Version: 1.0.0.qualifier
 Export-Package: de.fhg.fokus.xtensions.concurrent,
- de.fhg.fokus.xtensions.concurrent.circuitbreaker,
- de.fhg.fokus.xtensions.concurrent.circuitbreaker.impl,
  de.fhg.fokus.xtensions.datetime,
  de.fhg.fokus.xtensions.function,
+ de.fhg.fokus.xtensions.iterator,
  de.fhg.fokus.xtensions.optional,
+ de.fhg.fokus.xtensions.pair,
  de.fhg.fokus.xtensions.range,
  de.fhg.fokus.xtensions.stream,
  de.fhg.fokus.xtensions.string

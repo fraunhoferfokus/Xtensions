@@ -8,6 +8,7 @@ import java.util.Comparator
 import java.util.PrimitiveIterator
 import java.util.NoSuchElementException
 import de.fhg.fokus.xtensions.iterator.IntIterable
+import java.util.Objects
 
 /**
  * This class provides static extension methods to {@link IntegerRange}. To use these methods in Xtend, import this class via <br>
@@ -16,7 +17,7 @@ import de.fhg.fokus.xtensions.iterator.IntIterable
  * This class is not intended to be instantiated.
  */
 class RangeExtensions {
-	
+		
 	private new() {}
 	
 	// TODO count (of steps)
@@ -87,6 +88,11 @@ class RangeExtensions {
 		new IntegerRangeIntIterator(r)
 	}
 	
+	/**
+	 * Provides an {@link IntIterable} view on the given {@code IntegerRange r}.
+	 * @param r range to create the view for
+	 * @return {@link IntIterable} view on the given {@code IntegerRange r}.
+	 */
 	def static IntIterable asIntIterable(IntegerRange r) {
 		new IntegerRangeIntIterable(r)
 	}
@@ -100,7 +106,7 @@ package class IntegerRangeIntIterable implements IntIterable {
 	val IntegerRange range
 	
 	new (IntegerRange range) {
-		this.range = range
+		this.range = Objects.requireNonNull(range)
 	}
 	
 	override iterator() {
@@ -108,9 +114,7 @@ package class IntegerRangeIntIterable implements IntIterable {
 	}
 	
 	override forEachInt(IntConsumer consumer) {
-		for(var curr = range.start; curr <= range.end; curr += range.step) {
-			consumer.accept(curr)
-		}
+		RangeExtensions.forEachInt(range, consumer)
 	}
 	
 	override stream() {

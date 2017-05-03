@@ -10,7 +10,11 @@ import de.fhg.fokus.xtensions.iterator.PrimitiveIteratorExtensions;
 /**
  * This interface is a specialized version of an {@code Iterable<Double>}
  * providing a {@link PrimitiveIterator.OfDouble} which allows iteration over
- * unboxed primitive values.
+ * a (possibly infinite) amount of unboxed primitive values.<br>
+ * <br>
+ * This abstraction can be used in situations where an {@link DoubleStream} would
+ * be appropriate, but the user has to be able to create the stream multiple
+ * times. It can also be used as an immutable view on an {@code double[]} array.
  */
 public interface DoubleIterable extends Iterable<Double> {
 
@@ -27,7 +31,9 @@ public interface DoubleIterable extends Iterable<Double> {
 	 * Iterates over all elements of the iterable and calls {@code consumer} for
 	 * each element. The default implementation uses {@link #iterator()} to get
 	 * the elements of the iterable. Implementations are encouraged to overwrite
-	 * this method with a more efficient implementation.
+	 * this method with a more efficient implementation.<br>
+	 * Be aware that on inifinite iterables this method only returns when the 
+	 * {@code consumer} throws an exception or terminates the runtime.
 	 * 
 	 * @param consumer
 	 *            the action to be called for each element in the iterable.

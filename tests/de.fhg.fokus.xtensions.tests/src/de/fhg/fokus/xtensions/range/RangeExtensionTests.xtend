@@ -7,6 +7,10 @@ import java.util.function.IntConsumer
 import java.util.List
 import java.util.Arrays
 import java.util.ArrayList
+import java.util.ListIterator
+import java.util.PrimitiveIterator.OfInt
+import de.fhg.fokus.xtensions.Util
+import java.util.NoSuchElementException
 
 class RangeExtensionTests {
 	
@@ -258,6 +262,69 @@ class RangeExtensionTests {
 		assertNotNull(result)
 		val int[] expected = #[6,4,2]
 		assertArrayContainsAll(expected,result)
+	}
+	
+	//////////////
+	// iterator //
+	//////////////
+	
+	@Test def void testIntIteratorSingleValue() {
+		val list = newArrayList
+		val IntConsumer agg = [list.add(it)]
+		val range = (4..4)
+		assertIntIterator(range)
+	}
+	
+	def assertIntIterator(IntegerRange range) {
+		val intiterator = range.intIterator
+		val iterator = range.iterator
+		assertIteratorEqual(iterator, intiterator)
+	}
+	
+	def assertIteratorEqual(ListIterator<Integer> iterator, OfInt intIterator) {
+		while(iterator.hasNext) {
+			assertTrue(intIterator.hasNext)
+			val expected = iterator.next
+			val actual = intIterator.nextInt
+			assertEquals(expected, actual)
+		}
+		assertFalse(intIterator.hasNext)
+		Util.expectException(NoSuchElementException) [
+			intIterator.nextInt
+		]
+	}
+	
+	@Test def void testIntIteratorMulitValues() {
+		val range = (4..7).withStep(2)
+		assertIntIterator(range)
+	}
+	
+	@Test def void testIntIteratorMultiValuesBackwards() {
+		assertIntIterator(7..4)
+	}
+	
+	@Test def void testIntIteratorStepMulitValues() {
+		val range = (4..8).withStep(2)
+		assertIntIterator(range)
+	}
+	
+	@Test def void testIntIteratorStepMulitValuesOverhang() {
+		val range = (4..9).withStep(2)
+		assertIntIterator(range)
+	} 
+
+	@Test def void testIntIteratorBackwardsMulitValues() {
+		assertIntIterator(7..4)
+	}
+	
+	@Test def void testIntIteratorBackwardsStepMulitValues() {
+		val range = (8..4).withStep(-2)
+		assertIntIterator(range)
+	}
+	
+	@Test def void testIntIteratorBackwardStepMulitValuesOverhang() {
+		val range = (9..4).withStep(-2)
+		assertIntIterator(range)
 	}
 	
 	// TODO check range in negative range e.g. (-3..-5)
