@@ -1,26 +1,12 @@
 package de.fhg.fokus.xtensions.function;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.DoubleUnaryOperator;
 import java.util.function.Function;
-import java.util.function.IntUnaryOperator;
-import java.util.function.LongUnaryOperator;
 
 import org.eclipse.jdt.annotation.NonNull;
-import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.xtext.xbase.lib.FunctionExtensions;
 import org.eclipse.xtext.xbase.lib.Functions.Function0;
 import org.eclipse.xtext.xbase.lib.Functions.Function1;
 import org.eclipse.xtext.xbase.lib.Functions.Function2;
-import org.eclipse.xtext.xbase.lib.Functions.Function3;
-import org.eclipse.xtext.xbase.lib.Functions.Function4;
-import org.eclipse.xtext.xbase.lib.Functions.Function5;
-import org.eclipse.xtext.xbase.lib.Functions.Function6;
 import org.eclipse.xtext.xbase.lib.Inline;
 import org.eclipse.xtext.xbase.lib.Pair;
 import org.eclipse.xtext.xbase.lib.Pure;

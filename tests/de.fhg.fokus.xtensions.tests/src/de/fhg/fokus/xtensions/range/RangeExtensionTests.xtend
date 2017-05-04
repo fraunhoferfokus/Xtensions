@@ -5,7 +5,6 @@ import static org.junit.Assert.*
 import static extension de.fhg.fokus.xtensions.range.RangeExtensions.*
 import java.util.function.IntConsumer
 import java.util.List
-import java.util.Arrays
 import java.util.ArrayList
 import java.util.ListIterator
 import java.util.PrimitiveIterator.OfInt
@@ -269,8 +268,6 @@ class RangeExtensionTests {
 	//////////////
 	
 	@Test def void testIntIteratorSingleValue() {
-		val list = newArrayList
-		val IntConsumer agg = [list.add(it)]
 		val range = (4..4)
 		assertIntIterator(range)
 	}

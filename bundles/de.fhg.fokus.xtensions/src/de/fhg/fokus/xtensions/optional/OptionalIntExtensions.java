@@ -218,22 +218,6 @@ public class OptionalIntExtensions {
 		}
 	}
 
-	private static OfInt EMPTY_ITERATOR = new OfInt() {
-
-		@Override
-		public boolean hasNext() {
-			return false;
-		}
-
-		@Override
-		public int nextInt() {
-			throw new NoSuchElementException();
-		}
-		
-		@Override
-		public void forEachRemaining(IntConsumer action) {};
-	};
-
 	
 
 	/**

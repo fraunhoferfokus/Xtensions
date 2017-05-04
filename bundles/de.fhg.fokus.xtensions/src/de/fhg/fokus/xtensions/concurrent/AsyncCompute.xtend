@@ -5,7 +5,6 @@ import java.util.concurrent.ForkJoinPool
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.Executor
 import java.util.concurrent.ScheduledExecutorService
-import static extension de.fhg.fokus.xtensions.concurrent.internal.DurationToTimeConversion.*
 import static extension de.fhg.fokus.xtensions.concurrent.CompletableFutureExtensions.*
 import java.util.Objects
 

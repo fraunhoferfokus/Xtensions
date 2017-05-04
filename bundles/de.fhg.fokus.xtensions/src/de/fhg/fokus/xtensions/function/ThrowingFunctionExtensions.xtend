@@ -1,8 +1,5 @@
 package de.fhg.fokus.xtensions.function
 
-import org.eclipse.xtext.xbase.lib.Functions.Function1
-import java.util.Optional
-
 class ThrowingFunctionExtensions { 
 
 	// TODO public static def <T,R> (T)=>Optional<R> filterException((T)=>R fun) {}
