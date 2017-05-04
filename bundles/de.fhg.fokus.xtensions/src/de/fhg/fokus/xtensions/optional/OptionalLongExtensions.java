@@ -23,6 +23,7 @@ import org.eclipse.xtext.xbase.lib.Procedures.Procedure0;
 import org.eclipse.xtext.xbase.lib.Procedures.Procedure1;
 
 import de.fhg.fokus.xtensions.iterator.LongIterable;
+import de.fhg.fokus.xtensions.iterator.internal.PrimitiveIterableUtil;
 
 import org.eclipse.xtext.xbase.lib.Pure;
 
@@ -133,7 +134,7 @@ public class OptionalLongExtensions {
 			long value = self.getAsLong();
 			return new ValueIterable(value);
 		} else {
-			return EMPTY_ITERABLE;
+			return PrimitiveIterableUtil.EMPTY_LONGITERABLE;
 		}
 	}
 
@@ -190,48 +191,15 @@ public class OptionalLongExtensions {
 		}
 	}
 
-	private static OfLong EMPTY_ITERATOR = new OfLong() {
+	
 
-		@Override
-		public boolean hasNext() {
-			return false;
-		}
-
-		@Override
-		public long nextLong() {
-			throw new NoSuchElementException();
-		}
-		
-		public void forEachRemaining(LongConsumer action) {};
-	};
-
-	private static LongIterable EMPTY_ITERABLE = new LongIterable() {
-
-		@Override
-		public OfLong iterator() {
-			return EMPTY_ITERATOR;
-		}
-
-		@Override
-		public void forEachLong(LongConsumer consumer) {
-		};
-
-		@Override
-		public void forEach(java.util.function.Consumer<? super Long> action) {
-		};
-
-		@Override
-		public LongStream stream() {
-			return LongStream.empty();
-		};
-	};
 
 	public static <T> @NonNull OfLong iterator(@NonNull OptionalLong self) {
 		if (self.isPresent()) {
 			long value = self.getAsLong();
 			return new ValueIterator(value);
 		} else {
-			return EMPTY_ITERATOR;
+			return PrimitiveIterableUtil.EMPTY_LONGITERATOR;
 		}
 	}
 

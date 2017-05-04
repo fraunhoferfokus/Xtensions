@@ -24,6 +24,7 @@ import org.eclipse.xtext.xbase.lib.Procedures.Procedure1;
 
 import de.fhg.fokus.xtensions.iterator.DoubleIterable;
 import de.fhg.fokus.xtensions.iterator.LongIterable;
+import de.fhg.fokus.xtensions.iterator.internal.PrimitiveIterableUtil;
 
 import org.eclipse.xtext.xbase.lib.Pure;
 
@@ -134,7 +135,7 @@ public class OptionalDoubleExtensions {
 			double value = self.getAsDouble();
 			return new ValueIterable(value);
 		} else {
-			return EMPTY_ITERABLE;
+			return PrimitiveIterableUtil.EMPTY_DOUBLEITERABLE;
 		}
 	}
 
@@ -191,49 +192,12 @@ public class OptionalDoubleExtensions {
 		}
 	}
 
-	private static OfDouble EMPTY_ITERATOR = new OfDouble() {
-
-		@Override
-		public boolean hasNext() {
-			return false;
-		}
-
-		@Override
-		public double nextDouble() {
-			throw new NoSuchElementException();
-		}
-		
-		@Override
-		public void forEachRemaining(DoubleConsumer action) {};
-	};
-
-	private static DoubleIterable EMPTY_ITERABLE = new DoubleIterable() {
-
-		@Override
-		public OfDouble iterator() {
-			return EMPTY_ITERATOR;
-		}
-
-		@Override
-		public void forEachDouble(DoubleConsumer consumer) {
-		};
-
-		@Override
-		public void forEach(java.util.function.Consumer<? super Double> action) {
-		};
-
-		@Override
-		public DoubleStream stream() {
-			return DoubleStream.empty();
-		};
-	};
-
 	public static <T> @NonNull OfDouble iterator(@NonNull OptionalDouble self) {
 		if (self.isPresent()) {
 			double value = self.getAsDouble();
 			return new ValueIterator(value);
 		} else {
-			return EMPTY_ITERATOR;
+			return PrimitiveIterableUtil.EMPTY_DOUBLEITERATOR;
 		}
 	}
 

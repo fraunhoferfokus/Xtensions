@@ -24,6 +24,7 @@ import org.eclipse.xtext.xbase.lib.Procedures.Procedure1;
 
 import de.fhg.fokus.xtensions.iterator.IntIterable;
 import de.fhg.fokus.xtensions.iterator.LongIterable;
+import de.fhg.fokus.xtensions.iterator.internal.PrimitiveIterableUtil;
 
 import org.eclipse.xtext.xbase.lib.Pure;
 
@@ -149,7 +150,7 @@ public class OptionalIntExtensions {
 			int value = self.getAsInt();
 			return new ValueIterable(value);
 		} else {
-			return EMPTY_ITERABLE;
+			return PrimitiveIterableUtil.EMPTY_INTITERABLE;
 		}
 	}
 
@@ -158,9 +159,12 @@ public class OptionalIntExtensions {
 			int value = self.getAsInt();
 			return new ValueIterator(value);
 		} else {
-			return EMPTY_ITERATOR;
+			return PrimitiveIterableUtil.EMPTY_INTITERATOR;
 		}
 	}
+	
+	// TODO DoubleIterable asIterable(@NonNull OptionalDouble self){}
+	// TODO LongIterable asIterable(@NonNull OptionalLong self){}
 	
 	private static class ValueIterator implements java.util.PrimitiveIterator.OfInt {
 		final int value;
@@ -230,26 +234,7 @@ public class OptionalIntExtensions {
 		public void forEachRemaining(IntConsumer action) {};
 	};
 
-	private static IntIterable EMPTY_ITERABLE = new IntIterable() {
-
-		@Override
-		public OfInt iterator() {
-			return EMPTY_ITERATOR;
-		}
-
-		@Override
-		public void forEachInt(IntConsumer consumer) {
-		};
-
-		@Override
-		public void forEach(java.util.function.Consumer<? super Integer> action) {
-		};
-
-		@Override
-		public IntStream stream() {
-			return IntStream.empty();
-		};
-	};
+	
 
 	/**
 	 * Returns an immutable set that either contains the value, held by the
