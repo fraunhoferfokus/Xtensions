@@ -5,6 +5,8 @@ import de.fhg.fokus.xtensions.iterator.IntIterable
 import static org.junit.Assert.*
 import java.util.concurrent.atomic.AtomicInteger
 import static de.fhg.fokus.xtensions.Util.*
+import java.util.function.IntConsumer
+import java.util.NoSuchElementException
 
 class IntIterableTest {
 	
@@ -12,7 +14,9 @@ class IntIterableTest {
 	// generate //
 	/////////////
 	
-	@Test def void generateIterator() {
+	private static class MyException extends Exception{}
+	
+	@Test(timeout = 100) def void generateIterator() {
 		val IntIterable ints = IntIterable.generate [
 			val int[] i = #[0]
 			[
@@ -34,9 +38,18 @@ class IntIterableTest {
 			assertTrue(iter2.hasNext)
 			assertEquals(i, iter2.nextInt)
 		}
+		
+		val iter3 = ints.iterator
+		val ai = new AtomicInteger(0)
+		val IntConsumer action = [int it|
+			val i = ai.getAndIncrement
+			if(i == 100) throw new MyException
+			assertEquals(i, it)
+		]
+		expectException(MyException) [
+			iter3.forEachRemaining(action)
+		]
 	}
-	
-	private static class MyException extends Exception{}
 	
 	@Test(expected = MyException, timeout = 1000) def void generateIteratorForEach() {
 		val IntIterable ints = IntIterable.generate [
@@ -122,6 +135,7 @@ class IntIterableTest {
 		val IntIterable ints = IntIterable.iterate(0) [
 			it + 1
 		]
+		
 		// iterator is infinite, so we limit to 100 elements
 		val iter = ints.iterator
 		for(var i = 0; i< 100; i++) {
@@ -135,6 +149,17 @@ class IntIterableTest {
 			assertTrue(iter2.hasNext)
 			assertEquals(i, iter2.nextInt)
 		}
+		
+		val iter3 = ints.iterator
+		val ai = new AtomicInteger(0)
+		val IntConsumer action = [int it|
+			val i = ai.getAndIncrement
+			if(i == 100) throw new MyException
+			assertEquals(i, it)
+		]
+		expectException(MyException) [
+			iter3.forEachRemaining(action)
+		]
 	}
 	
 	@Test(expected = MyException, timeout = 1000) def void testIterateIteratorForEach() {

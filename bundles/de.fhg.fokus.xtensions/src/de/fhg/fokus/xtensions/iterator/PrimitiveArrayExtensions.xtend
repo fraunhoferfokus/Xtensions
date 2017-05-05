@@ -34,11 +34,10 @@ final class PrimitiveArrayExtensions {
 
 	/**
 	 * This method provides an unmodifiable view as a {@link IntIterable} on a slice of the 
-	 * array {@code arr}. The slice will start at the arry index of {@code startIncluding} and 
-	 * and at the array index of {@code endExcluding - 1}. If {@code startIncluding} and {@code endExcluding} are both
-	 * {@code 0} an empty iterable is returned. Note that at the current point negative
-	 * values for the index parameters are not supported and will cause this method to throw an exception.
-	 * This may change in later releases.
+	 * array {@code arr}. The slice will start at the array index of {@code startIncluding} and 
+	 * and at the array index of {@code endExcluding - 1}. If {@code startIncluding == endExcluding} an empty iterable is returned. 
+	 * Note that at the current point negative values for the index parameters are not supported and will cause this 
+	 * method to throw an exception. This may change in later releases.
 	 * @param arr the array to create a {@code IntIterable} view for.
 	 * @param startIncluding the index of the array where the iterable will start. Must be {@code >=0} and 
 	 *  {@code < arr.length}.
@@ -46,13 +45,13 @@ final class PrimitiveArrayExtensions {
 	 *  last element of the array should be the last element to be iterated over, this parameter must be 
 	 *  {@code arr.length}. The value must be {@code >= 0} and {@code <= arr.length}. If value is {@code 0}
 	 *  then {@code startIncluding} must be {@code 0} as well; in this case an empty {@code IntIterable} is returned
-	 * @throws IllegalArgumentException if {@code startIncluding >= endExcluding}.
+	 * @throws IllegalArgumentException if {@code startIncluding > endExcluding}.
 	 * @throws IndexOutOfBoundsException if either {@code startIncluding} or {@code endExcluding}
 	 *  refer to an index out of the range of array {@code arr}.
 	 */
 	static def IntIterable asIntIterable(int[] arr, int startIncluding, int endExcluding) {
 		// TODO negative parameter = array.length - value
-		if (startIncluding == (endExcluding - 1) || (startIncluding == 0 && endExcluding == 0)) {
+		if (startIncluding == endExcluding) {
 			PrimitiveIterableUtil.EMPTY_INTITERABLE
 		} else {
 			new IntArrayIterable(arr, startIncluding, endExcluding)
@@ -70,11 +69,10 @@ final class PrimitiveArrayExtensions {
 
 	/**
 	 * This method provides an unmodifiable view as a {@link LongIterable} on a slice of the 
-	 * array {@code arr}. The slice will start at the arry index of {@code startIncluding} and 
-	 * and at the array index of {@code endExcluding - 1}. If {@code startIncluding} and {@code endExcluding} are both
-	 * {@code 0} an empty iterable is returned. Note that at the current point negative
-	 * values for the index parameters are not supported and will cause this method to throw an exception.
-	 * This may change in later releases.
+	 * array {@code arr}. The slice will start at the array index of {@code startIncluding} and 
+	 * and at the array index of {@code endExcluding - 1}. If {@code startIncluding == endExcluding} an empty iterable is returned. 
+	 * Note that at the current point negative values for the index parameters are not supported and will cause this method 
+	 * to throw an exception. This may change in later releases.
 	 * @param arr the array to create a {@code LongIterable} view for.
 	 * @param startIncluding the index of the array where the iterable will start. Must be {@code >=0} and 
 	 *  {@code < arr.length}.
@@ -82,13 +80,13 @@ final class PrimitiveArrayExtensions {
 	 *  last element of the array should be the last element to be iterated over, this parameter must be 
 	 *  {@code arr.length}. The value must be {@code >= 0} and {@code <= arr.length}. If value is {@code 0}
 	 *  then {@code startIncluding} must be {@code 0} as well; in this case an empty {@code LongIterable} is returned.
-	 * @throws IllegalArgumentException if {@code startIncluding >= endExcluding}, except for both {@code == 0}.
+	 * @throws IllegalArgumentException if {@code startIncluding > endExcluding}.
 	 * @throws IndexOutOfBoundsException if either {@code startIncluding} or {@code endExcluding}
 	 *  refer to an index out of the range of array {@code arr}.
 	 */
 	static def LongIterable asLongIterable(long[] arr, int startIncluding, int endExcluding) {
 		// TODO negative parameter = array.length - value
-		if (startIncluding == (endExcluding - 1) || (startIncluding == 0 && endExcluding == 0)) {
+		if (startIncluding == endExcluding) {
 			PrimitiveIterableUtil.EMPTY_LONGITERABLE
 		} else {
 			new LongArrayIterable(arr, startIncluding, endExcluding)
@@ -101,16 +99,15 @@ final class PrimitiveArrayExtensions {
 	 * @parameter arr array to create an iterable for.
 	 */
 	static def DoubleIterable asDoubleIterable(double[] arr) {
-		asDobleIterable(arr, 0, arr.length)
+		asDoubleIterable(arr, 0, arr.length)
 	}
 
 	/**
 	 * This method provides an unmodifiable view as a {@link DoubleIterable} on a slice of the 
-	 * array {@code arr}. The slice will start at the arry index of {@code startIncluding} and 
-	 * and at the array index of {@code endExcluding - 1}. If {@code startIncluding} and {@code endExcluding} are both
-	 * {@code 0} an empty iterable is returned. Note that at the current point negative
-	 * values for the index parameters are not supported and will cause this method to throw an exception.
-	 * This may change in later releases.
+	 * array {@code arr}. The slice will start at the array index of {@code startIncluding} and 
+	 * and at the array index of {@code endExcluding - 1}. If {@code startIncluding == endExcluding} an empty iterable is returned. 
+	 * Note that at the current point negative values for the index parameters are not supported and will cause this method 
+	 * to throw an exception. This may change in later releases.
 	 * @param arr the array to create a {@code DoubleIterable} view for.
 	 * @param startIncluding the index of the array where the iterable will start. Must be {@code >=0} and 
 	 *  {@code < arr.length}.
@@ -118,13 +115,13 @@ final class PrimitiveArrayExtensions {
 	 *  last element of the array should be the last element to be iterated over, this parameter must be 
 	 *  {@code arr.length}. The value must be {@code >= 0} and {@code <= arr.length}. If value is {@code 0}
 	 *  then {@code startIncluding} must be {@code 0} as well; in this case an empty {@code DoubleIterable} is returned.
-	 * @throws IllegalArgumentException if {@code startIncluding >= endExcluding}.
+	 * @throws IllegalArgumentException if {@code startIncluding > endExcluding}.
 	 * @throws IndexOutOfBoundsException if either {@code startIncluding} or {@code endExcluding}
 	 *  refer to an index out of the range of array {@code arr}.
 	 */
-	static def DoubleIterable asDobleIterable(double[] arr, int startIncluding, int endExcluding) {
+	static def DoubleIterable asDoubleIterable(double[] arr, int startIncluding, int endExcluding) {
 		// TODO negative parameter = array.length - value
-		if (startIncluding == (endExcluding - 1) || (startIncluding == 0 && endExcluding == 0)) {
+		if (startIncluding == endExcluding) {
 			PrimitiveIterableUtil.EMPTY_DOUBLEITERABLE
 		} else {
 			new DoubleArrayIterable(arr, startIncluding, endExcluding)
@@ -201,18 +198,18 @@ final class PrimitiveArrayExtensions {
 package class IntArrayIterable implements IntIterable {
 
 	new(int[] arr, int startIncluding, int endExcluding) {
-			if (startIncluding < 0) {
-				throw new IndexOutOfBoundsException('''Start index «startIncluding» is below zero''')
-			}
-			if (arr.length <= startIncluding) {
-				throw new IndexOutOfBoundsException('''Start index «startIncluding» is beyond last element''')
-			}
-			if (arr.length > endExcluding) {
-				throw new IndexOutOfBoundsException('''End index «endExcluding» is beyond last element''')
-			}
-			if (startIncluding >= endExcluding) {
-				throw new IllegalArgumentException("Forbidden combination startIncluding >= endExcluding")
-			}
+		if (startIncluding < 0) {
+			throw new IndexOutOfBoundsException('''Start index «startIncluding» is below zero''')
+		}
+		if (arr.length <= startIncluding) {
+			throw new IndexOutOfBoundsException('''Start index «startIncluding» is beyond last element''')
+		}
+		if (arr.length < endExcluding) {
+			throw new IndexOutOfBoundsException('''End index «endExcluding» is beyond last element''')
+		}
+		if (startIncluding >= endExcluding) {
+			throw new IllegalArgumentException("Forbidden combination startIncluding >= endExcluding")
+		}
 		this.arr = arr
 		this.startIncluding = startIncluding
 		this.endExcluding = endExcluding
@@ -270,7 +267,7 @@ package class IntegerArrayIterator implements PrimitiveIterator.OfInt {
 	override forEachRemaining(IntConsumer action) {
 		Objects.requireNonNull(action);
 		val end = endExcluding
-		for (var i = next; i < end; next = i++) {
+		for (var i = next; i < end; next = (i=i+1)) {
 			action.accept(arr.get(i))
 		}
 	}
@@ -283,18 +280,18 @@ package class IntegerArrayIterator implements PrimitiveIterator.OfInt {
 package class LongArrayIterable implements LongIterable {
 
 	new(long[] arr, int startIncluding, int endExcluding) {
-			if (startIncluding < 0) {
-				throw new IndexOutOfBoundsException('''Start index «startIncluding» is below zero''')
-			}
-			if (arr.length <= startIncluding && startIncluding != 0) {
-				throw new IndexOutOfBoundsException('''Start index «startIncluding» is beyond last element''')
-			}
-			if (arr.length > endExcluding) {
-				throw new IndexOutOfBoundsException('''End index «endExcluding» is beyond last element''')
-			}
-			if (startIncluding >= endExcluding && endExcluding != 0) {
-				throw new IllegalArgumentException("Forbidden combination startIncluding >= endExcluding")
-			}
+		if (startIncluding < 0) {
+			throw new IndexOutOfBoundsException('''Start index «startIncluding» is below zero''')
+		}
+		if (arr.length <= startIncluding && startIncluding != 0) {
+			throw new IndexOutOfBoundsException('''Start index «startIncluding» is beyond last element''')
+		}
+		if (arr.length < endExcluding) {
+			throw new IndexOutOfBoundsException('''End index «endExcluding» is beyond last element''')
+		}
+		if (startIncluding >= endExcluding && endExcluding != 0) {
+			throw new IllegalArgumentException("Forbidden combination startIncluding >= endExcluding")
+		}
 		this.arr = arr
 		this.startIncluding = startIncluding
 		this.endExcluding = endExcluding
@@ -351,7 +348,7 @@ package class LongArrayIterator implements PrimitiveIterator.OfLong {
 	override forEachRemaining(LongConsumer action) {
 		Objects.requireNonNull(action);
 		val end = endExcluding
-		for (var i = next; i < end; next = i++) {
+		for (var i = next; i < end; next = (i=i+1)) {
 			action.accept(arr.get(i))
 		}
 	}
@@ -362,19 +359,20 @@ package class LongArrayIterator implements PrimitiveIterator.OfLong {
  * Implementation of {@link LongIterable} for {@code long[]}. 
  */
 package class DoubleArrayIterable implements DoubleIterable {
+
 	new(double[] arr, int startIncluding, int endExcluding) {
-			if (startIncluding < 0) {
-				throw new IndexOutOfBoundsException('''Start index «startIncluding» is below zero''')
-			}
-			if (arr.length <= startIncluding) {
-				throw new IndexOutOfBoundsException('''Start index «startIncluding» is beyond last element''')
-			}
-			if (arr.length > endExcluding) {
-				throw new IndexOutOfBoundsException('''End index «endExcluding» is beyond last element''')
-			}
-			if (startIncluding >= endExcluding) {
-				throw new IllegalArgumentException("Forbidden combination startIncluding >= endExcluding")
-			}
+		if (startIncluding < 0) {
+			throw new IndexOutOfBoundsException('''Start index «startIncluding» is below zero''')
+		}
+		if (arr.length <= startIncluding) {
+			throw new IndexOutOfBoundsException('''Start index «startIncluding» is beyond last element''')
+		}
+		if (arr.length < endExcluding) {
+			throw new IndexOutOfBoundsException('''End index «endExcluding» is beyond last element''')
+		}
+		if (startIncluding >= endExcluding) {
+			throw new IllegalArgumentException("Forbidden combination startIncluding >= endExcluding")
+		}
 		this.arr = arr
 		this.startIncluding = startIncluding
 		this.endExcluding = endExcluding
@@ -432,7 +430,7 @@ package class DoubleArrayIterator implements PrimitiveIterator.OfDouble {
 	override forEachRemaining(DoubleConsumer action) {
 		Objects.requireNonNull(action);
 		val end = endExcluding
-		for (var i = next; i < end; next = i++) {
+		for (var i = next; i < end; next = (i=i+1)) {
 			action.accept(arr.get(i))
 		}
 	}

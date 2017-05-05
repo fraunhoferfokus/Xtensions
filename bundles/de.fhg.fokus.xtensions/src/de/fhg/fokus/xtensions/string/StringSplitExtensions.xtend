@@ -29,6 +29,9 @@ class StringSplitExtensions {
 		}
 
 		override next() {
+			if(read) {
+				throw new NoSuchElementException
+			}
 			read = true
 			""
 		}

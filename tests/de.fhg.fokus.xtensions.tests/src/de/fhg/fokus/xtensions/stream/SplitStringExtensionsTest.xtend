@@ -5,6 +5,8 @@ import org.junit.Test
 import static org.junit.Assert.*
 
 import static extension de.fhg.fokus.xtensions.string.StringSplitExtensions.*
+import de.fhg.fokus.xtensions.Util
+import java.util.NoSuchElementException
 
 class SplitStringExtensionsTest {
 
@@ -131,6 +133,9 @@ class SplitStringExtensionsTest {
 		}
 		val msg = "iterator has more entries than String.split"
 		assertFalse(msg, iter.hasNext)
+		Util.expectException(NoSuchElementException) [
+			iter.next
+		]
 	}
 
 	private def void checkSplitLimited(String toSplit, String pattern, int limit) {
@@ -145,6 +150,9 @@ class SplitStringExtensionsTest {
 		}
 		val msg = "iterator has more entries than String.split"
 		assertFalse(msg, iter.hasNext)
+		Util.expectException(NoSuchElementException) [
+			iter.next
+		]
 	}
 
 	private def void checkSplitUnlimited(String toSplit, String pattern) {
@@ -159,5 +167,8 @@ class SplitStringExtensionsTest {
 		}
 		val msg = "iterator has more entries than String.split"
 		assertFalse(msg, iter.hasNext)
+		Util.expectException(NoSuchElementException) [
+			iter.next
+		]
 	}
 }
