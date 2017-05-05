@@ -6,10 +6,10 @@ import static extension de.fhg.fokus.xtensions.range.RangeExtensions.*
 import java.util.function.IntConsumer
 import java.util.List
 import java.util.ArrayList
-import java.util.ListIterator
 import java.util.PrimitiveIterator.OfInt
 import de.fhg.fokus.xtensions.Util
 import java.util.NoSuchElementException
+import java.util.Iterator
 
 class RangeExtensionTests {
 	
@@ -278,7 +278,7 @@ class RangeExtensionTests {
 		assertIteratorEqual(iterator, intiterator)
 	}
 	
-	def assertIteratorEqual(ListIterator<Integer> iterator, OfInt intIterator) {
+	def assertIteratorEqual(Iterator<Integer> iterator, OfInt intIterator) {
 		while(iterator.hasNext) {
 			assertTrue(intIterator.hasNext)
 			val expected = iterator.next
