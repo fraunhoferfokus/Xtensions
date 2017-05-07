@@ -1,5 +1,6 @@
 package de.fhg.fokus.xtensions.iterator;
 
+import java.util.Collection;
 import java.util.PrimitiveIterator;
 import java.util.PrimitiveIterator.OfDouble;
 import java.util.function.DoubleConsumer;
