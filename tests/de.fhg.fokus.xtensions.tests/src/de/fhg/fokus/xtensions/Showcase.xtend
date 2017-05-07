@@ -1,13 +1,15 @@
 package de.fhg.fokus.xtensions
 import static extension de.fhg.fokus.xtensions.range.RangeExtensions.*
-import static extension de.fhg.fokus.xtensions.iterator.PrimitiveArrayExtensions.*
-import de.fhg.fokus.xtensions.iterator.IntIterable
+import static extension de.fhg.fokus.xtensions.iteration.PrimitiveArrayExtensions.*
+import de.fhg.fokus.xtensions.iteration.IntIterable
 //import static extension de.fhg.fokus.xtensions.iterator.IterableExtensions.*
 import static extension de.fhg.fokus.xtensions.optional.OptionalExtensions.*
 import org.junit.Test
 import java.util.Optional
 import java.util.stream.Stream
+import org.junit.Ignore
 
+@Ignore
 class Showcase {
 	
 	@Test def rangeDemo() {

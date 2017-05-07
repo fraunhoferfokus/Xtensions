@@ -1,12 +1,11 @@
-package de.fhg.fokus.xtensions.itarator
+package de.fhg.fokus.xtensions.iteration
 
 import org.junit.Test
-import de.fhg.fokus.xtensions.iterator.IntIterable
+import de.fhg.fokus.xtensions.iteration.IntIterable
 import static org.junit.Assert.*
 import java.util.concurrent.atomic.AtomicInteger
 import static de.fhg.fokus.xtensions.Util.*
 import java.util.function.IntConsumer
-import java.util.NoSuchElementException
 
 class IntIterableTest {
 	

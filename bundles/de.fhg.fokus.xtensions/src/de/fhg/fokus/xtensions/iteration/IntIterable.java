@@ -1,4 +1,4 @@
-package de.fhg.fokus.xtensions.iterator;
+package de.fhg.fokus.xtensions.iteration;
 
 import java.util.PrimitiveIterator;
 import java.util.PrimitiveIterator.OfInt;
@@ -8,8 +8,10 @@ import java.util.function.IntUnaryOperator;
 import java.util.function.Supplier;
 import java.util.stream.IntStream;
 
-import de.fhg.fokus.xtensions.iterator.PrimitiveArrayExtensions;
-import de.fhg.fokus.xtensions.iterator.PrimitiveIteratorExtensions;
+import de.fhg.fokus.xtensions.iteration.IterateIntIterable;
+import de.fhg.fokus.xtensions.iteration.PrimitiveArrayExtensions;
+import de.fhg.fokus.xtensions.iteration.PrimitiveIteratorExtensions;
+import de.fhg.fokus.xtensions.iteration.SupplierIntIterable;
 
 /**
  * This interface is a specialized version of an {@code Iterable<Integer>}

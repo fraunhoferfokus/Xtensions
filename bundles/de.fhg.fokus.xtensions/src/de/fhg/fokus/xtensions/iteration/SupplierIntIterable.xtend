@@ -1,4 +1,4 @@
-package de.fhg.fokus.xtensions.iterator
+package de.fhg.fokus.xtensions.iteration
 
 import java.util.function.Supplier
 import java.util.function.IntSupplier

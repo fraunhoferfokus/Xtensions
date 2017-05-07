@@ -1,7 +1,7 @@
-package de.fhg.fokus.xtensions.iterator.internal
+package de.fhg.fokus.xtensions.iteration.internal
 
-import de.fhg.fokus.xtensions.iterator.IntIterable
-import de.fhg.fokus.xtensions.iterator.LongIterable
+import de.fhg.fokus.xtensions.iteration.IntIterable
+import de.fhg.fokus.xtensions.iteration.LongIterable
 import java.util.NoSuchElementException
 import java.util.PrimitiveIterator.OfInt
 import java.util.PrimitiveIterator.OfLong
@@ -10,7 +10,7 @@ import java.util.function.IntConsumer
 import java.util.function.LongConsumer
 import java.util.stream.IntStream
 import java.util.stream.LongStream
-import de.fhg.fokus.xtensions.iterator.DoubleIterable
+import de.fhg.fokus.xtensions.iteration.DoubleIterable
 import java.util.function.DoubleConsumer
 import java.util.stream.DoubleStream
 import java.util.PrimitiveIterator.OfDouble

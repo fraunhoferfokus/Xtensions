@@ -1,20 +1,19 @@
-package de.fhg.fokus.xtensions.itarator
+package de.fhg.fokus.xtensions.iteration
 
-import org.junit.Test
-import static extension de.fhg.fokus.xtensions.iterator.PrimitiveArrayExtensions.*
-import static org.junit.Assert.*
-import java.util.concurrent.atomic.AtomicInteger
 import de.fhg.fokus.xtensions.Util
-import java.util.PrimitiveIterator.OfInt
+import de.fhg.fokus.xtensions.iteration.DoubleIterable
+import de.fhg.fokus.xtensions.iteration.IntIterable
+import de.fhg.fokus.xtensions.iteration.LongIterable
 import java.util.NoSuchElementException
-import java.util.PrimitiveIterator.OfLong
-import java.util.PrimitiveIterator.OfDouble
-import de.fhg.fokus.xtensions.iterator.IntIterable
-import de.fhg.fokus.xtensions.iterator.LongIterable
-import de.fhg.fokus.xtensions.iterator.DoubleIterable
-import java.util.function.IntConsumer
+import java.util.concurrent.atomic.AtomicInteger
 import java.util.function.DoubleConsumer
+import java.util.function.IntConsumer
 import java.util.function.LongConsumer
+import org.junit.Test
+
+import static org.junit.Assert.*
+
+import static extension de.fhg.fokus.xtensions.iteration.PrimitiveArrayExtensions.*
 
 class PrimitiveArrayExtensionsTest {
 	

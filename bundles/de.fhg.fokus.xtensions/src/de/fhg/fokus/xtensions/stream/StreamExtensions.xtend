@@ -7,7 +7,7 @@ import java.util.Set
 import java.util.function.Supplier
 import java.util.stream.Stream
 
-import static extension de.fhg.fokus.xtensions.iterator.IterableExtensions.*
+import static extension de.fhg.fokus.xtensions.iteration.IterableExtensions.*
 import static java.util.stream.Collectors.*
 
 class StreamExtensions {

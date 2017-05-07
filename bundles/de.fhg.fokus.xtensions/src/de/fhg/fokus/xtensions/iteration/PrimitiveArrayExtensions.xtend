@@ -1,4 +1,4 @@
-package de.fhg.fokus.xtensions.iterator
+package de.fhg.fokus.xtensions.iteration
 
 import java.util.PrimitiveIterator
 import java.util.function.IntConsumer
@@ -10,7 +10,7 @@ import java.util.stream.LongStream
 import java.util.function.LongConsumer
 import java.util.function.DoubleConsumer
 import java.util.Arrays
-import de.fhg.fokus.xtensions.iterator.internal.PrimitiveIterableUtil
+import de.fhg.fokus.xtensions.iteration.internal.PrimitiveIterableUtil
 
 /**
  * This class provides extension methods on arrays of the primitive types {@code int}, {@code long}, {@code float}, and {@code double}.

@@ -7,7 +7,7 @@ import java.util.Spliterator
 import java.util.Comparator
 import java.util.PrimitiveIterator
 import java.util.NoSuchElementException
-import de.fhg.fokus.xtensions.iterator.IntIterable
+import de.fhg.fokus.xtensions.iteration.IntIterable
 import java.util.Objects
 
 /**

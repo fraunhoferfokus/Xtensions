@@ -22,9 +22,9 @@ import org.eclipse.xtext.xbase.lib.Inline;
 import org.eclipse.xtext.xbase.lib.Procedures.Procedure0;
 import org.eclipse.xtext.xbase.lib.Procedures.Procedure1;
 
-import de.fhg.fokus.xtensions.iterator.IntIterable;
-import de.fhg.fokus.xtensions.iterator.LongIterable;
-import de.fhg.fokus.xtensions.iterator.internal.PrimitiveIterableUtil;
+import de.fhg.fokus.xtensions.iteration.IntIterable;
+import de.fhg.fokus.xtensions.iteration.LongIterable;
+import de.fhg.fokus.xtensions.iteration.internal.PrimitiveIterableUtil;
 
 import org.eclipse.xtext.xbase.lib.Pure;
 
