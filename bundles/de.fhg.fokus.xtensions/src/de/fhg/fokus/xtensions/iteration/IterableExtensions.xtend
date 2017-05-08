@@ -4,6 +4,7 @@ import java.util.Collection
 import java.util.Objects
 import java.util.stream.Stream
 import java.util.stream.StreamSupport
+import java.util.stream.Collector
 
 class IterableExtensions {
 
@@ -46,4 +47,27 @@ class IterableExtensions {
 			StreamSupport.stream(it.spliterator, true)
 		}
 	}
+
+	/** 
+	 * Simple implementation reducing the elements of an iterable to a return value
+	 * using a {@link Collector}.
+	 * @param data the iterable elements should be collected.
+	 * @param collector the collector reducing multiple values into a single result value
+	 */
+	static def <T, A, R> R collect(Iterable<T> data, Collector<? super T, A, R> collector) {
+		val supplier = Objects.requireNonNull(collector.supplier)
+		val accumulator = Objects.requireNonNull(collector.accumulator)
+		val finisher = Objects.requireNonNull(collector.finisher)
+		
+		val A container = supplier.get()
+		for (T t : data) {
+			accumulator.accept(container, t)
+		}
+		return finisher.apply(container)
+	}
+
+// static def <T> IntItreable mapInt(Iterable<T> it, ToIntFunction mapper)
+// static def <T> LongItreable mapLong(Iterable<T> it, ToLongFunction mapper)
+// static def <T> DoubleItreable mapDouble(Iterable<T> it, ToDoubleFunction mapper)
+
 }
