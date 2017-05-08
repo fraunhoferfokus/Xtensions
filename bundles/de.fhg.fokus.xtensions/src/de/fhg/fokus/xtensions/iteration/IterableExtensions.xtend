@@ -6,6 +6,9 @@ import java.util.stream.Stream
 import java.util.stream.StreamSupport
 import java.util.stream.Collector
 
+/**
+ * Additional extension functions for the {@link Iterable} class.
+ */
 class IterableExtensions {
 
 	/**

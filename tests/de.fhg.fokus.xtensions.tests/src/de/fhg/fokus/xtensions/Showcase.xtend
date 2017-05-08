@@ -1,12 +1,15 @@
 package de.fhg.fokus.xtensions
-import static extension de.fhg.fokus.xtensions.range.RangeExtensions.*
-import static extension de.fhg.fokus.xtensions.iteration.PrimitiveArrayExtensions.*
+
 import de.fhg.fokus.xtensions.iteration.IntIterable
-//import static extension de.fhg.fokus.xtensions.iterator.IterableExtensions.*
-import static extension de.fhg.fokus.xtensions.optional.OptionalExtensions.*
-import org.junit.Test
-import java.util.Optional
 import java.util.stream.Stream
+import org.junit.Test
+
+import static java.util.stream.Collectors.*
+
+import static extension de.fhg.fokus.xtensions.iteration.IterableExtensions.*
+import static extension de.fhg.fokus.xtensions.iteration.PrimitiveArrayExtensions.*
+import static extension de.fhg.fokus.xtensions.optional.OptionalExtensions.*
+import static extension de.fhg.fokus.xtensions.range.RangeExtensions.*
 import org.junit.Ignore
 
 @Ignore
@@ -31,14 +34,22 @@ class Showcase {
 	
 	@Test def arrayDemo() {
 		val int[] arr = #[3,4,6]
+		
+		// int[].forEachInt(IntConsumer)
 		arr.forEachInt [
 			println()
 		]
 		
+		// int[].stream()
 		val sum = arr.stream.sum
 	}
 	
-	@Test def iterableDemo() {
+	@Test def void iterableDemo() {
+		
+		/////////////////////////
+		// Primitive iterables //
+		/////////////////////////
+		
 		val int[] arr = #[0,2,4,19,-10,10_000,Integer.MAX_VALUE,Integer.MIN_VALUE]
 		var ints = arr.asIntIterable(1, arr.length - 1) // omit first and last
 		ints.print(5)
@@ -48,6 +59,21 @@ class Showcase {
 		
 		ints = IntIterable.iterate(1)[it * 2] // infinite iterable
 		ints.print(5)
+		
+		/////////////////
+		// Iterable<T> //
+		/////////////////
+		
+		val Iterable<String> strings = #["fooooo", "baar", "baz"]
+		
+		// collect directly on Iterable
+		val avg = strings.collect(averagingInt[length])
+		println('''Average length: «avg»''')
+		
+		// stream() from Iterable
+		val charSum = strings.stream.flatMapToInt[it.chars].sum
+		println('''Char sum: «charSum»''')
+		
 	}
 	
 	def print(IntIterable ints, int count) {
@@ -74,16 +100,17 @@ class Showcase {
 		val size = dunno.mapInt[length]
 		
 		
+		(dunno || no).ifNotPresent[| println("Nothing to see here!")]
+		
 		//////////////////////////////////
 		// Java 9 forward compatibility //
 		//////////////////////////////////
 		
+		dunno.or[yes].ifPresent [println('''OR: «it»''')] // alternatively || operator
+		
 		dunno.ifPresentOrElse([println(it)], [println("awwww!")])
 		
-		dunno.or[yes].ifPresent [println('''OR: «it»''')]
-		
-		(dunno || no).ifNotPresent[| println("Nothing to see here!")]
-		
+		// Optional.stream()
 		Stream.of(no, yes, dunno).flatMap[stream​].forEach [
 			// print non-empty optionals using stream extension method
 			println(it)
