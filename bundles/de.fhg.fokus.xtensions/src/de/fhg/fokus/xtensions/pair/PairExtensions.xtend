@@ -2,6 +2,7 @@ package de.fhg.fokus.xtensions.pair
 
 import java.util.Optional
 import java.util.function.BiPredicate
+import static extension de.fhg.fokus.xtensions.optional.OptionalExtensions.*
 
 /**
  * Provides static extension methods for the {@code Pair} class.
@@ -23,13 +24,14 @@ final class PairExtensions {
 	
 	/**
 	 * Will call the {@code combiner} with the key and the value of {@code pair} and returns
-	 * the result of the {@code combiner} call.
+	 * the result of the {@code combiner} call. This function can be used as a {@code flatMap}
+	 * function by returning a new {@code Pair}.
 	 * @param pair the Pair from which key and value are taken and passed to {@code combiner}
 	 * @param combiner the function to be called with key and value from {@code pair}
 	 * @return result returned by {@code combiner}.
 	 */
 	static def <K,V,R> R combine(Pair<K,V> pair, (K,V)=>R combiner) {
-		return combiner.apply(pair.key,pair.value)
+		combiner.apply(pair.key,pair.value)
 	}
 	
 	/**
@@ -44,25 +46,25 @@ final class PairExtensions {
 	static def <K,V,R> Optional<R> safeCombine(Pair<K,V> pair, (K,V)=>R combiner) {
 		val key = pair.key
 		if(key === null) {
-			return Optional.empty
+			return none
 		}
 		val value = pair.value
 		if(value === null) {
-			return Optional.empty
+			return none
 		}
 		val result = combiner.apply(key,value)
-		return Optional.ofNullable(result)
+		maybe(result)
 	}
 	
-	/**
-	 * Will check if key and value from {@code pair} the test true with the given {@code predicate}.
-	 * The result of the test is returned by this function.
-	 * @param pair the Pair, that's key and value are tested by the given {@code predicate}.
-	 * @param predicate will test key and value
-	 * @return the result of {@code predicate} applied to key and value of {@code pair}
-	 */
-	static def <K,V,R> boolean test(Pair<K,V> pair, BiPredicate<K,V> predicate) {
-		return predicate.test(pair.key,pair.value)
-	}
-	
+	// TODO really useful? basically special case of combine.
+//	/**
+//	 * Will check if key and value from {@code pair} the test true with the given {@code predicate}.
+//	 * The result of the test is returned by this function.
+//	 * @param pair the Pair, that's key and value are tested by the given {@code predicate}.
+//	 * @param predicate will test key and value
+//	 * @return the result of {@code predicate} applied to key and value of {@code pair}
+//	 */
+//	static def <K,V> boolean test(Pair<K,V> pair, BiPredicate<K,V> predicate) {
+//		predicate.test(pair.key,pair.value)
+//	}
 }

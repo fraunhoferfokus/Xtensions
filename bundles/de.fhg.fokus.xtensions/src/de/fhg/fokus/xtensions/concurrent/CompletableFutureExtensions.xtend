@@ -664,6 +664,12 @@ class CompletableFutureExtensions {
 			this.tryShutdown = doShutdown
 		}
 
+		/**
+		 * Sets the provider of an exception that will be called on timeout.
+		 * The provided exception will then be used to complete the future.<br>
+		 * If not set, a new {@link TimeoutException} will be used to complete 
+		 * the future on timeout.
+		 */
 		def void setExceptionProvider(=>Throwable exceptionProvider) {
 			this.exceptionProvider = exceptionProvider;
 		}

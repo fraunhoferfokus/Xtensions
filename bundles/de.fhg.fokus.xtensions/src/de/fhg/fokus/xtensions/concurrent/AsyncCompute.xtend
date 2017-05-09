@@ -149,6 +149,7 @@ class AsyncCompute {
 	}
 
 	// TODO documentation
+	// TODO allow Duration here
 	public static def <R> CompletableFuture<R> async(long timeout, TimeUnit unit,
 		(CompletableFuture<R>)=>FutureCompletion<R> runAsync) {
 		val fut = async(runAsync)
@@ -156,6 +157,7 @@ class AsyncCompute {
 	}
 
 	// TODO documentation
+	// TODO allow Duration here
 	public static def <R> CompletableFuture<R> async(long timeout, TimeUnit unit, Executor executor,
 		(CompletableFuture<R>)=>FutureCompletion<R> runAsync) {
 		val fut = async(executor, runAsync)
@@ -163,6 +165,7 @@ class AsyncCompute {
 	}
 
 	// TODO documentation
+	// TODO allow Duration here
 	public static def <R> CompletableFuture<R> async(ScheduledExecutorService scheduler, long timeout, TimeUnit unit,
 		(CompletableFuture<R>)=>FutureCompletion<R> runAsync) {
 		val fut = async(runAsync)
@@ -170,6 +173,7 @@ class AsyncCompute {
 	}
 
 	// TODO documentation
+	// TODO allow Duration here
 	public static def <R> CompletableFuture<R> async(ScheduledExecutorService scheduler, long timeout, TimeUnit unit,
 		Executor executor, (CompletableFuture<R>)=>FutureCompletion<R> runAsync) {
 		val fut = async(executor, runAsync)
@@ -196,6 +200,7 @@ class AsyncCompute {
 	}
 
 	// TODO documentation
+	// TODO allow Duration here
 	public static def <R> CompletableFuture<R> asyncSupply(long timeout, TimeUnit unit,
 		(CompletableFuture<?>)=>R runAsync) {
 		val CompletableFuture<R> fut = asyncSupply(runAsync)
@@ -210,6 +215,7 @@ class AsyncCompute {
 	}
 
 	// TODO documentation
+	// TODO allow Duration here
 	public static def <R> CompletableFuture<R> asyncSupply(long timeout, TimeUnit unit, Executor executor,
 		(CompletableFuture<?>)=>R runAsync) {
 		val CompletableFuture<R> fut = asyncSupply(executor, runAsync)
@@ -217,6 +223,7 @@ class AsyncCompute {
 	}
 
 	// TODO documentation
+	// TODO allow Duration here
 	public static def <R> CompletableFuture<R> asyncSupply(ScheduledExecutorService scheduler, long timeout,
 		TimeUnit unit, Executor executor, (CompletableFuture<?>)=>R runAsync) {
 		val CompletableFuture<R> fut = asyncSupply(executor, runAsync)
@@ -252,12 +259,14 @@ class AsyncCompute {
 	}
 
 	// TODO documentation
+	// TODO allow Duration here
 	public static def <R> CompletableFuture<?> asyncRun(long timeout, TimeUnit unit,
 		(CompletableFuture<?>)=>void runAsync) {
 		asyncRun(timeout, unit, ForkJoinPool.commonPool, runAsync)
 	}
 
 	// TODO documentation
+	// TODO allow Duration here
 	public static def <R> CompletableFuture<?> asyncRun(long timeout, TimeUnit unit, Executor executor,
 		(CompletableFuture<?>)=>void runAsync) {
 		val fut = asyncRun(executor, runAsync)
@@ -265,6 +274,7 @@ class AsyncCompute {
 	}
 
 	// TODO documentation
+	// TODO allow Duration here
 	public static def <R> CompletableFuture<?> asyncRun(ScheduledExecutorService scheduler, long timeout, TimeUnit unit,
 		Executor executor, (CompletableFuture<?>)=>void runAsync) {
 		val fut = asyncRun(executor, runAsync)

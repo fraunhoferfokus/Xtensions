@@ -69,8 +69,9 @@ class IterableExtensions {
 		return finisher.apply(container)
 	}
 
-// static def <T> IntItreable mapInt(Iterable<T> it, ToIntFunction mapper)
-// static def <T> LongItreable mapLong(Iterable<T> it, ToLongFunction mapper)
-// static def <T> DoubleItreable mapDouble(Iterable<T> it, ToDoubleFunction mapper)
+// static def <T> IntItreable mapInt(Iterable<T> it, ToIntFunction mapper){}
+// static def <T> LongItreable mapLong(Iterable<T> it, ToLongFunction mapper){}
+// static def <T> DoubleItreable mapDouble(Iterable<T> it, ToDoubleFunction mapper){}
+// Optimize stream() by streaming original Iterable and call mapToX on Stream
 
 }
