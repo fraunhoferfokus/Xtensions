@@ -1,7 +1,6 @@
 package de.fhg.fokus.xtensions.pair
 
 import java.util.Optional
-import java.util.function.BiPredicate
 import static extension de.fhg.fokus.xtensions.optional.OptionalExtensions.*
 
 /**

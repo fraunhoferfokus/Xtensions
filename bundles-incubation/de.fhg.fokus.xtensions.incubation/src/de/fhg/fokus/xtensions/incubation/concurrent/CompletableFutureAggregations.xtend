@@ -1,4 +1,4 @@
-package de.fhg.fokus.xtensions.concurrent
+package de.fhg.fokus.xtensions.incubation.concurrent
 
 import java.util.concurrent.CompletableFuture
 import java.util.Objects

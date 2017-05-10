@@ -3,7 +3,6 @@ package de.fhg.fokus.xtensions.function;
 import java.util.function.Function;
 
 import org.eclipse.jdt.annotation.NonNull;
-import org.eclipse.xtext.xbase.lib.FunctionExtensions;
 import org.eclipse.xtext.xbase.lib.Functions.Function0;
 import org.eclipse.xtext.xbase.lib.Functions.Function1;
 import org.eclipse.xtext.xbase.lib.Functions.Function2;
@@ -17,10 +16,10 @@ import org.eclipse.xtext.xbase.lib.Pure;
  * 
  * @author Max Bureck
  */
-public final class AdditionalFunctionExtensions {
+public final class FunctionExtensions {
 
 	
-	private AdditionalFunctionExtensions() {
+	private FunctionExtensions() {
 		throw new IllegalStateException("FunctionExtensions is not allowed to be instantiated");
 	}
 
@@ -41,6 +40,7 @@ public final class AdditionalFunctionExtensions {
 	 * @throws NullPointerException
 	 *             if {@code function} is null
 	 */
+	@Inline("$2.apply($1)")
 	public static <T, R> R operator_tripleGreaterThan(T value, @NonNull Function1<? super T, ? extends R> function)
 			throws NullPointerException {
 		return function.apply(value);
@@ -75,7 +75,7 @@ public final class AdditionalFunctionExtensions {
 	@Inline(value = "org.eclipse.xtext.xbase.lib.FunctionExtensions.compose($1,$2)", imported = FunctionExtensions.class)
 	public static <T, V, R> @NonNull Function1<V, R> operator_doubleLessThan (@NonNull Function1<? super T, ? extends R> self,
 			@NonNull Function1<? super V, ? extends T> before) {
-		return FunctionExtensions.compose(self, before);
+		return org.eclipse.xtext.xbase.lib.FunctionExtensions.compose(self, before);
 	}
 	
 	/**
@@ -86,10 +86,10 @@ public final class AdditionalFunctionExtensions {
 	 * then applies the {@code self} function with the result of {@code before}
 	 */
 	@Pure
-	@Inline(value = "org.eclipse.xtext.xbase.lib.FunctionExtensions.andThen($1,$2)", imported = FunctionExtensions.class)
+	@Inline(value = "org.eclipse.xtext.xbase.lib.FunctionExtensions.andThen($1,$2)", imported = org.eclipse.xtext.xbase.lib.FunctionExtensions.class)
 	public static <T, V, R> @NonNull Function1<T, V> operator_doubleGreaterThan (@NonNull Function1<? super T, ? extends R> self,
 			@NonNull Function1<? super R, ? extends V> after) {
-		return FunctionExtensions.andThen(self, after);
+		return org.eclipse.xtext.xbase.lib.FunctionExtensions.andThen(self, after);
 	}
 
 	/**
@@ -122,6 +122,7 @@ public final class AdditionalFunctionExtensions {
 	 * @see #compose(Function1,Function1)
 	 */
 	@Pure
+//	@Inline(value ="() -> $2.apply($1.apply())")
 	public static <V, R> @NonNull Function0<V> andThen(@NonNull Function0<? extends R> self,
 			@NonNull Function1<? super R, ? extends V> after) {
 		return () -> after.apply(self.apply());

@@ -33,7 +33,7 @@ import com.google.common.collect.Lists;
 
 import de.fhg.fokus.xtensions.range.IntIntConsumer;
 import de.fhg.fokus.xtensions.range.RangeExtensions;
-import de.fhg.fokus.xtensions.function.AdditionalFunctionExtensions;
+import de.fhg.fokus.xtensions.function.FunctionExtensions;
 
 /**
  * This class contains static functions that ease the work with Java 8
@@ -306,7 +306,7 @@ public final class OptionalExtensions {
 	// type and have to accept Consumer instead
 	/**
 	 * This method is a good fit to be used with the
-	 * {@link AdditionalFunctionExtensions#operator_tripleGreaterThan(Object, org.eclipse.xtext.xbase.lib.Functions.Function1)
+	 * {@link FunctionExtensions#operator_tripleGreaterThan(Object, org.eclipse.xtext.xbase.lib.Functions.Function1)
 	 * >>>} operator defined in class {@code AdditionalFunctionExtensions}.<br>
 	 * Example:
 	 * 

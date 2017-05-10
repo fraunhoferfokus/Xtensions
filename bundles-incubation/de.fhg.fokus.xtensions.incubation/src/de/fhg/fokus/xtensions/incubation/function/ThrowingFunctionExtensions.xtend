@@ -1,4 +1,4 @@
-package de.fhg.fokus.xtensions.function
+package de.fhg.fokus.xtensions.incubation.function
 
 class ThrowingFunctionExtensions { 
 

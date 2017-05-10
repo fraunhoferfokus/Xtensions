@@ -16,6 +16,12 @@
 	<modules>
 		<module>bundles/de.fhg.fokus.xtensions</module>
 		<module>tests/de.fhg.fokus.xtensions.tests</module>
+		
+		<!-- Incubation bundles -->
+		<module>bundles-incubation/de.fhg.fokus.xtensions.incubation</module>
+		<module>tests-incubation/de.fhg.fokus.xtensions.incubation.tests</module>
+		<module>bundles-incubation/de.fhg.fokus.xtensions.circuitbreaker</module>
+		<module>tests-incubation/de.fhg.fokus.xtensions.circuitbreaker.tests</module>
 	</modules>
 	
 </project>

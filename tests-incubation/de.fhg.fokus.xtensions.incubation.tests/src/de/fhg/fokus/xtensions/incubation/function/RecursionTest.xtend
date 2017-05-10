@@ -1,9 +1,9 @@
-package de.fhg.fokus.xtensions.function
+package de.fhg.fokus.xtensions.incubation.function
 
 import org.junit.Test
 
-import static de.fhg.fokus.xtensions.function.Recursion.*
-import static extension de.fhg.fokus.xtensions.function.AdditionalFunctionExtensions.*
+import static de.fhg.fokus.xtensions.incubation.function.Recursion.*
+import static extension de.fhg.fokus.xtensions.function.FunctionExtensions.*
 import static org.junit.Assert.*
 import java.util.OptionalInt
 import java.util.List

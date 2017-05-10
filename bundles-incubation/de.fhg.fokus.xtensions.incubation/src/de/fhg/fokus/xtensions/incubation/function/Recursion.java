@@ -1,4 +1,4 @@
-package de.fhg.fokus.xtensions.function;
+package de.fhg.fokus.xtensions.incubation.function;
 
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.xtext.xbase.lib.Functions.Function0;

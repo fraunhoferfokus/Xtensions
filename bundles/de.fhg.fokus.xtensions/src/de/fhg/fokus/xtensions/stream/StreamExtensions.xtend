@@ -149,7 +149,7 @@ final class StreamExtensions {
 	}
 
 	// /////////////////
-	// Concatination //
+	// Concatenation //
 	// /////////////////
 	
 	/**

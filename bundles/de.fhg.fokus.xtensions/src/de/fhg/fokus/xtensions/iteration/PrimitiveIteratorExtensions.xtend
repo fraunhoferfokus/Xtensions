@@ -45,8 +45,7 @@ final class PrimitiveIteratorExtensions {
 	
 	private static def Spliterator.OfInt toSpliterator(PrimitiveIterator.OfInt wrapped) {
 		val characteristics = Spliterator.NONNULL
-		val estimatedSize = 0
-		Spliterators.spliterator(wrapped,estimatedSize,characteristics)
+		Spliterators.spliteratorUnknownSize(wrapped,characteristics)
 	}
 	
 	
@@ -76,8 +75,7 @@ final class PrimitiveIteratorExtensions {
 	
 	private static def Spliterator.OfLong toSpliterator(PrimitiveIterator.OfLong wrapped) {
 		val characteristics = Spliterator.NONNULL
-		val estimatedSize = 0
-		Spliterators.spliterator(wrapped,estimatedSize,characteristics)
+		Spliterators.spliteratorUnknownSize(wrapped,characteristics)
 	}
 	
 	
@@ -107,7 +105,6 @@ final class PrimitiveIteratorExtensions {
 	
 	private static def Spliterator.OfDouble toSpliterator(PrimitiveIterator.OfDouble wrapped) {
 		val characteristics = Spliterator.NONNULL
-		val estimatedSize = 0
-		Spliterators.spliterator(wrapped,estimatedSize,characteristics)
+		Spliterators.spliteratorUnknownSize(wrapped,characteristics)
 	}
 }

@@ -9,7 +9,11 @@ import java.util.stream.Collector
 /**
  * Additional extension functions for the {@link Iterable} class.
  */
-class IterableExtensions {
+final class IterableExtensions {
+	
+	private new() {
+		throw new IllegalStateException
+	}
 
 	/**
 	 * Creates a {@link Stream} instance for processing the elements 

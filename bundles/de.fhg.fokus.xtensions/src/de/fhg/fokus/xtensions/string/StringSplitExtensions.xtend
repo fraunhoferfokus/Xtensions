@@ -18,6 +18,93 @@ class StringSplitExtensions {
 	}
 
 	/**
+	 * Creates an iterator that splits the input parameter string {@code toSplit}
+	 * at the given regular expression {@code pattern}. The splitting behavior 
+	 * is modeled after the rules of {@link String#split(String,int)}, therefore 
+	 * the parameter {@code limit} has the same semantics.<br>
+	 * The returned Iterator performs the splitting operations as lazy as possible,
+	 * so it is is suited well for finding tokens in a string and stop splitting
+	 * as soon as a particular element is found. This also reduces memory copying
+	 * to unused strings.
+	 * @see String#split(String,int)
+	 */
+	public static def splitIt(String toSplit, String pattern, int limit) {
+		toSplit.splitIt(Pattern.compile(pattern), limit)
+	}
+	
+	/**
+	 * Creates an iterator that splits the input parameter string {@code toSplit}
+	 * at the given regular expression {@code pattern}. The splitting behavior 
+	 * is modeled after the rules of {@link Pattern#split(CharSequence,int)}, therefore 
+	 * the parameter {@code limit} has the same semantics.<br>
+	 * The returned Iterator performs the splitting operations as lazy as possible,
+	 * so it is is suited well for finding tokens in a string and stop splitting
+	 * as soon as a particular element is found. This also reduces memory copying
+	 * to unused strings.
+	 * @see Pattern#split(CharSequence,int)
+	 */
+	public static def Iterator<String> splitIt(CharSequence toSplit, Pattern pattern, int limit) {
+		if (toSplit.length == 0) {
+			return new EmptyStringIterator
+		}
+		if(limit<0) {
+			return new UnlimitedSplitIterator(toSplit, pattern)
+		}
+		if(limit == 0) {
+			return new UnlimitedSplitIteratorNoTrailingEmpty(toSplit, pattern)
+		}
+		// else: limited iterator
+		new LimitedSplitIterator(toSplit, pattern, limit)
+	}
+
+	/**
+	 * Creates an iterator that splits the input parameter string {@code toSplit}
+	 * at the given regular expression {@code pattern}. The splitting behavior 
+	 * is modeled after the rules of {@link Pattern#split(CharSequence)}.<br>
+	 * The returned Iterator performs the splitting operations as lazy as possible,
+	 * so it is is suited well for finding tokens in a string and stop splitting
+	 * as soon as a particular element is found. This also reduces memory copying
+	 * to unused strings.
+	 * @see Pattern#split(CharSequence)
+	 * @param toSplit is the string to be split by the given pattern. Must not be null
+	 * @throws NullPointerException if toSplit or pattern is null
+	 */
+	public static def Iterator<String> splitIt(CharSequence toSplit, Pattern pattern) {
+		Objects.requireNonNull(toSplit)
+		if (toSplit.length == 0) {
+			new EmptyStringIterator
+		} else {
+			new UnlimitedSplitIteratorNoTrailingEmpty(toSplit, pattern)
+		}
+	}
+
+	/**
+	 * Creates an iterator that splits the input parameter string {@code toSplit}
+	 * at the given regular expression {@code pattern}. The splitting behavior 
+	 * is modeled after the rules of {@link String#split(String)}.<br>
+	 * The returned Iterator performs the splitting operations as lazy as possible,
+	 * so it is is suited well for finding tokens in a string and stop splitting
+	 * as soon as a particular element is found. This also reduces memory copying
+	 * to unused strings.
+	 * @see String#split(String)
+	 */
+	public static def Iterator<String> splitIt(CharSequence toSplit, String pattern) {
+		toSplit.splitIt(Pattern.compile(pattern))
+	}
+	
+	/**
+	 * This method is a shortcut extension method for <br>
+	 * {@code java.util.regex.Pattern.compile(pattern).splitAsStream(toSplit)}.
+	 * @param toSplit the string to split according to the given {@code pattern}
+	 * @param pattern the pattern used to split the parameter {@code toSplit}
+	 */
+	 @Pure
+//	 @Inline(value = "Pattern.compile($2).splitAsStream($1)", imported = Pattern)
+	public static def Stream<String> splitStream(CharSequence toSplit, String pattern) {
+		Pattern.compile(pattern).splitAsStream(toSplit)
+	}
+	
+	/**
 	 * Iterator simply returning one empty String
 	 */
 	private static final class EmptyStringIterator implements Iterator<String> {
@@ -193,7 +280,7 @@ class StringSplitExtensions {
 			while (matcher.find) {
 				val start = matcher.start
 				val end = matcher.end
-				val i = index // buffer to local variable
+				val i = index // buffer to local variable, index may be overwritten
 				if (!(i == 0 && start == 0 && start == end)) {
 					index = end
 					val String res = if (i == start) {
@@ -280,91 +367,6 @@ class StringSplitExtensions {
 			result
 		}
 
-	}
-
-	/**
-	 * Creates an iterator that splits the input parameter string {@code toSplit}
-	 * at the given regular expression {@code pattern}. The splitting behavior 
-	 * is modeled after the rules of {@link String#split(String,int)}, therefore 
-	 * the parameter {@code limit} has the same semantics.<br>
-	 * The returned Iterator performs the splitting operations as lazy as possible,
-	 * so it is is suited well for finding tokens in a string and stop splitting
-	 * as soon as a particular element is found. This also reduces memory copying
-	 * to unused strings.
-	 * @see String#split(String,int)
-	 */
-	public static def splitIt(String toSplit, String pattern, int limit) {
-		toSplit.splitIt(Pattern.compile(pattern), limit)
-	}
-	
-	/**
-	 * Creates an iterator that splits the input parameter string {@code toSplit}
-	 * at the given regular expression {@code pattern}. The splitting behavior 
-	 * is modeled after the rules of {@link Pattern#split(CharSequence,int)}, therefore 
-	 * the parameter {@code limit} has the same semantics.<br>
-	 * The returned Iterator performs the splitting operations as lazy as possible,
-	 * so it is is suited well for finding tokens in a string and stop splitting
-	 * as soon as a particular element is found. This also reduces memory copying
-	 * to unused strings.
-	 * @see Pattern#split(CharSequence,int)
-	 */
-	public static def Iterator<String> splitIt(CharSequence toSplit, Pattern pattern, int limit) {
-		if (toSplit.length == 0) {
-			return new EmptyStringIterator
-		}
-		if(limit<0) {
-			return new UnlimitedSplitIterator(toSplit, pattern)
-		}
-		if(limit == 0) {
-			return new UnlimitedSplitIteratorNoTrailingEmpty(toSplit, pattern)
-		}
-		// else: limited iterator
-		new LimitedSplitIterator(toSplit, pattern, limit)
-	}
-
-	/**
-	 * Creates an iterator that splits the input parameter string {@code toSplit}
-	 * at the given regular expression {@code pattern}. The splitting behavior 
-	 * is modeled after the rules of {@link Pattern#split(CharSequence)}.<br>
-	 * The returned Iterator performs the splitting operations as lazy as possible,
-	 * so it is is suited well for finding tokens in a string and stop splitting
-	 * as soon as a particular element is found. This also reduces memory copying
-	 * to unused strings.
-	 * @see Pattern#split(CharSequence)
-	 * @param toSplit is the string to be split by the given pattern. Must not be null
-	 * @throws NullPointerException if toSplit or pattern is null
-	 */
-	public static def Iterator<String> splitIt(CharSequence toSplit, Pattern pattern) {
-		Objects.requireNonNull(toSplit)
-		if (toSplit.length == 0) {
-			new EmptyStringIterator
-		} else {
-			new UnlimitedSplitIteratorNoTrailingEmpty(toSplit, pattern)
-		}
-	}
-
-	/**
-	 * Creates an iterator that splits the input parameter string {@code toSplit}
-	 * at the given regular expression {@code pattern}. The splitting behavior 
-	 * is modeled after the rules of {@link String#split(String)}.<br>
-	 * The returned Iterator performs the splitting operations as lazy as possible,
-	 * so it is is suited well for finding tokens in a string and stop splitting
-	 * as soon as a particular element is found. This also reduces memory copying
-	 * to unused strings.
-	 * @see String#split(String)
-	 */
-	public static def Iterator<String> splitIt(CharSequence toSplit, String pattern) {
-		toSplit.splitIt(Pattern.compile(pattern))
-	}
-	
-	/**
-	 * This method is a shortcut extension method for <br>
-	 * {@code java.util.regex.Pattern.compile(pattern).splitAsStream(toSplit)}.
-	 * @param toSplit the string to split according to the given {@code pattern}
-	 * @param pattern the pattern used to split the parameter {@code toSplit}
-	 */
-	public static def Stream<String> splitStream(CharSequence toSplit, String pattern) {
-		Pattern.compile(pattern).splitAsStream(toSplit)
 	}
 
 }

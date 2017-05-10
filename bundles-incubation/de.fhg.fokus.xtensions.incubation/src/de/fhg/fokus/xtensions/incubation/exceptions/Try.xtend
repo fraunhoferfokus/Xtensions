@@ -1,4 +1,4 @@
-package de.fhg.fokus.xtensions.exceptions
+package de.fhg.fokus.xtensions.incubation.exceptions
 
 import java.util.Optional
 import java.util.NoSuchElementException
@@ -88,6 +88,22 @@ final class Try<R> {
 	 * If operation was successful but returned {@code null} value.
 	 */
 	def Try<R> ifEmptyResult(()=>void handler){
+		throw new UnsupportedOperationException("Not implemented yet")
+	}
+	
+	/**
+	 * Calls {@code action} with the result of this try, if the Try
+	 * holds a successful result and is not {@code null}.
+	 * @param action operation to be performed if this Try holds a result that
+	 *  is not {@code null}.
+	 * @return Try wrapping the result of the {@code action} if it completes successful,
+	 *   or holding an exception if the operation throws 
+	 */
+	def <U> Try<U> thenTry((R)=>U action) {
+		throw new UnsupportedOperationException("Not implemented yet")
+	}
+	
+	def <U> Try<U> thenFlatTry((R)=>Try<U> action) {
 		throw new UnsupportedOperationException("Not implemented yet")
 	}
 	
