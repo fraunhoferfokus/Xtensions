@@ -319,14 +319,46 @@ class CompletableFutureExtensions {
 		fut.exceptionally[ex|if(ex instanceof CancellationException) handler.apply else throw ex]
 	}
 
-	// TODO document
+	/**
+	 * The effect of calling this method is like using 
+	 * {@link CompletableFuture#exceptionally(java.util.function.Function) CompletableFuture#exceptionally}
+	 * where the provided function is only called when {@code fut} is completed with a {@link CancellationException}.
+	 * If {@code fut} completes exceptionally, but not with a {@code CancellationException}, the exception is 
+	 * re-thrown from the handler, so the returned future will be completed exceptionally with the same exception.
+	 * The {@code handler} will be invoked on the {@link ForkJoinPool#commonPool() common pool}, not on the thread 
+	 * completing {@code fut}.
+	 * @param fut future {@code handler} is registered on. Must not be {@code null}.
+	 * @param handler the callback to be invoked when {@code fut} is completed with cancellation.
+	 *  Must not be {@code null}. Will be invoked on the {@link ForkJoinPool#commonPool() common pool}, not on the thread 
+	 *  completing {@code fut}.
+	 * @return new CompletableFuture that either is completed with the result of {@code fut}, if 
+	 *   {@code fut} completes successful. Otherwise the result provided from {@code handler} is 
+	 *   used to complete the returned future.
+	 * @throws NullPointerException is thrown when {@code fut} or {@code handler} is {@code null}.
+	 */
 	static def <R> CompletableFuture<R> handleCancellationAsync(CompletableFuture<R> fut, ()=>R handler) {
 		Objects.requireNonNull(fut)
 		Objects.requireNonNull(handler)
 		fut.handleCancellationAsync(ForkJoinPool.commonPool, handler)
 	}
 
-	// TODO document
+	/**
+	 * The effect of calling this method is like using 
+	 * {@link CompletableFuture#exceptionally(java.util.function.Function) CompletableFuture#exceptionally}
+	 * where the provided function is only called when {@code fut} is completed with a {@link CancellationException}.
+	 * If {@code fut} completes exceptionally, but not with a {@code CancellationException}, the exception is 
+	 * re-thrown from the handler, so the returned future will be completed exceptionally with the same exception.
+	 * The {@code handler} will be invoked using the {@code Executor e}, not on the thread 
+	 * completing {@code fut}.
+	 * @param fut future {@code handler} is registered on. Must not be {@code null}.
+	 * @param handler the callback to be invoked when {@code fut} is completed with cancellation.
+	 *  Must not be {@code null}. Will be invoked via the {@code Executor e}, not on the thread 
+	 *  completing {@code fut}.
+	 * @return new CompletableFuture that either is completed with the result of {@code fut}, if 
+	 *   {@code fut} completes successful. Otherwise the result provided from {@code handler} is 
+	 *   used to complete the returned future.
+	 * @throws NullPointerException is thrown when {@code fut} or {@code handler} is {@code null}.
+	 */
 	static def <R> CompletableFuture<R> handleCancellationAsync(CompletableFuture<R> fut, Executor e, ()=>R handler) {
 		Objects.requireNonNull(fut)
 		Objects.requireNonNull(e)
@@ -894,8 +926,18 @@ class CompletableFutureExtensions {
 	// ////////////////////////////////
 	// Java 9 forward compatibility //
 	// ////////////////////////////////
-	// TODO variant with flag if cancel backward propagation allowed
-	// TODO document
+	/**
+	 * This extension function will create a new {@code CompletableFuture} that will either be completed 
+	 * with the result of {@code fut} (either successful or ), or if after the {@code timeoutTime} in time {@code unit} the future {@code fut}
+	 * was not completed, the returned future will be completed exceptionally with a {@link TimeoutException}.
+	 * @param fut the future that's result will be forwarded to the returned future before timeout.
+	 * @param timeoutTime time (of {@code unit}) after which the resulting {@code CompletableFuture} will be 
+	 *  completed exceptionally with a {@code TimeoutException} if it was not completed yet.
+	 * @param unit the TimeUnit for {@code timeoutTime}.
+	 * @return CompletableFuture that will either be completed with the result of {@code fut} it was completed
+	 *  before the timeout. If the returned future is not completed before the timeout it will be completed 
+	 *  with a {@code TimoutException}.
+	 */
 	static def <R> CompletableFuture<R> orTimeout(CompletableFuture<R> fut, long timeoutTime, TimeUnit unit) {
 		val ()=>Throwable exceptionProvider = [new TimeoutException]
 		val cancelBackPropagation = false
