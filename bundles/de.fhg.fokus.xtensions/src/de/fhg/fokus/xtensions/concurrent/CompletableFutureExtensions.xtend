@@ -18,6 +18,7 @@ import java.util.concurrent.Executors
 import java.util.concurrent.ThreadFactory
 import static extension de.fhg.fokus.xtensions.concurrent.internal.DurationToTimeConversion.*
 import java.util.function.BiConsumer
+import java.util.concurrent.atomic.AtomicReference
 
 /**
  * This class provides static methods (many of them to be used as extension methods)
@@ -48,6 +49,7 @@ class CompletableFutureExtensions {
 	 * without the parameter.
 	 * @see CompletableFuture#cancel(boolean)
 	 */
+//	 @Inline("$1.cancel(false)")
 	static def <R> boolean cancel(CompletableFuture<R> future) {
 		Objects.requireNonNull(future)
 		future.cancel(false)
@@ -193,7 +195,6 @@ class CompletableFutureExtensions {
 		CompletableFuture<? super R> to) throws NullPointerException {
 		Objects.requireNonNull(from)
 		Objects.requireNonNull(to)
-
 		from.whenComplete [ o, t |
 			if (t !== null) {
 				to.completeExceptionally(t)
@@ -217,6 +218,8 @@ class CompletableFutureExtensions {
 		Objects.requireNonNull(with)
 		with.forwardTo(toComplete)
 	}
+
+	private static enum InterruptionState { START, INTERRUPTING, INTERRUPTED, FINISHED }
 
 	// TODO static def <R,T> T supplyCancelOnInterrupt(CompletableFuture<R> fut, ()=>T interruptableBlock) 
 	/**
@@ -245,12 +248,9 @@ class CompletableFutureExtensions {
 	 *   ]
 	 * ]
 	 * </pre></code>
-	 * To make cancellation not interrupt the current thread outside of the context of the 
-	 * {@code interruptableBlock}, blocking synchronization is needed at the end of execution 
-	 * of {@code interruptableBlock} and in the handler registered on {@code fut} being executed
-	 * on cancellation.
 	 * 
 	 * @param fut future that if cancelled will interrupt the thread calling {@code interruptableBlock}.
+	 *  But only as long as the thread is in the {@code interruptableBlock}.
 	 * @param interruptableBlock the block of code that is executed on the thread calling this method.
 	 *   If {@code fut} is cancelled during execution of the block, the calling thread will be interrupted.
 	 *   After execution of this block the thread's interrupted flag will be reset.
@@ -259,8 +259,8 @@ class CompletableFutureExtensions {
 	 */
 	static def <R> void whenCancelledInterrupt(CompletableFuture<R> fut, ()=>void interruptableBlock) {
 		Objects.requireNonNull(fut)
-		Objects.requireNonNull(interruptableBlock)
-		val interruptAllowed = new AtomicBoolean(true)
+		Objects.requireNonNull(interruptableBlock) 
+		val interruptState = new AtomicReference(InterruptionState.START)
 		val interruptableThread = Thread.currentThread
 		// if future is cancelled and we are still in interruptableBlock
 		// then interrupt thread executing interruptableBlock
@@ -268,15 +268,17 @@ class CompletableFutureExtensions {
 			// first try without lock, if interruptableBlock
 			// already complete. If so, we don't even have to
 			// try to set interrupted.
-			if (!interruptAllowed.get) {
+			
+			if (!interruptState.compareAndSet(InterruptionState.START, InterruptionState.INTERRUPTING)) {
+				// We are second, so interruptableBlock was left, we do not need to interrupt
 				return;
 			}
 			// now double check, if thread is still in interruptableBlock,
 			// interrupt the thread executing interruptableBlock
-			synchronized (interruptAllowed) {
-				if (interruptAllowed.get) {
-					interruptableThread.interrupt
-				}
+			try {
+				interruptableThread.interrupt
+			} finally {
+				interruptState.set(InterruptionState.INTERRUPTED)	
 			}
 		]
 
@@ -284,16 +286,18 @@ class CompletableFutureExtensions {
 		try {
 			interruptableBlock.apply
 		} finally {
-			synchronized (interruptAllowed) {
-				interruptAllowed.set(false)
-				// reset interrupted flag if set by cancelled future,
-				// this way the thread can safely be reused by a thread pool
+			if(!interruptState.compareAndSet(InterruptionState.START, InterruptionState.FINISHED)) {
+				// We were interrupted, we we have to wait for the Thread being interrupted,
+				// so we don't interrupt the thread when 
+				while(!interruptState.compareAndSet(InterruptionState.INTERRUPTED, InterruptionState.FINISHED)) {
+					// we spin-wait, so we better let other Threads to useful stuff
+					Thread.yield
+				}
 				Thread.interrupted()
 			}
 		}
 	}
 
-	// TODO document
 	/**
 	 * The effect of calling this method is like using 
 	 * {@link CompletableFuture#exceptionally(java.util.function.Function) CompletableFuture#exceptionally}
@@ -411,14 +415,44 @@ class CompletableFutureExtensions {
 		fut.whenComplete(whenCancelledHandler(handler))
 	}
 
-	// TODO document
+	/**
+	 * Registers {@code handler} on the given future {@fut} to be called when the future is cancelled
+	 * (meaning completed with an instance of {@link CancellationException}). The {@code handler}
+	 * will be invoked on the {@link ForkJoinPool#commonPool() common pool}, not on the thread completing {@code fut}.
+	 * @param fut the future {@code handler} is registered on for notification about cancellation. 
+	 *   Must not be {@code null}.
+	 * @param handler callback to be registered on {@code fut}, being called when the future gets cancelled.
+	 *   Must not be {@code null}. Will be called on the {@link ForkJoinPool#commonPool() common pool}.
+	 * @return a CompletableFuture that will complete after the handler completes or if {@code fut} completes
+	 *  without being cancelled. If {@code fut} is cancelled the returned future will be completed exceptionally
+	 *  with a {@link java.util.concurrent.CancellationException CancellationException}, but will not itself count 
+	 *  as cancelled ({@link CompletableFuture#isCancelled() isCancelled} will return {@code false}). 
+	 *  When the original future completes exceptionally, callback methods on the returned future will provide a {@link java.util.concurrent.CompletionException CompletionException}
+	 *  wrapping the original exception. This includes {@code CancellationException}s.
+	 * @throws NullPointerException if {@code fut} or {@code handler} is {@code null}.
+	 */
 	static def <R> CompletableFuture<R> whenCancelledAsync(CompletableFuture<R> fut, ()=>void handler) {
 		Objects.requireNonNull(fut)
 		Objects.requireNonNull(handler)
 		fut.whenCancelledAsync(ForkJoinPool.commonPool, handler)
 	}
 
-	// TODO document
+	/**
+	 * Registers {@code handler} on the given future {@fut} to be called when the future is cancelled
+	 * (meaning completed with an instance of {@link CancellationException}). The {@code handler}
+	 * will be invoked on the {@code Executor e}, not on the thread completing {@code fut}.
+	 * @param fut the future {@code handler} is registered on for notification about cancellation. 
+	 *   Must not be {@code null}.
+	 * @param handler callback to be registered on {@code fut}, being called when the future gets cancelled.
+	 *   Must not be {@code null}. Will be called on the {@code Executor e}.
+	 * @return a CompletableFuture that will complete after the handler completes or if {@code fut} completes
+	 *  without being cancelled. If {@code fut} is cancelled the returned future will be completed exceptionally
+	 *  with a {@link java.util.concurrent.CancellationException CancellationException}, but will not itself count 
+	 *  as cancelled ({@link CompletableFuture#isCancelled() isCancelled} will return {@code false}). 
+	 *  When the original future completes exceptionally, callback methods on the returned future will provide a {@link java.util.concurrent.CompletionException CompletionException}
+	 *  wrapping the original exception. This includes {@code CancellationException}s.
+	 * @throws NullPointerException if {@code fut} or {@code handler} is {@code null}.
+	 */
 	static def <R> CompletableFuture<R> whenCancelledAsync(CompletableFuture<R> fut, Executor e, ()=>void handler) {
 		Objects.requireNonNull(fut)
 		Objects.requireNonNull(e)
@@ -431,7 +465,7 @@ class CompletableFutureExtensions {
 	}
 
 	/**
-	 * Registers {@code handler} on the given future {@fut} to be called when the future completes 
+	 * Registers {@code handler} on the given future {@code fut} to be called when the future completes 
 	 * exceptionally. This also includes cancellation.
 	 * @param fut the future {@code handler} is registered on for notification about exceptional completion. 
 	 *   Must not be {@code null}.
@@ -449,14 +483,41 @@ class CompletableFutureExtensions {
 		fut.whenComplete(whenExcpetionHandler(handler))
 	}
 
-	// TODO document
+	/**
+	 * Registers {@code handler} on the given future {@code fut} to be called when the future completes 
+	 * exceptionally. This also includes cancellation. The {@code handler} will be executed on the 
+	 * {@link ForkJoinPool#commonPool() common pool}, not on the thread completing {@code fut}.
+	 * @param fut the future {@code handler} is registered on for notification about exceptional completion. 
+	 *   Must not be {@code null}.
+	 * @param handler callback to be registered on {@code fut}, being called when the future completes with an exception.
+	 *   If the handler throws an exception, the returned future will be completed with the original exception.
+	 *   The handler must not be {@code null}. The handler will be executed on the {@link ForkJoinPool#commonPool() common pool}.
+	 * @return a CompletableFuture that will complete after the handler completes or if {@code fut} completes
+	 *  successfully. If {@code fut} completes exceptionally the returned future will be completed exceptionally
+	 *  with the same exception.
+	 * @throws NullPointerException if {@code fut} or {@code handler} is {@code null}.
+	 */
 	static def <R> CompletableFuture<R> whenExceptionAsync(CompletableFuture<R> fut, (Throwable)=>void handler) {
 		Objects.requireNonNull(fut)
 		Objects.requireNonNull(handler)
 		fut.whenExceptionAsync(ForkJoinPool.commonPool, handler)
 	}
 
-	// TODO document
+	/**
+	 * Registers {@code handler} on the given future {@code fut} to be called when the future completes 
+	 * exceptionally. This also includes cancellation. The {@code handler} will be executed on the 
+	 * {@code Executor e}, not on the thread completing {@code fut}.
+	 * @param fut the future {@code handler} is registered on for notification about exceptional completion. 
+	 *   Must not be {@code null}.
+	 * @param handler callback to be registered on {@code fut}, being called when the future completes with an exception.
+	 *   If the handler throws an exception, the returned future will be completed with the original exception.
+	 *   The handler must not be {@code null}. The handler will be executed on the {@code Executor e}.
+	 * @return a CompletableFuture that will complete after the handler completes or if {@code fut} completes
+	 *  successfully. If {@code fut} completes exceptionally the returned future will be completed exceptionally
+	 *  with the same exception.
+	 * @param e Executor used to execute {@code handler}
+	 * @throws NullPointerException if {@code fut} or {@code handler} is {@code null}.
+	 */
 	static def <R> CompletableFuture<R> whenExceptionAsync(CompletableFuture<R> fut, Executor e,
 		(Throwable)=>void handler) {
 		Objects.requireNonNull(fut)
@@ -519,8 +580,8 @@ class CompletableFutureExtensions {
 	 * @see #then(CompletableFuture, Procedure0)
 	 * @throws NullPointerException if either {@code fut} or {@code handler} is {@code null}
 	 */
+//	 @Inline("$1.thenAccept($2::apply)")
 	static def <R> CompletableFuture<Void> then(CompletableFuture<R> fut, (R)=>void handler) {
-		// TODO inline if annotation works in Xtend
 		Objects.requireNonNull(handler)
 		fut.thenAccept(handler)
 	}
@@ -615,7 +676,23 @@ class CompletableFutureExtensions {
 		result
 	}
 
-	// TODO document
+	/**
+	 * If the given future {@code fut} completes successfully, the future returned from this method will be
+	 * completed with the result value. Otherwise the provider {@code recovery} will be called to provide
+	 * a future and the result of this future will be used to complete the returned future. This also means 
+	 * that if the provided recovery future was completed exceptionally, the failure will be forwarded to the
+	 * returned future. The {@code recovery} function will be executed on the {@link ForkJoinPool#commonPool() common pool}.
+	 * @param fut the future that may fail (complete exceptionally). If it completes successfully, the result
+	 *  value will be used to complete the returned future
+	 * @param recovery provides a CompletionStage in case {@code fut} completes exceptionally. In this case the result
+	 *  (either value or exception) will be used to complete the future returned from the function. If this 
+	 *  supplier provides a {@code null} reference, the returned future will be completed with a {@link NullPointerException}.
+	 *  If the supplier throws an exception, the returned future will be completed with this exception. The provider will be 
+	 *  executed on the {@link ForkJoinPool#commonPool() common pool}.
+	 * @return future that will either complete successfully, if {@code fut} completes successfully. If {@code fut}
+	 *   completes exceptionally, otherwise {@code recovery} will be called and the result of the provided CompletionStage
+	 *   will be forwarded to the returned future.
+	 */
 	static def <R> CompletableFuture<R> recoverWithAsync(
 		CompletableFuture<R> fut,
 		(Throwable)=>CompletionStage<? extends R> recovery
@@ -623,7 +700,23 @@ class CompletableFutureExtensions {
 		recoverWithAsync(fut, ForkJoinPool.commonPool, recovery)
 	}
 
-	// TODO document
+	/**
+	 * If the given future {@code fut} completes successfully, the future returned from this method will be
+	 * completed with the result value. Otherwise the provider {@code recovery} will be called to provide
+	 * a future and the result of this future will be used to complete the returned future. This also means 
+	 * that if the provided recovery future was completed exceptionally, the failure will be forwarded to the
+	 * returned future. The {@code recovery} function will be executed on executed on {@code Executor e}.
+	 * @param fut the future that may fail (complete exceptionally). If it completes successfully, the result
+	 *  value will be used to complete the returned future
+	 * @param recovery provides a CompletionStage in case {@code fut} completes exceptionally. In this case the result
+	 *  (either value or exception) will be used to complete the future returned from the function. If this 
+	 *  supplier provides a {@code null} reference, the returned future will be completed with a {@link NullPointerException}.
+	 *  If the supplier throws an exception, the returned future will be completed with this exception. The provider will be 
+	 *  executed on {@code Executor e}.
+	 * @return future that will either complete successfully, if {@code fut} completes successfully. If {@code fut}
+	 *   completes exceptionally, otherwise {@code recovery} will be called and the result of the provided CompletionStage
+	 *   will be forwarded to the returned future.
+	 */
 	static def <R> CompletableFuture<R> recoverWithAsync(
 		CompletableFuture<R> fut,
 		Executor e,
@@ -638,7 +731,12 @@ class CompletableFutureExtensions {
 		result
 	}
 
-	public static final class OnTimeoutBuilder {
+	/** 
+	 * An instance of this class will be passed to the configuration block 
+	 * passed to the {@link CompletableFutureExtensions#orTimeout(CompletableFuture, Procedure1) orTimeout(CompletableFuture<R>, (TimeoutConfig)=>void)}
+	 * extension method.
+	 */
+	public static final class TimeoutConfig {
 		private new() {
 		}
 
@@ -654,6 +752,12 @@ class CompletableFutureExtensions {
 			Objects.requireNonNull(timeout)
 			this.timeout = timeout.key
 			this.timeUnit = timeout.value
+		}
+		
+		def void setTimeout(Duration timeout) {
+			val time = timeout.toTime
+			this.timeout = time.amount
+			this.timeUnit = time.unit
 		}
 
 		def void setScheduler(ScheduledExecutorService scheduler) {
@@ -683,10 +787,11 @@ class CompletableFutureExtensions {
 		}
 	}
 
-	static def <R> CompletableFuture<R> orTimeout(CompletableFuture<R> fut, (OnTimeoutBuilder)=>void config) {
+	// TODO document
+	static def <R> CompletableFuture<R> orTimeout(CompletableFuture<R> fut, (TimeoutConfig)=>void config) {
 		Objects.requireNonNull(fut)
 		Objects.requireNonNull(config)
-		val configData = new OnTimeoutBuilder
+		val configData = new TimeoutConfig
 		config.apply(configData)
 
 		val time = configData.timeout
@@ -801,9 +906,18 @@ class CompletableFutureExtensions {
 			cancelOriginalOnTimeout)
 	}
 
-	// TODO documentation
-	static def <R> CompletableFuture<R> copy(CompletableFuture<R> it) {
-		thenApply[it]
+	/**
+	 * Returns a {@code CompletableFuture} that completes normally if the given {@code CompletableFuture} {@code fut}
+	 * completes normally. If {@code fut} is completed exceptionally, the returned CompletableFuture will be completed
+	 * exceptionally with an CompletionException with the original exception set as cause. This is a shortcut for
+	 * {@code fut.thenApply[it]}. This can be handy if a {@code CompletableFuture} is needed that should provide a 
+	 * result, but must not be completed by the user.
+	 * @param fut the {@code CompletableFuture} to be copied
+	 * @return A copy of {@code fut}, meaning that the result of {@code fut} will be forwarded to 
+	 *   the returned {@code CompletableFuture}.
+	 */
+	static def <R> CompletableFuture<R> copy(CompletableFuture<R> fut) {
+		fut.thenApply[it]
 	}
 
 // TODO static def <T> CompletableFuture<T> completeOnTimeout​(CompletableFuture<T> it, T value, long timeout, TimeUnit unit)

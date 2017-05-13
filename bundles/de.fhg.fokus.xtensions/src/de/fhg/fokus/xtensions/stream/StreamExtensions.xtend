@@ -173,5 +173,5 @@ final class StreamExtensions {
 // Stream<T>#zip(Stream<V>) : Stream<Pair<T,V>>: call zip(stream.spliterator())
 // Stream<T>#zip(Spliterator<V>) :  Stream<Pair<T,V>> create new based spliterator on both and stream from spliterator, maybe thorw if one source not ordered
 // zip variants with BiFunction<T,V,R> returning Stream<V>
-// Stream<Pair<X,Y>>#squash((X,Y)=>Z), auch f�r andere?
+// Stream<Pair<X,Y>>#squash((X,Y)=>Z), auch für andere?
 }

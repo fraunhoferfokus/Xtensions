@@ -12,7 +12,7 @@ import java.util.Objects
  * provide all matches of given regular expressions on an input CharSequence (e.g. String).
  * This class is not intended to be instantiated.
  */
-class StringMatchExtensions {
+final class StringMatchExtensions {
 	
 	private new() {
 		throw new IllegalStateException('''«StringMatchExtensions» is not intended to be instantiated''')
@@ -39,6 +39,9 @@ class StringMatchExtensions {
 		}
 
 		override next() {
+			if(!hasNext) {
+				throw new NoSuchElementException
+			}
 			val res = input.subSequence(matcher.start, matcher.end)
 			hasNext = matcher.find
 			res.toString

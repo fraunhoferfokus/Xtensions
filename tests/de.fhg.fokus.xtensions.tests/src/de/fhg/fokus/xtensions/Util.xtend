@@ -15,7 +15,8 @@ class Util {
 			if(exClass.isInstance(e)) {
 				return exClass.cast(e)
 			}
-			fail("Exception not instance of " + exClass.name)
+			val msg = "Exception not instance of " + exClass.name + "; Actual class: " + e.class.name
+			throw new AssertionError(msg, e)
 		}
 		throw new AssertionError("Expected exception of type " + exClass.name)
 	}

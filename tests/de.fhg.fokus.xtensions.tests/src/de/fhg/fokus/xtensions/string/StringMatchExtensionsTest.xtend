@@ -7,6 +7,9 @@ import java.util.Iterator
 import org.hamcrest.CustomTypeSafeMatcher
 import java.util.Objects
 import org.hamcrest.Description
+import de.fhg.fokus.xtensions.Util
+import java.util.NoSuchElementException
+import java.util.regex.Pattern
 
 class StringMatchExtensionsTest {
 
@@ -39,6 +42,87 @@ class StringMatchExtensionsTest {
 		val String[] expected = #["abab"]
 		assertThat(iter, provides(expected))
 	}
+	
+	@Test def void testMatchResultItEmpty() {
+		val iter = "".matchResultIt("\\s")
+		assertFalse(iter.hasNext)
+		Util.expectException(NoSuchElementException) [
+			iter.next
+		]
+	}
+	
+	@Test def void testMatchResultItNoMatch() {
+		val iter = "azcnw".matchResultIt("bc")
+		assertFalse(iter.hasNext)
+		Util.expectException(NoSuchElementException) [
+			iter.next
+		]
+	}
+	
+	@Test def void testMatchResultItMatches() {
+		val iter = "azfobarcesfoobeerOOfooobaaarnw".matchResultIt("(fo*o)(ba*ar)?")
+		assertTrue(iter.hasNext)
+		val firstMatch = iter.next
+		assertEquals(2, firstMatch.groupCount)
+		assertEquals("fo", firstMatch.group(1))
+		assertEquals("bar", firstMatch.group(2))
+		assertTrue(iter.hasNext)
+		val secondMatch = iter.next
+		assertEquals(2, secondMatch.groupCount)
+		assertEquals("foo", secondMatch.group(1))
+		assertNull(secondMatch.group(2))
+		assertTrue(iter.hasNext)
+		val thirdMatch = iter.next
+		assertEquals(2, thirdMatch.groupCount)
+		assertEquals("fooo", thirdMatch.group(1))
+		assertEquals("baaar", thirdMatch.group(2))
+		assertFalse(iter.hasNext)
+		Util.expectException(NoSuchElementException) [
+			iter.next
+		]
+	}
+	
+	@Test def void testMatchResultItPatternEmpty() {
+		val pattern = Pattern.compile("\\s")
+		val iter = "".matchResultIt(pattern)
+		assertFalse(iter.hasNext)
+		Util.expectException(NoSuchElementException) [
+			iter.next
+		]
+	}
+	
+	@Test def void testMatchResultItPatternNoMatch() {
+		val pattern = Pattern.compile("bc")
+		val iter = "azcnw".matchResultIt(pattern)
+		assertFalse(iter.hasNext)
+		Util.expectException(NoSuchElementException) [
+			iter.next
+		]
+	}
+	
+	@Test def void testMatchResultItPatternMatches() {
+		val pattern = Pattern.compile("(fo*o)(ba*ar)?")
+		val iter = "azfobarcesfoobeerOOfooobaaarnw".matchResultIt(pattern)
+		assertTrue(iter.hasNext)
+		val firstMatch = iter.next
+		assertEquals(2, firstMatch.groupCount)
+		assertEquals("fo", firstMatch.group(1))
+		assertEquals("bar", firstMatch.group(2))
+		assertTrue(iter.hasNext)
+		val secondMatch = iter.next
+		assertEquals(2, secondMatch.groupCount)
+		assertEquals("foo", secondMatch.group(1))
+		assertNull(secondMatch.group(2))
+		assertTrue(iter.hasNext)
+		val thirdMatch = iter.next
+		assertEquals(2, thirdMatch.groupCount)
+		assertEquals("fooo", thirdMatch.group(1))
+		assertEquals("baaar", thirdMatch.group(2))
+		assertFalse(iter.hasNext)
+		Util.expectException(NoSuchElementException) [
+			iter.next
+		]
+	}
 
 	private static def <T> provides(T[] content, String description) {
 		new IteratorContentMatcher(description, content)
@@ -66,6 +150,9 @@ class StringMatchExtensionsTest {
 					return false
 				}
 			}
+			Util.expectException(NoSuchElementException) [
+				iter.next
+			]
 			iter.hasNext == false;
 		}
 

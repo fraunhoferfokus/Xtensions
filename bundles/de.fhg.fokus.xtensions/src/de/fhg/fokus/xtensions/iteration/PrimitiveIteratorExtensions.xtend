@@ -28,7 +28,7 @@ final class PrimitiveIteratorExtensions {
 	 * Best effort transformation from iterator to stream. Does not make any assumptions,
 	 * other than that the elements returned by the iterator are not null.
 	 */
-	static def IntStream stream(PrimitiveIterator.OfInt wrapped) { 
+	static def IntStream streamRemaining(PrimitiveIterator.OfInt wrapped) { 
 		val spliterator = wrapped.toSpliterator
 		StreamSupport.intStream(spliterator, false)
 	}
@@ -38,7 +38,7 @@ final class PrimitiveIteratorExtensions {
 	 * Best effort transformation from iterator to stream. Does not make any assumptions,
 	 * other than that the elements returned by the iterator are not null.
 	 */
-	static def IntStream parallelStream(PrimitiveIterator.OfInt wrapped) {  
+	static def IntStream parallelStreamRemaining(PrimitiveIterator.OfInt wrapped) {  
 		val spliterator = wrapped.toSpliterator
 		StreamSupport.intStream(spliterator, true)
 	}
@@ -58,7 +58,7 @@ final class PrimitiveIteratorExtensions {
 	 * Best effort transformation from iterator to stream. Does not make any assumptions,
 	 * other than that the elements returned by the iterator are not null.
 	 */
-	static def LongStream stream(PrimitiveIterator.OfLong wrapped) { 
+	static def LongStream streamRemaining(PrimitiveIterator.OfLong wrapped) { 
 		val spliterator = wrapped.toSpliterator
 		StreamSupport.longStream(spliterator, false)
 	}
@@ -68,7 +68,7 @@ final class PrimitiveIteratorExtensions {
 	 * Best effort transformation from iterator to stream. Does not make any assumptions,
 	 * other than that the elements returned by the iterator are not null.
 	 */
-	static def LongStream parallelStream(PrimitiveIterator.OfLong wrapped) {  
+	static def LongStream parallelStreamRemaining(PrimitiveIterator.OfLong wrapped) {  
 		val spliterator = wrapped.toSpliterator
 		StreamSupport.longStream(spliterator, true)
 	}
@@ -88,7 +88,7 @@ final class PrimitiveIteratorExtensions {
 	 * Best effort transformation from iterator to stream. Does not make any assumptions,
 	 * other than that the elements returned by the iterator are not null.
 	 */
-	static def DoubleStream stream(PrimitiveIterator.OfDouble wrapped) { 
+	static def DoubleStream streamRemaining(PrimitiveIterator.OfDouble wrapped) { 
 		val spliterator = wrapped.toSpliterator
 		StreamSupport.doubleStream(spliterator, false)
 	}
@@ -98,7 +98,7 @@ final class PrimitiveIteratorExtensions {
 	 * Best effort transformation from iterator to stream. Does not make any assumptions,
 	 * other than that the elements returned by the iterator are not null.
 	 */
-	static def DoubleStream parallelStream(PrimitiveIterator.OfDouble wrapped) {  
+	static def DoubleStream parallelStreamRemaining(PrimitiveIterator.OfDouble wrapped) {  
 		val spliterator = wrapped.toSpliterator
 		StreamSupport.doubleStream(spliterator, true)
 	}

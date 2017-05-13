@@ -1,4 +1,4 @@
-package de.fhg.fokus.xtensions.optional;
+package de.fhg.fokus.xtensions.incubation.optional;
 
 import java.util.OptionalDouble;
 import java.util.OptionalInt;

@@ -65,7 +65,7 @@ public interface IntIterable extends Iterable<Integer> {
 	/**
 	 * Returns an {@link IntStream} based on the elements in the iterable. <br>
 	 * The default implementation returns a stream uses
-	 * {@link PrimitiveIteratorExtensions#stream(OfInt)} with the iterator from
+	 * {@link PrimitiveIteratorExtensions#streamRemaining(OfInt)} with the iterator from
 	 * {@link #iterator()} to construct the resulting stream. It is highly
 	 * recommended for the implementations of this interface to provide an own
 	 * implementation of this method.
@@ -74,7 +74,7 @@ public interface IntIterable extends Iterable<Integer> {
 	 */
 	default IntStream stream() {
 		final OfInt iterator = iterator();
-		return PrimitiveIteratorExtensions.stream(iterator);
+		return PrimitiveIteratorExtensions.streamRemaining(iterator);
 	}
 
 	/**

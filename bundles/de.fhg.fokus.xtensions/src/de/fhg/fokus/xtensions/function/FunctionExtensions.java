@@ -1,5 +1,6 @@
 package de.fhg.fokus.xtensions.function;
 
+import java.util.Objects;
 import java.util.function.Function;
 
 import org.eclipse.jdt.annotation.NonNull;
@@ -9,6 +10,7 @@ import org.eclipse.xtext.xbase.lib.Functions.Function2;
 import org.eclipse.xtext.xbase.lib.Inline;
 import org.eclipse.xtext.xbase.lib.Pair;
 import org.eclipse.xtext.xbase.lib.Pure;
+import static java.util.Objects.*;
 
 /**
  * This class provides static extension methods for Xtend and Java 8 functional
@@ -93,7 +95,7 @@ public final class FunctionExtensions {
 	}
 
 	/**
-	 * Returns a composed function that first calls {@code self} function to
+	 * Returns a composed function that first calls {@code before} function to
 	 * and then applies the {@code after} function to the result. If
 	 * evaluation of either function throws an exception, it is relayed to the
 	 * caller of the composed function.
@@ -102,30 +104,32 @@ public final class FunctionExtensions {
 	 *            the type of output of the {@code after} function, and of the
 	 *            composed function.
 	 * @param <R>
-	 *            the return type of function {@code self} and input to function
+	 *            the return type of function {@code before} and input to function
 	 *            {@code after}.
-	 * @param self
+	 * @param before
 	 *            the function to apply before {@code after} function is applied
 	 *            in the returned composed function. The input to the composed
 	 *            function will be passed to this function and the output will
 	 *            be forwarded to function {@code after}.
 	 * @param after
-	 *            the function to be called after function {@code self} taking
+	 *            the function to be called after function {@code before} taking
 	 *            that functions output as an input in the returned composed
 	 *            function. The output of this function will be the return value
 	 *            of the composed function.
 	 * @return a composed function that first applies this function and then
 	 *         applies the {@code after} function
 	 * @throws NullPointerException
-	 *             if {@code self} or {@code after} is {@code null}
+	 *             if {@code before} or {@code after} is {@code null}
 	 *
 	 * @see #compose(Function1,Function1)
 	 */
 	@Pure
 //	@Inline(value ="() -> $2.apply($1.apply())")
-	public static <V, R> @NonNull Function0<V> andThen(@NonNull Function0<? extends R> self,
+	public static <V, R> @NonNull Function0<V> andThen(@NonNull Function0<? extends R> before,
 			@NonNull Function1<? super R, ? extends V> after) {
-		return () -> after.apply(self.apply());
+		requireNonNull(before, "before");
+		requireNonNull(before, "after");
+		return () -> after.apply(before.apply());
 	}
 	
 	////////////////////////////////////////////////////
@@ -140,7 +144,7 @@ public final class FunctionExtensions {
 		return (t) -> test.apply(t) || test2.apply(t);
 	}
 	
-	public static <T> Function1<T, Boolean> negate (Function1<T, Boolean> test, Function1<? super T, Boolean> test2) {
+	public static <T> Function1<T, Boolean> negate (Function1<T, Boolean> test) {
 		return (t) -> !test.apply(t);
 	}
 

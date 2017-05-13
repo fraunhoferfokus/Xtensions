@@ -151,19 +151,19 @@ class DefaultCircuitBreakerTest {
 		// we expect an exception, so we map it to be the result of the future
 		val actualException = action.withBreaker.handle[t, ex|ex].get(100, TimeUnit.MILLISECONDS)
 		
-		val actionMsg = '''Expected �expectedRetries + 1� calls to action, but actually performed �actionCount.get� calls.'''
+		val actionMsg = '''Expected «expectedRetries + 1» calls to action, but actually performed «actionCount.get» calls.'''
 		Assert.assertEquals(actionMsg, actionCount.get, expectedRetries + 1)
 		
-		val resultMsg = '''Expected the exception thrown by action, but actually found �actualException�.'''
+		val resultMsg = '''Expected the exception thrown by action, but actually found «actualException».'''
 		Assert.assertSame(resultMsg, expectedException, actualException)
 		
 		val expectedFailCount = expectedRetries + 1
 		val actualFailCount = state.failCount.get
-		val failCountMsg = '''Expected �expectedFailCount� failures to be recorded, but actually was �actualFailCount�.'''
+		val failCountMsg = '''Expected «expectedFailCount» failures to be recorded, but actually was «actualFailCount».'''
 		Assert.assertEquals(failCountMsg, expectedFailCount, actualFailCount)
 		
 		val actualSuccessCount = state.successCount.get
-		val successMsg = '''Expected no successfull call, but found �actualSuccessCount�.'''
+		val successMsg = '''Expected no successfull call, but found «actualSuccessCount».'''
 		Assert.assertEquals(successMsg, 0, actualSuccessCount)
 	}
 
@@ -196,16 +196,16 @@ class DefaultCircuitBreakerTest {
 		
 		// two failures, second retry leads to result
 		val actualRetries = retryStrategy.retryCount.get;
-		val msg = '''Expected �expectedRetries� retries, but actually �actualRetries� retries were performed'''
+		val msg = '''Expected «expectedRetries» retries, but actually «actualRetries» retries were performed'''
 		Assert.assertSame(msg, expectedRetries, actualRetries)
 		
 		val expectedFailCount = expectedRetries
 		val actualFailCount = state.failCount.get
-		val failCountMsg = '''Expected �expectedFailCount� failures to be recorded, but actually was �actualFailCount�.'''
+		val failCountMsg = '''Expected «expectedFailCount» failures to be recorded, but actually was «actualFailCount».'''
 		Assert.assertEquals(failCountMsg, expectedFailCount, actualFailCount)
 		
 		val actualSuccessCount = state.successCount.get
-		val successMsg = '''Expected one successfull call, but found �actualSuccessCount�.'''
+		val successMsg = '''Expected one successfull call, but found «actualSuccessCount».'''
 		Assert.assertEquals(successMsg, 1, actualSuccessCount)
 	}
 
@@ -231,16 +231,16 @@ class DefaultCircuitBreakerTest {
 		
 		// two failures, second retry leads to result
 		val actualRetries = retryStrategy.retryCount.get;
-		val msg = '''Expected �expectedRetries� retries, but actually �actualRetries� retries were performed'''
+		val msg = '''Expected «expectedRetries» retries, but actually «actualRetries» retries were performed'''
 		Assert.assertSame(msg, expectedRetries, actualRetries)
 		
 		val expectedFailCount = expectedRetries + 1
 		val actualFailCount = state.failCount.get
-		val failCountMsg = '''Expected �expectedFailCount� failures to be recorded, but actually was �actualFailCount�.'''
+		val failCountMsg = '''Expected «expectedFailCount» failures to be recorded, but actually was «actualFailCount».'''
 		Assert.assertEquals(failCountMsg, expectedFailCount, actualFailCount)
 		
 		val actualSuccessCount = state.successCount.get
-		val successMsg = '''Expected no successfull call, but found �actualSuccessCount�.'''
+		val successMsg = '''Expected no successfull call, but found «actualSuccessCount».'''
 		Assert.assertEquals(successMsg, 0, actualSuccessCount)
 	}
 
@@ -266,16 +266,16 @@ class DefaultCircuitBreakerTest {
 		
 		// two failures, second retry leads to result
 		val actualRetries = retryStrategy.retryCount.get;
-		val msg = '''Expected �expectedRetries� retries, but actually �actualRetries� retries were performed'''
+		val msg = '''Expected «expectedRetries» retries, but actually «actualRetries» retries were performed'''
 		Assert.assertSame(msg, expectedRetries, actualRetries)
 		
 		val expectedFailCount = expectedRetries + 1
 		val actualFailCount = state.failCount.get
-		val failCountMsg = '''Expected �expectedFailCount� failures to be recorded, but actually was �actualFailCount�.'''
+		val failCountMsg = '''Expected «expectedFailCount» failures to be recorded, but actually was «actualFailCount».'''
 		Assert.assertEquals(failCountMsg, expectedFailCount, actualFailCount)
 		
 		val actualSuccessCount = state.successCount.get
-		val successMsg = '''Expected no successfull call, but found �actualSuccessCount�.'''
+		val successMsg = '''Expected no successfull call, but found «actualSuccessCount».'''
 		Assert.assertEquals(successMsg, 0, actualSuccessCount)
 	}
 	
@@ -338,19 +338,19 @@ class DefaultCircuitBreakerTest {
 		// we expect an exception, so we map it to be the result of the future
 		val actualException = action.withBreaker.handle[t, ex|ex].get(100, TimeUnit.MILLISECONDS)
 		
-		val actionMsg = '''Expected �expectedRetries + 1� calls to action, but actually performed �actionCount.get� calls.'''
+		val actionMsg = '''Expected «expectedRetries + 1» calls to action, but actually performed «actionCount.get» calls.'''
 		Assert.assertEquals(actionMsg, actionCount.get, expectedRetries + 1)
 		
-		val resultMsg = '''Expected the exception to be instance of CircuitOpenException, but actually found �actualException.class�.'''
+		val resultMsg = '''Expected the exception to be instance of CircuitOpenException, but actually found «actualException.class».'''
 		Assert.assertTrue(resultMsg, actualException instanceof CircuitOpenException)
 		
 		val expectedFailCount = expectedRetries + 1
 		val actualFailCount = state.failCount.get
-		val failCountMsg = '''Expected �expectedFailCount� failures to be recorded, but actually was �actualFailCount�.'''
+		val failCountMsg = '''Expected «expectedFailCount» failures to be recorded, but actually was «actualFailCount».'''
 		Assert.assertEquals(failCountMsg, expectedFailCount, actualFailCount)
 		
 		val actualSuccessCount = state.successCount.get
-		val successMsg = '''Expected no successfull call, but found �actualSuccessCount�.'''
+		val successMsg = '''Expected no successfull call, but found «actualSuccessCount».'''
 		Assert.assertEquals(successMsg, 0, actualSuccessCount)
 	}
 
@@ -400,16 +400,16 @@ class DefaultCircuitBreakerTest {
 		
 		// two failures, second retry leads to result
 		val actualRetries = retryStrategy.count.get;
-		val msg = '''Expected �expectedRetries� retries, but actually �actualRetries� retries were performed'''
+		val msg = '''Expected «expectedRetries» retries, but actually «actualRetries» retries were performed'''
 		Assert.assertSame(msg, expectedRetries, actualRetries)
 
 		val expectedFailCount = expectedRetries + 1
 		val actualFailCount = state.failCount.get
-		val failCountMsg = '''Expected �expectedFailCount� failures to be recorded, but actually was �actualFailCount�.'''
+		val failCountMsg = '''Expected «expectedFailCount» failures to be recorded, but actually was «actualFailCount».'''
 		Assert.assertEquals(failCountMsg, expectedFailCount, actualFailCount)
 		
 		val actualSuccessCount = state.successCount.get
-		val successMsg = '''Expected no successfull call, but found �actualSuccessCount�.'''
+		val successMsg = '''Expected no successfull call, but found «actualSuccessCount».'''
 		Assert.assertEquals(successMsg, 0, actualSuccessCount)
 	}
 	
@@ -434,7 +434,7 @@ class DefaultCircuitBreakerTest {
 		]
 		val actualResult = action.withBreaker.get(100, TimeUnit.MILLISECONDS)
 		
-		val actionMsg = '''Expected �expectedRetries + 1� calls to action, but actually performed �actionCount.get� calls.'''
+		val actionMsg = '''Expected «expectedRetries + 1» calls to action, but actually performed «actionCount.get» calls.'''
 		Assert.assertEquals(actionMsg, actionCount.get, expectedRetries + 1)
 		
 		val errMsg = '''Difference between expected and actual action result'''
@@ -442,16 +442,16 @@ class DefaultCircuitBreakerTest {
 		
 		// two failures, second retry leads to result
 		val actualRetries = retryStrategy.count.get;
-		val msg = '''Expected �expectedRetries� retries, but actually �actualRetries� retries were performed'''
+		val msg = '''Expected «expectedRetries» retries, but actually «actualRetries» retries were performed'''
 		Assert.assertSame(msg, expectedRetries, actualRetries)
 
 		val expectedFailCount = expectedRetries
 		val actualFailCount = state.failCount.get
-		val failCountMsg = '''Expected �expectedFailCount� failures to be recorded, but actually was �actualFailCount�.'''
+		val failCountMsg = '''Expected «expectedFailCount» failures to be recorded, but actually was «actualFailCount».'''
 		Assert.assertEquals(failCountMsg, expectedFailCount, actualFailCount)
 		
 		val actualSuccessCount = state.successCount.get
-		val successMsg = '''Expected one successfull call, but found �actualSuccessCount�.'''
+		val successMsg = '''Expected one successfull call, but found «actualSuccessCount».'''
 		Assert.assertEquals(successMsg, 1, actualSuccessCount)
 	}
 	
@@ -476,15 +476,15 @@ class DefaultCircuitBreakerTest {
 		
 		// two failures, second retry leads to result
 		val actualRetries = retryStrategy.retryCount.get;
-		val msg = '''Expected no retries, but actually �actualRetries� retries were performed'''
+		val msg = '''Expected no retries, but actually «actualRetries» retries were performed'''
 		Assert.assertSame(msg, expectedRetries, actualRetries)
 		
 		val actualFailCount = state.failCount.get
-		val failCountMsg = '''Expected no failures to be recorded, but actually was �actualFailCount�.'''
+		val failCountMsg = '''Expected no failures to be recorded, but actually was «actualFailCount».'''
 		Assert.assertEquals(failCountMsg, 0, actualFailCount)
 		
 		val actualSuccessCount = state.successCount.get
-		val successMsg = '''Expected one successfull call, but found �actualSuccessCount�.'''
+		val successMsg = '''Expected one successfull call, but found «actualSuccessCount».'''
 		Assert.assertEquals(successMsg, 1, actualSuccessCount)
 	}
 

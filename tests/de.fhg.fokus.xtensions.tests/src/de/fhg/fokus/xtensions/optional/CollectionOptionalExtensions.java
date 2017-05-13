@@ -86,40 +86,42 @@ public class CollectionOptionalExtensions {
 		}
 	}
 
-	// TODO primitive versions
-	public static <T, R> R foldPresent(@NonNull Iterable<Optional<T>> self, R seed,
-			@NonNull Function2<? super R, ? super T, ? extends R> function) {
-		return fold(self, seed, (r, o) -> o.isPresent() ? function.apply(r, o.get()) : r);
-	}
-
-	// TODO primitive versions
-	public static <T> Optional<T> reducePresent(@NonNull Iterable<? extends Optional<? extends T>> iterable,
-			@NonNull Function2<? super T, ? super T, ? extends T> function) {
-		final Iterator<? extends Optional<? extends T>> iterator = iterable.iterator();
-		// we can only fold if we have at least one value
-		if (!iterator.hasNext()) {
-			return none();
-		}
-		Optional<? extends T> next = iterator.next();
-		// find first non-empty optional
-		while (!next.isPresent() && iterator.hasNext()) {
-			next = iterator.next();
-		}
-		// if we did not find a non-empty element, we have no result
-		if (!next.isPresent()) {
-			return none();
-		}
-		T result = next.get();
-		// now start actual folding
-		while (iterator.hasNext()) {
-			next = iterator.next();
-			// only fold existing values
-			if (next.isPresent()) {
-				result = function.apply(result, next.get());
-			}
-		}
-		return maybe(result);
-	}
+// TODO: really needed???
+//
+//	// TODO primitive versions
+//	public static <T, R> R foldPresent(@NonNull Iterable<Optional<T>> self, R seed,
+//			@NonNull Function2<? super R, ? super T, ? extends R> function) {
+//		return fold(self, seed, (r, o) -> o.isPresent() ? function.apply(r, o.get()) : r);
+//	}
+//
+//	// TODO primitive versions
+//	public static <T> Optional<T> reducePresent(@NonNull Iterable<? extends Optional<? extends T>> iterable,
+//			@NonNull Function2<? super T, ? super T, ? extends T> function) {
+//		final Iterator<? extends Optional<? extends T>> iterator = iterable.iterator();
+//		// we can only fold if we have at least one value
+//		if (!iterator.hasNext()) {
+//			return none();
+//		}
+//		Optional<? extends T> next = iterator.next();
+//		// find first non-empty optional
+//		while (!next.isPresent() && iterator.hasNext()) {
+//			next = iterator.next();
+//		}
+//		// if we did not find a non-empty element, we have no result
+//		if (!next.isPresent()) {
+//			return none();
+//		}
+//		T result = next.get();
+//		// now start actual folding
+//		while (iterator.hasNext()) {
+//			next = iterator.next();
+//			// only fold existing values
+//			if (next.isPresent()) {
+//				result = function.apply(result, next.get());
+//			}
+//		}
+//		return maybe(result);
+//	}
 
 	/*
 	 * public static <V> void ifPeek public static <V> peekOpt() public static

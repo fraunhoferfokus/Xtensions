@@ -20,6 +20,14 @@ final class Try<R> {
 		throw new UnsupportedOperationException("Not implemented yet")
 	}
 	
+	def static <R> Try<R> doTryWith(AutoCloseable resource, ()=>R provider) {
+		try {
+			doTry(provider) 
+		} finally {
+			resource.close
+		}
+	}
+	
 	def static <R> Try<R> flatTry(()=>Try<R> provider) {
 		throw new UnsupportedOperationException("Not implemented yet")
 	}

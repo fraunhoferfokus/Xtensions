@@ -47,36 +47,34 @@ class DurationToTimeConversion {
 
 		// does everything fit into nanoseconds?
 		// this would cause no loss in precision
-		val secondsInNanos = seconds * 1_000_000_000
-		// only go further if we have no overflow
-		if (secondsInNanos > seconds) {
-			val overallNanos = secondsInNanos + nanos
-			// if we have no overflow, we can return result in nanos
-			if (overallNanos > secondsInNanos && overallNanos > nanos) {
-				return overallNanos -> TimeUnit.NANOSECONDS
-			}
+		try {
+			val secondsInNanos = Math.multiplyExact(seconds, 1_000_000_000)
+			val overallNanos = Math.addExact(secondsInNanos,nanos)
+			return overallNanos -> TimeUnit.NANOSECONDS
+		} catch(ArithmeticException e) {
+			// overflow occurred, we need to find different strategy
 		}
 
 		// Duration does not fit into nanoseconds,
 		// do seconds fit into long of millis?
-		val secondsInMillis = (seconds * 1_000)
-		// check for overflow when convert to millis
-		// if so, we simply stick with seconds and drop nanos
-		if (secondsInMillis < seconds) {
+		var secondsInMillis = 0L
+		try {
+			secondsInMillis = Math.multiplyExact(seconds,1_000)
+		} catch(ArithmeticException e) {
+			// overflow occurred, we simply stick to seconds
 			return seconds -> TimeUnit.SECONDS
 		}
 		// otherwise we go for milliseconds, even if there is a loss
 		// does duration fit in milliseconds?
 		val nanosInMillis = nanos / 1_000_000
-		val milliSum = (secondsInMillis + nanosInMillis)
-		// check for overflow.
-		return if (milliSum < secondsInMillis) {
+		return try {
+			val milliSum = Math.addExact(secondsInMillis,nanosInMillis)
+			milliSum -> TimeUnit.MILLISECONDS
+		} catch(ArithmeticException e) {
 			// On overflow we keep milliseconds. 
 			// We lose less than a second by choosing Long.MAX_VALUE millis.
 			// Switching to seconds could lose more precision than staying with millis.
 			Long.MAX_VALUE -> TimeUnit.MILLISECONDS
-		} else {
-			milliSum -> TimeUnit.MILLISECONDS
 		}
 	}
 

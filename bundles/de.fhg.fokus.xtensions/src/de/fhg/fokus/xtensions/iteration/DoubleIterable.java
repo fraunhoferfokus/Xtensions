@@ -50,7 +50,7 @@ public interface DoubleIterable extends Iterable<Double> {
 	/**
 	 * Returns an {@link DoubleStream} based on the elements in the iterable. <br>
 	 * The default implementation returns a stream uses
-	 * {@link PrimitiveIteratorExtensions#stream(OfDouble)} with the iterator from
+	 * {@link PrimitiveIteratorExtensions#streamRemaining(OfDouble)} with the iterator from
 	 * {@link #iterator()} to construct the resulting stream. It is highly
 	 * recommended for the implementations of this interface to provide an own
 	 * implementation of this method.
@@ -59,7 +59,7 @@ public interface DoubleIterable extends Iterable<Double> {
 	 */
 	default DoubleStream stream() {
 		final OfDouble iterator = iterator();
-		return PrimitiveIteratorExtensions.stream(iterator);
+		return PrimitiveIteratorExtensions.streamRemaining(iterator);
 	}
 
 	// TODO public static IntIterable generate(final DoubleSupplier s)

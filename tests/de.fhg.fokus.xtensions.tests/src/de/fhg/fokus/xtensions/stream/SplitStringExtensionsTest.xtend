@@ -125,7 +125,7 @@ class SplitStringExtensionsTest {
 		val split = toSplit.split(pattern)
 		val iter = toSplit.splitIt(pattern)
 		for (int i : ( 0 ..< split.length)) {
-			val String msg = '''iterator stopped at iteration �i�, but should have �split.length� iterations''';
+			val String msg = '''iterator stopped at iteration «i», but should have «split.length» iterations''';
 			assertTrue(msg, iter.hasNext)
 			val expected = split.get(i)
 			val actual = iter.next
@@ -142,7 +142,7 @@ class SplitStringExtensionsTest {
 		val split = toSplit.split(pattern, limit)
 		val iter = toSplit.splitIt(pattern, limit)
 		for (int i : ( 0 ..< split.length)) {
-			val String msg = '''iterator stopped at iteration �i�, but should have �split.length� iterations''';
+			val String msg = '''iterator stopped at iteration «i», but should have «split.length» iterations''';
 			assertTrue(msg, iter.hasNext)
 			val expected = split.get(i)
 			val actual = iter.next
@@ -159,7 +159,7 @@ class SplitStringExtensionsTest {
 		val split = toSplit.split(pattern, -2)
 		val iter = toSplit.splitIt(pattern, -2)
 		for (int i : ( 0 ..< split.length)) {
-			val String msg = '''iterator stopped at iteration �i�, but should have �split.length� iterations''';
+			val String msg = '''iterator stopped at iteration «i», but should have «split.length» iterations''';
 			assertTrue(msg, iter.hasNext)
 			val expected = split.get(i)
 			val actual = iter.next
