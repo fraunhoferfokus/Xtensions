@@ -18,6 +18,7 @@ import java.util.function.IntUnaryOperator;
 import java.util.stream.IntStream;
 
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.xtext.xbase.lib.Inline;
 import org.eclipse.xtext.xbase.lib.Procedures.Procedure0;
 import org.eclipse.xtext.xbase.lib.Procedures.Procedure1;
@@ -28,7 +29,20 @@ import de.fhg.fokus.xtensions.iteration.internal.PrimitiveIterableUtil;
 
 import org.eclipse.xtext.xbase.lib.Pure;
 
-
+/**
+ * This class contains static functions that ease the work with Java 8
+ * {@link OptionalInt}. <br>
+ * To make easy use of this functions import this extensions like this in your
+ * Xtend source:
+ * <pre>
+ * {@code import static extension de.fhg.fokus.xtenders.optional.OptionalIntExtensions.*}
+ * </pre>
+ * 
+ * @see OptionalExtensions
+ * @see OptionalLongExtensions
+ * @see OptionalDoubleExtensions
+ * @author Max Bureck
+ */
 public class OptionalIntExtensions {
 	
 	private OptionalIntExtensions() {
@@ -70,80 +84,215 @@ public class OptionalIntExtensions {
 		return either::accept;
 	}
 
+	/**
+	 * Calls the procedure {@code then} if the optional {@code self} holds no
+	 * value. This method is equivalent to the following code:
+	 * 
+	 * <pre>
+	 * <code> if (!self.isPresent()) {
+	 * 	then.apply();
+	 * }</code>
+	 * </pre>
+	 * 
+	 * @param self
+	 *            if optional is empty, {@code then} will be called.
+	 * @param then
+	 *            procedure to be called if {@code self} does not hold a value.
+	 */
 	public static <T> void ifNotPresent(@NonNull OptionalInt self, @NonNull Procedure0 then) {
 		if (!self.isPresent()) {
 			then.apply();
 		}
 	}
 
-	public static <T> @NonNull Procedure1<@NonNull OptionalInt> intNotPresent(@NonNull Procedure0 then) {
-		return o -> ifNotPresent(o, then);
-	}
-
+	/**
+	 * This method is an alias for {@link OptionalInt#of(int)}.
+	 * @param i integer to wrap in an {@code OptionalInt}
+	 * @return {@code OptionalInt}, having present value {@code i}.
+	 */
 	@Pure
 	@Inline(value = "OptionalInt.of($1)", imported = OptionalInt.class)
-	public static <T> @NonNull OptionalInt some(int i) {
+	public static @NonNull OptionalInt some(int i) {
 		return OptionalInt.of(i);
 	}
 
+	/**
+	 * Alias for {@link OptionalInt#empty()}.
+	 * @return an {@code OptionalInt} with no value present.
+	 */
 	@Pure
 	@Inline(value = "OptionalInt.empty()", imported = OptionalInt.class)
-	public static <T> @NonNull OptionalInt noInt() {
+	public static @NonNull OptionalInt noInt() {
 		return OptionalInt.empty();
 	}
+	
+	/**
+	 * This method is a shortcut for the following expression:
+	 * <pre>
+	 * {@code i == null ? OptionalInt.empty() : OptionalInt.of(i)}
+	 * </pre>
+	 * @param i an Integer that is checked for {@code null}. If {@code i == null}, then
+	 *  returns an empty {@code OptionalInt}. If {@code i != null} returns an {@code OptionalInt}
+	 *  holding the integer value.
+	 * @return an {@code OptionalInt} holding {@code i}, if {@code i != null}, an empty {@code OptionalInt} otherwise.
+	 */
+	@Pure 
+	@Inline(value = "$1 == null ? OptionalInt.empty() : OptionalInt.of($1)", imported = OptionalInt.class)
+	public static @NonNull OptionalInt maybe(@Nullable Integer i) {
+		return i == null ? OptionalInt.empty() : OptionalInt.of(i);
+	}
 
+	/**
+	 * This operator is an alias for:
+	 * <pre>
+	 * <code>o.{@link OptionalInt#orElse(int) orElse}(alternative)</code>
+	 * </pre>
+	 * @param o {@code OptionalInt} checked for a present value 
+	 * @param alternative value to be returned by this extension function, oif {@code o} is empty.
+	 * @return either the value present in {@code o}, or {@code alternative} if there is no 
+	 *  value present in {@code o}.
+	 */
 	@Pure
 	@Inline(value = "$1.orElse($2)", imported = OptionalInt.class)
 	public static <T> int operator_elvis(@NonNull OptionalInt o, int alternative) {
 		return o.orElse(alternative);
 	}
 
+	/**
+	 * Alias for {@link OptionalInt#orElseGet(IntSupplier)}.
+	 * 
+	 * @param o
+	 *            optional to be queried for value
+	 * @param alternative
+	 *            will be returned if parameter {@code o} is empty.
+	 * @return if {@code o} has a value present, will return this value.
+	 *         Otherwise returns {@code alternative}.
+	 */
 	@Pure
 	@Inline(value = "$1.orElseGet($2)", imported = OptionalInt.class)
 	public static <T> int operator_elvis(@NonNull OptionalInt o, IntSupplier getter) {
 		return o.orElseGet(getter);
 	}
 
+	/**
+	 * Returns an {@code Optional<Integer>} holding the value of {@code self}, or returns 
+	 * an empty optional, if the given {@code OptionalInt} is empty.
+	 * @param self value will be extracted from this {@code OptionalInt}, if value is present
+	 *   and wrapped into an {@code Integer} which will be returned in an {@code Optional} from
+	 *   this method.
+	 * @return {@code Optional<Integer>} holding the value of {@code self} if present, empty 
+	 *  {@code Optional} otherwise
+	 */
 	@Pure
 	public static @NonNull Optional<Integer> boxed(@NonNull OptionalInt self) {
 		return map(self, Integer::valueOf);
 	}
 
+	/**
+	 * If the given {@code OptionalInt self} holds a value and the value tests positive with the given
+	 * {@code IntPredicate predicate}, returns {@code self}, otherwise returns an empty {@code OptionalInt}.
+	 * @param self the optional value that will be filtered using {@code predicate} 
+	 * @param predicate the test that will be used to filter {@code self}.
+	 * @return filtered {@code OptionalInt}, empty optional if {@code self} is empty or it's content
+	 *  tests negative with {@code predicate}. Otherwise returns {@code self}.
+	 */
 	public static @NonNull OptionalInt filter(@NonNull OptionalInt self, @NonNull IntPredicate predicate) {
 		return self.isPresent() && predicate.test(self.getAsInt()) ? self : OptionalInt.empty();
 	}
 
+	/**
+	 * Returns {@code OptionalLong} that holds the up-casted int value from {@code self}, or
+	 * an empty {@code OptionalLong} if {@code self} is empty.
+	 * @param self the value to be converted to an {@code OptionalLong}.
+	 * @return int value from {@code self} wrapped in {@code OptionalLong} if present,
+	 *  an empty {@code OptionalLong} otherwise.
+	 */
 	@Pure
 	public static @NonNull OptionalLong asLong(@NonNull OptionalInt self) {
 		return self.isPresent() ? OptionalLong.of(self.getAsInt()) : OptionalLong.empty();
 	}
 
+	/**
+	 * Returns {@code OptionalDouble} that holds the value from {@code self} casted to {@code double}, or
+	 * an empty {@code OptionalDouble} if {@code self} is empty.
+	 * @param self the value to be converted to an {@code OptionalDouble}.
+	 * @return int value from {@code self} wrapped in {@code OptionalDouble} if present,
+	 *  an empty {@code OptionalDouble} otherwise.
+	 */
 	@Pure
 	public static @NonNull OptionalDouble asDouble(@NonNull OptionalInt self) {
 		return self.isPresent() ? OptionalDouble.of(self.getAsInt()) : OptionalDouble.empty();
 	}
 
+	/**
+	 * Maps the value held by {@code self} to an object wrapped in {@code Optional} if present,
+	 * returns an empty {@code Optional} otherwise.
+	 * @param self the optional, that's value should be mapped if present
+	 * @param op mapping function mapping the value held by {@code self} to an object
+	 * @return an empty {@code Optional}, if {@code self} is empty, otherwise an {@code Optional}
+	 *  holding the result of {@code op} applied to the value held by {@code self}.
+	 */
 	public static <V> @NonNull Optional<V> map(@NonNull OptionalInt self, @NonNull IntFunction<V> op) {
 		return self.isPresent() ? Optional.ofNullable(op.apply(self.getAsInt())) : Optional.empty();
 	}
 	
-	public static <T> @NonNull OptionalInt mapInt(@NonNull OptionalInt self, @NonNull IntUnaryOperator op) {
-		return self.isPresent() ? OptionalInt.of(op.applyAsInt(self.getAsInt())) : self;
+	/**
+	 * Maps the value of {@code self} to an {@code int} value wrapped into an {@code OptionalInt}, if {@code self} holds a value.
+	 * Returns an empty {@code OptionalInt} otherwise.
+	 * @param self optional, that's held value will be mapped with {@code mapFunc}, if present
+	 * @param mapFunc mapping function, to be applied to value of {@code self}, if present
+	 * @return optional holding the value of {@code self}, mapped to int using {@code mapFunc} if value present. Empty 
+	 *  optional otherwise.
+	 */
+	public static <T> @NonNull OptionalInt mapInt(@NonNull OptionalInt self, @NonNull IntUnaryOperator mapFunc) {
+		return self.isPresent() ? OptionalInt.of(mapFunc.applyAsInt(self.getAsInt())) : self;
 	}
 
-	public static <T> @NonNull OptionalInt flatMapInt(@NonNull OptionalInt self, @NonNull IntFunction<OptionalInt> mapper) {
-		return self.isPresent() ? mapper.apply(self.getAsInt()) : self;
+	/**
+	 * Maps the value of {@code self} to an {@code OptionalInt} using {@code mapFunc}, if {@code self} has a present
+	 * value. If {@code self} is empty, this method returns an empty {@code OptionalInt}
+	 * 
+	 * @param self possibly holding value to be mapped with {@code mapFunc}
+	 * @param mapFunc mapping function, used on value of {@code self} if a value is present.
+	 * @return optional either holding result of {@code mapFunc} applied to value of {@code self} if 
+	 *  value is present, otherwise returning empty optional.
+	 */
+	public static <T> @NonNull OptionalInt flatMapInt(@NonNull OptionalInt self, @NonNull IntFunction<OptionalInt> mapFunc) {
+		return self.isPresent() ? mapFunc.apply(self.getAsInt()) : self;
 	}
 
+	/**
+	 * Maps the value of {@code self} to a {@code long} value wrapped into an {@code OptionalLong}, if {@code self} holds a value.
+	 * Returns an empty {@code OptionalInt} otherwise.
+	 * @param self optional, that's held value will be mapped with {@code mapFunc}, if present
+	 * @param mapFunc mapping function, to be applied to value of {@code self}, if present
+	 * @return optional holding the value of {@code self}, mapped to {@code long} using {@code mapFunc} if value present. Empty 
+	 *  optional otherwise.
+	 */
 	public static <T> @NonNull OptionalLong mapLong(@NonNull OptionalInt self, @NonNull IntToLongFunction mapFunc) {
 		return self.isPresent() ? OptionalLong.of(mapFunc.applyAsLong(self.getAsInt())) : OptionalLong.empty();
 	}
 
+	/**
+	 * Maps the value of {@code self} to a {@code double} value wrapped into an {@code OptionalDouble}, if {@code self} holds a value.
+	 * Returns an empty {@code OptionalInt} otherwise.
+	 * @param self optional, that's held value will be mapped with {@code mapFunc}, if present
+	 * @param mapFunc mapping function, to be applied to value of {@code self}, if present
+	 * @return optional holding the value of {@code self}, mapped to {@code long} using {@code mapFunc} if value present. Empty 
+	 *  optional otherwise.
+	 */
 	public static <T> @NonNull OptionalDouble mapDouble(@NonNull OptionalInt self,
 			@NonNull IntToDoubleFunction mapFunc) {
 		return self.isPresent() ? OptionalDouble.of(mapFunc.applyAsDouble(self.getAsInt())) : OptionalDouble.empty();
 	}
 
+	/**
+	 * Returns an {@code IntIterable} that either provides the one value present in {@code self},
+	 * or an {@code IntIterable} providing no value if {@code self} is empty.
+	 * @param self optional that's value (if present) will be provided via the returned iterable.
+	 * @return {@code IntIterable} providing one value taken from {@code self} or no value, if {@code self}
+	 *   is empty.
+	 */
 	@Pure
 	public static <T> @NonNull IntIterable asIterable(@NonNull OptionalInt self) {
 		if(self.isPresent()) {
@@ -154,6 +303,13 @@ public class OptionalIntExtensions {
 		}
 	}
 
+	/**
+	 * Returns an {@code PrimitiveIterable.OfInt} that either provides the one value present in {@code self},
+	 * or an {@code PrimitiveIterable.OfInt} providing no value if {@code self} is empty.
+	 * @param self optional that's value (if present) will be provided via the returned iterator.
+	 * @return {@code PrimitiveIterable.OfInt} providing one value taken from {@code self} or no value, if {@code self}
+	 *   is empty.
+	 */
 	public static <T> @NonNull OfInt iterator(@NonNull OptionalInt self) {
 		if(self.isPresent()) {
 			int value = self.getAsInt();
@@ -162,9 +318,6 @@ public class OptionalIntExtensions {
 			return PrimitiveIterableUtil.EMPTY_INTITERATOR;
 		}
 	}
-	
-	// TODO DoubleIterable asIterable(@NonNull OptionalDouble self){}
-	// TODO LongIterable asIterable(@NonNull OptionalLong self){}
 	
 	private static class ValueIterator implements java.util.PrimitiveIterator.OfInt {
 		final int value;
@@ -184,6 +337,7 @@ public class OptionalIntExtensions {
 			if (done) {
 				throw new NoSuchElementException();
 			} else {
+				done = true;
 				return value;
 			}
 		}

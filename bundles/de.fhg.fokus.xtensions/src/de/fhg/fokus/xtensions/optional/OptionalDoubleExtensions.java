@@ -28,6 +28,20 @@ import de.fhg.fokus.xtensions.iteration.internal.PrimitiveIterableUtil;
 
 import org.eclipse.xtext.xbase.lib.Pure;
 
+/**
+ * This class contains static functions that ease the work with Java 8
+ * {@link OptionalDouble}. <br>
+ * To make easy use of this functions import this extensions like this in your
+ * Xtend source:
+ * <pre>
+ * {@code import static extension de.fhg.fokus.xtenders.optional.OptionalDoubleExtensions.*}
+ * </pre>
+ * 
+ * @see OptionalExtensions
+ * @see OptionalIntExtensions
+ * @see OptionalLongExtensions
+ * @author Max Bureck
+ */
 public class OptionalDoubleExtensions {
 
 	private OptionalDoubleExtensions() {

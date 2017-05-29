@@ -37,12 +37,16 @@ import de.fhg.fokus.xtensions.function.FunctionExtensions;
 
 /**
  * This class contains static functions that ease the work with Java 8
- * {@link Optional}, as well as the primitive versions {@link OptionalInt},
- * {@link OptionalLong}, and {@link OptionalDouble}. <br>
+ * {@link Optional}. <br>
  * To make easy use of this functions import this extensions like this in your
  * Xtend source:
+ * <pre>
  * {@code import static extension de.fhg.fokus.xtenders.optional.OptionalExtensions.*}
+ * </pre>
  * 
+ * @see OptionalIntExtensions
+ * @see OptionalLongExtensions
+ * @see OptionalDoubleExtensions
  * @author Max Bureck
  */
 public final class OptionalExtensions {
@@ -275,24 +279,23 @@ public final class OptionalExtensions {
 	 * @param <T>
 	 */
 	@FunctionalInterface
-	public interface PresenceCheck<T> extends Procedure1<@NonNull Optional<T>>, Consumer<@NonNull T> {
+	public interface PresenceCheck<T> extends Procedure1<@NonNull Optional<T>> {
 
 		/**
 		 * User method, will be called if Optional contains a value.
 		 */
-		@Override
-		void accept(T t);
+		void ifPresent(T t);
 
 		@Override
 		default void apply(Optional<T> p) {
-			p.ifPresent(this);
+			p.ifPresent(this::ifPresent);
 		}
 
 		@Pure
 		default @NonNull Procedure1<@NonNull Optional<T>> elseDo(@NonNull Procedure0 or) {
 			return o -> {
 				if (o.isPresent()) {
-					accept(o.get());
+					ifPresent(o.get());
 				} else {
 					or.apply();
 				}
@@ -459,19 +462,51 @@ public final class OptionalExtensions {
 		return o.orElseGet(getter);
 	}
 
+	/**
+	 * Maps the value of {@code self} to an {@code int} value wrapped into an {@code OptionalInt}, if {@code self} holds a value.
+	 * Returns an empty {@code OptionalInt} otherwise.
+	 * @param self optional, that's held value will be mapped with {@code mapFunc}, if present
+	 * @param mapFunc mapping function, to be applied to value of {@code self}, if present
+	 * @return optional holding the value of {@code self}, mapped to int using {@code mapFunc} if value present. Empty 
+	 *  optional otherwise.
+	 */
 	public static <T> @NonNull OptionalInt mapInt(@NonNull Optional<T> self, @NonNull ToIntFunction<T> mapFunc) {
 		return self.isPresent() ? OptionalInt.of(mapFunc.applyAsInt(self.get())) : OptionalInt.empty();
 	}
 
+	
+	/**
+	 * Maps the value of {@code self} to a {@code long} value wrapped into an {@code OptionalLong}, if {@code self} holds a value.
+	 * Returns an empty {@code OptionalInt} otherwise.
+	 * @param self optional, that's held value will be mapped with {@code mapFunc}, if present
+	 * @param mapFunc mapping function, to be applied to value of {@code self}, if present
+	 * @return optional holding the value of {@code self}, mapped to {@code long} using {@code mapFunc} if value present. Empty 
+	 *  optional otherwise.
+	 */
 	public static <T> @NonNull OptionalLong mapLong(@NonNull Optional<T> self, @NonNull ToLongFunction<T> mapFunc) {
 		return self.isPresent() ? OptionalLong.of(mapFunc.applyAsLong(self.get())) : OptionalLong.empty();
 	}
 
+	/**
+	 * Maps the value of {@code self} to a {@code double} value wrapped into an {@code OptionalDouble}, if {@code self} holds a value.
+	 * Returns an empty {@code OptionalInt} otherwise.
+	 * @param self optional, that's held value will be mapped with {@code mapFunc}, if present
+	 * @param mapFunc mapping function, to be applied to value of {@code self}, if present
+	 * @return optional holding the value of {@code self}, mapped to {@code long} using {@code mapFunc} if value present. Empty 
+	 *  optional otherwise.
+	 */
 	public static <T> @NonNull OptionalDouble mapDouble(@NonNull Optional<T> self,
 			@NonNull ToDoubleFunction<T> mapFunc) {
 		return self.isPresent() ? OptionalDouble.of(mapFunc.applyAsDouble(self.get())) : OptionalDouble.empty();
 	}
 
+	/**
+	 * Returns an {@code Iterable<T>} that either provides the one value present in {@code self},
+	 * or an {@code Iterable<T>} providing no value if {@code self} is empty.
+	 * @param self optional that's value (if present) will be provided via the returned iterable.
+	 * @return {@code Iterable<T>} providing one taken from {@code self} or no value, if {@code self}
+	 *   is empty.
+	 */
 	@Pure
 	public static <T> @NonNull Iterable<T> asIterable(@NonNull Optional<T> self) {
 		if (self.isPresent()) {
@@ -483,6 +518,10 @@ public final class OptionalExtensions {
 		}
 	}
 
+	/**
+	 * Iterable providing one single value of type {@code T}.
+	 * @param <T> type of value provided by iterable.
+	 */
 	private static class ValueIterable<T> implements Iterable<T> {
 		final T value;
 
@@ -698,8 +737,6 @@ public final class OptionalExtensions {
 			@NonNull Supplier<@NonNull ? extends Optional<? extends T>> alternativeSupplier) {
 		return or(self, alternativeSupplier);
 	}
-
-	// TODO java 9 forward compatibility
 
 	//////////////////////////////////
 	// Java 9 forward compatibility //

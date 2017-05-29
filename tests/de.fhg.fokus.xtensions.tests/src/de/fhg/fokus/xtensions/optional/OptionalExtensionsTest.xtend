@@ -238,9 +238,9 @@ class OptionalExtensionsTest {
 		assertSame(expected, result.get)
 	}
 	
-	/////////////////
+	//////////////////////
 	// orSuper Optional //
-	/////////////////
+	//////////////////////
 	
 	@Test def void orSuperOptionalEmptyEmpty() {
 		val Optional<String> o = Optional.empty

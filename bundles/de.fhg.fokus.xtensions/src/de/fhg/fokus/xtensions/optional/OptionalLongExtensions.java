@@ -27,6 +27,20 @@ import de.fhg.fokus.xtensions.iteration.internal.PrimitiveIterableUtil;
 
 import org.eclipse.xtext.xbase.lib.Pure;
 
+/**
+ * This class contains static functions that ease the work with Java 8
+ * {@link OptionalLong}. <br>
+ * To make easy use of this functions import this extensions like this in your
+ * Xtend source:
+ * <pre>
+ * {@code import static extension de.fhg.fokus.xtenders.optional.OptionalLongExtensions.*}
+ * </pre>
+ * 
+ * @see OptionalExtensions
+ * @see OptionalIntExtensions
+ * @see OptionalDoubleExtensions
+ * @author Max Bureck
+ */
 public class OptionalLongExtensions {
 
 	private OptionalLongExtensions() {
