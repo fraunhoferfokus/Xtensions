@@ -78,4 +78,7 @@ final class IterableExtensions {
 // static def <T> DoubleItreable mapDouble(Iterable<T> it, ToDoubleFunction mapper){}
 // Optimize stream() by streaming original Iterable and call mapToX on Stream
 
+// safeMap(func)?
+// safeFilter(func)?
+
 }

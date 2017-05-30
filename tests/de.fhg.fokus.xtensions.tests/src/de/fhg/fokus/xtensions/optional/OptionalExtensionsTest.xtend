@@ -565,83 +565,85 @@ class OptionalExtensionsTest {
 		]
 	}
 	
-	///////////////////////////
-	// ifNotPresentProcedure //
-	///////////////////////////
-	
-	@Test def testIfNotPresentProcNotPresent() {
-		val Optional<String> o = Optional.empty
-		
-		val AtomicBoolean result = new AtomicBoolean(false)
-		val action = ifNotPresent[|
-			result.set(true)
-		]
-		action.apply(o)
-		
-		assertTrue(result.get)
-	}
-	
-	@Test def testIfNotPresentProcPresent() {
-		val Optional<String> o = Optional.of("foo")
-		
-		val action = ifNotPresent[|
-			fail()
-		]
-		action.apply(o)
-	}
-	
 	///////////////////////
-	// ifPresent or else //
+	// whenPresent or else //
 	///////////////////////
 	
-	@Test def tesIfPresentOrElseOnEmpty() {
+	@Test def tesWhenPresentOrElseOnEmpty() {
 		val Optional<String> o = Optional.empty
 		val AtomicBoolean result = new AtomicBoolean(false)
 		
-		val action = ifPresent [
+		o.whenPresent [
 			fail()
 		].elseDo [
 			result.set(true)
 		]
-		action.apply(o)
 		
 		assertTrue(result.get)
 	}
 	
-	@Test def tesIfPresentOnEmpty() {
+	@Test def tesWhenPresentOrElseOnEmptyOneVal() {
 		val Optional<String> o = Optional.empty
+		val AtomicBoolean result = new AtomicBoolean(false)
+		val expected = "foo"
 		
-		val action = ifPresent [
+		o.whenPresent [
 			fail()
+		].elseDo(expected) [
+			assertSame(expected, it)
+			result.set(true)
 		]
-		action.apply(o)
+		
+		assertTrue(result.get)
 	}
 	
-	@Test def tesIfPresentOnValue() {
+	@Test def tesWhenPresentOrElseOnEmptyTwoVals() {
+		val Optional<String> o = Optional.empty
+		val AtomicBoolean result = new AtomicBoolean(false)
+		val expected = "foo"
+		val Integer expected2 = 42
+		
+		o.whenPresent [
+			fail()
+		].elseDo(expected, expected2) [
+			assertSame(expected, $0)
+			assertSame(expected2, $1)
+			result.set(true)
+		]
+		
+		assertTrue(result.get)
+	}
+	
+	@Test def void testWhenPresentOnValue() {
 		val expected = "woo"
 		val Optional<String> o = Optional.of(expected)
 		val AtomicBoolean result = new AtomicBoolean(false)
 		
-		val action = ifPresent [String it|
+		o.whenPresent [String it|
 			assertSame(expected, it)
 			result.set(true)
 		]
-		action.apply(o)
 		assertTrue(result.get)
 	}
 	
-	@Test def tesIfPresentOrElseOnValue() {
+	@Test def void testWhenPresentOrElseOnValue() {
 		val expected = "gaga"
 		val Optional<String> o = Optional.of(expected)
 		val AtomicBoolean result = new AtomicBoolean(false)
 		
-		val action = ifPresent [String it|
+		val _else = o.whenPresent [String it|
 			assertSame(expected, it)
 			result.set(true)
-		].elseDo [
+		]
+		_else.elseDo [
 			fail()
 		]
-		action.apply(o)
+		_else.elseDo("foo") [
+			fail()
+		]
+		_else.elseDo("foo", 42) [
+			fail()
+		]
 		
 		assertTrue(result.get)
 	}

@@ -25,7 +25,6 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.xtext.xbase.lib.Inline;
 import org.eclipse.xtext.xbase.lib.IntegerRange;
 import org.eclipse.xtext.xbase.lib.Procedures.Procedure0;
-import org.eclipse.xtext.xbase.lib.Procedures.Procedure1;
 import org.eclipse.xtext.xbase.lib.Pure;
 
 import com.google.common.collect.ImmutableList;
@@ -33,7 +32,6 @@ import com.google.common.collect.Lists;
 
 import de.fhg.fokus.xtensions.range.IntIntConsumer;
 import de.fhg.fokus.xtensions.range.RangeExtensions;
-import de.fhg.fokus.xtensions.function.FunctionExtensions;
 
 /**
  * This class contains static functions that ease the work with Java 8
@@ -274,59 +272,87 @@ public final class OptionalExtensions {
 		return (@NonNull Optional<U>) self.filter(clazz::isInstance);
 	}
 
+// TODO needed? whenPresent seems way clearer
+//	/**
+//	 * @see OptionalExtensions#ifPresent(Consumer)
+//	 * @param <T>
+//	 */
+//	@FunctionalInterface
+//	public interface PresenceCheck<T> extends Procedure1<@NonNull Optional<T>> {
+//
+//		/**
+//		 * User method, will be called if Optional contains a value.
+//		 */
+//		void ifPresent(T t);
+//
+//		@Override
+//		default void apply(Optional<T> p) {
+//			p.ifPresent(this::ifPresent);
+//		}
+//
+//		@Pure
+//		default @NonNull Procedure1<@NonNull Optional<T>> elseDo(@NonNull Procedure0 or) {
+//			return o -> {
+//				if (o.isPresent()) {
+//					ifPresent(o.get());
+//				} else {
+//					or.apply();
+//				}
+//			};
+//		}
+//
+//	}
+//
+//	// due to problems with the Xtend compiler we cannot use PresenceCheck as
+//	// parameter
+//	// type and have to accept Consumer instead
+//	/**
+//	 * This method is a good fit to be used with the
+//	 * {@link FunctionExtensions#operator_tripleGreaterThan(Object, org.eclipse.xtext.xbase.lib.Functions.Function1)
+//	 * >>>} operator defined in class {@code AdditionalFunctionExtensions}.<br>
+//	 * Example:
+//	 * 
+//	 * <pre>
+//	 * {@code Optional.of("Hello") >>> ifPresent [
+//	 * 	println(it)
+//	 * ].elseDo [
+//	 * 	println("No value!")
+//	 * ]}
+//	 * </pre>
+//	 * 
+//	 * @param either
+//	 * @return
+//	 */
+//	@Pure
+//	public static <T> @NonNull PresenceCheck<T> ifPresent(@NonNull Consumer<@NonNull T> either) {
+//		return either::accept;
+//	}
+	
 	/**
-	 * @see OptionalExtensions#ifPresent(Consumer)
-	 * @param <T>
-	 */
-	@FunctionalInterface
-	public interface PresenceCheck<T> extends Procedure1<@NonNull Optional<T>> {
-
-		/**
-		 * User method, will be called if Optional contains a value.
-		 */
-		void ifPresent(T t);
-
-		@Override
-		default void apply(Optional<T> p) {
-			p.ifPresent(this::ifPresent);
-		}
-
-		@Pure
-		default @NonNull Procedure1<@NonNull Optional<T>> elseDo(@NonNull Procedure0 or) {
-			return o -> {
-				if (o.isPresent()) {
-					ifPresent(o.get());
-				} else {
-					or.apply();
-				}
-			};
-		}
-
-	}
-
-	// due to problems with the Xtend compiler we cannot use PresenceCheck as
-	// parameter
-	// type and have to accept Consumer instead
-	/**
-	 * This method is a good fit to be used with the
-	 * {@link FunctionExtensions#operator_tripleGreaterThan(Object, org.eclipse.xtext.xbase.lib.Functions.Function1)
-	 * >>>} operator defined in class {@code AdditionalFunctionExtensions}.<br>
-	 * Example:
-	 * 
-	 * <pre>
-	 * {@code Optional.of("Hello") >>> ifPresent [
+	 * This extension method will check if a value is present in {@code self} and if so will call {@code onPresent}
+	 * with that value. The returned {@code Else} will allows to perform a block of code if the optional does
+	 * not hold a value. Example usage:
+	 * <pre>{@code 
+	 * val Optional<String> o = Optional.of("some val")
+	 * o.whenPresent [
 	 * 	println(it)
 	 * ].elseDo [
-	 * 	println("No value!")
-	 * ]}
-	 * </pre>
-	 * 
-	 * @param either
-	 * @return
+	 * 	println("no val")
+	 * ]
+	 * }</pre>
+	 * @param self if holds value, {@code onPresent} will be executed with the value held by {@code self}.
+	 * @param onPresent will be executed with value of {@code self}, if present.
+	 * @return instance of {@code Else} that either execute an else block if {@code self} has no value present,
+	 *  or ignore the else block if the value is present.
 	 */
-	@Pure
-	public static <T> @NonNull PresenceCheck<T> ifPresent(@NonNull Consumer<@NonNull T> either) {
-		return either::accept;
+	public static <T> Else whenPresent(@NonNull Optional<T> self, @NonNull Consumer<@NonNull T> onPresent) {
+		if(self.isPresent()) {
+			@NonNull T value = self.get();
+			onPresent.accept(value);
+			return Else.PRESENT;
+		} else {
+			return Else.NOT_PRESENT;
+		}
 	}
 
 	/**
@@ -351,19 +377,6 @@ public final class OptionalExtensions {
 	}
 
 	/**
-	 * Returns a procedure that invoked with a an empty optional will call
-	 * procedure {@code then}.
-	 * 
-	 * @param then
-	 *            procedure to be called if optional passed to returned
-	 *            procedure is empty.
-	 */
-	@Pure
-	public static <T> @NonNull Procedure1<@NonNull Optional<T>> ifNotPresent(@NonNull Procedure0 then) {
-		return o -> ifNotPresent(o, then);
-	}
-
-	/**
 	 * 
 	 * Will call the given consumer If {@code opts} is empty, the
 	 * {@code consumer} will be called with an empty list.
@@ -381,6 +394,12 @@ public final class OptionalExtensions {
 		}
 	}
 
+	/**
+	 * Calls {@code consumer} with values from {@code a} and {@code b}, iff both optionals have a value present.
+	 * @param a value from this optional and value from {@code b} will be used to call {@code consumer}, if both present
+	 * @param b value from this optional and value from {@code a} will be used to call {@code consumer}, if both present
+	 * @param consumer will be called with values from {@code a} and {@code b}, iff both present
+	 */
 	public static <T, U> void ifBothPresent(@NonNull Optional<T> a, @NonNull Optional<U> b, BiConsumer<T, U> consumer) {
 		if (a.isPresent() && b.isPresent()) {
 			consumer.accept(a.get(), b.get());

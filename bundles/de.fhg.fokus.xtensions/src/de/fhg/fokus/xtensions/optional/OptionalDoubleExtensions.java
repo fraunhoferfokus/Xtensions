@@ -15,18 +15,18 @@ import java.util.function.DoubleSupplier;
 import java.util.function.DoubleToIntFunction;
 import java.util.function.DoubleToLongFunction;
 import java.util.function.DoubleUnaryOperator;
+import java.util.function.Supplier;
 import java.util.stream.DoubleStream;
 
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.xtext.xbase.lib.Inline;
 import org.eclipse.xtext.xbase.lib.Procedures.Procedure0;
 import org.eclipse.xtext.xbase.lib.Procedures.Procedure1;
+import org.eclipse.xtext.xbase.lib.Pure;
 
 import de.fhg.fokus.xtensions.iteration.DoubleIterable;
 import de.fhg.fokus.xtensions.iteration.LongIterable;
 import de.fhg.fokus.xtensions.iteration.internal.PrimitiveIterableUtil;
-
-import org.eclipse.xtext.xbase.lib.Pure;
 
 /**
  * This class contains static functions that ease the work with Java 8
@@ -47,36 +47,64 @@ public class OptionalDoubleExtensions {
 	private OptionalDoubleExtensions() {
 	}
 
-	@FunctionalInterface
-	public interface DoublePresenceCheck extends DoubleConsumer, Procedure1<@NonNull OptionalDouble> {
-
-		/**
-		 * User method, will be called if Optional contains a value.
-		 */
-		@Override
-		void accept(double value);
-
-		@Override
-		default void apply(@NonNull OptionalDouble p) {
-			p.ifPresent(this);
+// TODO needed? whenPresent seems way clearer
+//	@FunctionalInterface
+//	public interface DoublePresenceCheck extends DoubleConsumer, Procedure1<@NonNull OptionalDouble> {
+//
+//		/**
+//		 * User method, will be called if Optional contains a value.
+//		 */
+//		@Override
+//		void accept(double value);
+//
+//		@Override
+//		default void apply(@NonNull OptionalDouble p) {
+//			p.ifPresent(this);
+//		}
+//
+//		@Pure
+//		default Procedure1<@NonNull OptionalDouble> elseDo(@NonNull Procedure0 or) {
+//			return o -> {
+//				if (o.isPresent()) {
+//					accept(o.getAsDouble());
+//				} else {
+//					or.apply();
+//				}
+//			};
+//		}
+//
+//	}
+//
+//	@Pure
+//	public static <T> @NonNull DoublePresenceCheck ifPresent(@NonNull DoubleConsumer either) {
+//		return either::accept;
+//	}
+	
+	/**
+	 * This extension method will check if a value is present in {@code self} and if so will call {@code onPresent}
+	 * with that value. The returned {@code Else} will allows to perform a block of code if the optional does
+	 * not hold a value. Example usage:
+	 * <pre>{@code 
+	 * val OptionalDouble o = OptionalDouble.of(42.0d)
+	 * o.whenPresent [
+	 * 	println(it)
+	 * ].elseDo [
+	 * 	println("no val")
+	 * ]
+	 * }</pre>
+	 * @param self if holds value, {@code onPresent} will be executed with the value held by {@code self}.
+	 * @param onPresent will be executed with value of {@code self}, if present.
+	 * @return instance of {@code Else} that either execute an else block if {@code self} has no value present,
+	 *  or ignore the else block if the value is present.
+	 */
+	public static <T> Else whenPresent(@NonNull OptionalDouble self, @NonNull DoubleConsumer onPresent) {
+		if(self.isPresent()) {
+			double value = self.getAsDouble();
+			onPresent.accept(value);
+			return Else.PRESENT;
+		} else {
+			return Else.NOT_PRESENT;
 		}
-
-		@Pure
-		default Procedure1<@NonNull OptionalDouble> elseDo(@NonNull Procedure0 or) {
-			return o -> {
-				if (o.isPresent()) {
-					accept(o.getAsDouble());
-				} else {
-					or.apply();
-				}
-			};
-		}
-
-	}
-
-	@Pure
-	public static <T> @NonNull DoublePresenceCheck ifPresent(@NonNull DoubleConsumer either) {
-		return either::accept;
 	}
 
 	public static <T> void ifNotPresent(@NonNull OptionalDouble self, @NonNull Procedure0 then) {
@@ -231,6 +259,76 @@ public class OptionalDoubleExtensions {
 		} else {
 			return Collections.emptySet();
 		}
+	}
+	
+	/**
+	 * This extension function returns a stream of a single element if the given
+	 * optional {@code self} contains a value, or no element if the optional is
+	 * empty.
+	 * 
+	 * @param self
+	 *            the optional providing the value for the Stream provided
+	 * @return Stream providing either zero or one value, depending on parameter
+	 *         {@code self}
+	 */
+	public static @NonNull DoubleStream stream(@NonNull OptionalDouble self) {
+		return self.isPresent() ? DoubleStream.of(self.getAsDouble()) : DoubleStream.empty();
+	}
+	
+	/**
+	 * Will call {@code action} with the value held by {@code self} if it is not
+	 * empty. Otherwise will call {@code emptyAction}.
+	 * 
+	 * @param opt
+	 *            optional to be checked for value.
+	 * @param action
+	 *            to be called with value of {@code opt} if it is not empty.
+	 * @param emptyAction
+	 *            to be called if {@code opt} is empty.
+	 */
+	public static void ifPresentOrElse​(OptionalDouble self, DoubleConsumer action,
+            Runnable emptyAction) {
+		if (self.isPresent()) {
+			final double val = self.getAsDouble();
+			action.accept(val);
+		} else {
+			emptyAction.run();
+		}
+	}
+	
+	/**
+	 * Operator that will be de-sugared to call to
+	 * {@code OptionalIntExtensions.or(self,alternative)}.
+	 * 
+	 * @param self
+	 *            optional to be checked if empty. If not, this value will be
+	 *            returned from operator.
+	 * @param alternative
+	 *            will be called to get return value if {@code self} is empty.
+	 * @return {@code self}, if it is not empty, otherwise returns value
+	 *         supplied by {@code alternative}.
+	 */
+	@Inline(value = "OptionalDoubleExtensions.or($1,$2)", imported = OptionalDoubleExtensions.class)
+	public static @NonNull OptionalDouble operator_or(@NonNull OptionalDouble self,
+			@NonNull Supplier<@NonNull ? extends OptionalDouble> alternativeSupplier) {
+		return or(self, alternativeSupplier);
+	}
+	
+	/**
+	 * This method will either return {@code self} if it is not empty, or
+	 * otherwise the value supplied by {@code alternative}.
+	 * 
+	 * @param self
+	 *            optional to be checked if empty. If not, this value will be
+	 *            returned from operator.
+	 * @param alternative
+	 *            will be called to get return value if {@code self} is empty.
+	 * @return {@code self}, if it is not empty, otherwise returns value
+	 *         supplied by {@code alternative}.
+	 */
+	public static @NonNull OptionalDouble or(@NonNull OptionalDouble self,
+	@NonNull Supplier<@NonNull ? extends OptionalDouble> alternativeSupplier) {
+		return self.isPresent() ? self : alternativeSupplier.get();
 	}
 
 }
