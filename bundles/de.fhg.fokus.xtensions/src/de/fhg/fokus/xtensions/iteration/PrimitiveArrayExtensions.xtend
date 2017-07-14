@@ -17,8 +17,6 @@ import de.fhg.fokus.xtensions.iteration.internal.PrimitiveIterableUtil
  */
 final class PrimitiveArrayExtensions {
 
-	// TODO asIterable(int[] arr, int startInclusive, int endExclusive) throws IndexOutOfBoundsException 
-	// TODO asIterable(double[] arr, int startInclusive, int endExclusive) throws IndexOutOfBoundsException
 	private new() {
 		throw new IllegalStateException("PrimitiveArrayExtensions not intended to be instantiated")
 	}
@@ -49,7 +47,7 @@ final class PrimitiveArrayExtensions {
 	 * @throws IndexOutOfBoundsException if either {@code startIncluding} or {@code endExcluding}
 	 *  refer to an index out of the range of array {@code arr}.
 	 */
-	static def IntIterable asIntIterable(int[] arr, int startIncluding, int endExcluding) {
+	static def IntIterable asIntIterable(int[] arr, int startIncluding, int endExcluding) throws IllegalArgumentException, IndexOutOfBoundsException {
 		// TODO negative parameter = array.length - value
 		if (startIncluding == endExcluding) {
 			PrimitiveIterableUtil.EMPTY_INTITERABLE
@@ -84,7 +82,7 @@ final class PrimitiveArrayExtensions {
 	 * @throws IndexOutOfBoundsException if either {@code startIncluding} or {@code endExcluding}
 	 *  refer to an index out of the range of array {@code arr}.
 	 */
-	static def LongIterable asLongIterable(long[] arr, int startIncluding, int endExcluding) {
+	static def LongIterable asLongIterable(long[] arr, int startIncluding, int endExcluding) throws IllegalArgumentException, IndexOutOfBoundsException  {
 		// TODO negative parameter = array.length - value
 		if (startIncluding == endExcluding) {
 			PrimitiveIterableUtil.EMPTY_LONGITERABLE
@@ -119,7 +117,7 @@ final class PrimitiveArrayExtensions {
 	 * @throws IndexOutOfBoundsException if either {@code startIncluding} or {@code endExcluding}
 	 *  refer to an index out of the range of array {@code arr}.
 	 */
-	static def DoubleIterable asDoubleIterable(double[] arr, int startIncluding, int endExcluding) {
+	static def DoubleIterable asDoubleIterable(double[] arr, int startIncluding, int endExcluding) throws IllegalArgumentException, IndexOutOfBoundsException {
 		// TODO negative parameter = array.length - value
 		if (startIncluding == endExcluding) {
 			PrimitiveIterableUtil.EMPTY_DOUBLEITERABLE

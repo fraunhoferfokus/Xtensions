@@ -12,6 +12,7 @@ import java.util.stream.StreamSupport
 import java.util.Spliterators
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.Set
+import java.util.function.IntSupplier
 
 class OptionalIntExtensionsTest {
 	
@@ -93,6 +94,13 @@ class OptionalIntExtensionsTest {
 		
 		iterable.forEach[fail()]
 		
+		val a1 = iterable.stream().toArray
+		assertArrayEquals(#[], a1)
+		
+		iterable.forEachInt [
+			fail()
+		]
+		
 		val sp = Spliterators.spliteratorUnknownSize(iterable.iterator,0)
 		val arr = StreamSupport.intStream(sp,false).toArray
 		assertTrue(arr.empty)
@@ -111,6 +119,15 @@ class OptionalIntExtensionsTest {
 		val list = newArrayList
 		iterable.forEach[list.add(it)]
 		assertEquals(#[expected], list)
+		
+		val a1 = iterable.stream().toArray
+		assertArrayEquals(#[expected], a1)
+		
+		val list2 = newArrayList
+		iterable.forEachInt [
+			list2.add(it)
+		]
+		assertEquals(#[expected], list2)
 		
 		val sp = Spliterators.spliteratorUnknownSize(iterable.iterator,0)
 		val arr = StreamSupport.intStream(sp,false).toArray
@@ -140,9 +157,9 @@ class OptionalIntExtensionsTest {
 		]
 	}
 	
-	///////////////////////
+	/////////////////////////
 	// whenPresent or else //
-	///////////////////////
+	/////////////////////////
 	
 	@Test def tesWhenPresentOrElseOnEmpty() {
 		val OptionalInt o = OptionalInt.empty
@@ -346,6 +363,236 @@ class OptionalIntExtensionsTest {
 		assertEquals(expected, result.asInt)
 	}
 	
+	///////////
+	// elvis //
+	///////////
+	
+	@Test def void testElvisWithValue() {
+		val expected = 42
+		val o = OptionalInt.of(expected)
+		val int result = o ?: 70
+		
+		assertEquals(expected, result)
+	}
+	
+	@Test def void testElvisWithoutValue() {
+		val o = OptionalInt.empty
+		val expected = 9020010
+		val int result = o ?: expected
+		
+		assertEquals(expected, result)
+	}
+	
+	////////////////////
+	// elvis supplier //
+	////////////////////
+	
+	@Test def void testElvisSupplierWithValue() {
+		val expected = 77
+		val o = OptionalInt.of(expected)
+		val int result = o ?: [fail();0]
+		
+		assertSame(expected, result)
+	}
+	
+	@Test def void testElvisSupplierWithoutValue() {
+		val o = OptionalInt.empty
+		val expected = 42
+		val int result = o ?: [expected]
+		
+		assertSame(expected, result)
+	}
+	
+	@Test def void testElvisSupplierWithValueNullSupplier() {
+		val expected = 815
+		val OptionalInt o = OptionalInt.of(expected)
+		val IntSupplier sup = null
+		val result = o ?: sup
+		
+		assertEquals(expected, result)
+	}
+	
+	@Test(expected = NullPointerException) def void testElvisSupplierWithoutValueNullSupplier() {
+		val OptionalInt o = OptionalInt.empty
+		val IntSupplier sup = null
+		val result = o ?: sup
+		println(result)
+		fail()
+	}
+	
+	
+	////////////
+	// mapInt //
+	////////////
+	
+	@Test def void testMapIntEmpty() {
+		val OptionalInt o = OptionalInt.empty
+		val oi = o.mapInt[fail();0]
+		assertFalse(oi.present)
+	}
+	
+	@Test def void testMapIntValue() {
+		val expected = 42
+		val o = OptionalInt.of(21)
+		val oi = o.mapInt[it*2]
+		assertTrue(oi.present)
+		assertEquals(expected, oi.asInt)
+	}
+	
+	////////////
+	// mapLong //
+	////////////
+	
+	@Test def void testMapLongEmpty() {
+		val OptionalInt o = OptionalInt.empty
+		val ol = o.mapLong[fail();Long.MAX_VALUE]
+		assertFalse(ol.present)
+	}
+	
+	@Test def void testMapLongValue() {
+		val o = OptionalInt.of(99)
+		val ol = o.mapLong[
+			assertEquals(99, it)
+			Long.MAX_VALUE
+		]
+		assertTrue(ol.present)
+		assertEquals(Long.MAX_VALUE, ol.asLong)
+	}
+	
+	///////////////
+	// mapDouble //
+	///////////////
+	
+	@Test def void testMapDoubleEmpty() {
+		val OptionalInt o = OptionalInt.empty
+		val od = o.mapDouble[fail();Double.MAX_VALUE]
+		assertFalse(od.present)
+	}
+	
+	@Test def void testMapDoubleValue() {
+		val start = 42
+		val o = OptionalInt.of(start)
+		val od = o.mapDouble[
+			assertEquals(start, it)
+			Long.MAX_VALUE
+		]
+		assertTrue(od.present)
+		assertEquals(Long.MAX_VALUE, od.asDouble, 0.00001d)
+	}
+	
+	///////////
+	// boxed //
+	///////////
+	
+	@Test def void testBoxedEmpty() {
+		val o = OptionalInt.empty.boxed
+		assertFalse(o.present)
+	}
+	
+	@Test def void testBoxedValue() {
+		val expected = Integer.MIN_VALUE
+		val o = OptionalInt.of(expected).boxed
+		assertTrue(o.present)
+		assertEquals(expected, o.get as int)
+	}
+	
+	////////////
+	// filter //
+	////////////
+	
+	@Test def void testFilterEmpty() {
+		val o = OptionalInt.empty
+		val result = o.filter[fail();true]
+		assertFalse(result.present)
+	}
+	
+	@Test def void testFilterLetThrough() {
+		val expected = 32
+		val o = OptionalInt.of(expected)
+		val result = o.filter[
+			assertEquals(expected, it)
+			true
+		]
+		assertTrue(result.present)
+		assertEquals(expected, result.asInt)
+	}
+	
+	@Test def void testFilterOut() {
+		val expected = 64
+		val o = OptionalInt.of(expected)
+		val result = o.filter[
+			assertEquals(expected, it)
+			false
+		]
+		assertFalse(result.present)
+	}
+	
+	// TODO 
+	// flatMapInt
+	
+	////////////
+	// asLong //
+	////////////
+	
+	@Test def void testAsLongEmpty() {
+		val o = OptionalInt.empty.asLong
+		assertFalse(o.present)
+	}
+	
+	@Test def void testAsLongElement() {
+		val o = OptionalInt.of(Integer.MAX_VALUE).asLong
+		assertTrue(o.present)
+		val result = o.asLong
+		assertEquals(Integer.MAX_VALUE, result)
+	}
+	
+	//////////////
+	// asDouble //
+	//////////////
+	
+	@Test def void testAsDoubleEmpty() {
+		val o = OptionalInt.empty.asDouble
+		assertFalse(o.present)
+	}
+	
+	@Test def void testAsDoubleElement() {
+		val o = OptionalInt.of(87).asDouble
+		assertTrue(o.present)
+		val result = o.asDouble
+		assertEquals(87.0d, result, 0.001d)
+	}
+	
+	////////////////
+	// flatMapInt //
+	////////////////
+	
+	@Test def void testFlatMapIntEmpty() {
+		val OptionalInt o = OptionalInt.empty.flatMapInt[fail()null]
+		assertFalse(o.present)
+	}
+	
+	@Test def void testFlatMapIntReturnFilled() {
+		val start = 4711
+		val OptionalInt o = OptionalInt.of(start)
+		val OptionalInt expected = OptionalInt.of(42)
+		val result = o.flatMapInt [
+			assertEquals(start, it)
+			expected
+		]
+		assertSame(expected, result)
+	}
+	
+	@Test def void testFlatMapIntReturnEmpty() {
+		val start = 9000
+		val OptionalInt o = OptionalInt.of(start)
+		val OptionalInt expected = OptionalInt.empty
+		val result = o.flatMapInt [
+			assertEquals(start, it)
+			expected
+		]
+		assertSame(expected, result)
+	}
+	
 	/////////////////////
 	// Utility methods //
 	/////////////////////
@@ -361,7 +608,7 @@ class OptionalIntExtensionsTest {
 	def testOneElementIterator(OfInt i, int expected) {
 		assertNotNull(i)
 		assertTrue(i.hasNext)
-		assertSame(expected, i.nextInt)
+		assertEquals(expected, i.nextInt)
 		testEmptyIterator(i)
 	} 
 }

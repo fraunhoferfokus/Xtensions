@@ -1,6 +1,5 @@
 package de.fhg.fokus.xtensions.iteration;
 
-import java.util.Collection;
 import java.util.PrimitiveIterator;
 import java.util.PrimitiveIterator.OfDouble;
 import java.util.function.DoubleConsumer;
@@ -64,4 +63,5 @@ public interface DoubleIterable extends Iterable<Double> {
 
 	// TODO public static IntIterable generate(final DoubleSupplier s)
 	// TODO public static IntIterable iterate(final double seed, final DoubleUnaryOperator f)
+	// TODO public static LongIterable iterate(final long seed, LongPredicate hasNext, final LongUnaryOperator next)
 }

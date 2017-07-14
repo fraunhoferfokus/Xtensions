@@ -173,7 +173,7 @@ public class OptionalIntExtensions {
 	 * <pre>
 	 * <code>o.{@link OptionalInt#orElse(int) orElse}(alternative)</code>
 	 * </pre>
-	 * @param o {@code OptionalInt} checked for a present value 
+	 * @param o checked for a present value 
 	 * @param alternative value to be returned by this extension function, oif {@code o} is empty.
 	 * @return either the value present in {@code o}, or {@code alternative} if there is no 
 	 *  value present in {@code o}.
@@ -189,10 +189,10 @@ public class OptionalIntExtensions {
 	 * 
 	 * @param o
 	 *            optional to be queried for value
-	 * @param alternative
-	 *            will be returned if parameter {@code o} is empty.
+	 * @param getter
+	 *            will be called to get return value if parameter {@code o} is empty.
 	 * @return if {@code o} has a value present, will return this value.
-	 *         Otherwise returns {@code alternative}.
+	 *         Otherwise returns {@code getter} will be called to get return value.
 	 */
 	@Pure
 	@Inline(value = "$1.orElseGet($2)", imported = OptionalInt.class)
@@ -301,7 +301,7 @@ public class OptionalIntExtensions {
 
 	/**
 	 * Maps the value of {@code self} to a {@code double} value wrapped into an {@code OptionalDouble}, if {@code self} holds a value.
-	 * Returns an empty {@code OptionalInt} otherwise.
+	 * Returns an empty {@code OptionalDouble} otherwise.
 	 * @param self optional, that's held value will be mapped with {@code mapFunc}, if present
 	 * @param mapFunc mapping function, to be applied to value of {@code self}, if present
 	 * @return optional holding the value of {@code self}, mapped to {@code long} using {@code mapFunc} if value present. Empty 

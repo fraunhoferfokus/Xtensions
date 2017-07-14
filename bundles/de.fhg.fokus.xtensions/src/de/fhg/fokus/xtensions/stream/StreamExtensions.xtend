@@ -9,6 +9,11 @@ import java.util.stream.Stream
 
 import static extension de.fhg.fokus.xtensions.iteration.IterableExtensions.*
 import static java.util.stream.Collectors.*
+import java.util.function.Predicate
+import java.util.function.UnaryOperator
+import java.util.Iterator
+import java.util.NoSuchElementException
+import java.util.stream.StreamSupport
 
 /**
  * This class provides static extension methods for the {@link Stream} class.
@@ -162,6 +167,56 @@ final class StreamExtensions {
 	static def <T> Stream<T> +(Stream<? extends T> first, Stream<? extends T> second) {
 		Stream.concat(first, second)
 	}
+	
+	//////////////////
+	// Construction //
+	//////////////////
+	
+	/**
+	 * This method provides functionality that is directly available on the Java 9 Stream class.<br>
+	 * This method will construct a Stream that provides {@code seed} as an initial element. Elements will
+	 * only be provided if {@code hasNext} returns {@code true} when applied to the element. If {@code hasNext}
+	 * returns {@code false} for the initial element the returned Stream will be empty. 
+	 * The next value(s) provided by the stream will be computed by the previous element using the {@code next}
+	 * function. The stream will terminate and not provide this element if {@code hasNext} does not hold for
+	 * this element.
+	 * @param seed first element returned by the stream and seed for following elements by using {@code next}.
+	 * @param hasNext before each element is provided (except for the first one)
+	 * @param next operation providing the next element
+	 * @return Stream providing elements computing by {@code seed}, {@code hasNext}, and {@code next}.
+	 */
+	static def <T> Stream<T> iterate​(T seed, Predicate<? super T> hasNext, UnaryOperator<T> next) {
+		val nextOp = next
+		val hasNextPred = hasNext
+		val Iterable<T> iterable = [new Iterator<T>() {
+				var nextVal = seed
+				
+				override hasNext() {
+					hasNextPred.test(nextVal)
+				}
+				
+				override next() {
+					val result = nextVal
+					if(!hasNextPred.test(result)) {
+						throw new NoSuchElementException()
+					}
+					nextVal = nextOp.apply(result)
+					result
+				}
+			}
+		]
+		StreamSupport.stream(iterable.spliterator, false)
+	}
+	
+	/**
+	 * This method redirects to {@link StreamExtensions#iterate​(Object, Predicate, UnaryOperator) iterate​(Object, Predicate, UnaryOperator)}.<br>
+	 * This allows e.g. writing {@code Stream.iterate(0,[it<100],[it+1])} in Xtend, which does not require code changes when
+	 * switching to Java 9 to take advantage of the native implementation of this method.
+	 * @see StreamExtensions#iterate​(Object, Predicate, UnaryOperator)
+	 */
+	static def <T> Stream<T> iterate​(Class<Stream> clazz, T seed, Predicate<? super T> hasNext, UnaryOperator<T> next) {
+		iterate​(seed,hasNext, next)
+	}
 
 // TODO
 // Collector GetOnlyElement => Stream#getOnlyElement() -> Optional<T>
@@ -173,5 +228,8 @@ final class StreamExtensions {
 // Stream<T>#zip(Stream<V>) : Stream<Pair<T,V>>: call zip(stream.spliterator())
 // Stream<T>#zip(Spliterator<V>) :  Stream<Pair<T,V>> create new based spliterator on both and stream from spliterator, maybe thorw if one source not ordered
 // zip variants with BiFunction<T,V,R> returning Stream<V>
-// Stream<Pair<X,Y>>#squash((X,Y)=>Z), auch für andere?
+// static def <T, Z> Stream<Pair<T, Z>> combinations(Stream<T> stream, Iterable<Z> combineWith, BiPredicate<T,Z> where)
+// static def <T, Z> Stream<Pair<T, Z>> combinations(Stream<T> stream, ()=>Stream<Z> streamSupplier, BiPredicate<T,Z> where) 
+// static def <T, Z, R> Stream<R> combinations(Stream<T> stream, Iterable<Z> combineWith, (T, Z)=>R combiner, BiPredicate<T,Z> where)
+// static def <T, Z, R> Stream<R> combinations(Stream<T> stream, ()=>Stream<Z> streamSupplier, (T, Z)=>R combiner, BiPredicate<T,Z> where)
 }

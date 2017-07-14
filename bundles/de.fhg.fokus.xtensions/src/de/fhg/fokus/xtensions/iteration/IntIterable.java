@@ -109,4 +109,6 @@ public interface IntIterable extends Iterable<Integer> {
 	public static IntIterable iterate(final int seed, final IntUnaryOperator op) {
 		return new IterateIntIterable(seed, op);
 	}
+
+	// TODO public static IntIterable iterate(final int seed, IntPredicate hasNext, final IntUnaryOperator next)
 }

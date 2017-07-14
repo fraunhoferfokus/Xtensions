@@ -19,9 +19,9 @@ import java.util.function.Supplier;
 import java.util.stream.DoubleStream;
 
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.xtext.xbase.lib.Inline;
 import org.eclipse.xtext.xbase.lib.Procedures.Procedure0;
-import org.eclipse.xtext.xbase.lib.Procedures.Procedure1;
 import org.eclipse.xtext.xbase.lib.Pure;
 
 import de.fhg.fokus.xtensions.iteration.DoubleIterable;
@@ -107,71 +107,191 @@ public class OptionalDoubleExtensions {
 		}
 	}
 
+	/**
+	 * Calls the procedure {@code then} if the optional {@code self} holds no
+	 * value. This method is equivalent to the following code:
+	 * 
+	 * <pre>
+	 * <code> if (!self.isPresent()) {
+	 * 	then.apply();
+	 * }</code>
+	 * </pre>
+	 * 
+	 * @param self
+	 *            if optional is empty, {@code then} will be called.
+	 * @param then
+	 *            procedure to be called if {@code self} does not hold a value.
+	 */
 	public static <T> void ifNotPresent(@NonNull OptionalDouble self, @NonNull Procedure0 then) {
 		if (!self.isPresent()) {
 			then.apply();
 		}
 	}
 
-	@Pure
-	public static <T> @NonNull Procedure1<@NonNull OptionalDouble> ifNotPresent(@NonNull Procedure0 then) {
-		return o -> ifNotPresent(o, then);
-	}
-
+	/**
+	 * This operator is an alias for:
+	 * <pre>
+	 * <code>o.{@link OptionalDouble#orElse(double) orElse}(alternative)</code>
+	 * </pre>
+	 * @param o {@code OptionalDouble} checked for a present value 
+	 * @param alternative value to be returned by this extension function, oif {@code o} is empty.
+	 * @return either the value present in {@code o}, or {@code alternative} if there is no 
+	 *  value present in {@code o}.
+	 */
 	@Pure
 	@Inline(value = "$1.orElse($2)", imported = OptionalDouble.class)
 	public static <T> double operator_elvis(@NonNull OptionalDouble o, double alternative) {
 		return o.orElse(alternative);
 	}
 
+	/**
+	 * Alias for {@link OptionalDouble#orElseGet(DoubleSupplier)}.
+	 * 
+	 * @param o
+	 *            optional to be queried for value
+	 * @param getter
+	 *            will be called to get return value if parameter {@code o} is empty.
+	 * @return if {@code o} has a value present, will return this value.
+	 *         Otherwise returns {@code getter} will be called to get return value.
+	 */
 	@Pure
 	@Inline(value = "$1.orElseGet($2)", imported = OptionalDouble.class)
 	public static <T> double operator_elvis(@NonNull OptionalDouble o, DoubleSupplier getter) {
 		return o.orElseGet(getter);
 	}
 
+	/**
+	 * This method is an alias for {@link OptionalDouble#of(double)}.
+	 * @param d double to wrap in an {@code OptionalDouble}
+	 * @return {@code OptionalDouble}, having present value {@code d}.
+	 */
 	@Pure
 	@Inline(value = "OptionalDouble.of($1)", imported = OptionalDouble.class)
 	public static <T> @NonNull OptionalDouble some(double d) {
 		return OptionalDouble.of(d);
 	}
 
+	/**
+	 * Alias for {@link OptionalDouble#empty()}.
+	 * @return an {@code OptionalDouble} with no value present.
+	 */
 	@Pure
 	@Inline(value = "OptionalDouble.empty()", imported = OptionalDouble.class)
 	public static <T> @NonNull OptionalDouble noDouble() {
 		return OptionalDouble.empty();
 	}
+	
+	/**
+	 * This method is a shortcut for the following expression:
+	 * <pre>
+	 * {@code i == null ? OptionalDouble.empty() : OptionalDouble.of(i)}
+	 * </pre>
+	 * @param i an Integer that is checked for {@code null}. If {@code i == null}, then
+	 *  returns an empty {@code OptionalInt}. If {@code i != null} returns an {@code OptionalInt}
+	 *  holding the integer value.
+	 * @return an {@code OptionalInt} holding {@code i}, if {@code i != null}, an empty {@code OptionalInt} otherwise.
+	 */
+	@Pure 
+	@Inline(value = "$1 == null ? OptionalDouble.empty() : OptionalDouble.of($1)", imported = OptionalDouble.class)
+	public static @NonNull OptionalDouble maybe(@Nullable Double i) {
+		return i == null ? OptionalDouble.empty() : OptionalDouble.of(i);
+	}
 
+	/**
+	 * Returns an {@code Optional<Double>} holding the value of {@code self}, or returns 
+	 * an empty optional, if the given {@code OptionalDouble} is empty.
+	 * @param self value will be extracted from this {@code OptionalDouble}, if value is present
+	 *   and wrapped into an {@code Double} which will be returned in an {@code Optional} from
+	 *   this method.
+	 * @return {@code Optional<Double>} holding the value of {@code self} if present, empty 
+	 *  {@code Optional} otherwise
+	 */
 	@Pure
 	public static @NonNull Optional<Double> boxed(@NonNull OptionalDouble self) {
 		return map(self, Double::valueOf);
 	}
 
+	/**
+	 * If the given {@code OptionalDouble self} holds a value and the value tests positive with the given
+	 * {@code DoublePredicate predicate}, returns {@code self}, otherwise returns an empty {@code OptionalDouble}.
+	 * @param self the optional value that will be filtered using {@code predicate} 
+	 * @param predicate the test that will be used to filter {@code self}.
+	 * @return filtered {@code OptionalDouble}, empty optional if {@code self} is empty or it's content
+	 *  tests negative with {@code predicate}. Otherwise returns {@code self}.
+	 */
 	public static @NonNull OptionalDouble filter(@NonNull OptionalDouble self, @NonNull DoublePredicate predicate) {
 		return self.isPresent() && predicate.test(self.getAsDouble()) ? self : OptionalDouble.empty();
 	}
 
+	/**
+	 * Maps the value held by {@code self} to an object wrapped in {@code Optional} if present,
+	 * returns an empty {@code Optional} otherwise.
+	 * @param self the optional, that's value should be mapped if present
+	 * @param op mapping function mapping the value held by {@code self} to an object
+	 * @return an empty {@code Optional}, if {@code self} is empty, otherwise an {@code Optional}
+	 *  holding the result of {@code op} applied to the value held by {@code self}.
+	 */
 	public static <V> @NonNull Optional<V> map(@NonNull OptionalDouble self, @NonNull DoubleFunction<V> mapFunc) {
 		return self.isPresent() ? Optional.ofNullable(mapFunc.apply(self.getAsDouble())) : Optional.empty();
 	}
 
+	/**
+	 * Maps the value of {@code self} to an {@code int} value wrapped into an {@code OptionalInt}, if {@code self} holds a value.
+	 * Returns an empty {@code OptionalInt} otherwise.
+	 * @param self optional, that's held value will be mapped with {@code mapFunc}, if present
+	 * @param mapFunc mapping function, to be applied to value of {@code self}, if present
+	 * @return optional holding the value of {@code self}, mapped to int using {@code mapFunc} if value present. Empty 
+	 *  optional otherwise.
+	 */
 	public static <T> @NonNull OptionalInt mapInt(@NonNull OptionalDouble self, @NonNull DoubleToIntFunction mapFunc) {
 		return self.isPresent() ? OptionalInt.of(mapFunc.applyAsInt(self.getAsDouble())) : OptionalInt.empty();
 	}
 
+	/**
+	 * Maps the value of {@code self} to a {@code long} value wrapped into an {@code OptionalLong}, if {@code self} holds a value.
+	 * Returns an empty {@code OptionalInt} otherwise.
+	 * @param self optional, that's held value will be mapped with {@code mapFunc}, if present
+	 * @param mapFunc mapping function, to be applied to value of {@code self}, if present
+	 * @return optional holding the value of {@code self}, mapped to {@code long} using {@code mapFunc} if value present. Empty 
+	 *  optional otherwise.
+	 */
 	public static <T> @NonNull OptionalLong mapLong(@NonNull OptionalDouble self,
 			@NonNull DoubleToLongFunction mapFunc) {
 		return self.isPresent() ? OptionalLong.of(mapFunc.applyAsLong(self.getAsDouble())) : OptionalLong.empty();
 	}
 
+	/**
+	 * Maps the value of {@code self} to a {@code double} value wrapped into an {@code OptionalDouble}, if {@code self} holds a value.
+	 * Returns an empty {@code OptionalDouble} otherwise.
+	 * @param self optional, that's held value will be mapped with {@code mapFunc}, if present
+	 * @param mapFunc mapping function, to be applied to value of {@code self}, if present
+	 * @return optional holding the value of {@code self}, mapped to {@code long} using {@code mapFunc} if value present. Empty 
+	 *  optional otherwise.
+	 */
 	public static <T> @NonNull OptionalDouble mapDouble(@NonNull OptionalDouble self, @NonNull DoubleUnaryOperator op) {
 		return self.isPresent() ? OptionalDouble.of(op.applyAsDouble(self.getAsDouble())) : OptionalDouble.empty();
 	}
 	
+	/**
+	 * Maps the value of {@code self} to an {@code OptionalDouble} using {@code mapFunc}, if {@code self} has a present
+	 * value. If {@code self} is empty, this method returns an empty {@code OptionalDouble}
+	 * 
+	 * @param self possibly holding value to be mapped with {@code mapFunc}
+	 * @param mapFunc mapping function, used on value of {@code self} if a value is present.
+	 * @return optional either holding result of {@code mapFunc} applied to value of {@code self} if 
+	 *  value is present, otherwise returning empty optional.
+	 */
 	public static <T> @NonNull OptionalDouble flatMapDouble(@NonNull OptionalDouble self, @NonNull DoubleFunction<OptionalDouble> mapper) {
 		return self.isPresent() ? mapper.apply(self.getAsDouble()) : self;
 	}
 
+	/**
+	 * Returns a {@code DoubleIterable} that either provides the one value present in {@code self},
+	 * or an {@code DoubleIterable} providing no value if {@code self} is empty.
+	 * @param self optional that's value (if present) will be provided via the returned iterable.
+	 * @return {@code DoubleIterable} providing one value taken from {@code self} or no value, if {@code self}
+	 *   is empty.
+	 */
 	public static <T> @NonNull DoubleIterable asIterable(@NonNull OptionalDouble self) {
 		if (self.isPresent()) {
 			double value = self.getAsDouble();
@@ -234,6 +354,13 @@ public class OptionalDoubleExtensions {
 		}
 	}
 
+	/**
+	 * Returns an {@code PrimitiveIterable.OfDouble} that either provides the one value present in {@code self},
+	 * or an {@code PrimitiveIterable.OfDouble} providing no value if {@code self} is empty.
+	 * @param self optional that's value (if present) will be provided via the returned iterator.
+	 * @return {@code PrimitiveIterable.OfDouble} providing one value taken from {@code self} or no value, if {@code self}
+	 *   is empty.
+	 */
 	public static <T> @NonNull OfDouble iterator(@NonNull OptionalDouble self) {
 		if (self.isPresent()) {
 			double value = self.getAsDouble();

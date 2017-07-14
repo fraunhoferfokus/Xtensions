@@ -188,4 +188,27 @@ class StreamExtensionsTest {
 		val Set<String> expected = #{"foohui", "barhui", "foobuh", "barbuh"}
 		assertEquals(expected, result)
 	}
+	
+	/////////////
+	// iterate //
+	/////////////
+	
+	@Test def void iterateEmpty() {
+		val Stream<Integer> s = Stream.iterate​(1,[it<1],[it+1])
+		assertEquals(0,s.count)
+	}
+	
+	@Test def void iterateTwoElements() {
+		val Stream<Integer> s = Stream.iterate​(0,[it<3],[it+2])
+		val actual = s.toArray()
+		val Integer[] expected = #[0,2]
+		assertArrayEquals(expected,actual)
+	}
+	
+	@Test def void iterateFiveElements() {
+		val Stream<Integer> s = Stream.iterate​(1,[it!=32],[it*2])
+		val actual = s.toArray()
+		val Integer[] expected = #[1,2,4,8,16]
+		assertArrayEquals(expected,actual)
+	}
 }

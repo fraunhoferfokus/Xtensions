@@ -34,7 +34,7 @@ final class PairExtensions {
 	}
 	
 	/**
-	 * If key or value of the given {@code pair} is {@code null}, this function returns an empty {@code Optional}.
+	 * If {@code pair}, or key or value of the given {@code pair} is {@code null}, this function returns an empty {@code Optional}.
 	 * Otherwise the {@code combiner} will be called with the key and the value of {@code pair} and returns
 	 * the result of the {@code combiner} call wrapped in an {@code Optional}. If the result of {@code combiner} 
 	 * is {@code null} an empty Optional will be returned.
@@ -43,6 +43,9 @@ final class PairExtensions {
 	 * @return result returned by {@code combiner} wrapped in an Optional
 	 */
 	static def <K,V,R> Optional<R> safeCombine(Pair<K,V> pair, (K,V)=>R combiner) {
+		if(pair === null) {
+			return none
+		}
 		val key = pair.key
 		if(key === null) {
 			return none

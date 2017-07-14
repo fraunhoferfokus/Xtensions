@@ -63,4 +63,5 @@ public interface LongIterable extends Iterable<Long> {
 	
 	// TODO public static LongIterable generate(final LongSupplier s)
 	// TODO public static LongIterable iterate(final long seed, final LongUnaryOperator f)
+	// TODO public static LongIterable iterate(final long seed, LongPredicate hasNext, final LongUnaryOperator next)
 }

@@ -79,6 +79,7 @@ final class IterableExtensions {
 // Optimize stream() by streaming original Iterable and call mapToX on Stream
 
 // safeMap(func)?
-// safeFilter(func)?
-
+// safeFilter(func)?	
+// Iterable<Pair<X,Y>> combinations(Iterable<X>,Iterable<Y>)
+// Iterable<Pair<X,Y>> combinations(Iterable<X>,Iterable<Y>, BiPredicate<X,Y>)
 }

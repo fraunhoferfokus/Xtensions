@@ -446,8 +446,12 @@ class OptionalExtensionsTest {
 	}
 	
 	@Test def void testMapLongValue() {
-		val o = Optional.of("foo")
-		val ol = o.mapLong[Long.MAX_VALUE]
+		val start = "foo"
+		val o = Optional.of(start)
+		val ol = o.mapLong[
+			assertSame(start, it)
+			Long.MAX_VALUE
+		]
 		assertTrue(ol.present)
 		assertEquals(Long.MAX_VALUE, ol.asLong)
 	}

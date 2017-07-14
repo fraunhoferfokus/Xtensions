@@ -77,6 +77,12 @@ class PairExtensionTests {
 	// safeCombine //
 	/////////////////
 	
+	@Test def void testSafeCombinePairNull() {
+		val Pair<Integer,Integer> pair = null
+		val result = pair.safeCombine[fail()0]
+		assertFalse(result.present)
+	}
+	
 	@Test def void testSafeCombineFirstNull() {
 		val result = (null -> "buzz").safeCombine[fail() $0 + $1]
 		assertFalse(result.present)

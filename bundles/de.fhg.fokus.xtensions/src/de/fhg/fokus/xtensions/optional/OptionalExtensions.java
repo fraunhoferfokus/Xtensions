@@ -470,10 +470,10 @@ public final class OptionalExtensions {
 	 * 
 	 * @param o
 	 *            optional to be queried for value
-	 * @param alternative
-	 *            will be returned if parameter {@code o} is empty.
+	 * @param getter
+	 *            will be called to get return value if parameter {@code o} is empty.
 	 * @return if {@code o} has a value present, will return this value.
-	 *         Otherwise returns {@code alternative}.
+	 *         Otherwise returns {@code getter} will be called to get return value.
 	 */
 	@Pure
 	@Inline(value = "$1.orElseGet($2)", imported = Optional.class)
