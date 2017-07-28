@@ -61,7 +61,7 @@ public interface DoubleIterable extends Iterable<Double> {
 		return PrimitiveIteratorExtensions.streamRemaining(iterator);
 	}
 
-	// TODO public static IntIterable generate(final DoubleSupplier s)
-	// TODO public static IntIterable iterate(final double seed, final DoubleUnaryOperator f)
-	// TODO public static LongIterable iterate(final long seed, LongPredicate hasNext, final LongUnaryOperator next)
+	// TODO public static DoubleIterable generate(final DoubleSupplier s)
+	// TODO public static DoubleIterable iterate(final double seed, final DoubleUnaryOperator f)
+	// TODO public static DoubleIterable iterate(final double seed, DoublePredicate hasNext, final DoubleUnaryOperator next)
 }

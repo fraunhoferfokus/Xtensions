@@ -84,8 +84,42 @@ forEach methods that do not rely on boxing the primitive values when passing the
 
 In the following sections we will explore the ways to create those primitive Iterables.
 
+Examples:
+
+	import de.fhg.fokus.xtensions.iteration.IntIterable
+	...
+
+	def printHex(IntIterable ints) {
+		ints.forEachInt [
+			val hex = Long.toHexString(it)
+			println(hex)
+		]
+	}
+	
+	def printHex(IntIterable ints, int limit) {
+		val PrimitiveIterator.OfInt iter = ints.iterator
+		for(var counter = 0; iter.hasNext && counter < limit; counter++) {
+			val i = iter.nextInt
+			val hex = Integer.toHexString(i)
+			println(hex)
+		}
+	}
+	
+	def printHexOdd(IntIterable ints) {
+		val IntStream s = ints.stream.filter[it % 2 == 1]
+		s.forEach [
+			val hex = Long.toHexString(it)
+			println(hex)
+		]
+	}
+
 
 #### From Arrays
+
+The `asIntIterable` extension method method creates a primitive iterable for primitive arrays.
+There are two versions: One version creates an iterable over the complete array, the other one produces
+an iterable over a section of the array. The section can be specified by defining the start index and
+an excluding end index. 
 
 Example:
 
@@ -144,10 +178,13 @@ due to the API limitations on that class.
 
 #### From Primitive Optionals
 
-Currently only supported for OptionalInt.
+The extension classes for primitive Optionals allow the creation of primitive iterables allowing 
+iteration over either one or no value, depending on the source Optional.
 
 Example:
 
+	import static extension de.fhg.fokus.xtensions.optional.OptionalIntExtensions.*
+	...
 	val ints = some(42).asIterable
 
 

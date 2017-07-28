@@ -1,6 +1,8 @@
 package de.fhg.fokus.xtensions.datetime;
 
 import java.time.Duration;
+import java.time.temporal.ChronoUnit;
+
 import org.eclipse.xtext.xbase.lib.Inline;
 
 /**
@@ -36,6 +38,16 @@ public class DurationExtensions {
 	public static Duration milliseconds(long ms) {
 		return Duration.ofMillis(ms);
 	}
+	
+	/**
+	 * Alias for {@code Duration.of(ms, ChronoUnit.MICROS)}.
+	 * @param ms milliseconds
+	 * @return result of {@code Duration.of(ms, ChronoUnit.MICROS)}
+	 */
+	@Inline(value = "Duration.of($1, ChronoUnit.MICROS)", imported = {Duration.class, ChronoUnit.class})
+	public static Duration microseconds(long ms) {
+		return Duration.of(ms, ChronoUnit.MICROS);
+	}
 
 	/**
 	 * Alias for {@link Duration#ofSeconds(long)}.
@@ -70,11 +82,21 @@ public class DurationExtensions {
 	/**
 	 * Alias for {@link Duration#ofDays(long)}.
 	 * @param d days
-	 * @return result of {@link Duration#ofDays(long)} call with {@code min}
+	 * @return result of {@link Duration#ofDays(long)} call with {@code d}
 	 */
 	@Inline(value = "Duration.ofDays($1)", imported = Duration.class)
 	public static Duration days(long d) {
 		return Duration.ofDays(d);
+	}
+	
+	/**
+	 * Alias for {@code Duration.of(w, ChronoUnit.WEEKS)}.
+	 * @param d days
+	 * @return result of {@code Duration.of(w, ChronoUnit.WEEKS)}
+	 */
+	@Inline(value = "Duration.of($1, ChronoUnit.WEEKS)", imported = {Duration.class, ChronoUnit.class})
+	public static Duration weeks(long w) {
+		return Duration.of(w,ChronoUnit.WEEKS);
 	}
 
 	/**
@@ -106,11 +128,6 @@ public class DurationExtensions {
 	@Inline(value = "$1.negated()", imported = Duration.class)
 	public static Duration operator_minus(Duration a) {
 		return a.negated();
-	}
-
-	@Inline(value = "$1", imported = Duration.class)
-	public static Duration operator_plus(Duration a) {
-		return a;
 	}
 
 	@Inline(value = "$1.compareTo($2)", imported = Duration.class)

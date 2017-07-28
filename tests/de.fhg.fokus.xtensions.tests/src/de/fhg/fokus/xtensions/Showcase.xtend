@@ -13,8 +13,10 @@ import static extension de.fhg.fokus.xtensions.optional.OptionalIntExtensions.*
 import static extension de.fhg.fokus.xtensions.range.RangeExtensions.*
 import org.junit.Ignore
 import java.util.Random
+import java.util.stream.IntStream
+import java.util.PrimitiveIterator
 
-@Ignore
+//@Ignore
 class Showcase {
 	
 	@Test def rangeDemo() {
@@ -56,7 +58,8 @@ class Showcase {
 		// From array
 		val int[] arr = #[0,2,4,19,-10,10_000,Integer.MAX_VALUE,Integer.MIN_VALUE]
 		var ints = arr.asIntIterable(1, arr.length - 1) // omit first and last
-		ints.print(5)
+//		ints.print(5)
+		ints.printHex
 		
 		// From IntegerRange
 		ints = (0..50).withStep(2).asIntIterable
@@ -100,6 +103,30 @@ class Showcase {
 	def print(IntIterable ints, int count) {
 		ints.stream.limit(count).forEach [
 			println(it)
+		]
+	}
+	
+	def printHex(IntIterable ints) {
+		ints.forEachInt [
+			val hex = Long.toHexString(it)
+			println(hex)
+		]
+	}
+	
+	def printHex(IntIterable ints, int limit) {
+		val PrimitiveIterator.OfInt iter = ints.iterator
+		for(var counter = 0; iter.hasNext && counter < limit; counter++) {
+			val i = iter.nextInt
+			val hex = Integer.toHexString(i)
+			println(hex)
+		}
+	}
+	
+	def printHexOdd(IntIterable ints) {
+		val IntStream s = ints.stream.filter[it % 2 == 1]
+		s.forEach [
+			val hex = Long.toHexString(it)
+			println(hex)
 		]
 	}
 	
