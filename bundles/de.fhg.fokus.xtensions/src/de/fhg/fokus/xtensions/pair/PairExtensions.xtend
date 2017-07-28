@@ -17,7 +17,7 @@ final class PairExtensions {
 	 * @param pair the Pair from which key and value are taken and passed to {@code consumer}.
 	 * @param consumer will be called with key and value from {@code pair}
 	 */
-	static def <K,V> void consume(Pair<K,V> pair, (K,V)=>void consumer) {
+	static def <K,V> void =>(Pair<K,V> pair, (K,V)=>void consumer) {
 		consumer.apply(pair.key, pair.value)
 	}
 	
@@ -58,7 +58,7 @@ final class PairExtensions {
 		maybe(result)
 	}
 	
-	// TODO really useful? basically special case of combine.
+	// TODO really useful? basically special case of combine (without boxing of Boolean).
 //	/**
 //	 * Will check if key and value from {@code pair} the test true with the given {@code predicate}.
 //	 * The result of the test is returned by this function.

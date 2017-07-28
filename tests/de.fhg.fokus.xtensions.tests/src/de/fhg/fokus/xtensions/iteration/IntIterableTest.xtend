@@ -6,6 +6,7 @@ import static org.junit.Assert.*
 import java.util.concurrent.atomic.AtomicInteger
 import static de.fhg.fokus.xtensions.Util.*
 import java.util.function.IntConsumer
+import de.fhg.fokus.xtensions.Util
 
 class IntIterableTest {
 	
@@ -220,5 +221,64 @@ class IntIterableTest {
 		for(var i = 0; i< 100; i+=2) {
 			assertEquals(2 * i, intsArr2.get(i))
 		}
+	}
+	
+	///////////////////////////
+	// iterate end condition //
+	///////////////////////////
+	
+	@Test def void testIterateEndIterator() {
+		val IntIterable ints = IntIterable.iterate(0, [it<10], [it + 1])
+		
+		// iterator is infinite, so we limit to 100 elements
+		val iter = ints.iterator
+		for(var i = 0; i< 10; i++) {
+			assertTrue(iter.hasNext)
+			assertEquals(i, iter.nextInt)
+		}
+		Util.assertEmptyIntIterator(iter)
+		
+		// try starting over with new iterator
+		val iter2 = ints.iterator
+		for(var i = 0; i< 10; i++) {
+			assertTrue(iter2.hasNext)
+			assertEquals(i, iter2.nextInt)
+		}
+		Util.assertEmptyIntIterator(iter)
+		
+		val iter3 = ints.iterator
+		// since we incrementAndGet we start with -1a
+		val ai = new AtomicInteger(-1)
+		val IntConsumer action = [int it|
+			val i = ai.incrementAndGet
+			assertEquals(i, it)
+		]
+		iter3.forEachRemaining(action)
+		assertEquals(9, ai.get)
+		Util.assertEmptyIntIterator(iter3)
+	}
+	
+	@Test def void testIterateEndEmptyIterator() {
+		val IntIterable ints = IntIterable.iterate(0, [false], [throw new Exception])
+		Util.assertEmptyIntIterator(ints.iterator)
+	}
+	
+	@Test(timeout = 1000) def void generateIteratorEndForEach() {
+		val IntIterable ints = IntIterable.iterate(1, [it < 17], [it * 2])
+		val AtomicInteger ai = new AtomicInteger(1)
+		ints.forEachInt [
+			val expected = ai.get
+			assertEquals(expected, it)
+			// set next expected value
+			ai.set(expected * 2)
+		]
+		assertEquals(32, ai.get)
+	}
+	
+	@Test(timeout = 1000) def void generateIteratorEndForEachEmpty() {
+		val IntIterable ints = IntIterable.iterate(0, [false], [throw new Exception])
+		ints.forEachInt [
+			fail()
+		]
 	}
 }

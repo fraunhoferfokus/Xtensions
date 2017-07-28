@@ -127,11 +127,6 @@ public class DurationExtensions {
 	public static boolean operator_greaterThan(Duration a, Duration b) {
 		return a.compareTo(b) > 0;
 	}
-
-	@Inline(value = "$1.compareTo($2) == 0")
-	public static boolean operator_tripleEquals(Duration a, Duration b) {
-		return a.compareTo(b) == 0;
-	}
 	
 	@Inline(value = "$1.compareTo($2) <= 0")
 	public static boolean operator_lessEqualsThan(Duration a, Duration b) {

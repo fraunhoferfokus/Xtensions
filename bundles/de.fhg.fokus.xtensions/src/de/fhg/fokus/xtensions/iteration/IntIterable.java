@@ -3,6 +3,7 @@ package de.fhg.fokus.xtensions.iteration;
 import java.util.PrimitiveIterator;
 import java.util.PrimitiveIterator.OfInt;
 import java.util.function.IntConsumer;
+import java.util.function.IntPredicate;
 import java.util.function.IntSupplier;
 import java.util.function.IntUnaryOperator;
 import java.util.function.Supplier;
@@ -57,10 +58,22 @@ public interface IntIterable extends Iterable<Integer> {
 	default void forEachInt(IntConsumer consumer) {
 		final OfInt iterator = iterator();
 		while (iterator.hasNext()) {
-			int next = iterator.nextInt();
+			final int next = iterator.nextInt();
 			consumer.accept(next);
 		}
 	}
+
+// TODO: useful? or is forEachInt(IntPredicate consumer) better??? Or not needed?
+//	default void forEachInt(IntPredicate whileCondition, IntConsumer consumer) {
+//		final OfInt iterator = iterator();
+//		while (iterator.hasNext()) {
+//			final int next = iterator.nextInt();
+//			if(!consumer.test(next)) {
+//				break;
+//			}
+//			whileBody.accept(next);
+//		}
+//	}
 
 	/**
 	 * Returns an {@link IntStream} based on the elements in the iterable. <br>
@@ -110,5 +123,22 @@ public interface IntIterable extends Iterable<Integer> {
 		return new IterateIntIterable(seed, op);
 	}
 
-	// TODO public static IntIterable iterate(final int seed, IntPredicate hasNext, final IntUnaryOperator next)
+	/**
+	 * Creates {@link IntIterable} an which works similar to a traditional for-loop.
+	 * The first value provided by an iterator provided by the created iterable will be 
+	 * {@code seed} value. The iterator's {@code OfInt#next()} method will return the
+	 * boolean value provided by {@code IntPredicate} on the potentially next value.
+	 * This also means that if {@code IntPredicate} does not hold for the first value 
+	 * the iterator will not provide any value. The next value provided after the initial
+	 * one is {@code next} applied to the initial value. All following values provided by
+	 * the iterator will be computed from the last value by applying {@code next}.
+	 * 
+	 * @param seed initial value to be provided by iterators
+	 * @param hasNext method to check if iterator should provide a next value
+	 * @param next value mapping previous value provided by iterator to next value provided
+	 * @return iterable, providing an iterator based on {@code seed}, {@code hasNext}, and {@code next}.
+	 */
+	public static IntIterable iterate(final int seed, IntPredicate hasNext, final IntUnaryOperator next) {
+		return new IterateIntIterableLimited(seed, hasNext, next);
+	}
 }

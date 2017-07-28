@@ -36,7 +36,6 @@ final class PrimitiveIterableUtil {
 		override forEach(Consumer<? super Integer> action) {
 		}
 
-		@Override
 		override IntStream stream() {
 			IntStream.empty()
 		}

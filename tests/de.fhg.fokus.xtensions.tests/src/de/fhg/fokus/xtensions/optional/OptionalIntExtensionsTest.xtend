@@ -161,7 +161,7 @@ class OptionalIntExtensionsTest {
 	// whenPresent or else //
 	/////////////////////////
 	
-	@Test def tesWhenPresentOrElseOnEmpty() {
+	@Test def testWhenPresentOrElseOnEmpty() {
 		val OptionalInt o = OptionalInt.empty
 		val AtomicBoolean result = new AtomicBoolean(false)
 		
@@ -174,7 +174,7 @@ class OptionalIntExtensionsTest {
 		assertTrue(result.get)
 	}
 	
-	@Test def tesWhenPresentOrElseOnEmptyOneVal() {
+	@Test def testWhenPresentOrElseOnEmptyOneVal() {
 		val OptionalInt o = OptionalInt.empty
 		val AtomicBoolean result = new AtomicBoolean(false)
 		val expected = "foo"
@@ -189,7 +189,7 @@ class OptionalIntExtensionsTest {
 		assertTrue(result.get)
 	}
 	
-	@Test def tesWhenPresentOrElseOnEmptyTwoVals() {
+	@Test def testWhenPresentOrElseOnEmptyTwoVals() {
 		val OptionalInt o = OptionalInt.empty
 		val AtomicBoolean result = new AtomicBoolean(false)
 		val expected = "foo"
@@ -591,6 +591,74 @@ class OptionalIntExtensionsTest {
 			expected
 		]
 		assertSame(expected, result)
+	}
+	
+	///////////////////
+	// asIntIterable //
+	///////////////////
+	
+	// empty optional
+	
+	@Test def void testAsIntIterableEmptyIterator() {
+		val o = OptionalInt.empty
+		val iterable = o.asIterable
+		
+		val iter = iterable.iterator
+		Util.assertEmptyIntIterator(iter)
+	}
+
+	@Test def void testAsIntIterableEmptyStream() {
+		val o = OptionalInt.empty
+		val iterable = o.asIterable
+		
+		val s = iterable.stream
+		val result = s.toArray
+		assertEquals(0, result.length)
+	}
+
+	@Test def void testAsIntIterableEmptyForEach() {
+		val o = OptionalInt.empty
+		val iterable = o.asIterable
+		iterable.forEach[throw new Exception]
+	}
+	
+	// optional with value
+	
+	
+	@Test def void testPresentAsIntIterableIterator() {
+		val expected = 42
+		val o = OptionalInt.of(expected)
+		val iterable = o.asIterable
+		
+		val iter = iterable.iterator
+		assertTrue(iter.hasNext)
+		val actual = iter.next
+		assertEquals(expected, actual)
+		
+		Util.assertEmptyIntIterator(iter)
+	}
+
+	@Test def void testPresentAsIntIterableStream() {
+		val expected = 64
+		val o = OptionalInt.of(expected)
+		val iterable = o.asIterable
+		
+		val s = iterable.stream
+		val result = s.toArray
+		assertArrayEquals(#[expected], result)
+	}
+
+	@Test def void testPresentAsIntIterableForEach() {
+		val expected = 99
+		val o = OptionalInt.of(expected)
+		val iterable = o.asIterable
+		val visited = new AtomicBoolean(false)
+		iterable.forEach [
+			assertFalse(visited.get)
+			assertEquals(expected, it)
+			visited.set(true)
+		]
+		assertTrue(visited.get)
 	}
 	
 	/////////////////////

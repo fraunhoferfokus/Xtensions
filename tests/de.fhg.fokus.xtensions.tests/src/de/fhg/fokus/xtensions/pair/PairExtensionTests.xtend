@@ -16,7 +16,7 @@ class PairExtensionTests {
 		val expectedVal = 3
 		val tst = expectedKey -> expectedVal
 		val called = new AtomicBoolean(false)
-		tst.consume[k, v|
+		tst => [k, v|
 			assertEquals(expectedKey, k)
 			assertEquals(expectedVal, v)
 			called.set(true)
@@ -29,7 +29,7 @@ class PairExtensionTests {
 		val expectedVal = 3
 		val tst = expectedKey -> expectedVal
 		val called = new AtomicBoolean(false)
-		tst.consume[k, v|
+		tst => [k, v|
 			assertEquals(expectedKey, k)
 			assertEquals(expectedVal, v)
 			called.set(true)
@@ -42,7 +42,7 @@ class PairExtensionTests {
 		val Integer expectedVal = null
 		val tst = expectedKey -> expectedVal
 		val called = new AtomicBoolean(false)
-		tst.consume[k, v|
+		tst => [k, v|
 			assertEquals(expectedKey, k)
 			assertEquals(expectedVal, v)
 			called.set(true)
@@ -101,5 +101,61 @@ class PairExtensionTests {
 	@Test def void testSafeCombine() {
 		val result = ("fizz" -> "buzz").safeCombine[$0 + $1]
 		assertEquals("fizzbuzz", result.get)
+	}
+	
+	///////////////////
+	// with operator //
+	///////////////////
+	
+	@Test def void testWithOpBothPresent() {
+		val a = "foo"
+		val b = Integer.valueOf(42)
+		val entered = new AtomicBoolean(false)
+		
+		(a -> b) => [x,y|
+			assertSame(a,x)
+			assertSame(b,y)
+			entered.set(true)
+		]
+		assertTrue(entered.get)
+	}
+	
+	@Test def void testWithOpFirstPresent() {
+		val a = "foo"
+		val b = null
+		val entered = new AtomicBoolean(false)
+		
+		(a -> b) => [x,y|
+			assertSame(a,x)
+			assertNull(y)
+			entered.set(true)
+		]
+		assertTrue(entered.get)
+	}
+	
+	@Test def void testWithOpSecondPresent() {
+		val a = null
+		val b = Integer.valueOf(99)
+		val entered = new AtomicBoolean(false)
+		
+		(a -> b) => [x,y|
+			assertNull(x)
+			assertSame(b,y)
+			entered.set(true)
+		]
+		assertTrue(entered.get)
+	}
+	
+	@Test def void testWithOpNonePresent() {
+		val a = null
+		val b = null
+		val entered = new AtomicBoolean(false)
+		
+		(a -> b) => [x,y|
+			assertNull(x)
+			assertNull(y)
+			entered.set(true)
+		]
+		assertTrue(entered.get)
 	}
 }

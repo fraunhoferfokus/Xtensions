@@ -3,6 +3,8 @@ package de.fhg.fokus.xtensions.iteration
 import java.util.PrimitiveIterator.OfInt
 import java.util.function.IntUnaryOperator
 import java.util.function.IntConsumer
+import java.util.function.IntPredicate
+import java.util.NoSuchElementException
 
 /**
  * Instances of this class should be provided using {@link IntIterable#iterate(int,IntUnaryOperator)}.<br>
@@ -34,11 +36,19 @@ package class IterateIntIterable implements IntIterable {
 	
 }
 
+/**
+ * {@code OfInt} implementation of an infinite iterator based on a seed value
+ * and a function mapping the current value to the next one.
+ */
 package class IterateOfInt implements OfInt {
 	
 	var int next
 	val IntUnaryOperator operator
 	
+	/**
+	 * @param i initial value to be returned by iterator
+	 * @param operator operation mapping the current iterator value to the next
+	 */
 	new(int i, IntUnaryOperator operator) {
 		this.next = i
 		this.operator = operator
@@ -60,6 +70,81 @@ package class IterateOfInt implements OfInt {
 			val curr = next
 			next = op.applyAsInt(curr)
 			action.accept(curr)
+		}
+	}
+	
+}
+
+package class IterateIntIterableLimited implements IntIterable {
+	
+	val int seed
+	val IntPredicate hasNext
+	val IntUnaryOperator next
+	
+	new(int seed, IntPredicate hasNext, IntUnaryOperator next) {
+		this.seed = seed
+		this.hasNext = hasNext
+		this.next = next
+	}
+	
+	override OfInt iterator() {
+		new IterateOfIntLimited(seed, hasNext, next)
+	}
+	
+	override forEachInt(IntConsumer consumer) {
+		val hasNextOp = hasNext
+		val nextOp = next
+		var next = seed
+		while(hasNextOp.test(next)) {
+			consumer.accept(next)
+			next = nextOp.applyAsInt(next)
+		}
+	}
+	
+}
+
+/**
+ * {@code OfInt} implementation of an infinite iterator based on a seed value
+ * and a function mapping the current value to the next one.
+ */
+package class IterateOfIntLimited implements OfInt {
+	
+	var int next
+	val IntUnaryOperator operator
+	val IntPredicate hasNext
+	
+	/**
+	 * @param i initial value to be returned by iterator
+	 * @param operator operation mapping the current iterator value to the next
+	 */
+	new(int seed, IntPredicate hasNext, IntUnaryOperator next) {
+		this.next = seed
+		this.operator = next
+		this.hasNext = hasNext
+	}
+	
+	override nextInt() {
+		if(!hasNext.test(next)) {
+			throw new NoSuchElementException
+		}
+		val curr = next
+		next = operator.applyAsInt(curr)
+		curr
+	}
+	
+	override hasNext() {
+		hasNext.test(next)
+	}
+	
+	override forEachRemaining(IntConsumer action) {
+		val op = operator
+		val hasNext = this.hasNext
+		var curr = next
+		while(hasNext.test(curr)) {
+			val localNext = op.applyAsInt(curr)
+			next = localNext
+			action.accept(curr)
+			curr = localNext
 		}
 	}
 	

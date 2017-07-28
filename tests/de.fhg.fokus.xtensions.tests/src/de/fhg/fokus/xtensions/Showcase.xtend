@@ -9,8 +9,10 @@ import static java.util.stream.Collectors.*
 import static extension de.fhg.fokus.xtensions.iteration.IterableExtensions.*
 import static extension de.fhg.fokus.xtensions.iteration.PrimitiveArrayExtensions.*
 import static extension de.fhg.fokus.xtensions.optional.OptionalExtensions.*
+import static extension de.fhg.fokus.xtensions.optional.OptionalIntExtensions.*
 import static extension de.fhg.fokus.xtensions.range.RangeExtensions.*
 import org.junit.Ignore
+import java.util.Random
 
 @Ignore
 class Showcase {
@@ -50,15 +52,34 @@ class Showcase {
 		// Primitive iterables //
 		/////////////////////////
 		
+		
+		// From array
 		val int[] arr = #[0,2,4,19,-10,10_000,Integer.MAX_VALUE,Integer.MIN_VALUE]
 		var ints = arr.asIntIterable(1, arr.length - 1) // omit first and last
 		ints.print(5)
 		
+		// From IntegerRange
 		ints = (0..50).withStep(2).asIntIterable
 		ints.print(5)
 		
+		// From IntIterable.iterate
 		ints = IntIterable.iterate(1)[it * 2] // infinite iterable
 		ints.print(5)
+		
+		// From IntIterable.generate
+		ints = IntIterable.generate [
+			val rand = new Random;
+			[rand.nextInt]
+		]
+		ints.stream.limit(10).forEach[println(it)]
+		
+		// From IntIterable.iterate with end
+		ints = IntIterable.iterate(0, [it<=10], [it+2])
+		ints.forEach[println(it)]
+		
+		// From optional
+		ints = some(42).asIterable
+		ints.forEach[println(it)]
 		
 		/////////////////
 		// Iterable<T> //

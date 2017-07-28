@@ -1,6 +1,5 @@
 package de.fhg.fokus.xtensions.optional;
 
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Queue;
@@ -8,11 +7,9 @@ import java.util.function.Consumer;
 
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
-import org.eclipse.xtext.xbase.lib.Functions.Function2;
 import org.eclipse.xtext.xbase.lib.Inline;
 
 import static de.fhg.fokus.xtensions.optional.OptionalExtensions.*;
-import static org.eclipse.xtext.xbase.lib.IterableExtensions.*;
 
 public class CollectionOptionalExtensions {
 
