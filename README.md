@@ -11,7 +11,8 @@ for classes in the Java 8 standard library and the Xtend standard library. A few
 ## Usage
 
 This chapter will provide a high level overview on how to use the different parts of this library.
-Unfortunately 
+Unfortunately there is currently no built available via a maven or p2 repository. So the library
+has to be built from source. See chapter [Build](#build)
 
 ### Extensions to Optional
 
@@ -43,14 +44,39 @@ TODO: Describe toSet, toList
 TODO: Describe map/mapX/filter to IterableX
 
 ### Extensions to IntegerRange
-TODO: Describe stream(), 
+
+IntegerRange is a handy type from the Xtend standard library which can
+be constructed using the `..` operator. But the only way to iterate 
+over the elements of the range is by boxing the integers while iterating.
+
+The extensions provided by this library allow iterating over the primitive
+values of the range.
+
+One way to iterate over the range is to use Java 8 streams, by using the 
+`stream` or `parallelStream` extension method from the class 
+`de.fhg.fokus.xtensions.range.RangeExtensions`.
+  
 Exmaple: 
 
+	import static extension de.fhg.fokus.xtensions.range.RangeExtensions.*
+	...
 	val range = (0..20).withStep(2)
 	range.stream.filter[it % 5 == 0].sum
 
-TODO: asIntIterable(), 
-TODO: forEachInt, etc.
+Another way to iterate over the elements of a range is to use the `forEachInt` method.
+
+Example:
+
+	import static extension de.fhg.fokus.xtensions.range.RangeExtensions.*
+	...
+	val range = (0..20).withStep(2)
+	range.forEachInt [
+		println(it)
+	]
+
+To interact with consumers expecting an `IntIterable` (see [Primitive Iterables](#primitive-iterables) ), which is a generic interface 
+for iteration over primitive int values provided by this library, the extension method
+`asIntIterable` was provided.
 
 ### Extensions on Primitive Arrays
 TODO Describe int[]#forEachInt, asXIterable etc.
@@ -64,7 +90,7 @@ TODO: Describe concatenation operator +
 TODO: Describe Java 9 forward compatibility for Stream.iterate 
 TODO: Describe combinations extension methods
 
-### Extensions to Primitive Stream 
+### Extensions to Primitive Streams 
 
 
 ### Extensions to Duration 
@@ -86,9 +112,9 @@ In the following sections we will explore the ways to create those primitive Ite
 
 Examples:
 
-	import de.fhg.fokus.xtensions.iteration.IntIterable
+	import static extension de.fhg.fokus.xtensions.iteration.IntIterable.*
 	...
-
+	
 	def printHex(IntIterable ints) {
 		ints.forEachInt [
 			val hex = Long.toHexString(it)
@@ -126,7 +152,7 @@ Example:
 	import static extension de.fhg.fokus.xtensions.iteration.PrimitiveArrayExtensions.*
 	...
 	val int[] arr = #[0,2,4,19,-10,10_000,Integer.MAX_VALUE,Integer.MIN_VALUE]
-	var ints = arr.asIntIterable(1, arr.length - 1)  // omit first and last
+	var ints = arr.asIntIterable(1, arr.length - 1)  // omit first and last element
 
 
 #### From Computations
@@ -136,7 +162,7 @@ Currently only available on IntIterable
 TODO: Describe IntIterable.generate
 Example:
 
-	import de.fhg.fokus.xtensions.iteration.IntIterable
+	import static extension de.fhg.fokus.xtensions.iteration.IntIterable.*
 	...
 	val ints = IntIterable.generate [
 		val rand = new Random;
@@ -147,7 +173,7 @@ Example:
 TODO: Describe IntIterable.iterate(int, IntUnaryOperator)
 Example:
 
-	import de.fhg.fokus.xtensions.iteration.IntIterable
+	import static extension de.fhg.fokus.xtensions.iteration.IntIterable.*
 	...
 	val ints = IntIterable.iterate(1)[it * 2]
 
@@ -155,7 +181,7 @@ Example:
 TODO: Describe IntIterable.iterate(int, IntPredicate, IntUnaryOperator)
 Example:
 
-	import de.fhg.fokus.xtensions.iteration.IntIterable
+	import static extension de.fhg.fokus.xtensions.iteration.IntIterable.*
 	...
 	val ints = IntIterable.iterate(0, [it<=10], [it+2])
 
@@ -204,6 +230,9 @@ TODO: Describe Function#filterException, Function#recoverException, etc.
 ### Concurrency Extensions
 
 ## Build
+
+The build is based on maven tycho, so [Maven 3.0](http://maven.apache.org/download.cgi) or higher has to be installed on 
+the machine.
 
 To build the libraries from source, simply drop into the root directory and call `mvn clean package`.
 The main library will be located in `bundles/de.fhg.fokus.xtensions/target`

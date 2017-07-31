@@ -100,20 +100,20 @@ class Showcase {
 		
 	}
 	
-	def print(IntIterable ints, int count) {
+	private def print(IntIterable ints, int count) {
 		ints.stream.limit(count).forEach [
 			println(it)
 		]
 	}
 	
-	def printHex(IntIterable ints) {
+	private def printHex(IntIterable ints) {
 		ints.forEachInt [
 			val hex = Long.toHexString(it)
 			println(hex)
 		]
 	}
 	
-	def printHex(IntIterable ints, int limit) {
+	private def printHex(IntIterable ints, int limit) {
 		val PrimitiveIterator.OfInt iter = ints.iterator
 		for(var counter = 0; iter.hasNext && counter < limit; counter++) {
 			val i = iter.nextInt
@@ -122,7 +122,7 @@ class Showcase {
 		}
 	}
 	
-	def printHexOdd(IntIterable ints) {
+	private def printHexOdd(IntIterable ints) {
 		val IntStream s = ints.stream.filter[it % 2 == 1]
 		s.forEach [
 			val hex = Long.toHexString(it)
