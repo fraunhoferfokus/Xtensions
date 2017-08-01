@@ -16,14 +16,14 @@ has to be built from source. See chapter [Build](#build)
 
 ### Extensions to Optional
 
-TODO: Describe map to primitive Optionals
+TODO: Describe map to primitive Optionals  
 TODO: Describe Java 9 forward compatibility: 
 
 #### Java 9 Forward Compatibility
 
-TODO: Describe or
-TODO: Describe ifPresentOrElse
-TODO: Describe stream​
+TODO: Describe or  
+TODO: Describe ifPresentOrElse  
+TODO: Describe stream  ​
 
 #### Factory Functions
 TODO: Describe some / none / noInt / noLong / noDouble / onlyIf
@@ -74,28 +74,59 @@ Example:
 		println(it)
 	]
 
-To interact with consumers expecting an `IntIterable` (see [Primitive Iterables](#primitive-iterables) ), which is a generic interface 
+To interact with consumers expecting an `IntIterable` (see [Primitive Iterables](#primitive-iterables)), which is a generic interface 
 for iteration over primitive int values provided by this library, the extension method
 `asIntIterable` was provided.
 
 ### Extensions on Primitive Arrays
-TODO Describe int[]#forEachInt, asXIterable etc.
+
+The class `de.fhg.fokus.xtensions.iteration.PrimitiveArrayExtensions` contains extension methods for 
+arrays of primitive values (int, long, double) to iterate with a forEach method consuming primitive values.
+
+Example:
+
+	val int[] arr = #[3,4,6]
+	arr.forEachInt [
+		println(it)
+	]
+
+Additionally the class allows to create primitive iterable wrapper objects (see [Primitive Iterables](#primitive-iterables)).
+
+Note that the JDK class [`java.util.Arrays`](http://docs.oracle.com/javase/8/docs/api/java/util/Arrays.html) already contains 
+static `stream` methods that can be used as extension methods to create Java 8 streams from primitive arrays.
+
 
 ### Stream Extensions
 
-TODO: Describe filter by class
+The class `de.fhg.fokus.xtensions.stream.StreamExtensions`
 
-TODO: Describe common Collectors to extension methods toList, toSet, toCollection
-TODO: Describe concatenation operator +
-TODO: Describe Java 9 forward compatibility for Stream.iterate 
-TODO: Describe combinations extension methods
+Java 8 streams are missing a few methods known from the Xtend iterable extension methods.
+The one method that is probably most often used is the method to filter by type. This can easily
+be retrofitted on the Streams API by an extension method. This extension method is provided
+in the `StreamExtensions` class.
+
+Example: 
+
+	val s = Stream.of(42, "Hello", Double.NaN, "World")
+		.filter(String)
+		.collect(Collectors.joining(" "))
+
+Note: Since joining Strings is a common operation, the `StringStreamExtensions` allow to call `join`
+directly on the Stream. Have a look at [Extensions to Streams of Strings](#extensions-to-streams-of-strings).
+
+
+TODO: Describe common Collectors to extension methods toList, toSet, toCollection  
+TODO: Describe concatenation operator +  
+TODO: Describe Java 9 forward compatibility for Stream.iterate  
+TODO: Describe combinations extension methods  
 
 ### Extensions to Primitive Streams 
 
+### Extensions to Streams of Strings
 
 ### Extensions to Duration 
 
-TODO: Describe constructor extensions (e.g. long#seconds)
+TODO: Describe constructor extensions (e.g. long#seconds) 
 TODO: Describe operators (+, -, /, *, >, <, >=, <=)
 
 
@@ -159,7 +190,7 @@ Example:
 
 Currently only available on IntIterable
 
-TODO: Describe IntIterable.generate
+TODO: Describe IntIterable.generate  
 Example:
 
 	import static extension de.fhg.fokus.xtensions.iteration.IntIterable.*
@@ -170,7 +201,7 @@ Example:
 	]
 
 
-TODO: Describe IntIterable.iterate(int, IntUnaryOperator)
+TODO: Describe IntIterable.iterate(int, IntUnaryOperator)  
 Example:
 
 	import static extension de.fhg.fokus.xtensions.iteration.IntIterable.*
@@ -178,7 +209,7 @@ Example:
 	val ints = IntIterable.iterate(1)[it * 2]
 
 
-TODO: Describe IntIterable.iterate(int, IntPredicate, IntUnaryOperator)
+TODO: Describe IntIterable.iterate(int, IntPredicate, IntUnaryOperator)  
 Example:
 
 	import static extension de.fhg.fokus.xtensions.iteration.IntIterable.*

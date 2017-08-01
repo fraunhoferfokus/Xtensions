@@ -11,10 +11,12 @@ import static extension de.fhg.fokus.xtensions.iteration.PrimitiveArrayExtension
 import static extension de.fhg.fokus.xtensions.optional.OptionalExtensions.*
 import static extension de.fhg.fokus.xtensions.optional.OptionalIntExtensions.*
 import static extension de.fhg.fokus.xtensions.range.RangeExtensions.*
+import static extension de.fhg.fokus.xtensions.stream.StreamExtensions.*
 import org.junit.Ignore
 import java.util.Random
 import java.util.stream.IntStream
 import java.util.PrimitiveIterator
+import java.util.stream.Collectors
 
 //@Ignore
 class Showcase {
@@ -41,7 +43,7 @@ class Showcase {
 		
 		// int[].forEachInt(IntConsumer)
 		arr.forEachInt [
-			println()
+			println(it)
 		]
 		
 		// int[].stream()
@@ -171,6 +173,13 @@ class Showcase {
 		} else {
 			null
 		}
+	}
+	
+	@Test def void streamDemo() {
+		val s = Stream.of(42, "Hello", Double.NaN, "World")
+			.filter(String)
+			.collect(Collectors.joining(" "))
+		println(s)
 	}
 	
 }
