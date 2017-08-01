@@ -167,7 +167,7 @@ class Showcase {
 		]
 	}
 	
-	def possiblyNull() {
+	private def possiblyNull() {
 		if(System.currentTimeMillis % 2 == 0) {
 			"I'm in ur optional"
 		} else {
@@ -180,6 +180,11 @@ class Showcase {
 			.filter(String)
 			.collect(Collectors.joining(" "))
 		println(s)
+		
+		val list = Stream.of("Foo", "Hello" , "Boo", "World")
+			.filter[!contains("oo")]
+			.map[toUpperCase]
+			.toList
 	}
 	
 }

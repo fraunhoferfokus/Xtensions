@@ -78,7 +78,7 @@ To interact with consumers expecting an `IntIterable` (see [Primitive Iterables]
 for iteration over primitive int values provided by this library, the extension method
 `asIntIterable` was provided.
 
-### Extensions on Primitive Arrays
+### Extensions to Primitive Arrays
 
 The class `de.fhg.fokus.xtensions.iteration.PrimitiveArrayExtensions` contains extension methods for 
 arrays of primitive values (int, long, double) to iterate with a forEach method consuming primitive values.
@@ -107,6 +107,9 @@ in the `StreamExtensions` class.
 
 Example: 
 
+
+	import static extension de.fhg.fokus.xtensions.stream.StreamExtensions.*
+	...
 	val s = Stream.of(42, "Hello", Double.NaN, "World")
 		.filter(String)
 		.collect(Collectors.joining(" "))
@@ -114,8 +117,21 @@ Example:
 Note: Since joining Strings is a common operation, the `StringStreamExtensions` allow to call `join`
 directly on the Stream. Have a look at [Extensions to Streams of Strings](#extensions-to-streams-of-strings).
 
+Some other collectors, especially the ones bridging to the collections API are also used very often,
+but using the collect method with the methods from the `Collectors` class is a bit verbose.  
+As a shortcut the `StreamExtensions` class provides `toList`, `toSet`, and `toCollection` 
+extension methods to the `Stream` class.
 
-TODO: Describe common Collectors to extension methods toList, toSet, toCollection  
+Example:
+
+	import static extension de.fhg.fokus.xtensions.stream.StreamExtensions.*
+	...
+	val list = Stream.of("Foo", "Hello" , "Boo", "World")
+		.filter[!contains("oo")]
+		.map[toUpperCase]
+		.toList
+
+
 TODO: Describe concatenation operator +  
 TODO: Describe Java 9 forward compatibility for Stream.iterate  
 TODO: Describe combinations extension methods  
@@ -132,9 +148,9 @@ TODO: Describe operators (+, -, /, *, >, <, >=, <=)
 
 ### Primitive Iterables
 
-The JDK provides a generic `java.util.Iterator<T>` interface and primitive versions of the Iterator in form of the sub-interfaces of `java.util.PrimitiveIterator<T,T_CONS>`. However, there are no primitive versions of the `Iterable<T>` interface, constructing primitive iterators.
+The JDK provides a generic [`java.util.Iterator<T>`](http://docs.oracle.com/javase/8/docs/api/java/util/Iterator.html) interface and primitive versions of the Iterator in form of the sub-interfaces of [`java.util.PrimitiveIterator<T,T_CONS>`](http://docs.oracle.com/javase/8/docs/api/java/util/PrimitiveIterator.html). However, there are no primitive versions of the [`java.lang.Iterable<T>`](http://docs.oracle.com/javase/8/docs/api/java/lang/Iterable.html) interface, constructing primitive iterators.
 
-So the JDK is missing an interface to abstract over "a bunch" of primitive numbers. A primitive iterator or primitive stream can only traversed once, which is not very satisfying in many cases. Ideally there should be in interface allowing the iteration over a (possibly infinite) sequence of primitive numbers. We want to be able to get a primitive iterator, a primitive stream, or directly iterate over the elements with a `forEach` method. A set of these interfaces is provided in package `de.fhg.fokus.xtensions.iteration`.<br>
+So the JDK is missing an interface to abstract over "a bunch" of primitive numbers to iterate over. A primitive iterator or primitive stream can only traversed once, which is not very satisfying in many cases. Ideally there should be in interface allowing the iteration over a (possibly infinite) sequence of primitive numbers. We want to be able to get a primitive iterator, a primitive stream, or directly iterate over the elements with a `forEach` method. A set of these interfaces is provided in package `de.fhg.fokus.xtensions.iteration`.<br>
 The primitive Iterable versions provided in the package all specialize `java.lang.Iterable` with the boxed
 number type, but also provide specialized functions for providing primitive iterators, primitive streams, and 
 forEach methods that do not rely on boxing the primitive values when passing them on to the consumer.
@@ -191,6 +207,7 @@ Example:
 Currently only available on IntIterable
 
 TODO: Describe IntIterable.generate  
+
 Example:
 
 	import static extension de.fhg.fokus.xtensions.iteration.IntIterable.*
@@ -202,6 +219,7 @@ Example:
 
 
 TODO: Describe IntIterable.iterate(int, IntUnaryOperator)  
+
 Example:
 
 	import static extension de.fhg.fokus.xtensions.iteration.IntIterable.*
@@ -210,6 +228,7 @@ Example:
 
 
 TODO: Describe IntIterable.iterate(int, IntPredicate, IntUnaryOperator)  
+
 Example:
 
 	import static extension de.fhg.fokus.xtensions.iteration.IntIterable.*
@@ -244,9 +263,6 @@ Example:
 	...
 	val ints = some(42).asIterable
 
-
-### Primitive Array Extensions
-TODO: Describe stream / toIterable / forEach
 
 ### Function Extensions
 
