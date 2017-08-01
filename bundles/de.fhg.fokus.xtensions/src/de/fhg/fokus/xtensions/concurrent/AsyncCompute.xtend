@@ -13,6 +13,8 @@ import java.util.Objects
  * and {@code asyncRun} methods.
  */
 class AsyncCompute {
+	
+	private new(){}
 
 	/**
 	 * An instance of this class has to be provided by the function passed to

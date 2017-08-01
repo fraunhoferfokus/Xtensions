@@ -12,21 +12,26 @@ for classes in the Java 8 standard library and the Xtend standard library. A few
 
 This chapter will provide a high level overview on how to use the different parts of this library.
 Unfortunately there is currently no built available via a maven or p2 repository. So the library
-has to be built from source. See chapter [Build](#build)
+has to be built from source. See chapter [Build](#build).
+
+When using the library in OSGi it is recommended to use package imports since the library may evolve
+and split into multiple bundles in future releases.
 
 ### Extensions to Optional
 
-TODO: Describe map to primitive Optionals  
-TODO: Describe Java 9 forward compatibility: 
+The static factory Methods for creating `Optional` instances are not really meant to be used as 
+statically imported methods. They have no meaningful names to be used this way. They also differ from
+the commonly used names `some`, `none` and `maybe` that are used in many other languages.  
+The class ``
 
-#### Java 9 Forward Compatibility
+JDK does not cache OptionalInt as Integer#valueOf
+While these factory methods are , the `someOf`
 
-TODO: Describe or  
-TODO: Describe ifPresentOrElse  
-TODO: Describe stream  ​
+TODO: Describe map to primitive Optionals 
+
 
 #### Factory Functions
-TODO: Describe some / none / noInt / noLong / noDouble / onlyIf
+TODO: Describe some / none / maybe
 
 #### Function Shortcut Aliases
 TODO: ?: operators
@@ -40,7 +45,15 @@ TODO: Describe || operator
 #### From Optional to Collection
 TODO: Describe toSet, toList
 
-#### Extensions to Primitive Optionals
+#### Java 9 Forward Compatibility
+
+TODO: Describe or  
+TODO: Describe ifPresentOrElse  
+TODO: Describe stream  ​
+
+### Extensions to Primitive Optionals
+
+TODO: Describe noInt / noLong / noDouble
 TODO: Describe map/mapX/filter to IterableX
 
 ### Extensions to IntegerRange
@@ -96,7 +109,7 @@ Note that the JDK class [`java.util.Arrays`](http://docs.oracle.com/javase/8/doc
 static `stream` methods that can be used as extension methods to create Java 8 streams from primitive arrays.
 
 
-### Stream Extensions
+### Extensions to Streams
 
 The class `de.fhg.fokus.xtensions.stream.StreamExtensions`
 
@@ -140,10 +153,13 @@ TODO: Describe combinations extension methods
 
 ### Extensions to Streams of Strings
 
-### Extensions to Duration 
+### Extensions to Iterable
 
-TODO: Describe constructor extensions (e.g. long#seconds) 
-TODO: Describe operators (+, -, /, *, >, <, >=, <=)
+`de.fhg.fokus.xtensions.iteration.IterableExtensions`
+
+TODO: Describe extension method `stream`  
+TODO: Describe extension method `parallelStream`  
+TODO: Describe extension method `collect`  
 
 
 ### Primitive Iterables
@@ -264,7 +280,12 @@ Example:
 	val ints = some(42).asIterable
 
 
-### Function Extensions
+### Extensions to Duration 
+
+TODO: Describe constructor extensions (e.g. long#seconds)  
+TODO: Describe operators (+, -, /, *, >, <, >=, <=)
+
+### Extensions to Functions
 
 #### Function Composition
 TODO: Describe andThen etc.
@@ -275,6 +296,10 @@ TODO: Describe Function#filterException, Function#recoverException, etc.
 #### Lambda Recursion
 
 ### Concurrency Extensions
+
+#### Extensions to Completable Future
+
+TODO: describe then-Methods
 
 ## Build
 

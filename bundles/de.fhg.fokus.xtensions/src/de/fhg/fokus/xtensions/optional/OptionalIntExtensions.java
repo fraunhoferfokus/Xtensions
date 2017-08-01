@@ -44,6 +44,13 @@ import de.fhg.fokus.xtensions.iteration.internal.PrimitiveIterableUtil;
  */
 public class OptionalIntExtensions {
 	
+	private static int cacheLowBound = -127;
+	private static int cacheUpperBound = 128;
+	
+	private static final class OptionalIntCacheHoder {
+		private static OptionalInt[] cache = new OptionalInt[cacheUpperBound - cacheLowBound + 1];
+	}
+	
 	private OptionalIntExtensions() {
 	}
 
@@ -140,6 +147,33 @@ public class OptionalIntExtensions {
 	@Inline(value = "OptionalInt.of($1)", imported = OptionalInt.class)
 	public static @NonNull OptionalInt some(int i) {
 		return OptionalInt.of(i);
+	}
+	
+	/**
+	 * This method returns an OptionalInt instance wrapping the given int {@code i}.
+	 * The returned value might be cached to achieve object re-use and therefore 
+	 * less garbage collection.<br>
+	 * This method might be deprecated in future if {@link OptionalInt#of(int)} or a
+	 * new factory method adds caching of instances itself.
+	 * @param i integer to be wrapped in OptionalInt
+	 * @return instance of OptionalInt, wrapping the given integer {@code i}.
+	 */
+	public static OptionalInt someOf(int i) {
+		if(i < cacheLowBound || i > cacheUpperBound) {
+			return OptionalInt.of(i);
+		} else {
+			OptionalInt[] cache = OptionalIntCacheHoder.cache;
+			// we do not care for multi-threaded access to the cache.
+			// in the worst case we create a cached element multiple times,
+			// overwriting the value of a different thread.
+			final int cacheIndex = i - cacheLowBound;
+			final OptionalInt result = cache[cacheIndex];
+			if(result != null) {
+				return result;
+			} else {
+				return cache[cacheIndex] = OptionalInt.of(i);
+			}
+		}
 	}
 
 	/**

@@ -1,18 +1,20 @@
 package de.fhg.fokus.xtensions.optional
 
-import static extension de.fhg.fokus.xtensions.optional.OptionalIntExtensions.*
-import org.junit.Test
-import static org.junit.Assert.*
-import java.util.OptionalInt
 import de.fhg.fokus.xtensions.Util
 import java.util.NoSuchElementException
-import static de.fhg.fokus.xtensions.Util.*
+import java.util.OptionalInt
 import java.util.PrimitiveIterator.OfInt
-import java.util.stream.StreamSupport
+import java.util.Set
 import java.util.Spliterators
 import java.util.concurrent.atomic.AtomicBoolean
-import java.util.Set
 import java.util.function.IntSupplier
+import java.util.stream.StreamSupport
+import org.junit.Test
+
+import static de.fhg.fokus.xtensions.Util.*
+import static org.junit.Assert.*
+
+import static extension de.fhg.fokus.xtensions.optional.OptionalIntExtensions.*
 
 class OptionalIntExtensionsTest {
 	
@@ -27,6 +29,30 @@ class OptionalIntExtensionsTest {
 		assertEquals(expected, o.asInt)
 	}
 	
+	////////////
+	// someOf //
+	////////////
+	
+	@Test def void testSomeOfVeryLowValue() {
+		val expected = Integer.MIN_VALUE + 1
+		testSomeOf(expected)
+	}
+	
+	@Test def void testSomeOfLowestCached() {
+		val expected = -127
+		testSomeOf(expected)
+	}
+	
+	@Test def void testSomeOfHighestCached() {
+		val expected = 128
+		testSomeOf(expected)
+	}
+	
+	
+	@Test def void testSomeOfVeryHighValue() {
+		val expected = Integer.MAX_VALUE + 1
+		testSomeOf(expected)
+	}
 	
 	///////////
 	// noInt //
@@ -679,4 +705,14 @@ class OptionalIntExtensionsTest {
 		assertEquals(expected, i.nextInt)
 		testEmptyIterator(i)
 	} 
+	
+	protected def void testSomeOf(int expected) {
+		val OptionalInt o =  someOf(expected)
+		assertTrue(o.present)
+		assertEquals(expected, o.asInt)
+		
+		val OptionalInt o2 =  someOf(expected)
+		assertTrue(o2.present)
+		assertEquals(expected, o2.asInt)
+	}
 }
