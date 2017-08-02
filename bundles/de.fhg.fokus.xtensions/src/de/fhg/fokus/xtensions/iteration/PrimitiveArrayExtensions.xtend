@@ -166,29 +166,6 @@ final class PrimitiveArrayExtensions {
 		}
 	}
 
-	/**
-	 * This is a convenience extension method for {@link Arrays#stream(int[])}.
-	 */
-//	@Inline(value="Arrays.stream($1)", imported=Arrays)
-	static def IntStream stream(int[] arr) {
-		Arrays.stream(arr)
-	}
-
-	/**
-	 * This is a convenience extension method for {@link Arrays#stream(double[])}.
-	 */
-//	@Inline(value="Arrays.stream($1)", imported=Arrays)
-	static def DoubleStream stream(double[] arr) {
-		Arrays.stream(arr)
-	}
-
-	/**
-	 * This is a convenience extension method for {@link Arrays#stream(long[])}.
-	 */
-//	@Inline(value="Arrays.stream($1)", imported=Arrays)
-	static def LongStream stream(long[] arr) {
-		Arrays.stream(arr)
-	}
 }
 
 /**

@@ -159,6 +159,8 @@ Example:
 
 Additionally the class allows to create primitive iterable wrapper objects (see [Primitive Iterables](#primitive-iterables)).
 
+Tip:
+
 Note that the JDK class [`java.util.Arrays`](http://docs.oracle.com/javase/8/docs/api/java/util/Arrays.html) already contains 
 static `stream` methods that can be used as extension methods to create Java 8 streams from primitive arrays.
 
@@ -218,6 +220,10 @@ TODO: Describe join collector
 TODO: Describe extension method `stream`  
 TODO: Describe extension method `parallelStream`  
 TODO: Describe extension method `collect`  
+
+### Extensions to PrimitiveIterators
+
+TODO: Describe extension methods `streamRemaining` / `streamRemainingAsync`  
 
 
 ### Primitive Iterables
@@ -336,6 +342,13 @@ Example:
 	import static extension de.fhg.fokus.xtensions.optional.OptionalIntExtensions.*
 	...
 	val ints = some(42).asIterable
+
+### Extensions to String 
+
+TODO: Describe extension method matchIt  
+TODO: Describe extension method matchResultIt  
+TODO: Describe extension method splitIt  
+TODO: Describe extension method splitStream  
 
 
 ### Extensions to Duration 
