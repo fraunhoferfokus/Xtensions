@@ -575,7 +575,7 @@ class OptionalDoubleExtensionsTest {
 		]
 	}
 	
-	def testOneElementIterator(OfDouble i, double expected, double delta) {
+	private def testOneElementIterator(OfDouble i, double expected, double delta) {
 		assertNotNull(i)
 		assertTrue(i.hasNext)
 		assertEquals(expected, i.nextDouble, delta)

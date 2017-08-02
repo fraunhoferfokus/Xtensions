@@ -27,6 +27,37 @@ class OptionalLongExtensionsTest {
 		assertEquals(expected, o.asLong)
 	}
 	
+	////////////
+	// someOf //
+	////////////
+	
+	@Test def void testSomeOfVeryLowValue() {
+		val expected = Long.MIN_VALUE + 1
+		testSomeOf(expected)
+	}
+	
+	@Test def void testSomeOfLowestCached() {
+		val expected = -128L
+		testSomeOf(expected)
+	}
+	
+	@Test def void testSomeOfHighestCached() {
+		val expected = 127L
+		testSomeOf(expected)
+	}
+	
+	
+	@Test def void testSomeOfZero() {
+		val expected = 0L
+		testSomeOf(expected)
+	}
+	
+	
+	@Test def void testSomeOfVeryHighValue() {
+		val expected = Long.MAX_VALUE + 1
+		testSomeOf(expected)
+	}
+	
 	
 	////////////
 	// noLong //
@@ -65,7 +96,7 @@ class OptionalLongExtensionsTest {
 	// whenPresent or else //
 	/////////////////////////
 	
-	@Test def tesWhenPresentOrElseOnEmpty() {
+	@Test def testWhenPresentOrElseOnEmpty() {
 		val OptionalLong o = OptionalLong.empty
 		val AtomicBoolean result = new AtomicBoolean(false)
 		
@@ -78,7 +109,7 @@ class OptionalLongExtensionsTest {
 		assertTrue(result.get)
 	}
 	
-	@Test def tesWhenPresentOrElseOnEmptyOneVal() {
+	@Test def testWhenPresentOrElseOnEmptyOneVal() {
 		val OptionalLong o = OptionalLong.empty
 		val AtomicBoolean result = new AtomicBoolean(false)
 		val expected = "foo"
@@ -93,7 +124,7 @@ class OptionalLongExtensionsTest {
 		assertTrue(result.get)
 	}
 	
-	@Test def tesWhenPresentOrElseOnEmptyTwoVals() {
+	@Test def testWhenPresentOrElseOnEmptyTwoVals() {
 		val OptionalLong o = OptionalLong.empty
 		val AtomicBoolean result = new AtomicBoolean(false)
 		val expected = "foo"
@@ -592,10 +623,20 @@ class OptionalLongExtensionsTest {
 		]
 	}
 	
-	def testOneElementIterator(OfLong i, long expected) {
+	private def testOneElementIterator(OfLong i, long expected) {
 		assertNotNull(i)
 		assertTrue(i.hasNext)
 		assertEquals(expected, i.nextLong)
 		testEmptyIterator(i)
 	} 
+	
+	private def void testSomeOf(long expected) {
+		val OptionalLong o =  someOf(expected)
+		assertTrue(o.present)
+		assertEquals(expected, o.asLong)
+		
+		val OptionalLong o2 =  someOf(expected)
+		assertTrue(o2.present)
+		assertEquals(expected, o2.asLong)
+	}
 }

@@ -39,12 +39,18 @@ class OptionalIntExtensionsTest {
 	}
 	
 	@Test def void testSomeOfLowestCached() {
-		val expected = -127
+		val expected = -128
 		testSomeOf(expected)
 	}
 	
 	@Test def void testSomeOfHighestCached() {
-		val expected = 128
+		val expected = 127
+		testSomeOf(expected)
+	}
+	
+	
+	@Test def void testSomeOfZero() {
+		val expected = 0
 		testSomeOf(expected)
 	}
 	
@@ -699,14 +705,14 @@ class OptionalIntExtensionsTest {
 		]
 	}
 	
-	def testOneElementIterator(OfInt i, int expected) {
+	private def testOneElementIterator(OfInt i, int expected) {
 		assertNotNull(i)
 		assertTrue(i.hasNext)
 		assertEquals(expected, i.nextInt)
 		testEmptyIterator(i)
 	} 
 	
-	protected def void testSomeOf(int expected) {
+	private def void testSomeOf(int expected) {
 		val OptionalInt o =  someOf(expected)
 		assertTrue(o.present)
 		assertEquals(expected, o.asInt)

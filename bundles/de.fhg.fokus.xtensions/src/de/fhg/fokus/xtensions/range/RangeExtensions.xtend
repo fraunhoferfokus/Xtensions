@@ -74,12 +74,18 @@ class RangeExtensions {
 	}
 
 	def static IntStream stream(IntegerRange r) {
-		//val spliterator = new IntegerRangeSpliterator(r)
-		val spliterator = new IntegerRangeSpliterator(r)
-		StreamSupport.intStream(spliterator, false)
+		if(r.step == 1) {
+			// we assume that for the simple case the stream
+			// specialized on that case does less work
+			IntStream.rangeClosed(r.start, r.end)
+		} else {
+			val spliterator = new IntegerRangeSpliterator(r)
+			StreamSupport.intStream(spliterator, false)	
+		}
 	}
 
 	def static IntStream parallelStream(IntegerRange r) {
+		// TODO use IntStream.range() if r.step == 1
 		val spliterator = new IntegerRangeSpliterator(r)
 		StreamSupport.intStream(spliterator, true)
 	}

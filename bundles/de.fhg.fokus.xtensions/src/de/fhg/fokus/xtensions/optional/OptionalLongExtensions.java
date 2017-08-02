@@ -43,6 +43,13 @@ import de.fhg.fokus.xtensions.iteration.internal.PrimitiveIterableUtil;
  */
 public class OptionalLongExtensions {
 
+	private static final int CACHE_LOW_BOUND = -128;
+	private static final int CACHE_UPPER_BOUND = 127;
+	
+	private static final class OptionalLongCacheHoder {
+		private static final OptionalLong[] CACHE = new OptionalLong[CACHE_UPPER_BOUND - CACHE_LOW_BOUND + 1];
+	}
+	
 	private OptionalLongExtensions() {
 	}
 
@@ -86,6 +93,34 @@ public class OptionalLongExtensions {
 	@Inline(value = "OptionalLong.of($1)", imported = OptionalLong.class)
 	public static @NonNull OptionalLong some(long l) {
 		return OptionalLong.of(l);
+	}
+	
+	/**
+	 * This method returns an OptionalLong instance wrapping the given long {@code l}.
+	 * The returned value might be cached to achieve object re-use and therefore 
+	 * less garbage collection.<br>
+	 * This method might be deprecated in future if {@link OptionalInt#of(int)} or a
+	 * new factory method adds caching of instances itself.
+	 * @param i integer to be wrapped in OptionalInt
+	 * @return instance of OptionalInt, wrapping the given integer {@code i}.
+	 */
+	public static OptionalLong someOf(long l) {
+		if(l < CACHE_LOW_BOUND || l > CACHE_UPPER_BOUND) {
+			return OptionalLong.of(l);
+		} else {
+			OptionalLong[] cache = OptionalLongCacheHoder.CACHE;
+			// we do not care for multi-threaded access to the cache.
+			// in the worst case we create a cached element multiple times,
+			// overwriting the value of a different thread.
+			// We can safely cast to int, since we checked above we are in int value range
+			final int cacheIndex = ((int)l) - CACHE_LOW_BOUND;
+			final OptionalLong result = cache[cacheIndex];
+			if(result != null) {
+				return result;
+			} else {
+				return cache[cacheIndex] = OptionalLong.of(l);
+			}
+		}
 	}
 	
 	/**
