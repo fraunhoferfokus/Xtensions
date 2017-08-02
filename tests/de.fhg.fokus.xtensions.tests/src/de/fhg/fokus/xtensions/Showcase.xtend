@@ -17,6 +17,8 @@ import java.util.Random
 import java.util.stream.IntStream
 import java.util.PrimitiveIterator
 import java.util.stream.Collectors
+import java.util.Optional
+import java.util.regex.Pattern
 
 //@Ignore
 class Showcase {
@@ -138,6 +140,13 @@ class Showcase {
 		val yes = some("yesss!")
 		val dunno = maybe(possiblyNull())
 		
+		// Filter by type
+		val Optional<Object> optObj = some("Hi there!")
+		val Optional<String> optStr = optObj.filter(String)
+		optStr.ifPresent [
+			println(it.toUpperCase)
+		]
+		
 		// view as iterable
 		for(str : yes.asIterable) {
 			println("Iterating over: " + str)
@@ -149,6 +158,10 @@ class Showcase {
 		// map to primitive optionals
 		val size = dunno.mapInt[length]
 		
+		
+		if(someOf(42) === someOf(42)) {
+			println("someOf caches instances")
+		}
 		
 		(dunno || no).ifNotPresent[| println("Nothing to see here!")]
 		
@@ -185,6 +198,14 @@ class Showcase {
 			.filter[!contains("oo")]
 			.map[toUpperCase]
 			.toList
+	}
+	
+	
+	@Test def void stringDemo() {
+		
+		// TIP: use pattern as extension object
+		extension val pattern = Pattern.compile("(?<=oo)")
+		"foobar".splitAsStream.forEach[println(it)]
 	}
 	
 }

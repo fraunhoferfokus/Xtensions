@@ -153,10 +153,10 @@ final class StringStreamExtensions {
 		stream.flatMap[splitStream(pattern, limit)]
 	}
 
-	private static def Stream<String> splitStream(CharSequence input, Pattern pattern, int limit) {
+	private static def Stream<String> splitStream(CharSequence input, extension Pattern pattern, int limit) {
 		if (limit == 0) {
 			// take platform native implementation for default behavior
-			pattern.splitAsStream(input)
+			input.splitAsStream
 		} else {
 			val Supplier<Spliterator<String>> s = [|
 				val characteristics = Spliterator.ORDERED.bitwiseOr(Spliterator.NONNULL)
@@ -192,9 +192,11 @@ final class StringStreamExtensions {
 		stream.flatMatches(Pattern.compile(pattern))
 	}
 
+	// TODO publish as part of StringMatchExtensions
 	private static def Stream<String> matchStream(String input, Pattern pattern) {
 		// TODO characteristics!!
 		val Supplier<Spliterator<String>> s = [|
+			// TODO think about custom spliterator instead of wrapping the iterator
 			Spliterators.spliteratorUnknownSize(input.matchIt(pattern), 0)
 		]
 		StreamSupport.stream(s, 0, false)

@@ -131,4 +131,6 @@ final class StringMatchExtensions {
 	public static def Iterator<MatchResult> matchResultIt(CharSequence toMatch, String pattern) {
 		toMatch.matchResultIt(Pattern.compile(pattern))
 	}
+	
+	// TODO: matchStream (see StringStreamExtensions), matchResultStream
 }

@@ -235,6 +235,9 @@ class CompletableFutureExtensions {
 	 * submitted to the thread pool managing the thread. <br>
 	 * This is an example of how this message could be used:
 	 * <code><pre>
+	 * import static extension de.fhg.fokus.xtensions.concurrent.AsyncCompute.*
+	 * import static extension de.fhg.fokus.xtensions.concurrent.CompletableFutureExtensions.*
+	 * // ...
 	 * val blockOpPool = Executors.newCachedThreadPool
 	 * // ...
 	 * val sleepy = blockOpPool.asyncRun [ 

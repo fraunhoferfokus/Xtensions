@@ -21,39 +21,87 @@ and split into multiple bundles in future releases.
 
 The static factory Methods for creating `Optional` instances are not really meant to be used as 
 statically imported methods. They have no meaningful names to be used this way. They also differ from
-the commonly used names `some`, `none` and `maybe` that are used in many other languages.  
-The class ``
+the commonly used names `some`, `none` and `maybe` which are used in many other languages.  
+The class `OptionalIntExtensions` provides static factory methods with these common names
+which are implemented to be inlined to the factory methods used by the JDK.
 
-JDK does not cache OptionalInt as Integer#valueOf
-While these factory methods are , the `someOf`
+Examples:
 
-TODO: Describe map to primitive Optionals 
+	import static extension de.fhg.fokus.xtensions.optional.OptionalIntExtensions.*
+	...
+	val Optional<String> no = none
+	val Optional<String> yes = some("yesss!")
+	val Optional<String> dunno = maybe(possiblyNull())
+	...
+	private def possiblyNull() {
+		if(System.currentTimeMillis % 2 == 0) {
+			"I'm in ur optional"
+		} else {
+			null
+		}
+	}
+
+The optional class does not provide a `filter` method, that filters the optional based on the class
+of the object wrapped. The `OptionalIntExtensions` adds such a method, providing an instance
+check of the wrapped value.
+
+Example:
+
+	val Optional<Object> optObj = some("Hi there!")
+	val Optional<String> optStr = optObj.filter(String)
+	optStr.ifPresent [
+		println(it.toUpperCase)
+	]
+
+To bridge between APIs providing an `Optional` value and ones that expect
+multiple values, the extension methods `asIterable`, `toList` and `toSet`
+are provided to create immutable implementations of common JVM collection APIs.
+
+Examples:
+
+	import static extension de.fhg.fokus.xtensions.optional.OptionalIntExtensions.*
+	...
+	val Optional<String> yes = some("yesss!")
+	
+	// view as iterable
+	for(str : yes.asIterable) {
+		println("Iterating over: " + str)
+	}
+	
+	// TODO view as List
+	yes.toList
+	
+	// TODO view as Set
+	yes.toSet
 
 
-#### Factory Functions
-TODO: Describe some / none / maybe
+TODO: Describe map to primitive Optionals  
 
-#### Function Shortcut Aliases
-TODO: ?: operators
+TODO: describe Java 9 Forward Compatibility  
+* TODO: Describe or  
+* TODO: Describe ifPresentOrElse  
+* TODO: Describe stream  
 
-#### Extensions to Optionals
-TODO: 
-
-#### Operators on Optionals
-TODO: Describe || operator
-
-#### From Optional to Collection
-TODO: Describe toSet, toList
-
-#### Java 9 Forward Compatibility
-
-TODO: Describe or  
-TODO: Describe ifPresentOrElse  
-TODO: Describe stream  ​
+TODO: Describe || operator ?: operators
+​
 
 ### Extensions to Primitive Optionals
 
 TODO: Describe noInt / noLong / noDouble
+
+The Oracle JDK currently does not cache OptionalInt and OptionalLong instances in the static factory method 
+`OptionalInt.of(int)` and `OptionalLong.of(long)` as it is currently done for Integer creation in 
+`Integer.valueOf(int)`. To provide such a caching static factory methods, the 
+`OptionalIntExtensions.someOf(int)` and `OptionalLongExtensions.someOf(long)` method were 
+introduced.
+
+Example:
+
+	if(someOf(42) === someOf(42)) {
+		println("someOf caches instances")
+	}
+
+
 TODO: Describe map/mapX/filter to IterableX
 
 ### Extensions to IntegerRange
@@ -90,6 +138,12 @@ Example:
 To interact with consumers expecting an `IntIterable` (see [Primitive Iterables](#primitive-iterables)), which is a generic interface 
 for iteration over primitive int values provided by this library, the extension method
 `asIntIterable` was provided.
+
+### Extensions to Pair
+
+TODO: Describe with operator  
+TODO: Describe combine   
+TODO: Describe safeCombine   
 
 ### Extensions to Primitive Arrays
 
@@ -149,9 +203,13 @@ TODO: Describe concatenation operator +
 TODO: Describe Java 9 forward compatibility for Stream.iterate  
 TODO: Describe combinations extension methods  
 
-### Extensions to Primitive Streams 
-
 ### Extensions to Streams of Strings
+
+TODO: Describe join collector extension method  
+TODO: Describe matching filter extension method  
+TODO: Describe flatSplit mapping extension method  
+TODO: Describe flatMatches mapping extension method  
+TODO: Describe join collector
 
 ### Extensions to Iterable
 
@@ -287,19 +345,43 @@ TODO: Describe operators (+, -, /, *, >, <, >=, <=)
 
 ### Extensions to Functions
 
-#### Function Composition
+Function Composition  
 TODO: Describe andThen etc.
 
-#### Throwing Functions
+Throwing Functions  
 TODO: Describe Function#filterException, Function#recoverException, etc.
 
-#### Lambda Recursion
+Lambda Recursion
 
-### Concurrency Extensions
+### Extensions to CompletableFuture
 
-#### Extensions to Completable Future
+TODO: Describe then-Methods  
+TODO: Describe whenCancelled/whenCancelledAsync extension method  
+TODO: Describe whenException/whenExceptionAsync extension method  
+TODO: Describe whenException/whenExceptionAsync extension method  
+TODO: Describe recoverWith/recoverWithAsnyc extension method  
+TODO: Describe handleCancellation/handleCancellationAsync extension method  
+TODO: Describe forwardTo extension method  
+TODO: Describe forwardCancellation extension method  
+TODO: Describe cancelOnTimeout extension method  
+TODO: Describe whenCancelledInterrupt method  
 
-TODO: describe then-Methods
+TODO: Describe Java 9 forward compatibility  
+* TODO: Describe extension method orTimeout
+* TODO: Describe extension method copy
+
+### Async Computations
+
+TODO: Describe asyncRun methods  
+TODO: Describe asyncSupply methods  
+TODO: Describe async methods
+
+### Scheduling
+
+TODO: Describe repeatEvery methods  
+TODO: Describe repeatWithFixedDelay methods  
+TODO: Describe waitFor methods  
+TODO: Describe delay methods  
 
 ## Build
 

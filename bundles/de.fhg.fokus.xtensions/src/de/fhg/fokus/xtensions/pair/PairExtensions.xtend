@@ -58,7 +58,9 @@ final class PairExtensions {
 		maybe(result)
 	}
 	
-	// TODO really useful? basically special case of combine (without boxing of Boolean).
+	// TODO a version of safeCombine returning null instead of Optional?
+	
+	// TODO really useful? basically special case of combine (without boxing of boolean).
 //	/**
 //	 * Will check if key and value from {@code pair} the test true with the given {@code predicate}.
 //	 * The result of the test is returned by this function.
