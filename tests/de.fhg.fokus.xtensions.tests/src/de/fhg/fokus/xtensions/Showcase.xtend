@@ -6,12 +6,14 @@ import org.junit.Test
 
 import static java.util.stream.Collectors.*
 
-import static extension de.fhg.fokus.xtensions.iteration.IterableExtensions.*
 import static extension de.fhg.fokus.xtensions.iteration.PrimitiveArrayExtensions.*
+import static extension de.fhg.fokus.xtensions.iteration.IterableExtensions.*
 import static extension de.fhg.fokus.xtensions.optional.OptionalExtensions.*
 import static extension de.fhg.fokus.xtensions.optional.OptionalIntExtensions.*
 import static extension de.fhg.fokus.xtensions.range.RangeExtensions.*
 import static extension de.fhg.fokus.xtensions.stream.StreamExtensions.*
+import static extension de.fhg.fokus.xtensions.string.StringSplitExtensions.*
+import static extension java.util.Arrays.*
 import org.junit.Ignore
 import java.util.Random
 import java.util.stream.IntStream
@@ -19,8 +21,9 @@ import java.util.PrimitiveIterator
 import java.util.stream.Collectors
 import java.util.Optional
 import java.util.regex.Pattern
+import java.util.Iterator
 
-//@Ignore
+@Ignore
 class Showcase {
 	
 	@Test def rangeDemo() {
@@ -163,6 +166,10 @@ class Showcase {
 			println("someOf caches instances")
 		}
 		
+		val len = yes.mapInt[length].orElse(0)
+		println("Length is " + len)
+		
+		
 		(dunno || no).ifNotPresent[| println("Nothing to see here!")]
 		
 		//////////////////////////////////
@@ -206,6 +213,10 @@ class Showcase {
 		// TIP: use pattern as extension object
 		extension val pattern = Pattern.compile("(?<=oo)")
 		"foobar".splitAsStream.forEach[println(it)]
+		
+		val Iterator<String> i = "foobaar".splitIt("(?<=oo)")
+		val word = i.findFirst[startsWith("b")]
+		println(word)
 	}
 	
 }

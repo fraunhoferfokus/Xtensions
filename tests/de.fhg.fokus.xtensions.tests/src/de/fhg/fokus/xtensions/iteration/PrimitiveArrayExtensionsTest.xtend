@@ -89,11 +89,6 @@ class PrimitiveArrayExtensionsTest {
 		assertEquals(0,empty.stream.count)
 	}
 	
-	@Test def void testIntArrayStream() {
-		val int[] arr = #[9, -123, 0, Integer.MAX_VALUE]
-		assertArrayEquals(arr, arr.stream.toArray)
-	}
-	
 	//////////////////
 	// long[]#stream //
 	//////////////////
@@ -103,11 +98,6 @@ class PrimitiveArrayExtensionsTest {
 		assertEquals(0,empty.stream.count)
 	}
 	
-	@Test def void testLongArrayStream() {
-		val long[] arr = #[100_000_000L, -8L, 0L, Long.MAX_VALUE]
-		assertArrayEquals(arr, arr.stream.toArray)
-	}
-	
 	//////////////////
 	// double[]#stream //
 	//////////////////
@@ -115,11 +105,6 @@ class PrimitiveArrayExtensionsTest {
 	@Test def void testEmptyDoubleArrayStream() {
 		val double[] empty = #[]
 		assertEquals(0,empty.stream.count)
-	}
-	
-	@Test def void testDoubleArrayStream() {
-		val double[] arr = #[Double.NaN,5.0d,Double.POSITIVE_INFINITY,1e-5]
-		assertArrayEquals(arr, arr.stream.toArray, 1e-6)
 	}
 	
 	///////////////////

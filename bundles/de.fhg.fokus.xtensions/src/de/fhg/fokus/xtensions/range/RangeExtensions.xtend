@@ -33,9 +33,9 @@ class RangeExtensions {
 	 * @thorws NullPointerException if {@code r} or {@code consumer} is {@code null}
 	 */
 	def static void forEachInt(IntegerRange r, IntConsumer consumer) {
-		val int start = r.getStart()
-		val int end = r.getEnd()
-		val int step = r.getStep()
+		val int start = r.start
+		val int end = r.end
+		val int step = r.step
 		if (step > 0) {
 			for (var int i = start; i <= end; i += step) {
 				consumer.accept(i)
@@ -58,9 +58,9 @@ class RangeExtensions {
 	 * @thorws NullPointerException if {@code r} or {@code consumer} is {@code null}
 	 */
 	def static void forEachInt(IntegerRange r, IntIntConsumer consumer) {
-		val int start = r.getStart()
-		val int end = r.getEnd()
-		val int step = r.getStep()
+		val int start = r.start
+		val int end = r.end
+		val int step = r.step
 		var int index = 0
 		if (step > 0) {
 			for (var int i = start; i <= end; i += step) {

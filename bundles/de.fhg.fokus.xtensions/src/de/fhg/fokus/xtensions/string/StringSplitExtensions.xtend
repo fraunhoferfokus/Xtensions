@@ -184,6 +184,9 @@ class StringSplitExtensions {
 		}
 
 		def String readNext() {
+			if(matcher.hitEnd) {
+				return null
+			}
 			while (matcher.find) {
 				val start = matcher.start
 				val end = matcher.end
@@ -275,6 +278,9 @@ class StringSplitExtensions {
 				} else {
 					return EMPTY
 				}
+			}
+			if(matcher.hitEnd) {
+				return null
 			}
 			// no empty string we skipped over, go further
 			while (matcher.find) {

@@ -3,6 +3,9 @@ package de.fhg.fokus.xtensions.incubation.exceptions
 import java.util.Optional
 import java.util.NoSuchElementException
 
+/**
+ * Result of computation of non-null result value 
+ */
 final class Try<R> {
 	private val Exception e
 	private val R result
@@ -13,19 +16,30 @@ final class Try<R> {
 	}
 	
 	def static <R> Try<R> completed(R result) {
-		throw new UnsupportedOperationException("Not implemented yet")
+		new Try(result, null)
+	}
+	
+	def static <R> Try<R> completedExceptionally(Exception e) {
+		new Try(null, e)
+	}
+	
+	// maybe 
+	def static <I extends AutoCloseable,R> tryWith(()=>I resourceProvider, (I)=>R provider) {
+		try {
+			val resource = resourceProvider.apply
+			try {
+				val result = provider.apply(resource);
+				new Try(result, null)
+			} finally {
+				resource.close
+			}
+		} catch(Exception e) {
+			new Try(null, e);
+		}
 	}
 	
 	def static <R> Try<R> doTry(()=>R provider) {
 		throw new UnsupportedOperationException("Not implemented yet")
-	}
-	
-	def static <R> Try<R> doTryWith(AutoCloseable resource, ()=>R provider) {
-		try {
-			doTry(provider) 
-		} finally {
-			resource.close
-		}
 	}
 	
 	def static <R> Try<R> flatTry(()=>Try<R> provider) {
@@ -33,16 +47,33 @@ final class Try<R> {
 	}
 	
 	/**
-	 * Recovers exceptions of class {@code E}.
+	 * Recovers exceptions of class {@code E}. If recovery fails with exception
+	 * it will be thrown by this method.
 	 */
 	def <E> Try<R> recover(Class<E> exceptionType, (E)=>R recovery) {
 		throw new UnsupportedOperationException("Not implemented yet")
 	}
 	
 	/**
+	 * Recovers exceptions of class {@code E}. If recovery fails with
+	 * exception the returned Try will hold the exception
+	 */
+	def <E> Try<R> tryRecover(Class<E> exceptionType, (E)=>R recovery) {
+		throw new UnsupportedOperationException("Not implemented yet")
+	}
+	
+	/**
+	 * Recovers exceptions. If recovery fails with an exception, the exception 
+	 * will be thrown by this method.
+	 */
+	def R recover((Exception)=>R recovery) {
+		throw new UnsupportedOperationException("Not implemented yet")
+	}
+	
+	/**
 	 * Recovers exceptions
 	 */
-	def Try<R> recover((Exception)=>R recovery) {
+	def Try<R> tryRecover((Exception)=>R recovery) {
 		throw new UnsupportedOperationException("Not implemented yet")
 	}
 	

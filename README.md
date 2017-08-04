@@ -47,6 +47,8 @@ check of the wrapped value.
 
 Example:
 
+	import static extension de.fhg.fokus.xtensions.optional.OptionalIntExtensions.*
+	...
 	val Optional<Object> optObj = some("Hi there!")
 	val Optional<String> optStr = optObj.filter(String)
 	optStr.ifPresent [
@@ -74,8 +76,20 @@ Examples:
 	// TODO view as Set
 	yes.toSet
 
+ 
+The `Optional` class has a `map` method that can map the value present in the optional
+to a value of another type. Unfortunately there is no method to map to a primitive type
+returning a primitive òptional, such as `OptionalInt`. The extension methods `mapInt`,
+`mapLong`, and `mapDouble` allow mapping to primitive options without having to
+box the resulting value.
 
-TODO: Describe map to primitive Optionals  
+Example:
+
+	import static extension de.fhg.fokus.xtensions.optional.OptionalIntExtensions.*
+	...
+	val Optional<String> yes = some("yesss!")
+	val len = yes.mapInt[length].orElse(0)
+	println("Length is " + len)
 
 TODO: describe Java 9 Forward Compatibility  
 * TODO: Describe or  
@@ -389,7 +403,7 @@ TODO: Describe asyncRun methods
 TODO: Describe asyncSupply methods  
 TODO: Describe async methods
 
-### Scheduling
+### Scheduling Util
 
 TODO: Describe repeatEvery methods  
 TODO: Describe repeatWithFixedDelay methods  
