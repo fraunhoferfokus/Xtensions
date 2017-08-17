@@ -1,6 +1,7 @@
 package de.fhg.fokus.xtensions.incubation.immutable
 
 import java.util.Optional
+import static extension de.fhg.fokus.xtensions.optional.OptionalExtensions.*
 
 /**
  * Focus objects can be used to "zoom" into a nested object structure
@@ -18,15 +19,15 @@ abstract class Focus<I, O> implements ((O)=>O)=>Optional<I> {
 		}
 
 		override getOpt() {
-			Optional.empty
+			none
 		}
 
 		override apply((Object)=>Object mapper) {
-			Optional.empty
+			none
 		}
 
 		override get() {
-			null
+			none
 		}
 
 	}
@@ -34,7 +35,7 @@ abstract class Focus<I, O> implements ((O)=>O)=>Optional<I> {
 	package new() {
 	}
 
-	public static def <I, O> Focus<I, O> create(((O)=>O)=>I updater, O wrapped) {
+	public static def <I, O> Focus<I, O> create(O wrapped, (O)=>I updater) {
 		if (wrapped === null) {
 			EMPTY_FOCUS as Focus<I, O>
 		} else {
@@ -45,6 +46,7 @@ abstract class Focus<I, O> implements ((O)=>O)=>Optional<I> {
 	// creating object if not there
 	// maybe has to be part of Focus-Getter instead?
 	// TODO def Focus<I,Y> zoomOrCreate((O)=>Focus<O, Y> focusProvider, =>Y factory) 
+	// TODO def Focus<I, O> filter(Predicate<O> test)
 
 	/**
 	 * Focus on a feature on the focused feature
@@ -71,10 +73,10 @@ abstract class Focus<I, O> implements ((O)=>O)=>Optional<I> {
 
 package final class ValueFocus<I, O> extends Focus<I, O> {
 
-	private val ((O)=>O)=>I updater
+	private val (O)=>I updater
 	private val O value // must be not null
 
-	package new(((O)=>O)=>I updater, O wrapped) {
+	package new((O)=>I updater, O wrapped) {
 		this.updater = updater
 		this.value = wrapped
 	}
@@ -86,22 +88,15 @@ package final class ValueFocus<I, O> extends Focus<I, O> {
 				EMPTY_FOCUS as Focus<I, Y>
 			ValueFocus: {
 				val newWrapped = zoomedFocus.value as Y
-				val focusUpdater = zoomedFocus.updater as ((Y)=>Y)=>O
+				val focusUpdater = zoomedFocus.updater
 				val zoomedUpdate = zoomedUpdater(focusUpdater)
 				new ValueFocus(zoomedUpdate, newWrapped)
 			}
 		}
 	}
 
-	private def <Y> ((Y)=>Y)=>I zoomedUpdater(((Y)=>Y)=>O focusUpdater) {
-		[ (Y)=>Y innerMapper |
-			updater.apply [
-				if (it === null) {
-					return null
-				}
-				focusUpdater.apply(innerMapper)
-			]
-		]
+	private def <Y> (Y)=>I zoomedUpdater((Y)=>O focusUpdater) {
+		focusUpdater.andThen(updater)
 	}
 
 	override get() {
@@ -109,11 +104,12 @@ package final class ValueFocus<I, O> extends Focus<I, O> {
 	}
 
 	override getOpt() {
-		Optional.of(value)
+		some(value)
 	}
 
 	override apply((O)=>O mapper) {
-		Optional.ofNullable(value).map[updater.apply(mapper)]
+		val newValue = mapper.apply(value)
+		updater.apply(newValue).maybe
 	}
 
 }

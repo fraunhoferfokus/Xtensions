@@ -2,6 +2,7 @@ package de.fhg.fokus.xtensions.incubation.exceptions
 
 import java.util.Optional
 import java.util.NoSuchElementException
+import static extension de.fhg.fokus.xtensions.optional.OptionalExtensions.*
 
 /**
  * Result of computation of non-null result value .
@@ -60,6 +61,15 @@ final class Try<R> {
 		}
 	}
 	
+	def static <I,R> Try<R> doTry(I input, (I)=>R provider) {
+		try {
+			val result = provider.apply(input)
+			new Try(result, null)
+		} catch(Exception e) {
+			new Try(null, e)
+		}
+	}
+	
 	def static <R> Try<R> flatTry(()=>Try<R> provider) {
 		throw new UnsupportedOperationException("Not implemented yet")
 	}
@@ -106,17 +116,17 @@ final class Try<R> {
 	
 	/**
 	 * Recovers exceptions or {@code null} result values with value {@code recovery}.
-	 */
-	def R recoverEmpty(R recovery) {
-		result ?: recovery
-	}
-	
-	/**
-	 * Recovers exceptions or {@code null} result values with value {@code recovery}.
 	 * If recovery fails with an exception a failed {@code Try} is returned.
 	 */
 	def Try<R> tryRecoverEmpty(()=>R recovery) {
 		throw new UnsupportedOperationException("Not implemented yet")
+	}
+	
+	/**
+	 * Recovers exceptions or {@code null} result values with value {@code recovery}.
+	 */
+	def R recoverEmpty(R recovery) {
+		result ?: recovery
 	}
 	
 	/**
@@ -172,6 +182,22 @@ final class Try<R> {
 		throw new UnsupportedOperationException("Not implemented yet")
 	}
 	
+	def boolean isEmpty() {
+		e !== null || result === null
+	}
+	
+	def boolean isFinishedExceptionally() {
+		e !== null
+	}
+	
+	def Try<R> mapException((Exception)=>Exception mapper) {
+		throw new UnsupportedOperationException("Not implemented yet")
+	}
+	
+	def <U> U transform((R)=>U resultTransformer, (Exception)=>U exceptionTranformer, =>U emtpyTransformer) {
+		throw new UnsupportedOperationException("Not implemented yet")
+	}
+	
 	/**
 	 * Returns empty optional if Try completed exceptionally or with a
 	 * {@code null} value. Otherwise returns an optional with the computed
@@ -179,9 +205,9 @@ final class Try<R> {
 	 */
 	def Optional<R> get() {
 		if(e !== null) {
-			Optional.empty
+			none
 		} else {
-			Optional.ofNullable(result)
+			maybe(result)
 		}
 	}
 	
@@ -204,13 +230,24 @@ final class Try<R> {
 	 * will be thrown
 	 */
 	def R getOrThrow() throws NoSuchElementException {
+		getOrThrow[new NoSuchElementException]
+	}
+	
+	def <E extends Exception> R getOrThrow(()=>E exceptionProvider) throws E {
 		if(e !== null) {
 			throw e
 		}
 		if(result !== null) {
 			result
 		} else {
-			throw new NoSuchElementException
+			throw exceptionProvider.apply
 		}
 	}
+	
+	def Optional<Exception> getException() {
+		e.maybe
+	}
+	
+	// TODO makes sense? 
+//	def Either<R,Exception> asEither() //mapps empty to NoSuchElementException
 }
