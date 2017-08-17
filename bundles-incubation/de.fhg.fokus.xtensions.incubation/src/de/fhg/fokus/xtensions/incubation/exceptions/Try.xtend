@@ -4,7 +4,20 @@ import java.util.Optional
 import java.util.NoSuchElementException
 
 /**
- * Result of computation of non-null result value 
+ * Result of computation of non-null result value .
+ * Constructing try:
+ * <ul>
+ * 	<li>tryWith</li>
+ * 	<li>doTry</li>
+ * 	<li>flatTry</li>
+ * 	<li>completedSuccessfully</li>
+ * 	<li>completedExceptionally</li>
+ * </ul>
+ * All methods starting with {@code if} react on the result and simply return 
+ * the Try on which they were invoked again. If the handlers passed to these methods
+ * throw an exception, they well be thrown from the {@code if*} method that was called.<br>
+ * <br>
+ * The methods starting with {@code then} execute the given handler when the 
  */
 final class Try<R> {
 	private val Exception e
@@ -15,7 +28,7 @@ final class Try<R> {
 		this.result = result
 	}
 	
-	def static <R> Try<R> completed(R result) {
+	def static <R> Try<R> completedSuccessfully(R result) {
 		new Try(result, null)
 	}
 	
@@ -39,7 +52,12 @@ final class Try<R> {
 	}
 	
 	def static <R> Try<R> doTry(()=>R provider) {
-		throw new UnsupportedOperationException("Not implemented yet")
+		try {
+			val result = provider.apply
+			new Try(result, null)
+		} catch(Exception e) {
+			new Try(null, e)
+		}
 	}
 	
 	def static <R> Try<R> flatTry(()=>Try<R> provider) {
@@ -66,7 +84,7 @@ final class Try<R> {
 	 * Recovers exceptions. If recovery fails with an exception, the exception 
 	 * will be thrown by this method.
 	 */
-	def R recover((Exception)=>R recovery) {
+	def Try<R> recover((Exception)=>R recovery) {
 		throw new UnsupportedOperationException("Not implemented yet")
 	}
 	
@@ -90,7 +108,7 @@ final class Try<R> {
 	 * Recovers exceptions or {@code null} result values with value {@code recovery}.
 	 */
 	def R recoverEmpty(R recovery) {
-		throw new UnsupportedOperationException("Not implemented yet")
+		result ?: recovery
 	}
 	
 	/**
@@ -119,6 +137,10 @@ final class Try<R> {
 		throw new UnsupportedOperationException("Not implemented yet")
 	}
 	
+	/**
+	 * Calls the given {@code handler} with the result value if the Try 
+	 * completed with a non {@code null} result value.
+	 */
 	def Try<R> ifResult((R)=>void handler){
 		throw new UnsupportedOperationException("Not implemented yet")
 	}
@@ -142,10 +164,19 @@ final class Try<R> {
 		throw new UnsupportedOperationException("Not implemented yet")
 	}
 	
+	def <U, I extends AutoCloseable> Try<U> thenTryWith(()=>I resourceProducer,(I,R)=>U action) {
+		throw new UnsupportedOperationException("Not implemented yet")
+	}
+	
 	def <U> Try<U> thenFlatTry((R)=>Try<U> action) {
 		throw new UnsupportedOperationException("Not implemented yet")
 	}
 	
+	/**
+	 * Returns empty optional if Try completed exceptionally or with a
+	 * {@code null} value. Otherwise returns an optional with the computed
+	 * result value present.
+	 */
 	def Optional<R> get() {
 		if(e !== null) {
 			Optional.empty
@@ -155,11 +186,15 @@ final class Try<R> {
 	}
 	
 	/**
-	 * Returns result value on successful computation or {@code null}
-	 * an exception was thrown.
+	 * Returns result value on successful computation (even when the result
+	 * value was {@code null}) or {@code null} if an exception was thrown.
 	 */
 	def R getOrNull() {
-		recoverEmpty(null as R)
+		if(e !== null) {
+			null
+		} else {
+			result
+		}
 	}
 	
 	/**
@@ -169,6 +204,13 @@ final class Try<R> {
 	 * will be thrown
 	 */
 	def R getOrThrow() throws NoSuchElementException {
-		throw new UnsupportedOperationException("Not implemented yet")
+		if(e !== null) {
+			throw e
+		}
+		if(result !== null) {
+			result
+		} else {
+			throw new NoSuchElementException
+		}
 	}
 }

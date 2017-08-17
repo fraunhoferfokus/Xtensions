@@ -35,7 +35,7 @@ abstract class Focus<I, O> implements ((O)=>O)=>Optional<I> {
 	}
 
 	public static def <I, O> Focus<I, O> create(((O)=>O)=>I updater, O wrapped) {
-		if (wrapped == null) {
+		if (wrapped === null) {
 			EMPTY_FOCUS as Focus<I, O>
 		} else {
 			new ValueFocus<I, O>(updater, wrapped)
@@ -96,7 +96,7 @@ package final class ValueFocus<I, O> extends Focus<I, O> {
 	private def <Y> ((Y)=>Y)=>I zoomedUpdater(((Y)=>Y)=>O focusUpdater) {
 		[ (Y)=>Y innerMapper |
 			updater.apply [
-				if (it == null) {
+				if (it === null) {
 					return null
 				}
 				focusUpdater.apply(innerMapper)
