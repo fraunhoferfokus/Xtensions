@@ -17,6 +17,10 @@ has to be built from source. See chapter [Build](#build).
 When using the library in OSGi it is recommended to use package imports since the library may evolve
 and split into multiple bundles in future releases.
 
+The following chapters will give an overview over the most important extensions and types provided 
+by the library. It does not include all methods. Please have a look at the sources or the JavaDocs
+to explore all possible functionality.
+
 ### Extensions to Optional
 
 The static factory Methods for creating `Optional` instances are not really meant to be used as 
@@ -42,8 +46,8 @@ Examples:
 	}
 
 The optional class does not provide a `filter` method, that filters the optional based on the class
-of the object wrapped. The `OptionalIntExtensions` adds such a method, providing an instance
-check of the wrapped value.
+the wrapped object is instance of, as known e.g. from Xtend's filter methods on `Iterable`. 
+The `OptionalIntExtensions` adds such a method, providing an instance check of the wrapped value.
 
 Example:
 
@@ -79,7 +83,7 @@ Examples:
  
 The `Optional` class has a `map` method that can map the value present in the optional
 to a value of another type. Unfortunately there is no method to map to a primitive type
-returning a primitive òptional, such as `OptionalInt`. The extension methods `mapInt`,
+returning a primitive optional, such as `OptionalInt`. The extension methods `mapInt`,
 `mapLong`, and `mapDouble` allow mapping to primitive options without having to
 box the resulting value.
 
@@ -88,8 +92,10 @@ Example:
 	import static extension de.fhg.fokus.xtensions.optional.OptionalIntExtensions.*
 	...
 	val Optional<String> yes = some("yesss!")
-	val len = yes.mapInt[length].orElse(0)
+	val OptionalInt lenOpt = yes.mapInt[length]
+	val len = lenOpt.orElse(0)
 	println("Length is " + len)
+
 
 TODO: describe Java 9 Forward Compatibility  
 * TODO: Describe or  
@@ -101,7 +107,7 @@ TODO: Describe || operator ?: operators
 
 ### Extensions to Primitive Optionals
 
-TODO: Describe noInt / noLong / noDouble
+TODO: Describe some / noInt / noLong / noDouble
 
 The Oracle JDK currently does not cache OptionalInt and OptionalLong instances in the static factory method 
 `OptionalInt.of(int)` and `OptionalLong.of(long)` as it is currently done for Integer creation in 
@@ -359,10 +365,33 @@ Example:
 
 ### Extensions to String 
 
+Advantages of iterator: Allows return in loop, some iterator extensions are not (yet) available 
+on Stream (such as `takeWhile` and `dropWhile`)
+
 TODO: Describe extension method matchIt  
 TODO: Describe extension method matchResultIt  
-TODO: Describe extension method splitIt  
+TODO: Describe extension method splitIt. 
+
+Example: 
+
+	val Iterator<String> i = "foozoobaar".splitIt("(?<=oo)")
+	i.takeWhile[!startsWith("b")].forEach[
+		println(it)
+	]
+
 TODO: Describe extension method splitStream  
+If a split pattern is known in advance the following is possible with the JDK types to obtain a Stream of split elements:
+
+	static extension val pattern = Pattern.compile("mypattern")
+	// ...
+	"tosplit".splitAsStream  // actually calls pattern.splitAsStream("tosplit")
+	
+If a pattern String has to be produced on the fly, the extension method `splitAsStream` is provided
+as a shortcut for the sequence of calls from above:
+
+	import static extension de.fhg.fokus.xtensions.string.StringSplitExtensions.*
+	// ...
+	"tosplit".splitAsStream("mypattern")
 
 
 ### Extensions to Duration 
@@ -372,13 +401,15 @@ TODO: Describe operators (+, -, /, *, >, <, >=, <=)
 
 ### Extensions to Functions
 
+TODO: Describe >>> operator, also for Pair (should be inlined)  
+
 Function Composition  
-TODO: Describe andThen etc.
+TODO: Describe andThen, >> etc.
+
+TODO: Describe Bool functions and / or / negate
 
 Throwing Functions  
 TODO: Describe Function#filterException, Function#recoverException, etc.
-
-Lambda Recursion
 
 ### Extensions to CompletableFuture
 

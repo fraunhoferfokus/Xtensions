@@ -7,6 +7,8 @@ import java.util.concurrent.Executor
 import java.util.concurrent.ScheduledExecutorService
 import static extension de.fhg.fokus.xtensions.concurrent.CompletableFutureExtensions.*
 import java.util.Objects
+import de.fhg.fokus.xtensions.concurrent.FutureCompletion.NowFutureCompletion
+import de.fhg.fokus.xtensions.concurrent.FutureCompletion.FutureFutureCompletion
 
 /**
  * The static methods of this class start asynchronous computation, such as the {@code async}, {@code asyncSupply},
@@ -16,128 +18,131 @@ class AsyncCompute {
 	
 	private new(){}
 
-	/**
-	 * An instance of this class has to be provided by the function passed to
-	 * any of the {@code async} methods. Since this 
-	 * Create instance using one of the following functions:
-	 * <ul>
-	 * 	<li>{@link AsyncCompute#completeAsync() completeAsync()}</li>
-	 * 	<li>{@link AsyncCompute#completedAlready() completedAllready()}</li>
-	 * 	<li>{@link AsyncCompute#completeNow(Object) completeNow(T)}</li>
-	 * 	<li>{@link AsyncCompute#completeWith(CompletableFuture) completeWith(CompletableFuture<? extends T>)}</li>
-	 * </ul>
-	 */
-	public static class FutureCompletion<T> {
-		package new() {
-		}
-	}
+//	/**
+//	 * An instance of this class has to be provided by the function passed to
+//	 * any of the {@code async} methods. Since this 
+//	 * Create instance using one of the following functions:
+//	 * <ul>
+//	 * 	<li>{@link AsyncCompute#completeAsync() completeAsync()}</li>
+//	 * 	<li>{@link AsyncCompute#completedAlready() completedAllready()}</li>
+//	 * 	<li>{@link AsyncCompute#completeNow(Object) completeNow(T)}</li>
+//	 * 	<li>{@link AsyncCompute#completeWith(CompletableFuture) completeWith(CompletableFuture<? extends T>)}</li>
+//	 * </ul>
+//	 */
+//	public static class FutureCompletion<T> {
+//		package new() {
+//		}
+//	}
+//
+//	/**
+//	 * Factory method to create a FutureCompletion instance that can be used
+//	 * as a return value in a function passed to an async function. <br>
+//	 * The created FutureCompletion indicates, that the result future is completed asynchronously.
+//	 * This means that the CompletedFuture passed into the function must be called 
+//	 * "manually". This can also be done asynchronously on a different thread. Note that 
+//	 * the caller method cannot ensure completion of the future holding the result value.
+//	 * @see #async(Function1)
+//	 * @see #async(Executor, Function1)
+//	 * @see #async(long, TimeUnit, Function1)
+//	 * @see #async(long, TimeUnit, Executor, Function1)
+//	 * @see #async(ScheduledExecutorService, long, TimeUnit, Executor, Function1)
+//	 * @see #async(ScheduledExecutorService, long, TimeUnit, Function1)
+//	 */
+//	public static def <T> FutureCompletion<T> completeAsync() {
+//		// NoOp completion is the same for every type T
+//		NO_OP_COMPLETION as FutureCompletion<?> as FutureCompletion<T>
+//	}
+//
+//	/** 
+//	 * Factory method to create a FutureCompletion instance that can be used
+//	 * as a return value in a function passed to an async function.<br>
+//	 * The value returned by this value indicates that the future provided to 
+//	 * the {@code async} method was already completed. Note that if this value 
+//	 * is provided without actually having completed the future, the future will
+//	 * be completed exceptionally by the {@code async} method.
+//	 * 
+//	 * @return utureCompletion to return by functions passed to {@code async} method.
+//	 * @see #async(Function1)
+//	 * @see #async(Executor, Function1)
+//	 * @see #async(long, TimeUnit, Function1)
+//	 * @see #async(long, TimeUnit, Executor, Function1)
+//	 * @see #async(ScheduledExecutorService, long, TimeUnit, Executor, Function1)
+//	 * @see #async(ScheduledExecutorService, long, TimeUnit, Function1)
+//	 */
+//	public static def <T> FutureCompletion<T> completedAlready() {
+//		// completion is the same for every type T
+//		ALREADY_COMPLETED_COMPLETION as FutureCompletion<?> as FutureCompletion<T>
+//	}
+//
+//	/** 
+//	 * Factory method to create a FutureCompletion instance that can be used
+//	 * as a return value in a function passed to an async function.<br>
+//	 * The value returned by this method indicates that the given {@code value}
+//	 * should be used to complete the result future.
+//	 * 
+//	 * @param value used to complete result future with
+//	 * @return FutureCompletion to return by functions passed to {@code async} method.
+//	 * @see #async(Function1)
+//	 * @see #async(Executor, Function1)
+//	 * @see #async(long, TimeUnit, Function1)
+//	 * @see #async(long, TimeUnit, Executor, Function1)
+//	 * @see #async(ScheduledExecutorService, long, TimeUnit, Executor, Function1)
+//	 * @see #async(ScheduledExecutorService, long, TimeUnit, Function1)
+//	 */
+//	public static def <T> FutureCompletion<T> completeNow(T value) {
+//		return new NowFutureCompletion(value)
+//	}
+//
+//	/** 
+//	 * Factory method to create a FutureCompletion instance that can be used
+//	 * as a return value in a function passed to an async function.<br>
+//	 * The value returned by this method indicates that the resulting completable
+//	 * future should be completed with the value provided by the 
+//	 * 
+//	 * TODO FURTHER DESCRIPTION, cancellation forward
+//	 * 
+//	 * @param futureResult
+//	 * @return FutureCompletion to return by functions passed to {@code async} method.
+//	 * @see #async(Function1)
+//	 * @see #async(Executor, Function1)
+//	 * @see #async(long, TimeUnit, Function1)
+//	 * @see #async(long, TimeUnit, Executor, Function1)
+//	 * @see #async(ScheduledExecutorService, long, TimeUnit, Executor, Function1)
+//	 * @see #async(ScheduledExecutorService, long, TimeUnit, Function1)
+//	 */
+//	public static def <T> FutureCompletion<T> completeWith(CompletableFuture<? extends T> futureResult) {
+//		return new FutureFutureCompletion(futureResult)
+//	}
+//
+//	private static val NO_OP_COMPLETION = new FutureCompletion
+//	private static val ALREADY_COMPLETED_COMPLETION = new FutureCompletion
+//
+//	/**
+//	 * Subclass of {@link FutureCompletion} holding a result value of type {@code T}
+//	 */
+//	private static final class NowFutureCompletion<T> extends FutureCompletion<T> {
+//		val T value
+//
+//		package new(T t) {
+//			value = t
+//		}
+//	}
+//
+//	/**
+//	 * Subclass of {@link FutureCompletion} holding a future of {@code T} holding the 
+//	 * value to be returned.
+//	 */
+//	private static final class FutureFutureCompletion<T> extends FutureCompletion<T> {
+//		val CompletableFuture<? extends T> value
+//
+//		package new(CompletableFuture<? extends T> f) {
+//			value = f
+//		}
+//	}
 
 	/**
-	 * Factory method to create a FutureCompletion instance that can be used
-	 * as a return value in a function passed to an async function. <br>
-	 * The created FutureCompletion indicates, that the result future is completed asynchronously.
-	 * This means that the CompletedFuture passed into the function must be called 
-	 * "manually". This can also be done asynchronously on a different thread. Note that 
-	 * the caller method cannot ensure completion of the future holding the result value.
-	 * @see #async(Function1)
-	 * @see #async(Executor, Function1)
-	 * @see #async(long, TimeUnit, Function1)
-	 * @see #async(long, TimeUnit, Executor, Function1)
-	 * @see #async(ScheduledExecutorService, long, TimeUnit, Executor, Function1)
-	 * @see #async(ScheduledExecutorService, long, TimeUnit, Function1)
-	 */
-	public static def <T> FutureCompletion<T> completeAsync() {
-		// NoOp completion is the same for every type T
-		NO_OP_COMPLETION as FutureCompletion<?> as FutureCompletion<T>
-	}
-
-	/** 
-	 * Factory method to create a FutureCompletion instance that can be used
-	 * as a return value in a function passed to an async function.<br>
-	 * The value returned by this value indicates that the future provided to 
-	 * the {@code async} method was already completed. Note that if this value 
-	 * is provided without actually having completed the future, the future will
-	 * be completed exceptionally by the {@code async} method.
 	 * 
-	 * @return utureCompletion to return by functions passed to {@code async} method.
-	 * @see #async(Function1)
-	 * @see #async(Executor, Function1)
-	 * @see #async(long, TimeUnit, Function1)
-	 * @see #async(long, TimeUnit, Executor, Function1)
-	 * @see #async(ScheduledExecutorService, long, TimeUnit, Executor, Function1)
-	 * @see #async(ScheduledExecutorService, long, TimeUnit, Function1)
 	 */
-	public static def <T> FutureCompletion<T> completedAlready() {
-		// completion is the same for every type T
-		ALREADY_COMPLETED_COMPLETION as FutureCompletion<?> as FutureCompletion<T>
-	}
-
-	/** 
-	 * Factory method to create a FutureCompletion instance that can be used
-	 * as a return value in a function passed to an async function.<br>
-	 * The value returned by this method indicates that the given {@code value}
-	 * should be used to complete the result future.
-	 * 
-	 * @param value used to complete result future with
-	 * @return FutureCompletion to return by functions passed to {@code async} method.
-	 * @see #async(Function1)
-	 * @see #async(Executor, Function1)
-	 * @see #async(long, TimeUnit, Function1)
-	 * @see #async(long, TimeUnit, Executor, Function1)
-	 * @see #async(ScheduledExecutorService, long, TimeUnit, Executor, Function1)
-	 * @see #async(ScheduledExecutorService, long, TimeUnit, Function1)
-	 */
-	public static def <T> FutureCompletion<T> completeNow(T value) {
-		return new NowFutureCompletion(value)
-	}
-
-	/** 
-	 * Factory method to create a FutureCompletion instance that can be used
-	 * as a return value in a function passed to an async function.<br>
-	 * The value returned by this method indicates that the resulting completable
-	 * future should be completed with the value provided by the 
-	 * 
-	 * TODO FURTHER DESCRIPTION, cancellation forward
-	 * 
-	 * @param futureResult
-	 * @return FutureCompletion to return by functions passed to {@code async} method.
-	 * @see #async(Function1)
-	 * @see #async(Executor, Function1)
-	 * @see #async(long, TimeUnit, Function1)
-	 * @see #async(long, TimeUnit, Executor, Function1)
-	 * @see #async(ScheduledExecutorService, long, TimeUnit, Executor, Function1)
-	 * @see #async(ScheduledExecutorService, long, TimeUnit, Function1)
-	 */
-	public static def <T> FutureCompletion<T> completeWith(CompletableFuture<? extends T> futureResult) {
-		return new FutureFutureCompletion(futureResult)
-	}
-
-	private static val NO_OP_COMPLETION = new FutureCompletion
-	private static val ALREADY_COMPLETED_COMPLETION = new FutureCompletion
-
-	/**
-	 * Subclass of {@link FutureCompletion} holding a result value of type {@code T}
-	 */
-	private static final class NowFutureCompletion<T> extends FutureCompletion<T> {
-		val T value
-
-		package new(T t) {
-			value = t
-		}
-	}
-
-	/**
-	 * Subclass of {@link FutureCompletion} holding a future of {@code T} holding the 
-	 * value to be returned.
-	 */
-	private static final class FutureFutureCompletion<T> extends FutureCompletion<T> {
-		val CompletableFuture<? extends T> value
-
-		package new(CompletableFuture<? extends T> f) {
-			value = f
-		}
-	}
-
 	public static def <R> CompletableFuture<R> async((CompletableFuture<R>)=>FutureCompletion<R> runAsync) {
 		async(ForkJoinPool.commonPool, runAsync)
 	}
@@ -186,7 +191,7 @@ class AsyncCompute {
 							fut.forwardCancellation(resultFut)
 						}
 					}
-					case result === ALREADY_COMPLETED_COMPLETION: {
+					case result === FutureCompletion.ALREADY_COMPLETED_COMPLETION: {
 						if (!fut.done) {
 							val ex = new IllegalStateException(
 								"Function claimed alreadyCompleted, while future was not completed.")
@@ -241,7 +246,8 @@ class AsyncCompute {
 	 * complete the returned future. If {@code runAsync} throws a {@code Throwable}, it will be used to complete the 
 	 * future exceptionally with the thrown object.
 	 * 
-	 * @param runAsync function to be executed on the {@link ForkJoinPool#commonPool() common ForkJoinPoo}.
+	 * @param runAsync function to be executed on the {@link ForkJoinPool#commonPool() common ForkJoinPoo}. The 
+	 *  result of this function will be used to complete the CompletableFuture returned by this method.
 	 * @return future that will used to provide result from concurrently executed {@code runAsync}. This future
 	 *  may be cancelled by the user, the {@code runAsync} function is advised to check the future for cancellation.
 	 */
@@ -274,8 +280,25 @@ class AsyncCompute {
 		fut
 	}
 
-	// TODO documentation
-	// TODO allow Duration here
+	/**
+	 * This method will call the given {@code runAsync} function using the {@link ForkJoinPool#commonPool() common ForkJoinPoo} with the {@code CompletableFuture}
+	 * being returned. This parameter is supposed to be used to checked by the {@code runAsync} function
+	 * for cancellation from the outside. The value returned by the {@code runAsync} function will be used to try to 
+	 * complete the returned future. If {@code runAsync} throws a {@code Throwable}, it will be used to complete the 
+	 * future exceptionally with the thrown object. If the {@code runAsync} function does not provide a result value 
+	 * after the timeout specified via the parameters {@code timeout} and {@code unit}, the returned future will be 
+	 * canceled. Therefore the {@code runAsync} function is advised to check for cancellation of the future provided
+	 * to it as parameter. If {@code runAsync} returns a value after the CompletableFuture was cancelled, the result
+	 * will not appear in the CompletableFuture.
+	 * 
+	 * @param timeout Amount of time after which the returned {@code CompletableFuture} is cancelled, if it was not 
+	 *  completed until then. The unit of the amount of time is specified via parameter {@code unit}.
+	 * @param unit the time unit of the {@code timeout} parameter.
+	 * @param runAsync function to be executed on the {@link ForkJoinPool#commonPool() common ForkJoinPoo}. The 
+	 *  result of this function will be used to complete the CompletableFuture returned by this method.
+	 * @return future that will used to provide result from concurrently executed {@code runAsync}. This future
+	 *  may be cancelled by the user, the {@code runAsync} function is advised to check the future for cancellation.
+	 */
 	public static def <R> CompletableFuture<R> asyncSupply(long timeout, TimeUnit unit,
 		(CompletableFuture<?>)=>R runAsync) {
 		val CompletableFuture<R> fut = asyncSupply(runAsync)
@@ -356,4 +379,8 @@ class AsyncCompute {
 		fut.cancelOnTimeout(scheduler, timeout, unit)
 	}
 
+	// TODO async(ExecutorService, ... ,RetryStrategy) <- when ExecutorService rejects task, retry instead 
+	// RetryStrategy{ scheduleNextRetry(Runnable) }
+	// RetryStrategy.fixed(int,TimeUnit)
+	// RetryStrategy.fixed(ScheduledThreadPoolExecutor,int,TimeUnit)
 }

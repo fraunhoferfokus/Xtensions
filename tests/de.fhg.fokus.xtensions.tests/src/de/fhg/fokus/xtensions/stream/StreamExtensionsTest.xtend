@@ -211,4 +211,128 @@ class StreamExtensionsTest {
 		val Integer[] expected = #[1,2,4,8,16]
 		assertArrayEquals(expected,actual)
 	}
+	
+	///////////////
+	// findFirst //
+	///////////////
+	
+	@Test def void findFirstEmptyStream() {
+		val Stream<String> stream = Stream.empty
+		val opt = stream.findFirst[true]
+		assertFalse(opt.present)
+		
+		val Stream<String> stream2 = Stream.empty
+		val opt2 = stream2.findFirst[false]
+		assertFalse(opt2.present)
+	}
+	
+	@Test def void findFirstNotMatchingStream() {
+		val stream = Stream.of("boo", "foo", "zoo")
+		val opt = stream.findFirst[startsWith("go")]
+		assertFalse(opt.present)
+	}
+	
+	@Test def void findFirstOneMatchingStream() {
+		val expected = "foo"
+		val stream = Stream.of("boo", expected, "zoo")
+		val opt = stream.findFirst[startsWith("fo")]
+		assertTrue(opt.present)
+		val result = opt.get
+		assertSame(expected, result)
+	}
+	
+	@Test def void findFirstMultipleMatchingStream() {
+		val expected = "fog"
+		val stream = Stream.of("boo", expected, "foo", "zoo", "foul")
+		val opt = stream.findFirst[startsWith("fo")]
+		assertTrue(opt.present)
+		val result = opt.get
+		assertSame(expected, result)
+	}
+	
+	/////////////
+	// findAny //
+	/////////////
+	
+	@Test def void findAnyEmptyStream() {
+		val Stream<String> stream = Stream.empty
+		val opt = stream.findAny[true]
+		assertFalse(opt.present)
+		
+		val Stream<String> stream2 = Stream.empty
+		val opt2 = stream2.findAny[false]
+		assertFalse(opt2.present)
+	}
+	
+	@Test def void findAnyNotMatchingStream() {
+		val stream = Stream.of("boo", "foo", "zoo")
+		val opt = stream.findAny[startsWith("go")]
+		assertFalse(opt.present)
+	}
+	
+	@Test def void findAnyOneMatchingStream() {
+		val expected = "foo"
+		val stream = Stream.of("boo", expected, "zoo")
+		val opt = stream.findAny[startsWith("fo")]
+		assertTrue(opt.present)
+		val result = opt.get
+		assertSame(expected, result)
+	}
+	
+	@Test def void findAnyMultipleMatchingStream() {
+		val expected = #{"fog", "foo", "foo"}
+		val stream = Stream.of("boo", "fog", "foo", "zoo", "foo")
+		val opt = stream.findFirst[startsWith("fo")]
+		assertTrue(opt.present)
+		val result = opt.get
+		assertTrue(expected.contains(result))
+	}
+	
+	
+	/////////
+	// min //
+	/////////
+	
+	@Test def void minEmptyStream() {
+		val opt = Stream.<String>empty.min
+		assertFalse(opt.present)
+	}
+	
+	@Test def void minOneElementStream() {
+		val expected = "something"
+		val opt = Stream.of(expected).min
+		assertTrue(opt.present)
+		assertSame(expected, opt.get)
+	}
+	
+	@Test def void minMultipleElementStream() {
+		val expected = "aa"
+		val opt = Stream.of("ac", expected, "ab").min
+		assertTrue(opt.present)
+		assertSame(expected, opt.get)
+	}
+	
+	
+	/////////
+	// max //
+	/////////
+	
+	@Test def void maxEmptyStream() {
+		val opt = Stream.<String>empty.max
+		assertFalse(opt.present)
+	}
+	
+	@Test def void maxOneElementStream() {
+		val expected = "something"
+		val opt = Stream.of(expected).max
+		assertTrue(opt.present)
+		assertSame(expected, opt.get)
+	}
+	
+	@Test def void maxMultipleElementStream() {
+		val expected = "ac"
+		val opt = Stream.of("aa", expected, "ab").max
+		assertTrue(opt.present)
+		assertSame(expected, opt.get)
+	}
 }

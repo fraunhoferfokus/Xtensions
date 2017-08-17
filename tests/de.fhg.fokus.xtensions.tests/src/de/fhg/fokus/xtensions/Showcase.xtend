@@ -22,8 +22,17 @@ import java.util.stream.Collectors
 import java.util.Optional
 import java.util.regex.Pattern
 import java.util.Iterator
+import java.util.OptionalInt
+import de.fhg.fokus.xtensions.stream.StreamExtensions
+import java.util.stream.StreamSupport
+import java.util.function.Predicate
 
-@Ignore
+import static de.fhg.fokus.xtensions.concurrent.AsyncCompute.*
+import static de.fhg.fokus.xtensions.concurrent.FutureCompletion.*
+import java.util.concurrent.CompletableFuture
+import org.junit.Assert
+
+//@Ignore
 class Showcase {
 	
 	@Test def rangeDemo() {
@@ -159,16 +168,14 @@ class Showcase {
 		}
 		
 		// map to primitive optionals
-		val size = dunno.mapInt[length]
+		val OptionalInt lenOpt = dunno.mapInt[length]
+		val len = lenOpt.orElse(0)
+		println("Length is " + len)
 		
 		
 		if(someOf(42) === someOf(42)) {
 			println("someOf caches instances")
 		}
-		
-		val len = yes.mapInt[length].orElse(0)
-		println("Length is " + len)
-		
 		
 		(dunno || no).ifNotPresent[| println("Nothing to see here!")]
 		
@@ -205,6 +212,10 @@ class Showcase {
 			.filter[!contains("oo")]
 			.map[toUpperCase]
 			.toList
+			
+	
+		val min = Stream.of("ac", "aa", "ab").min
+		Assert.assertEquals("aa", min.get)
 	}
 	
 	
@@ -214,9 +225,10 @@ class Showcase {
 		extension val pattern = Pattern.compile("(?<=oo)")
 		"foobar".splitAsStream.forEach[println(it)]
 		
-		val Iterator<String> i = "foobaar".splitIt("(?<=oo)")
-		val word = i.findFirst[startsWith("b")]
-		println(word)
+		val Iterator<String> i = "foozoobaar".splitIt("(?<=oo)")
+		i.takeWhile[!startsWith("b")].forEach[
+			println(it)
+		]
 	}
 	
 }

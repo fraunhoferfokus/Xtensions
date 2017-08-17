@@ -6,6 +6,7 @@ import java.util.Iterator
 import java.util.NoSuchElementException
 import java.util.Objects
 import java.util.stream.Stream
+import java.util.regex.PatternSyntaxException
 
 /**
  * Utility class holding static extension functions to split strings.
@@ -27,6 +28,8 @@ class StringSplitExtensions {
 	 * as soon as a particular element is found. This also reduces memory copying
 	 * to unused strings.
 	 * @see String#split(String,int)
+	 * @throws NullPointerException if toSplit or pattern is null
+	 * @throws PatternSyntaxException if the {@code pattern}'s syntax is invalid
 	 */
 	public static def splitIt(String toSplit, String pattern, int limit) {
 		toSplit.splitIt(Pattern.compile(pattern), limit)
@@ -42,8 +45,9 @@ class StringSplitExtensions {
 	 * as soon as a particular element is found. This also reduces memory copying
 	 * to unused strings.
 	 * @see Pattern#split(CharSequence,int)
+	 * @throws NullPointerException if toSplit or pattern is null
 	 */
-	public static def Iterator<String> splitIt(CharSequence toSplit, Pattern pattern, int limit) {
+	public static def Iterator<String> splitIt(CharSequence toSplit, Pattern pattern, int limit) throws NullPointerException {
 		if (toSplit.length == 0) {
 			return new EmptyStringIterator
 		}
@@ -69,7 +73,7 @@ class StringSplitExtensions {
 	 * @param toSplit is the string to be split by the given pattern. Must not be null
 	 * @throws NullPointerException if toSplit or pattern is null
 	 */
-	public static def Iterator<String> splitIt(CharSequence toSplit, Pattern pattern) {
+	public static def Iterator<String> splitIt(CharSequence toSplit, Pattern pattern) throws NullPointerException {
 		Objects.requireNonNull(toSplit)
 		if (toSplit.length == 0) {
 			new EmptyStringIterator
@@ -87,8 +91,10 @@ class StringSplitExtensions {
 	 * as soon as a particular element is found. This also reduces memory copying
 	 * to unused strings.
 	 * @see String#split(String)
+	 * @throws NullPointerException if toSplit or pattern is null
+	 * @throws PatternSyntaxException if the {@code pattern}'s syntax is invalid
 	 */
-	public static def Iterator<String> splitIt(CharSequence toSplit, String pattern) {
+	public static def Iterator<String> splitIt(CharSequence toSplit, String pattern) throws NullPointerException {
 		toSplit.splitIt(Pattern.compile(pattern))
 	}
 	
@@ -100,7 +106,7 @@ class StringSplitExtensions {
 	 */
 	 @Pure
 //	 @Inline(value = "Pattern.compile($2).splitAsStream($1)", imported = Pattern)
-	public static def Stream<String> splitStream(CharSequence toSplit, String pattern) {
+	public static def Stream<String> splitAsStream(CharSequence toSplit, String pattern) {
 		Pattern.compile(pattern).splitAsStream(toSplit)
 	}
 	

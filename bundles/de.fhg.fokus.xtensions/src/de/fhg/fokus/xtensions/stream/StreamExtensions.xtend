@@ -14,6 +14,10 @@ import java.util.function.UnaryOperator
 import java.util.Iterator
 import java.util.NoSuchElementException
 import java.util.stream.StreamSupport
+import java.util.Optional
+import java.util.Spliterators
+import java.util.Spliterator
+import java.util.Comparator
 
 /**
  * This class provides static extension methods for the {@link Stream} class.
@@ -39,6 +43,78 @@ final class StreamExtensions {
 		Objects.requireNonNull(input)
 		Objects.requireNonNull(clazz)
 		input.filter[clazz.isInstance(it)] as Stream<U>
+	}
+	
+	/**
+	 * This method is a shortcut for {@code stream.filter(test).findFirst()}.
+	 * Meaning this operation will try to find the fist element in the stream
+	 * matching the given {@code test}. If such an element is found, the returned
+	 * Optional will have the found element present. Otherwise an empty Optional
+	 * will be returned.
+	 * @param stream the stream that will be searched for an element matching 
+	 *  the {@code test}
+	 * @param test the predicate checking for an matching element. An element
+	 *  is considered a match when the test returns {@code true} for a given
+	 *  element. If {@code test} throws an exception this exception will be 
+	 *  thrown from this method.
+	 * @return an optional either holding the element found in {@code stream}
+	 *  or an empty optional if no element matched {@code test}.
+	 * @throws NullPointerException if {@code stream} or {@code test} is {@code null}
+	 */
+	static def <T> Optional<T> findFirst(Stream<T> stream, Predicate<T> test) {
+		Objects.requireNonNull(stream)
+		Objects.requireNonNull(test)
+		stream.filter(test).findFirst
+	}
+	
+	/**
+	 * This method is a shortcut for {@code stream.filter(test).findAny()}.
+	 * Meaning this operation will try to find the an element in the stream
+	 * matching the given {@code test}. If such an element is found, the returned
+	 * Optional will have the found element present. Otherwise an empty Optional
+	 * will be returned.
+	 * @param stream the stream that will be searched for an element matching 
+	 *  the {@code test}
+	 * @param test the predicate checking for an matching element. An element
+	 *  is considered a match when the test returns {@code true} for a given
+	 *  element. If {@code test} throws an exception this exception will be 
+	 *  thrown from this method.
+	 * @return an optional either holding the element found in {@code stream}
+	 *  or an empty optional if no element matched {@code test}.
+	 * @throws NullPointerException if {@code stream} or {@code test} is {@code null}
+	 */
+	static def <T> Optional<T> findAny(Stream<T> stream, Predicate<T> test) {
+		Objects.requireNonNull(stream)
+		Objects.requireNonNull(test)
+		stream.filter(test).findAny
+	}
+	
+	/**
+	 * This is a shortcut for {@code stream.min(Comparator.naturalOrder())}. 
+	 * This extension method conveniently seaches the minimum element according
+	 * to the order implemented via the {@code Comparable} interface the elements
+	 * of the stream implement.
+	 * @param stream the stream to be reduced to the minimum element.
+	 * @return an Optional holding the minimum element of the stream, 
+	 *   or an empty optional if the stream is empty.
+	 */
+//	 @Inline(value="$1.min(Comparator.naturalOrder())", imported=Comparator)
+	static def <T extends Comparable<? super T>> Optional<T> min(Stream<T> stream) {
+		stream.min(Comparator.naturalOrder)
+	}
+	
+	/**
+	 * This is a shortcut for {@code stream.max(Comparator.naturalOrder())}. 
+	 * This extension method conveniently seaches the maximum element according
+	 * to the order implemented via the {@code Comparable} interface the elements
+	 * of the stream implement.
+	 * @param stream the stream to be reduced to the maximum element.
+	 * @return an Optional holding the maximum element of the stream, 
+	 *   or an empty optional if the stream is empty.
+	 */
+//	 @Inline(value="$1.max(Comparator.naturalOrder())", imported=Comparator)
+	static def <T extends Comparable<? super T>> Optional<T> max(Stream<T> stream) {
+		stream.max(Comparator.naturalOrder)
 	}
 
 	/**
@@ -188,24 +264,25 @@ final class StreamExtensions {
 	static def <T> Stream<T> iterate​(T seed, Predicate<? super T> hasNext, UnaryOperator<T> next) {
 		val nextOp = next
 		val hasNextPred = hasNext
-		val Iterable<T> iterable = [new Iterator<T>() {
-				var nextVal = seed
-				
-				override hasNext() {
-					hasNextPred.test(nextVal)
-				}
-				
-				override next() {
-					val result = nextVal
-					if(!hasNextPred.test(result)) {
-						throw new NoSuchElementException()
-					}
-					nextVal = nextOp.apply(result)
-					result
-				}
+		val iter = new Iterator<T>() {
+			var nextVal = seed
+			
+			override hasNext() {
+				hasNextPred.test(nextVal)
 			}
-		]
-		StreamSupport.stream(iterable.spliterator, false)
+			
+			override next() {
+				val result = nextVal
+				if(!hasNextPred.test(result)) {
+					throw new NoSuchElementException()
+				}
+				nextVal = nextOp.apply(result)
+				result
+			}
+		}
+		val characteristics = Spliterator.ORDERED.bitwiseOr(Spliterator.IMMUTABLE)
+		val split = Spliterators.spliteratorUnknownSize(iter, characteristics);
+		StreamSupport.stream(split, false)
 	}
 	
 	/**
@@ -219,11 +296,6 @@ final class StreamExtensions {
 	}
 
 // TODO
-// Collector GetOnlyElement => Stream#getOnlyElement() -> Optional<T>
-// Stream<Iterable>#flatten //?? needed?
-// Stream<T>#forEach with index (check parallel! Use AtomicLong with getAndIncrement )
-// Stream<T>#forEachOrdered indexed (check parallel!)
-// Stream<T>#indexed():Stream<Pair<int,T>> (check parallel!)
 // Stream<T>#zip(Iterable<? extends V>):Stream<Pair<T,V>> : call zip(iterable.spliterator())
 // Stream<T>#zip(Stream<V>) : Stream<Pair<T,V>>: call zip(stream.spliterator())
 // Stream<T>#zip(Spliterator<V>) :  Stream<Pair<T,V>> create new based spliterator on both and stream from spliterator, maybe thorw if one source not ordered
