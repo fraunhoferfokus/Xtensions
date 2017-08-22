@@ -8,6 +8,7 @@ import de.fhg.fokus.xtensions.incubation.exceptions.Try
 public abstract class Either<L, R> {
 	private new (){}
 	
+	public abstract def <X,Y> Either<X, Y> map((L)=>X leftMapper, (R)=>Y rightMapper)
 	public abstract def <Y> Either<L, Y> mapRight((R)=>Y mapper)
 	public abstract def <Y> Either<Y, R> mapLeft((L)=>Y mapper)
 	public abstract def <Y> Either<L, Y> flatMapRight((R)=>Either<? extends L, ? extends Y> mapper)
@@ -18,6 +19,8 @@ public abstract class Either<L, R> {
 	public abstract def Optional<L> getRight()
 	public abstract def Either<L, R> ifLeft((L)=>void leftConsumer)
 	public abstract def Either<L, R> ifRight((R)=>void rightConsumer)
+	public abstract def <X> MatchRight<R,X> caseLeft((L)=>X caseBranch)
+	public abstract def <X> MatchLeft<L,X> caseRight((R)=>X caseBranch)
 	public abstract def boolean isLeft()
 	public abstract def boolean isRight()
 	public abstract def L leftOr(L alternative)
@@ -30,6 +33,14 @@ public abstract class Either<L, R> {
 	public abstract def <X> X consume((L)=>void leftConsumer,(R)=>void rightConsumer)
 	public abstract def Either<R,L> swap()
 	
+	public static interface MatchLeft<L,X> {
+		def X caseLeft((L)=>X caseBranch)
+	}
+	
+	public static interface MatchRight<R,X> {
+		def X caseRight((R)=>X caseBranch)
+	}
+	
 	// TODO makes sense?
 //	public abstract def Try<L> tryLeft()
 //	public abstract def Try<L> tryLeft((R)=>Exception exceptionProducer)
@@ -37,21 +48,22 @@ public abstract class Either<L, R> {
 //	public abstract def Try<L> tryRight((L)=>Exception exceptionProducer)
 	
 	
-//	private static class Left<L,R> extends Either<L,R> {
+//	public static class Left<L,R> extends Either<L,R> {
 //		private L left
 //		new(L left) {
 //			this.left = left
 //		}
 //		// TODO implement methods 
-//		
+//		def L get() {left}
 //	}
 //
-//	private static class Right<L,R> extends Either<L,R> {
+//	public static class Right<L,R> extends Either<L,R> {
 //		private R right
 //		new(R right) {
 //			this.right = right
 //		}
 //		// TODO implement methods 
+//		def R get() {right}
 //		
 //	}
 	
@@ -67,11 +79,11 @@ public abstract class Either<L, R> {
 	
 	def static void main(String[] args) {
 		val Either<BigInteger,Double> foo = Either::left(10BI)
-		val Number bar = foo.get
+		val Number bar = foo.available
 		println(bar)
 	}
 	
-	public static def <T, L extends T, R extends T> T get(Either<L,R> either) {
+	public static def <T, L extends T, R extends T> T getAvailable(Either<L,R> either) {
 //		// unfortunately the Xtend code gen is not good enough for a more concise expression
 //		var T result
 //		switch(either) {
@@ -81,5 +93,10 @@ public abstract class Either<L, R> {
 //		}
 //		result
 		throw new UnsupportedOperationException("Not implemented yet")
+	}
+	
+	// safe since L and R values are only consumed
+	public static def <L,R> Either<L,R> upcast(Either<? extends L,? extends R> either) {
+		either as Either<L,R>
 	}
 }

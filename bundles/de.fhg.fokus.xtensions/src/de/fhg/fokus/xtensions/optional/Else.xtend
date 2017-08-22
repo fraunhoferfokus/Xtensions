@@ -1,9 +1,9 @@
-package de.fhg.fokus.xtensions.optional;
+package de.fhg.fokus.xtensions.optional
 
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
+import java.util.function.BiConsumer
+import java.util.function.Consumer
 
-/**
+/** 
  * Class with method {@link Else#elseDo(Runnable) elseDo(Runnable)}, which either
  * executes the given runnable or not, depending on the sub-class.
  * @see OptionalExtensions#whenPresent(java.util.Optional, Consumer)
@@ -11,56 +11,52 @@ import java.util.function.Consumer;
  * @see OptionalLongExtensions#whenPresent(java.util.OptionalLong, java.util.function.LongConsumer)
  * @see OptionalDoubleExtensions#whenPresent(java.util.OptionalDouble, java.util.function.DoubleConsumer)
  */
-public abstract class Else {
-	/*package*/ static final Else PRESENT = new Else() {
-		@Override
-		public void elseDo(Runnable elseBlock) {
+abstract class Else {
+	/*package*/ static final package Else PRESENT = new Else() {
+		override void elseDo(Runnable elseBlock) {
 		}
 
-		@Override
-		public <T> void elseDo(T val, Consumer<T> elseBlock) {
+		override <T> void elseDo(T value, Consumer<T> elseBlock) {
 		}
 
-		@Override
-		public <T, U> void elseDo(T t, U u, BiConsumer<T, U> elseBlock) {
+		override <T, U> void elseDo(T t, U u, BiConsumer<T, U> elseBlock) {
 		}
-	};
-	/*package*/ static final Else NOT_PRESENT = new Else() {
-		@Override
-		public void elseDo(Runnable elseBlock) {
-			elseBlock.run();
+	}
+	/*package*/ static final package Else NOT_PRESENT = new Else() {
+		override void elseDo(Runnable elseBlock) {
+			elseBlock.run()
 		}
 
-		@Override
-		public <T> void elseDo(T val, Consumer<T> elseBlock) {
-			elseBlock.accept(val);
+		override <T> void elseDo(T ^value, Consumer<T> elseBlock) {
+			elseBlock.accept(value)
 		}
 
-		@Override
-		public <T, U> void elseDo(T t, U u, BiConsumer<T, U> elseBlock) {
-			elseBlock.accept(t,u);
+		override <T, U> void elseDo(T t, U u, BiConsumer<T, U> elseBlock) {
+			elseBlock.accept(t, u)
 		}
-	};
-	private Else(){}
-	
-	/**
+	}
+
+	private new() {
+	}
+
+	/** 
 	 * This method either executes the given {@code elseBlock} or not,
 	 * based on the sub-class of {@code Else}.
 	 * @param elseBlock code to be executed or not.
 	 */
-	public abstract void elseDo(Runnable elseBlock);
-	
-	/**
+	def abstract void elseDo(Runnable elseBlock)
+
+	/** 
 	 * This method either executes the given {@code elseBlock} or not,
 	 * based on the sub-class of {@code Else}. The given {@code val} will
 	 * be forwarded to the elseBlock on execution. This allows the usage of non-capturing
 	 * lambdas, allowing better execution performance.
-	 * @param val value to be forwarded to {@code elseBlock}, if it is executed.
+	 * @param ^val value to be forwarded to {@code elseBlock}, if it is executed.
 	 * @param elseBlock code to be executed or not.
 	 */
-	public abstract <T> void elseDo(T val, Consumer<T> elseBlock);
-	
-	/**
+	def abstract <T> void elseDo(T ^value, Consumer<T> elseBlock)
+
+	/** 
 	 * This method either executes the given {@code elseBlock} or not,
 	 * based on the sub-class of {@code Else}. The given {@code t} and {@code u} will
 	 * be forwarded to the elseBlock on execution. This allows the usage of non-capturing
@@ -69,5 +65,6 @@ public abstract class Else {
 	 * @param u value to be forwarded to {@code elseBlock}, if it is executed.
 	 * @param elseBlock code to be executed or not.
 	 */
-	public abstract <T, U> void elseDo(T t, U u, BiConsumer<T,U> elseBlock);
+	def abstract <T, U> void elseDo(T t, U u, BiConsumer<T, U> elseBlock)
+
 }
