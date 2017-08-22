@@ -110,6 +110,12 @@ abstract class Try<R> {
 	 */
 	abstract def Try<R> tryRecoverException((Exception)=>R recovery)
 	
+	abstract def Try<R> recoverEmpty(()=>R recovery)
+	
+	abstract def Try<R> tryRecoverEmpty(()=>R recovery)
+	
+	abstract def Try<R> recoverEmpty(R recovery)
+	
 	/**
 	 * Recovers exceptions or {@code null} result values with value provided by {@code recovery}.
 	 * If {@code recovery} fails with an exception it will be thrown by this method. If the result
@@ -244,6 +250,18 @@ abstract class Try<R> {
 			this
 		}
 		
+		override Try<R> recoverEmpty(()=>R recovery) {
+			this
+		}
+	
+		override Try<R> tryRecoverEmpty(()=>R recovery) {
+			this
+		}
+	
+		override Try<R> recoverEmpty(R recovery) {
+			this
+		}
+		
 		override recover(()=>R recovery) {
 			result
 		}
@@ -366,6 +384,18 @@ abstract class Try<R> {
 		override tryRecoverException((Exception)=>R recovery) {
 			// No exception to recover from
 			this
+		}
+		
+		override Try<R> recoverEmpty(()=>R recovery) {
+			completed(recovery.apply)
+		}
+		
+		override Try<R> tryRecoverEmpty(()=>R recovery) {
+			doTry(recovery)
+		}
+		
+		override Try<R> recoverEmpty(R recovery) {
+			completed(recovery)
 		}
 		
 		override recover(()=>R recovery) {
@@ -577,6 +607,18 @@ abstract class Try<R> {
 		
 		override getException() {
 			some(e)
+		}
+		
+		override Try<R> recoverEmpty(()=>R recovery) {
+			this
+		}
+	
+		override Try<R> tryRecoverEmpty(()=>R recovery) {
+			this
+		}
+	
+		override Try<R> recoverEmpty(R recovery) {
+			this
 		}
 		
 		override recover(()=>R recovery) {
