@@ -8,7 +8,7 @@ import de.fhg.fokus.xtensions.incubation.showcase.Person
 class Showcase {
 	
 	@Test
-	def void demoFocus() {
+	def void demoImmutable() {
 		val rita = new Person("Rita", null, null)
 		val sven = new Person("Sven", null, null)
 		val hank = new Person("Hank", rita, sven)
@@ -37,6 +37,12 @@ class Showcase {
 			.orElse(mike) // return mike unchanged if a focus on the path is empty
 		
 		println(mike.mom.dad.name)
+		
+		val julius = mike.with [
+			name = "Julius"
+		]
+		
+		println(julius.name)
 	}
 	
 	@Test
