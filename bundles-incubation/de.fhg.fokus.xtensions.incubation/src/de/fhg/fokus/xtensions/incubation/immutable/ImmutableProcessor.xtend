@@ -46,7 +46,7 @@ class ImmutableProcessor implements TransformationParticipant<MutableMemberDecla
 			annotatedClass.addWithMethod(context)
 		}
 		if(annotatedClass.hasAnnotation(ImmutableFeature.CREATE_METHOD)) {
-			// TODO addCreateMethod
+			annotatedClass.addCreateMethod(context)
 		}
 	}
 	
@@ -125,52 +125,7 @@ class ImmutableProcessor implements TransformationParticipant<MutableMemberDecla
 		}
 		
 		def void addWithMethod(MutableClassDeclaration annotatedClass, extension TransformationContext context) {
-			val builder = findClass(annotatedClass.qualifiedName + ".Builder")
-			builder.final = true
-			// Add generics if original type has generics
-			annotatedClass.typeParameters.forEach[ typeParam |
-				builder.genericTypeReference(typeParam)
-			]
-			val apu = new AccessorsProcessor.Util(context)
-			annotatedClass.declaredFields.forEach [ f |
-				// TODO check if fields already exists
-				builder.addField(f.simpleName) [
-					// If type of source field is generic, we have to use a respective generic type from builder
-					val genericType = annotatedClass.typeParameters.filter[it.newSelfTypeReference == f.type].head
-					if(genericType !== null) {
-						val targetFieldTypeRef = builder.genericTypeReference(genericType)
-						type = targetFieldTypeRef.newTypeReference()
-					} else {
-						// otherwise we just use the type from original field
-						type = f.type.orObject
-					}
-					visibility = Visibility.PRIVATE
-					apu.addGetter(it, Visibility.PUBLIC)
-					apu.addSetter(it, Visibility.PUBLIC)
-				]
-			]
-			// TODO: check if constructor already exists
-			builder.addConstructor [
-				val typeParams  = builder.typeParameters.map[it.newSelfTypeReference]
-				addParameter("source", annotatedClass.newTypeReference(typeParams))
-				visibility = Visibility.PRIVATE
-				body = '''
-					«FOR f : annotatedClass.declaredFields»
-						this.«f.simpleName» = source.«f.simpleName»;
-					«ENDFOR»
-				'''
-			]
-			builder.addMethod("build") [
-				val typeParams  = builder.typeParameters.map[it.newSelfTypeReference]
-				returnType = annotatedClass.newTypeReference(typeParams)
-				body = '''
-					return new «annotatedClass.simpleName»(
-						«FOR f: annotatedClass.declaredFields SEPARATOR ','»
-							this.«f.simpleName»
-						«ENDFOR»
-					);
-				'''
-			]
+			val builder = addBuilderClass(annotatedClass, context)
 			annotatedClass.addMethod("with") [
 				val clazzRef = annotatedClass.newSelfTypeReference
 				val typeParams = annotatedClass.typeParameters.map[it.newSelfTypeReference]
@@ -184,6 +139,104 @@ class ImmutableProcessor implements TransformationParticipant<MutableMemberDecla
 					return builder.build();
 				'''
 			]
+		}
+	
+		def addBuilderClass(MutableClassDeclaration annotatedClass, TransformationContext context) {
+			val builder = findClass(annotatedClass.qualifiedName + ".Builder")
+			builder.final = true
+			// Add generics if original type has generics
+			annotatedClass.typeParameters.forEach[ typeParam |
+				builder.genericTypeReference(typeParam)
+			]
+			val apu = new AccessorsProcessor.Util(context)
+			// create fields of builder
+			annotatedClass.declaredFields.forEach [ f |
+				val fieldExists = builder.declaredFields.exists[it.simpleName == f.simpleName]
+				if(!fieldExists) {
+					builder.addField(f.simpleName) [
+						// If type of source field is generic, we have to use a respective generic type from builder
+						val genericType = annotatedClass.typeParameters.filter[it.newSelfTypeReference == f.type].head
+						if(genericType !== null) {
+							val targetFieldTypeRef = builder.genericTypeReference(genericType)
+							type = targetFieldTypeRef.newTypeReference()
+						} else {
+							// otherwise we just use the type from original field
+							type = f.type.orObject
+						}
+						visibility = Visibility.PRIVATE
+						apu.addGetter(it, Visibility.PUBLIC)
+						apu.addSetter(it, Visibility.PUBLIC)
+					]
+				}
+			]
+			// does constructor already exist? If not create
+			val constructorExists = builder.declaredConstructors.exists[
+				val param = it.parameters.head
+				param?.type?.type?.qualifiedName == annotatedClass.qualifiedName
+			]
+			if(!constructorExists) {
+				builder.addConstructor [
+					val typeParams  = builder.typeParameters.map[it.newSelfTypeReference]
+					addParameter("source", annotatedClass.newTypeReference(typeParams))
+					visibility = Visibility.PRIVATE
+					body = '''
+						«FOR f : annotatedClass.declaredFields»
+							this.«f.simpleName» = source.«f.simpleName»;
+						«ENDFOR»
+					'''
+				]
+			}
+			// does empty constructor exist?
+			val defaultConstructorExists = builder.declaredConstructors.exists[
+				it.parameters.length == 0
+			]
+			if(!defaultConstructorExists) {
+				builder.addConstructor [
+					visibility = Visibility.PRIVATE
+					body = ''''''
+				]
+			}
+			// If build method does not exist, create it
+			val builderMethodExists = builder.declaredMethods.exists[it.simpleName == "build" && parameters.size == 0]
+			if(!builderMethodExists) {
+				builder.addMethod("build") [
+					val typeParams  = builder.typeParameters.map[it.newSelfTypeReference]
+					returnType = annotatedClass.newTypeReference(typeParams)
+					body = '''
+						return new «annotatedClass.simpleName»(
+							«FOR f: annotatedClass.declaredFields SEPARATOR ','»
+								this.«f.simpleName»
+							«ENDFOR»
+						);
+					'''
+				]
+			}
+			return builder
+		}
+		
+		def void addCreateMethod(MutableClassDeclaration annotatedClass, extension TransformationContext context) {
+			val builder = addBuilderClass(annotatedClass, context)
+			val createMethodExists = annotatedClass.declaredMethods.exists[
+				it.simpleName == "create" &&
+				it.parameters.size == 1 &&
+				it.parameters.head?.type?.type?.qualifiedName == annotatedClass.qualifiedName + ".Builder"
+			]
+			if(!createMethodExists) {
+				annotatedClass.addMethod("create") [
+					static = true
+					returnType = annotatedClass.newSelfTypeReference
+					
+					val typeParams = annotatedClass.typeParameters.map[it.newSelfTypeReference]
+					val lambdaType = findTypeGlobally(Procedure1).newTypeReference(builder.newTypeReference(typeParams))
+					addParameter("block", lambdaType)
+					body = '''
+						// For simplicity we use raw types here. Compiler warnings are ignored anyway.
+						final «annotatedClass.simpleName».Builder builder = new «annotatedClass.simpleName».Builder();
+						block.apply(builder);
+						return builder.build();
+					'''
+				]
+			}
 		}
 		
 		def create target: builder.addTypeParameter(genericTypeRef.simpleName, genericTypeRef.upperBounds) 

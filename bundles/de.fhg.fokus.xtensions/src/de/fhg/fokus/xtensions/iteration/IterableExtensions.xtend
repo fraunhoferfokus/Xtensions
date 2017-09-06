@@ -10,6 +10,15 @@ import java.util.stream.Collector
  * Additional extension functions for the {@link Iterable} class.
  */
 final class IterableExtensions {
+
+// static def <T> IntItreable mapInt(Iterable<T> it, ToIntFunction mapper){}
+// static def <T> LongItreable mapLong(Iterable<T> it, ToLongFunction mapper){}
+// static def <T> DoubleItreable mapDouble(Iterable<T> it, ToDoubleFunction mapper){}
+// Optimize stream() by streaming original Iterable and call mapToX on Stream
+
+// static def <X,Y> Iterable<Pair<X,Y>> combinations(Iterable<X>,Iterable<Y>)
+// static def <X,Y> Iterable<Pair<X,Y>> combinations(Iterable<X>,Iterable<Y>, BiPredicate<X,Y>)
+// static def <T> List<T> toImmutableList(Iterable<T>)
 	
 	private new() {
 		throw new IllegalStateException
@@ -72,12 +81,4 @@ final class IterableExtensions {
 		}
 		return finisher.apply(container)
 	}
-
-// static def <T> IntItreable mapInt(Iterable<T> it, ToIntFunction mapper){}
-// static def <T> LongItreable mapLong(Iterable<T> it, ToLongFunction mapper){}
-// static def <T> DoubleItreable mapDouble(Iterable<T> it, ToDoubleFunction mapper){}
-// Optimize stream() by streaming original Iterable and call mapToX on Stream
-
-// Iterable<Pair<X,Y>> combinations(Iterable<X>,Iterable<Y>)
-// Iterable<Pair<X,Y>> combinations(Iterable<X>,Iterable<Y>, BiPredicate<X,Y>)
 }

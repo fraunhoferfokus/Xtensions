@@ -5,6 +5,7 @@ import java.util.function.IntUnaryOperator
 import java.util.function.IntConsumer
 import java.util.function.IntPredicate
 import java.util.NoSuchElementException
+import java.util.stream.IntStream
 
 /**
  * Instances of this class should be provided using {@link IntIterable#iterate(int,IntUnaryOperator)}.<br>
@@ -32,6 +33,10 @@ package class IterateIntIterable implements IntIterable {
 			consumer.accept(next)
 			next = op.applyAsInt(next)
 		}
+	}
+	
+	override stream() {
+		IntStream.iterate(seed, operator)
 	}
 	
 }

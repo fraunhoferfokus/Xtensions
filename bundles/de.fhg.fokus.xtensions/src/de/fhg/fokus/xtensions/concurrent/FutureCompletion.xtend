@@ -1,20 +1,15 @@
-package de.fhg.fokus.xtensions.concurrent;
+package de.fhg.fokus.xtensions.concurrent
 
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletableFuture
 
-import org.eclipse.xtext.xbase.lib.Functions.Function1;
+class FutureCompletion<T> {
+	static final package FutureCompletion<?> NO_OP_COMPLETION = new FutureCompletion()
+	static final package FutureCompletion<?> ALREADY_COMPLETED_COMPLETION = new FutureCompletion()
 
-public class FutureCompletion<T> {
-	
-	/*package*/ static final FutureCompletion<?> NO_OP_COMPLETION = new FutureCompletion<>();
-	/*package*/ static final FutureCompletion<?> ALREADY_COMPLETED_COMPLETION = new FutureCompletion<>();
-	
 	/** 
 	 * Factory method to create a FutureCompletion instance that can be used
 	 * as a return value in a function passed to an async function.<br>
-	 * The value returned by this method indicates that the given {@code value}
-	 * should be used to complete the result future.
-	 * 
+	 * The value returned by this method indicates that the given {@code value}should be used to complete the result future.
 	 * @param value used to complete result future with
 	 * @return FutureCompletion to return by functions passed to {@code async} method.
 	 * @see AsyncCompute#async(Function1)
@@ -24,18 +19,16 @@ public class FutureCompletion<T> {
 	 * @see AsyncCompute#async(ScheduledExecutorService, long, TimeUnit, Executor, Function1)
 	 * @see AsyncCompute#async(ScheduledExecutorService, long, TimeUnit, Function1)
 	 */
-	public static <T> FutureCompletion<T> completeNow(T value) {
-		return new NowFutureCompletion<>(value);
+	def static <T> FutureCompletion<T> completeNow(T value) {
+		return new NowFutureCompletion(value)
 	}
-	
+
 	/** 
 	 * Factory method to create a FutureCompletion instance that can be used
 	 * as a return value in a function passed to an async function.<br>
 	 * The value returned by this method indicates that the resulting completable
 	 * future should be completed with the value provided by the 
-	 * 
 	 * TODO FURTHER DESCRIPTION, cancellation forward
-	 * 
 	 * @param futureResult
 	 * @return FutureCompletion to return by functions passed to {@code async} method.
 	 * @see AsyncCompute#async(Function1)
@@ -45,11 +38,11 @@ public class FutureCompletion<T> {
 	 * @see AsyncCompute#async(ScheduledExecutorService, long, TimeUnit, Executor, Function1)
 	 * @see AsyncCompute#async(ScheduledExecutorService, long, TimeUnit, Function1)
 	 */
-	public static <T> FutureCompletion<T> completeWith(CompletableFuture<? extends T> futureResult) {
-		return new FutureFutureCompletion<>(futureResult);
+	def static <T> FutureCompletion<T> completeWith(CompletableFuture<? extends T> futureResult) {
+		return new FutureFutureCompletion(futureResult)
 	}
-	
-	/**
+
+	/** 
 	 * Factory method to create a FutureCompletion instance that can be used
 	 * as a return value in a function passed to an async function. <br>
 	 * The created FutureCompletion indicates, that the result future is completed asynchronously.
@@ -63,35 +56,34 @@ public class FutureCompletion<T> {
 	 * @see AsyncCompute#async(ScheduledExecutorService, long, TimeUnit, Executor, Function1)
 	 * @see AsyncCompute#async(ScheduledExecutorService, long, TimeUnit, Function1)
 	 */
-	@SuppressWarnings("unchecked")
-	public static <T> FutureCompletion<T> completeAsync() {
+	@SuppressWarnings("unchecked") def static <T> FutureCompletion<T> completeAsync() {
 		// NoOp completion is the same for every type T
-		return (FutureCompletion<T>) NO_OP_COMPLETION;
+		return (NO_OP_COMPLETION as FutureCompletion<T>)
 	}
 
-	private FutureCompletion() {}
+	private new() {
+	}
 
-	/**
+	/** 
 	 * Subclass of {@link FutureCompletion} holding a result value of type {@code T}
 	 */
-	/*package*/ static final class NowFutureCompletion<T> extends FutureCompletion<T> {
-		final T value;
+	static final package class NowFutureCompletion<T> extends FutureCompletion<T> {
+		final package T value
 
-		private NowFutureCompletion(T t) {
-			value = t;
+		private new(T t) {
+			value = t
 		}
 	}
 
-	/**
+	/** 
 	 * Subclass of {@link FutureCompletion} holding a future of {@code T} holding the 
 	 * value to be returned.
 	 */
-	/*package*/ static final class FutureFutureCompletion<T> extends FutureCompletion<T> {
-		final CompletableFuture<? extends T> value;
+	static final package class FutureFutureCompletion<T> extends FutureCompletion<T> {
+		final package CompletableFuture<? extends T> value
 
-		private FutureFutureCompletion(CompletableFuture<? extends T> f) {
-			value = f;
+		private new(CompletableFuture<? extends T> f) {
+			value = f
 		}
 	}
-	
 }

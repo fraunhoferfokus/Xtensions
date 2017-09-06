@@ -9,16 +9,35 @@ class Showcase {
 	
 	@Test
 	def void demoImmutable() {
-		val rita = new Person("Rita", null, null)
-		val sven = new Person("Sven", null, null)
-		val hank = new Person("Hank", rita, sven)
+		val rita = Person.create [
+			name = "Rita"
+		]
+		val sven = Person.create [
+			name = "Sven"
+		]
+		val hank = Person.create [
+			name = "Hank"
+			dad = sven
+			mom = rita
+		]
 		
-		val julie = new Person("Julie", null, null)
-		val ron = new Person("Ron", null, null)
-		val jane = new Person("Jane", julie, ron)
+		val julie = Person.create [
+			name = "Julie"
+		]
+		val ron = Person.create [
+			name = "Ron"
+		]
+		val jane = Person.create [
+			name = "Jane"
+			mom = julie
+			dad = ron
+		]
 		
-		var mike = new Person("Mike", jane, hank)
-		
+		var mike = Person.create [
+			name = "Mike"
+			mom = jane
+			dad = hank
+		]
 		
 		// change name of mike's mom's dad to John
 		mike = mike.mom[

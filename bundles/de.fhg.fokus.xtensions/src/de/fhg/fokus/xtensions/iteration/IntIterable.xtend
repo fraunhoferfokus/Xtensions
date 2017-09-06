@@ -1,6 +1,5 @@
 package de.fhg.fokus.xtensions.iteration
 
-import java.util.PrimitiveIterator
 import java.util.PrimitiveIterator.OfInt
 import java.util.function.IntConsumer
 import java.util.function.IntPredicate

@@ -18,6 +18,8 @@ import java.util.concurrent.ThreadFactory
 import static extension de.fhg.fokus.xtensions.concurrent.internal.DurationToTimeConversion.*
 import java.util.function.BiConsumer
 import java.util.concurrent.atomic.AtomicReference
+import java.util.function.Function
+import java.util.function.Consumer
 
 /**
  * This class provides static methods (many of them to be used as extension methods)
@@ -41,8 +43,20 @@ import java.util.concurrent.atomic.AtomicReference
  */
 class CompletableFutureExtensions {
 
+// TODO static def <T> CompletableFuture<T> completeOnTimeout​(CompletableFuture<T> it, T value, long timeout, TimeUnit unit)
+// TODO static def <T> CompletableFuture<T> completeAsync​(CompletableFuture<R> it, Supplier<? extends T> supplier, Executor executor)
+// TODO static def <T> CompletableFuture<T> completeAsync​(CompletableFuture<R> it, Supplier<? extends T> supplier)
+// ///////////////
+// Other Ideas //
+// ///////////////
+// TODO handleComposeAsync variants
+// TODO thenAsync? all variants
+// TODO static def <T> CompletableFuture<T> void filter(Predicate<T>) // returns future holding NoSuchElementException if not present (may be cached). Not filtering to null, there are too many methods on CF that can fail on null
+// TODO static def <T> CompletableFuture<U> void filter(Class<U>) // returns future holding NoSuchElementException if not present (may be cached). Not filtering to null, there are too many methods on CF that can fail on null
+// TODO static def <T> CompletableFuture<T> void filter(Predicate<T>, ()=>Throwable) // returns future holding provided Throwable if not present. Not filtering to null, there are too many methods on CF that can fail on null
+
 	/**
-	 * Calls {@link CompletableFuture#cancel(boolean)} on the given {@code future}.
+	 * Calls {@link CompletableFuture#cancel(boolean)} on the given {@code future} with parameter {@code false}.
 	 * Since the boolean parameter {@code mayInterruptIfRunning} has no influence 
 	 * on CompletableFuture instances anyway,  this method provides a cancel method 
 	 * without the parameter.
@@ -127,7 +141,7 @@ class CompletableFutureExtensions {
 	 * removal on cancellation of task.
 	 */
 	private def static getDefaultScheduler() {
-		val scheduler = new ScheduledThreadPoolExecutor(0, daemonThreadFactory)
+		val scheduler = new ScheduledThreadPoolExecutor(1, daemonThreadFactory)
 		scheduler.removeOnCancelPolicy = true
 		scheduler
 	}
@@ -610,12 +624,12 @@ class CompletableFutureExtensions {
 	 * @param handler the function that will be called as the consumer to {@code thenAccept}
 	 *   Must not be {@code null}.
 	 * @return resulting CompletableFuture of {@code thenAccept} call
-	 * @see #then(CompletableFuture, Function1)
-	 * @see #then(CompletableFuture, Procedure0)
+	 * @see #then(CompletableFuture, Function)
+	 * @see #then(CompletableFuture, Runnable)
 	 * @throws NullPointerException if either {@code fut} or {@code handler} is {@code null}
 	 */
 //	 @Inline("$1.thenAccept($2::apply)")
-	static def <R> CompletableFuture<Void> then(CompletableFuture<R> fut, (R)=>void handler) {
+	static def <R> CompletableFuture<Void> then(CompletableFuture<R> fut, Consumer<? super R> handler) {
 		Objects.requireNonNull(handler)
 		fut.thenAccept(handler)
 	}
@@ -629,10 +643,10 @@ class CompletableFutureExtensions {
 	 *   Must not be {@code null}.
 	 * @return resulting CompletableFuture of {@code thenApply} call
 	 * @throws NullPointerException if either {@code fut} or {@code handler} is {@code null}
-	 * @see #then(CompletableFuture, Procedure0)
-	 * @see #then(CompletableFuture, Procedure1)
+	 * @see #then(CompletableFuture, Runnable)
+	 * @see #then(CompletableFuture, Consumer)
 	 */
-	static def <R, U> CompletableFuture<U> then(CompletableFuture<R> fut, (R)=>U handler) {
+	static def <R, U> CompletableFuture<U> then(CompletableFuture<R> fut, Function<? super R,? extends U> handler) {
 		// TODO inline if annotation works in Xtend
 		Objects.requireNonNull(handler)
 		fut.thenApply(handler)
@@ -645,10 +659,10 @@ class CompletableFutureExtensions {
 	 * @param handler the function that will be called as the consumer to {@code thenRun}
 	 * @return resulting CompletableFuture of {@code thenRun} call
 	 * @throws NullPointerException if either {@code fut} or {@code handler} is {@code null}
-	 * @see #then(CompletableFuture, Function1)
-	 * @see #then(CompletableFuture, Procedure1)
+	 * @see #then(CompletableFuture, Consumer)
+	 * @see #then(CompletableFuture, Function)
 	 */
-	static def <R> CompletableFuture<Void> then(CompletableFuture<R> fut, ()=>void handler) {
+	static def <R> CompletableFuture<Void> then(CompletableFuture<R> fut, Runnable handler) {
 		// TODO inline if annotation works in Xtend
 		Objects.requireNonNull(handler)
 		fut.thenRun(handler)
@@ -777,27 +791,51 @@ class CompletableFutureExtensions {
 		private var long timeout = 1
 		private var TimeUnit timeUnit = null
 		private var ScheduledExecutorService executor = null
-		private var tryShutdown = true
+		private var tryShutdown = false
 		private var =>Throwable exceptionProvider = null
 		private var boolean cancelBackPropagation = false
 		private var boolean cancelOriginalOnTimeout = false
 
+		/**
+		 * Sets the time duration after which the timeout operation is triggered.<br>
+		 * Default value is {@code 1 second}.
+		 * @param timeout Pair of time amount and time unit of duration of timeout.
+		 */
 		def void setTimeout(Pair<Long, TimeUnit> timeout) {
 			Objects.requireNonNull(timeout)
 			this.timeout = timeout.key
 			this.timeUnit = timeout.value
 		}
 		
+		/**
+		 * Sets the time duration after which the timeout operation is triggered.<br>
+		 * Default value is {@code 1 second}.
+		 * @param timeout time duration of timeout
+		 */
 		def void setTimeout(Duration timeout) {
 			val time = timeout.toTime
 			this.timeout = time.amount
 			this.timeUnit = time.unit
 		}
 
+		/** 
+		 * Sets the scheduler used to schedule the timeout operation. <br>
+		 * By default (if not set) a new {@code ScheduledExecutorService} is created and 
+		 * shut down after completion of the original future or after timeout.
+		 * @param scheduler the scheduler used to schedule the timeout operation
+		 */
 		def void setScheduler(ScheduledExecutorService scheduler) {
 			this.executor = scheduler
 		}
 
+		/**
+		 * Defines if the scheduler for cancellation operation should be shut down after 
+		 * the original future completes or a timeout occures. Only relevant if 
+		 * {@link #setScheduler(ScheduledExecutorService) setScheduler} is used
+		 * to set custom scheduler.<br>
+		 * Default value is {@code false}.
+		 * @param doShutdown 
+		 */
 		def void setTryShutdownScheduler(boolean doShutdown) {
 			this.tryShutdown = doShutdown
 		}
@@ -807,22 +845,63 @@ class CompletableFutureExtensions {
 		 * The provided exception will then be used to complete the future.<br>
 		 * If not set, a new {@link TimeoutException} will be used to complete 
 		 * the future on timeout.
+		 * @param exceptionProvider constructor operation to create exception to
+		 *  be set when timeout occurs.
 		 */
 		def void setExceptionProvider(=>Throwable exceptionProvider) {
 			this.exceptionProvider = exceptionProvider;
 		}
 
+		/**
+		 * If this method is called with {@code true}, canceling the created timeout future
+		 * will try to cancel the original future.<br>
+		 * Default value is {@code false}
+		 * @param cancelPropagation if {@code true}, canceling the created timeout future
+		 *  will try to cancel the original future.
+		 */
 		def void setBackwardPropagateCancel(boolean cancelPropagation) {
 			this.cancelBackPropagation = cancelPropagation
 		}
 
+		/**
+		 * If this method is called with {@code true}, the original future will be 
+		 * tried to be canceled if the created timeout future will cancelled.<br>
+		 * Default value is {@code false}
+		 * @param cancelOriginalOnTimeout if {@code true}, the original future will be 
+		 * tried to be canceled if the created timeout future will cancelled.
+		 */
 		def void setCancelOriginalOnTimeout(boolean cancelOriginalOnTimeout) {
 			this.cancelOriginalOnTimeout = cancelOriginalOnTimeout
 		}
 	}
 
-	// TODO document
-	static def <R> CompletableFuture<R> orTimeout(CompletableFuture<R> fut, (TimeoutConfig)=>void config) {
+	/**
+	 * This method will return a future that will be completed exceptionally if the given {@code CompletableFuture fut}
+	 * does not complete in a given timeout interval. The given {@code config} lambda defines the details
+	 * of the timeout cancellation operation. Note that for all fields of {@code TimeoutConfig} default 
+	 * values used, so all setters are optional. See the documentation of the setters of the {@link TimeoutConfig}
+	 * to get to know the default values.
+	 * <br><br>
+	 * Example: <pre> {@code
+	 * val myFuture = CompletableFuture.supplyAsync [...]
+	 * val cancelScheduler = new ScheduledThreadPoolExecutor(1)
+	 *     cancelScheduler.removeOnCancelPolicy = true
+	 * val myTimeoutFuture = myFuture.orTimeout [
+	 * 	timeout = (5L -> TimeUnit.SECONDS) // amount of time after which cancellation should be started
+	 * 	cancelOriginalOnTimeout = false   // on timeout cancel myFuture and myTimeoutFuture
+	 * 	backwardPropagateCancel = true    // on cancel of myTimeoutFuture cancel myFuture as well
+	 * 	exceptionProvider = [new IllegalStateException("Timeout")]	// on timeout throw IllegalStateException
+	 * 	scheduler = cancelScheduler  // scheduler to schedule timeout cancellation
+	 * 	tryShutdownScheduler = true  // close scheduler when myFuture is completed
+	 * ]
+	 * }
+	 * </pre>
+	 * @param fut source future for which timeout operation is specified
+	 * @param config operation for configuration of the timeout operation
+	 * @return future that will be cancelled if {@code fut} is not completed before the
+	 *   timeout configured by {@code config} exceeded.
+	 */
+	public static def <R> CompletableFuture<R> orTimeout(CompletableFuture<R> fut, (TimeoutConfig)=>void config) {
 		Objects.requireNonNull(fut)
 		Objects.requireNonNull(config)
 		val configData = new TimeoutConfig
@@ -849,7 +928,6 @@ class CompletableFutureExtensions {
 			cancelOriginalOnTimeout)
 	}
 
-	// TODO flag if cancel backward propagation allowed
 	// TODO document
 	static private def <R> CompletableFuture<R> orTimeout(CompletableFuture<R> fut, ScheduledExecutorService scheduler,
 		boolean shutdownScheduler, long time, TimeUnit unit, =>Throwable exceptionProvider,
@@ -857,6 +935,9 @@ class CompletableFutureExtensions {
 		// if the future is already completed, there is no point in even 
 		// starting a timer
 		if (fut.done) {
+			if(shutdownScheduler) {
+				scheduler.shutdown()
+			}
 			return fut
 		}
 
@@ -898,24 +979,14 @@ class CompletableFutureExtensions {
 			if (scheduler.isShutdown) {
 				return
 			}
-			// try canceling the task, but on the scheduler threads
-			// not on the thread completing the future
-			try {
-				scheduler.execute [
-					// if the future is completed earlier
-					// than cancellation, we can cancel the 
-					// scheduled task
-					val cancelled = task.cancel(true)
-					// if the completion did not happen yet,
-					// we need to 
-					if (cancelled && shutdownScheduler) {
-						scheduler.shutdown()
-					}
-				]
-			} catch (RejectedExecutionException ree) {
-				// so the scheduler is already shut down
-				// or has to many tasks in task list.
-				// In this case we can't cancel our operation
+			// if the future is completed earlier
+			// than cancellation, we can cancel the 
+			// scheduled task
+			val cancelled = task.cancel(true)
+			// if the completion did not happen yet,
+			// we need to 
+			if (cancelled && shutdownScheduler) {
+				scheduler.shutdown()
 			}
 		]
 
@@ -963,16 +1034,4 @@ class CompletableFutureExtensions {
 	static def <R> CompletableFuture<R> copy(CompletableFuture<R> fut) {
 		fut.thenApply[it]
 	}
-
-// TODO static def <T> CompletableFuture<T> completeOnTimeout​(CompletableFuture<T> it, T value, long timeout, TimeUnit unit)
-// TODO static def <T> CompletableFuture<T> completeAsync​(CompletableFuture<R> it, Supplier<? extends T> supplier, Executor executor)
-// TODO static def <T> CompletableFuture<T> completeAsync​(CompletableFuture<R> it, Supplier<? extends T> supplier)
-// ///////////////
-// Other Ideas //
-// ///////////////
-// TODO handleComposeAsync variants
-// TODO thenAsync? all variants
-// TODO static def <T> CompletableFuture<T> void filter(Predicate<T>) // returns future holding NoSuchElementException if not present (may be cached). Not filtering to null, there are too many methods on CF that can fail on null
-// TODO static def <T> CompletableFuture<U> void filter(Class<U>) // returns future holding NoSuchElementException if not present (may be cached). Not filtering to null, there are too many methods on CF that can fail on null
-// TODO static def <T> CompletableFuture<T> void filter(Predicate<T>, ()=>Throwable) // returns future holding provided Throwable if not present. Not filtering to null, there are too many methods on CF that can fail on null
 }

@@ -20,6 +20,8 @@ import de.fhg.fokus.xtensions.Util
 import java.util.concurrent.ExecutionException
 import java.util.NoSuchElementException
 import java.util.concurrent.TimeoutException
+import java.util.function.Function
+import java.util.function.Consumer
 
 class CompletableFutureExtensionsTest {
 	
@@ -37,13 +39,13 @@ class CompletableFutureExtensionsTest {
 	
 	@Test(expected = NullPointerException) def void testThenApplyHandlerNull() {
 		val cf = new CompletableFuture<String>
-		val (String)=>String handler = null
+		val Function<String,String> handler = null
 		cf.then(handler)
 	}
 	
 	@Test def void testThenApplyHandlerThrowing() {
 		val cf = new CompletableFuture<String>
-		val (String)=>String handler = [
+		val Function<String,String> handler = [
 			throw new NullPointerException
 		]
 		val result = cf.then(handler)
@@ -55,7 +57,7 @@ class CompletableFutureExtensionsTest {
 	
 	@Test def void testThenApplyHandlerThrowingAfterCompletion() {
 		val cf = new CompletableFuture<String>
-		val (String)=>String handler = [
+		val Function<String,String> handler = [
 			throw new NullPointerException
 		]
 		cf.complete("foo")
@@ -77,7 +79,7 @@ class CompletableFutureExtensionsTest {
 	
 	@Test def void testThenApplySuccessThrowing() {
 		val cf = new CompletableFuture<String>
-		val (String)=>String handler = [
+		val Function<String,String> handler = [
 			throw new NullPointerException
 		]
 		val after = cf.then(handler)
@@ -127,13 +129,13 @@ class CompletableFutureExtensionsTest {
 	
 	@Test(expected = NullPointerException) def void testThenAcceptFutNull() {
 		val CompletableFuture<String> cf = null
-		val (String)=>void handler = [] 
+		val Consumer<String> handler = [] 
 		cf.then(handler)
 	}
 	
 	@Test(expected = NullPointerException) def void testThenAcceptHandlerNull() {
 		val cf = new CompletableFuture<String>
-		val (String)=>void handler = null
+		val Consumer<String> handler = null
 		cf.then(handler)
 	}
 	
@@ -192,13 +194,13 @@ class CompletableFutureExtensionsTest {
 	
 	@Test(expected = NullPointerException) def void testThenRunFutNull() {
 		val CompletableFuture<String> cf = null
-		val ()=>void handler = [] 
+		val Runnable handler = [] 
 		cf.then(handler)
 	}
 	
 	@Test(expected = NullPointerException) def void testThenRunHandlerNull() {
 		val cf = new CompletableFuture<String>
-		val ()=>void handler = null
+		val Runnable handler = null
 		cf.then(handler)
 	}
 	
@@ -213,9 +215,9 @@ class CompletableFutureExtensionsTest {
 		assertTrue("Then handler must be called.", success.get)		
 	}
 	
-	@Test def void testThenRunySuccessThrowing() {
+	@Test def void testThenRunSuccessThrowing() {
 		val cf = new CompletableFuture<String>
-		val ()=>void handler = [
+		val Runnable handler = [
 			throw new NullPointerException
 		]
 		val after = cf.then(handler)
@@ -227,9 +229,9 @@ class CompletableFutureExtensionsTest {
 		after.join
 	}
 	
-	@Test def void testThenRunySuccessThrowingAfterCompletion() {
+	@Test def void testThenRunSuccessThrowingAfterCompletion() {
 		val cf = new CompletableFuture<String>
-		val ()=>void handler = [
+		val Runnable handler = [
 			throw new NullPointerException
 		]
 		cf.complete("foo")
@@ -283,7 +285,7 @@ class CompletableFutureExtensionsTest {
 	
 	@Test(expected = NullPointerException) def void testWhenCancelledNull() {
 		val CompletableFuture<String> cf = null
-		val ()=>void handler = [] 
+		val Runnable handler = [] 
 		cf.whenCancelled(handler)
 	}
 	
@@ -1040,6 +1042,10 @@ class CompletableFutureExtensionsTest {
 		assertSame("The result is expected holding the handler provided value.", expected, actual)
 	}
 	
+	//////////
+	// copy //
+	//////////
+	
 	@Test def void testCopyFutureNonCompleted() {
 		val fut = new CompletableFuture<Integer>
 		val fut2 = fut.copy
@@ -1048,6 +1054,22 @@ class CompletableFutureExtensionsTest {
 		fut.complete(2)
 		
 		assertEquals(2, fut2.get)
+	}
+	
+	@Test def void testCopyFutureNonCompletedExceptionally() {
+		val fut = new CompletableFuture<Integer>
+		val fut2 = fut.copy
+		val ex = new IllegalStateException
+		
+		assertFalse(fut2.done)
+		fut.completeExceptionally(ex)
+		
+		assertEquals(true, fut2.isCompletedExceptionally)
+		val correctException = new AtomicBoolean(false)
+		fut2.whenComplete [i,t|
+			correctException.set(t.cause === ex)
+		]
+		assertTrue(correctException.get)
 	}
 	
 	@Test def void testCopyFutureCompleted() {
@@ -1060,6 +1082,21 @@ class CompletableFutureExtensionsTest {
 		assertEquals(2, fut2.get)
 	}
 	
+	@Test def void testCopyFutureCompletedExceptionally() {
+		val fut = new CompletableFuture<Integer>
+		val ex = new ArrayIndexOutOfBoundsException
+		fut.completeExceptionally(ex)
+		
+		val fut2 = fut.copy
+		
+		assertEquals(true, fut2.isCompletedExceptionally)
+		val correctException = new AtomicBoolean(false)
+		fut2.whenComplete [i,t|
+			correctException.set(t.cause === ex)
+		]
+		assertTrue(correctException.get)
+	}
+	
 	/////////////////////////
 	// forwardCancellation //
 	/////////////////////////
@@ -1070,6 +1107,16 @@ class CompletableFutureExtensionsTest {
 		
 		fut.forwardCancellation(fut2)
 		fut.cancel
+		
+		assertTrue(fut2.cancelled)
+	}
+	
+	@Test def void testForwardCancellationCancelOriginalBeforeForward() {
+		val fut = new CompletableFuture<Integer>
+		val fut2 = new CompletableFuture<Integer>
+		
+		fut.cancel
+		fut.forwardCancellation(fut2)
 		
 		assertTrue(fut2.cancelled)
 	}
@@ -1109,6 +1156,220 @@ class CompletableFutureExtensionsTest {
 		fut.complete(42)
 		
 		assertFalse(fut2.isDone)
+	}
+	
+	@Test def void testForwardCancellationOriginalCompletesSuccessfullyBeforeForward() {
+		val fut = new CompletableFuture<Integer>
+		val fut2 = new CompletableFuture<Integer>
+		
+		fut.complete(42)
+		fut.forwardCancellation(fut2)
+		
+		assertFalse(fut2.isDone)
+	}
+	
+	
+	@Test def void testForwardCancellationOriginalCompletesExceptionally() {
+		val fut = new CompletableFuture<Integer>
+		val fut2 = new CompletableFuture<Integer>
+		
+		fut.forwardCancellation(fut2)
+		fut.completeExceptionally(new IllegalStateException)
+		
+		assertFalse(fut2.isDone)
+	}
+	
+	@Test def void testForwardCancellationOriginalCompletesExceptionallyBeforeForward() {
+		val fut = new CompletableFuture<Integer>
+		val fut2 = new CompletableFuture<Integer>
+		
+		fut.completeExceptionally(new ArrayIndexOutOfBoundsException)
+		fut.forwardCancellation(fut2)
+		
+		assertFalse(fut2.isDone)
+	}
+	
+	/////////////////////////////////////
+	// forwardCancellation to multiple //
+	/////////////////////////////////////
+	
+	@Test def void testForwardCancellationToMultiCancelOriginal() {
+		val fut = new CompletableFuture<Integer>
+		val fut2 = new CompletableFuture<Integer>
+		val fut3 = new CompletableFuture<Integer>
+		val fut4 = new CompletableFuture<Integer>
+		
+		fut.forwardCancellation(fut2, fut3, fut4)
+		fut.cancel
+		
+		assertTrue(fut2.cancelled)
+		assertTrue(fut3.cancelled)
+		assertTrue(fut4.cancelled)
+	}
+	
+	@Test def void testForwardCancellationToMultCancelOriginalBeforeForward() {
+		val fut = new CompletableFuture<Integer>
+		val fut2 = new CompletableFuture<Integer>
+		val fut3 = new CompletableFuture<Integer>
+		val fut4 = new CompletableFuture<Integer>
+		
+		fut.cancel
+		fut.forwardCancellation(fut2, fut3, fut4)
+		
+		assertTrue(fut2.cancelled)
+		assertTrue(fut3.cancelled)
+		assertTrue(fut4.cancelled)
+	}
+	
+	@Test def void testForwardCancellationCancelToMultiOriginalForwardeeAlreadyComplete() {
+		val fut = new CompletableFuture<Integer>
+		val fut2 = new CompletableFuture<Integer>
+		val fut3 = new CompletableFuture<Integer>
+		val fut4 = new CompletableFuture<Integer>
+		
+		fut.forwardCancellation(fut2,fut3,fut4)
+		fut2.complete(42)
+		fut3.complete(37)
+		fut4.complete(55)
+		fut.cancel
+		assertFalse(fut2.cancelled)
+		assertFalse(fut2.completedExceptionally)
+		assertFalse(fut3.cancelled)
+		assertFalse(fut3.completedExceptionally)
+		assertFalse(fut4.cancelled)
+		assertFalse(fut4.completedExceptionally)
+	}
+	
+	@Test def void testForwardCancellationCancelToMultiOriginalForwardeesPartiallyComplete() {
+		val fut = new CompletableFuture<Integer>
+		val fut2 = new CompletableFuture<Integer>
+		val fut3 = new CompletableFuture<Integer>
+		val fut4 = new CompletableFuture<Integer>
+		
+		fut.forwardCancellation(fut2,fut3,fut4)
+		fut2.complete(42)
+		fut4.complete(55)
+		fut.cancel
+		assertFalse(fut2.cancelled)
+		assertFalse(fut2.completedExceptionally)
+		assertTrue(fut3.cancelled)
+		assertFalse(fut4.cancelled)
+		assertFalse(fut4.completedExceptionally)
+	}
+	
+	@Test def void testForwardCancellationToMultiCancelOriginalForwardeeAlreadyCompletedExceptionally() {
+		val fut = new CompletableFuture<Integer>
+		val fut2 = new CompletableFuture<Integer>
+		val fut3 = new CompletableFuture<Integer>
+		val fut4 = new CompletableFuture<Integer>
+		
+		val expected = new NoSuchElementException
+		fut.forwardCancellation(fut2,fut3,fut4)
+		fut2.completeExceptionally(expected)
+		fut3.completeExceptionally(expected)
+		fut4.completeExceptionally(expected)
+		fut.cancel
+		assertFalse(fut2.cancelled)
+		assertTrue(fut2.completedExceptionally)
+		assertFalse(fut3.cancelled)
+		assertTrue(fut3.completedExceptionally)
+		assertFalse(fut4.cancelled)
+		assertTrue(fut4.completedExceptionally)
+		val e = Util.expectException(ExecutionException) [
+			fut2.get
+		]
+		assertSame(expected, e.cause)
+		val e2 = Util.expectException(ExecutionException) [
+			fut3.get
+		]
+		assertSame(expected, e2.cause)
+		val e3 = Util.expectException(ExecutionException) [
+			fut4.get
+		]
+		assertSame(expected, e3.cause)
+	}
+	
+	@Test def void testForwardCancellationToMultiCancelOriginalForwardeesPartiallyAlreadyCompletedExceptionally() {
+		val fut = new CompletableFuture<Integer>
+		val fut2 = new CompletableFuture<Integer>
+		val fut3 = new CompletableFuture<Integer>
+		val fut4 = new CompletableFuture<Integer>
+		
+		val expected = new NoSuchElementException
+		fut.forwardCancellation(fut2,fut3,fut4)
+		fut3.completeExceptionally(expected)
+		fut4.completeExceptionally(expected)
+		fut.cancel
+		assertTrue(fut2.cancelled)
+		assertFalse(fut3.cancelled)
+		assertTrue(fut3.completedExceptionally)
+		assertFalse(fut4.cancelled)
+		assertTrue(fut4.completedExceptionally)
+		val e2 = Util.expectException(ExecutionException) [
+			fut3.get
+		]
+		assertSame(expected, e2.cause)
+		val e3 = Util.expectException(ExecutionException) [
+			fut4.get
+		]
+		assertSame(expected, e3.cause)
+	}
+	
+	@Test def void testForwardCancellationToMultiOriginalCompletesSuccessfully() {
+		val fut = new CompletableFuture<Integer>
+		val fut2 = new CompletableFuture<Integer>
+		val fut3 = new CompletableFuture<Integer>
+		val fut4 = new CompletableFuture<Integer>
+		
+		fut.forwardCancellation(fut2,fut3,fut4)
+		fut.complete(42)
+		
+		assertFalse(fut2.isDone)
+		assertFalse(fut3.isDone)
+		assertFalse(fut4.isDone)
+	}
+	
+	@Test def void testForwardCancellationToMultiOriginalCompletesSuccessfullyBeforeForward() {
+		val fut = new CompletableFuture<Integer>
+		val fut2 = new CompletableFuture<Integer>
+		val fut3 = new CompletableFuture<Integer>
+		val fut4 = new CompletableFuture<Integer>
+		
+		fut.complete(42)
+		fut.forwardCancellation(fut2,fut3,fut4)
+		
+		assertFalse(fut2.isDone)
+		assertFalse(fut3.isDone)
+		assertFalse(fut4.isDone)
+	}
+	
+	
+	@Test def void testForwardCancellationToMultiOriginalCompletesExceptionally() {
+		val fut = new CompletableFuture<Integer>
+		val fut2 = new CompletableFuture<Integer>
+		val fut3 = new CompletableFuture<Integer>
+		val fut4 = new CompletableFuture<Integer>
+		
+		fut.forwardCancellation(fut2,fut3,fut4)
+		fut.completeExceptionally(new IllegalStateException)
+		
+		assertFalse(fut2.isDone)
+		assertFalse(fut3.isDone)
+		assertFalse(fut4.isDone)
+	}
+	
+	@Test def void testForwardCancellationToMultiOriginalCompletesExceptionallyBeforeForward() {
+		val fut = new CompletableFuture<Integer>
+		val fut2 = new CompletableFuture<Integer>
+		val fut3 = new CompletableFuture<Integer>
+		val fut4 = new CompletableFuture<Integer>
+		
+		fut.completeExceptionally(new ArrayIndexOutOfBoundsException)
+		fut.forwardCancellation(fut2,fut3,fut4)
+		
+		assertFalse(fut2.isDone)
+		assertFalse(fut3.isDone)
+		assertFalse(fut4.isDone)
 	}
 	
 	//////////////////
@@ -1320,6 +1581,157 @@ class CompletableFutureExtensionsTest {
 		assertTrue(withTimeout.cancelled)
 	}
 	
+	///////////////////////////////////////////////////////////////////////
+	// orTimeout(CompletableFuture<R>, (TimeoutConfig)=>void) //
+	///////////////////////////////////////////////////////////////////////
+	
+	@Test(timeout = 1000) def void testOrTimeoutConfigCancelBeforeTimeout() {
+		val fut = new CompletableFuture<String>
+		val timeoutTime = 50L
+		val unit = TimeUnit.MILLISECONDS
+		val withTimeout = fut.orTimeout[
+			timeout = (timeoutTime -> unit)
+		]
+		fut.cancel
+		Thread.sleep(200)
+		assertTrue(withTimeout.done)
+		assertTrue(withTimeout.cancelled)
+	}
+	
+	@Test(timeout = 1000) def void testOrTimeoutOnConfigDefaultTimeoutException() {
+		val fut = new CompletableFuture<String>
+		val timeoutTime = 10L
+		val unit = TimeUnit.MILLISECONDS
+		val withTimeout = fut.orTimeout[
+			timeout = (timeoutTime -> unit)
+		]
+		Thread.sleep(100)
+		assertFalse(fut.done)
+		assertTrue(withTimeout.done)
+		assertTrue(withTimeout.completedExceptionally)
+		val e = Util.expectException(ExecutionException) [
+			withTimeout.get
+		]
+		assertTrue(e.cause instanceof TimeoutException)
+	}
+	
+	@Test(timeout = 1000) def void testOrTimeoutConfigOnTimeoutException() {
+		val fut = new CompletableFuture<String>
+		val timeoutTime = 10L
+		val unit = TimeUnit.MILLISECONDS
+		val ex = new NoSuchElementException
+		val withTimeout = fut.orTimeout [
+			timeout = (timeoutTime -> unit)
+			exceptionProvider = [ex]
+		]
+		Thread.sleep(100)
+		assertFalse(fut.done) // by default no cancellation of original
+		assertTrue(withTimeout.done)
+		assertTrue(withTimeout.completedExceptionally)
+		val e = Util.expectException(ExecutionException) [
+			withTimeout.get
+		]
+		assertTrue(e.cause === ex)
+	}
+	
+	@Test def void testOrTimeoutConfigCancelBackpropagation() {
+		val fut = new CompletableFuture<String>
+		val timeoutTime = 10L
+		val unit = TimeUnit.SECONDS
+		val ex = new NoSuchElementException
+		val withTimeout = fut.orTimeout [
+			timeout = (timeoutTime -> unit)
+			exceptionProvider = [ex]
+			backwardPropagateCancel = true
+		]
+		assertFalse(fut.done)
+		assertFalse(withTimeout.done)
+		
+		withTimeout.cancel(true)
+		assertTrue(fut.cancelled)
+	}
+	
+	@Test def void testOrTimeoutConfigCancelNoBackpropagation() {
+		val fut = new CompletableFuture<String>
+		val timeoutTime = 100L
+		val unit = TimeUnit.MILLISECONDS
+		val ex = new NoSuchElementException
+		val withTimeout = fut.orTimeout [
+			timeout = (timeoutTime -> unit)
+			exceptionProvider = [ex]
+			backwardPropagateCancel = false
+		]
+		assertFalse(fut.done)
+		assertFalse(withTimeout.done)
+		
+		withTimeout.cancel(true)
+		assertFalse(fut.cancelled)
+	}
+	
+	@Test def void testOrTimeoutConfigCancelOriginalOnTimeout() {
+		val fut = new CompletableFuture<String>
+		val timeoutTime = 10L
+		val unit = TimeUnit.MILLISECONDS
+		val ex = new NoSuchElementException
+		val withTimeout = fut.orTimeout [
+			timeout = (timeoutTime -> unit)
+			exceptionProvider = [ex]
+			cancelOriginalOnTimeout = true
+		]
+		Thread.sleep(100)
+		assertTrue(withTimeout.completedExceptionally)
+		assertTrue(fut.cancelled)
+	}
+	
+	@Test def void testOrTimeoutConfigShutdownSchedulerAfterTimeout() {
+		val fut = new CompletableFuture<String>
+		val timeoutTime = 10L
+		val unit = TimeUnit.MILLISECONDS
+		val ex = new NoSuchElementException
+		val pool = new ScheduledThreadPoolExecutor(1)
+		val withTimeout = fut.orTimeout [
+			timeout = (timeoutTime -> unit)
+			exceptionProvider = [ex]
+			scheduler = pool
+			tryShutdownScheduler = true
+		]
+		Thread.sleep(100)
+		assertTrue(pool.isShutdown)
+	}
+	
+	@Test(timeout = 1000) def void testOrTimeoutConfigShutdownSchedulerOnCompletion() {
+		val fut = new CompletableFuture<String>
+		val timeoutTime = 10L
+		val unit = TimeUnit.SECONDS
+		val ex = new NoSuchElementException
+		val pool = new ScheduledThreadPoolExecutor(1)
+		val withTimeout = fut.orTimeout [
+			timeout = (timeoutTime -> unit)
+			exceptionProvider = [ex]
+			scheduler = pool
+			tryShutdownScheduler = true
+		]
+		fut.complete("foobar")
+		pool.awaitTermination(100, TimeUnit.MILLISECONDS)
+		assertTrue(pool.isShutdown)
+	}
+	
+	@Test(timeout = 1000) def void testOrTimeoutConfigAlreadyCompletedShutdownScheduler() {
+		val fut = new CompletableFuture<String>
+		val timeoutTime = 10L
+		val unit = TimeUnit.SECONDS
+		val ex = new NoSuchElementException
+		val pool = new ScheduledThreadPoolExecutor(1)
+		fut.complete("foobar")
+		val withTimeout = fut.orTimeout [
+			timeout = (timeoutTime -> unit)
+			exceptionProvider = [ex]
+			scheduler = pool
+			tryShutdownScheduler = true
+		]
+		pool.awaitTermination(100, TimeUnit.MILLISECONDS)
+		assertTrue(pool.isShutdown)
+	}
+	
 	// TODO test Async variants
-	// TODO all features of orTimeout(CompletableFuture, (TimeoutConfig)=>void)
 }

@@ -1,6 +1,7 @@
 package de.fhg.fokus.xtensions.incubation.immutable
 
 import java.util.Optional
+
 import static extension de.fhg.fokus.xtensions.optional.OptionalExtensions.*
 
 /**
@@ -18,8 +19,8 @@ abstract class Focus<I, O> implements ((O)=>O)=>Optional<I> {
 			EMPTY_FOCUS as Focus<Object, Y>
 		}
 
-		override getOpt() {
-			none
+		override getOrNull() {
+			null
 		}
 
 		override apply((Object)=>Object mapper) {
@@ -27,6 +28,10 @@ abstract class Focus<I, O> implements ((O)=>O)=>Optional<I> {
 		}
 
 		override get() {
+			none
+		}
+		
+		override set(Object newValue) {
 			none
 		}
 
@@ -53,9 +58,11 @@ abstract class Focus<I, O> implements ((O)=>O)=>Optional<I> {
 	 */
 	abstract def <Y> Focus<I, Y> zoom((O)=>Focus<O, Y> focusProvider)
 
-	abstract def O get()
+	abstract def O getOrNull()
 
-	abstract def Optional<O> getOpt()
+	abstract def Optional<O> get()
+	
+	abstract def Optional<I> set(O newValue)
 
 	/**
 	 * Applies an operation on the feature in focus and returns the 
@@ -99,16 +106,20 @@ package final class ValueFocus<I, O> extends Focus<I, O> {
 		focusUpdater.andThen(updater)
 	}
 
-	override get() {
+	override getOrNull() {
 		value
 	}
 
-	override getOpt() {
+	override get() {
 		some(value)
 	}
 
 	override apply((O)=>O mapper) {
 		val newValue = mapper.apply(value)
+		updater.apply(newValue).maybe
+	}
+	
+	override set(O newValue) {
 		updater.apply(newValue).maybe
 	}
 

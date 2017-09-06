@@ -12,6 +12,14 @@ import com.google.common.collect.AbstractIterator
  */
 class IteratorExtensions {
 	
+	// TODO excluding(T... obj) /*maybe use set under the hood*/, excluding(Iterable<T>), excluding(Set<T>)
+	// TODO public static def <T,Y> Iterator<Y> mapIf(Iterator<T>, Predicate<T>, Function1<T,Y>)
+	// TODO public static def <T,Y> Optional<Y> findFirst(Iterator<T>, Class<? extends Y> clazz)
+	// TODO public static def <T  extends Comparable<? super T>> Optional<Pair<T,T>> minMax(Iterator<T>)
+	// TODO public static def <T> Optional<Pair<T,T>> minMax(Iterator<T>, Comparator<? super T> comparator)
+	// TODO filter2(Predicate<T>), exists2(Predicate<T>), dropWhile2(Predicate<T>), takeWhile2(Predicate<T>), Optional<T> findLast2(Predicate<T>), forall2(Predicate<T>)
+	// TODO all of the above for Iterable
+	
 	/**
 	 * Creates a Java 8 stream of all remaining elements provided by the {@code iterator}.
 	 */
@@ -96,7 +104,7 @@ class IteratorExtensions {
 		}
 	}
 
-	static def <T,U> Iterator<U> nextIterator(Iterator<T> iterator, (T)=>Iterator<U> mapper) {
+	private static def <T,U> Iterator<U> nextIterator(Iterator<T> iterator, (T)=>Iterator<U> mapper) {
 		while(iterator.hasNext) {
 			val nextEl = iterator.next
 			val nextIt = mapper.apply(nextEl)
@@ -148,5 +156,6 @@ class IteratorExtensions {
 			result
 		}
 	}
+	
 	
 }

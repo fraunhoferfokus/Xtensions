@@ -27,7 +27,7 @@ abstract class Else {
 			elseBlock.run()
 		}
 
-		override <T> void elseDo(T ^value, Consumer<T> elseBlock) {
+		override <T> void elseDo(T value, Consumer<T> elseBlock) {
 			elseBlock.accept(value)
 		}
 
@@ -51,10 +51,10 @@ abstract class Else {
 	 * based on the sub-class of {@code Else}. The given {@code val} will
 	 * be forwarded to the elseBlock on execution. This allows the usage of non-capturing
 	 * lambdas, allowing better execution performance.
-	 * @param ^val value to be forwarded to {@code elseBlock}, if it is executed.
+	 * @param value value to be forwarded to {@code elseBlock}, if it is executed.
 	 * @param elseBlock code to be executed or not.
 	 */
-	def abstract <T> void elseDo(T ^value, Consumer<T> elseBlock)
+	def abstract <T> void elseDo(T value, Consumer<T> elseBlock)
 
 	/** 
 	 * This method either executes the given {@code elseBlock} or not,
