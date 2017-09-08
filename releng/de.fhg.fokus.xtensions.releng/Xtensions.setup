@@ -168,25 +168,9 @@
     <requirement
         name="org.eclipse.pde.feature.group"
         versionRange="[3.12.3,4.0.0)"/>
-    <requirement
-        name="com.mountainminds.eclemma.feature.feature.group"
-        versionRange="[2.3.3.201602231923,3.0.0)"/>
-    <requirement
-        name="org.eclipse.oomph.targlets.feature.group"/>
-    <requirement
-        name="org.eclipse.oomph.setup.targlets.feature.group"/>
-    <requirement
-        name="org.eclipse.oomph.setup.pde.feature.group"/>
-    <requirement
-        name="org.eclipse.oomph.setup.pde.feature.group"/>
-    <requirement
-        name="org.eclipse.oomph.setup.jdt.feature.group"/>
-    <requirement
-        name="org.eclipse.oomph.setup.git.feature.group"/>
-    <requirement
-        name="org.eclipse.egit.feature.group"/>
-    <requirement
-        name="org.eclipse.oomph.setup.workingsets.feature.group"/>
+	<requirement
+		name="org.eclipse.eclemma.feature.feature.group"
+		versionRange="[3.0.0,4.0.0)"/>
     <requirement
         name="org.eclipse.oomph.targlets.feature.group"/>
     <requirement
@@ -219,8 +203,22 @@
         name="org.eclipse.egit.feature.group"/>
     <requirement
         name="org.eclipse.oomph.setup.workingsets.feature.group"/>
-    <repository
-        url="http://update.eclemma.org/"/>
+    <requirement
+        name="org.eclipse.oomph.targlets.feature.group"/>
+    <requirement
+        name="org.eclipse.oomph.setup.targlets.feature.group"/>
+    <requirement
+        name="org.eclipse.oomph.setup.pde.feature.group"/>
+    <requirement
+        name="org.eclipse.oomph.setup.pde.feature.group"/>
+    <requirement
+        name="org.eclipse.oomph.setup.jdt.feature.group"/>
+    <requirement
+        name="org.eclipse.oomph.setup.git.feature.group"/>
+    <requirement
+        name="org.eclipse.egit.feature.group"/>
+    <requirement
+        name="org.eclipse.oomph.setup.workingsets.feature.group"/>
     <repository
         url="http://download.eclipse.org/releases/oxygen"/>
     <repository
@@ -309,7 +307,7 @@
       <repositoryList
           name="Oxygen">
         <repository
-            url="http://download.eclipse.org/eclipse/updates/4.7-I-builds"/>
+            url="http://download.eclipse.org/eclipse/updates/4.7"/>
       </repositoryList>
       <repositoryList
           name="Neon">
@@ -360,7 +358,7 @@
       <repositoryList
           name="Oxygen">
         <repository
-            url="http://download.eclipse.org/eclipse/updates/4.7-I-builds"/>
+            url="http://download.eclipse.org/eclipse/updates/4.7"/>
       </repositoryList>
       <repositoryList
           name="Neon">
@@ -411,7 +409,7 @@
       <repositoryList
           name="Oxygen">
         <repository
-            url="http://download.eclipse.org/eclipse/updates/4.7-I-builds"/>
+            url="http://download.eclipse.org/eclipse/updates/4.7"/>
       </repositoryList>
       <repositoryList
           name="Neon">
