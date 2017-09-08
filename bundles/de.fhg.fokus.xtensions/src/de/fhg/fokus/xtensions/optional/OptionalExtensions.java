@@ -756,6 +756,20 @@ public final class OptionalExtensions {
 			@NonNull Supplier<@NonNull ? extends Optional<? extends T>> alternativeSupplier) {
 		return or(self, alternativeSupplier);
 	}
+	
+	/**
+	 * Operation to cast {@code Optional<T>} to an {@code Optional<U>} where
+	 * {@code U} is a supertype of {@code T}. This cast is safe, since Optional
+	 * never actually uses elements of the generic type and only returns or passes
+	 * through elements of the generic type, so that no {@code ClassCastException}
+	 * will ever be thrown due to this cast.
+	 * @param opt
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public static <U, T extends U> Optional<U> upcast(Optional<T> opt) {
+		return (Optional<U>)opt;
+	}
 
 	//////////////////////////////////
 	// Java 9 forward compatibility //

@@ -5,6 +5,7 @@ import java.util.NoSuchElementException
 import static extension de.fhg.fokus.xtensions.optional.OptionalExtensions.*
 import java.util.function.Predicate
 import static extension java.util.Objects.*
+import java.util.stream.Stream
 
 /**
  * Result of computation of non-null result value .
@@ -26,6 +27,12 @@ abstract class Try<R> {
 
 	private new(){}
 	
+	
+	/**
+	 * Returns an instance of {@link Empty} if {@code result === null},
+	 * or an instance of {@link Success} holding the {@code result} value if not.
+	 * @param result the result value to be wrapped. May be {@code null}.
+	 */
 	static def <R> Try<R> completed(R result) {
 		if(result === null) {
 			completedEmpty
@@ -34,15 +41,30 @@ abstract class Try<R> {
 		}
 	}
 	
-	static def <R> Try<R> completedSuccessfully(R result) {
+	/**
+	 * Returns a new instance of {@link Success} wrapping around the given
+	 * result. The given {@code result} must not be {@code null}. If the result
+	 * may be {@code null}, consider using factory method {@link Try#completed(Object) completed}
+	 * instead.
+	 * @param result The result value to wrap into a {@code Success} instance. Must not be {@code null}.
+	 * @throws NullPointerException if {@code result === null}.
+	 */
+	static def <R> Success<R> completedSuccessfully(R result) throws NullPointerException {
 		new Success(result.requireNonNull)
 	}
 	
+	/**
+	 * Returns an instance of {@link Empty}, representing a successful, but empty result.
+	 */
 	def static <R> Empty<R> completedEmpty() {
-		Empty.INSTANCE as Empty as Empty<R>
+		Empty.INSTANCE as Empty<?> as Empty<R>
 	}
 	
-	def static <R> Failure<R> completedExceptionally(Exception e) {
+	/**
+	 * Returns an instance of {@link Failure} wrapping around the {@code Exception e} 
+	 * which is the cause of failure.
+	 */
+	def static <R> Failure<R> completedExceptionally(Exception e) throws NullPointerException {
 		new Failure(e.requireNonNull)
 	}
 	
@@ -86,6 +108,8 @@ abstract class Try<R> {
 			completedExceptionally(e)
 		}
 	}
+	
+//	abstract def <U super R> Try<U> upcast();
 	
 	/**
 	 * Recovers exceptions of class {@code E}. If recovery fails with exception
@@ -187,6 +211,8 @@ abstract class Try<R> {
 	
 	abstract def Try<R> filter(Predicate<R> test)
 	
+	abstract def <U> Try<U> filter(Class<U> clazz)
+	
 	// TODO tryTransform
 	abstract def <U> U transform((R)=>U resultTransformer, (Exception)=>U exceptionTranformer, =>U emptyTransformer)
 	
@@ -196,6 +222,13 @@ abstract class Try<R> {
 	 * result value present.
 	 */
 	abstract def Optional<R> getResult()
+	
+	/**
+	 * Returns an empty stream if Try completed exceptionally or with 
+	 * a {@code null} value. Otherwise returns a stream with the completed
+	 * result value.
+	 */
+	abstract def Stream<R> stream();
 	
 	/**
 	 * Returns result value on successful computation (even when the result
@@ -221,6 +254,45 @@ abstract class Try<R> {
 		
 	abstract def Optional<Exception> getException()
 	
+	/**
+	 * Returns given {@code Try<T>} as {@code Try<U>} where {@code U} is supertype of {@code T}.
+	 * @see Try#upcast(Success)
+	 * @see Try#upcast(Empty)
+	 * @see Try#upcast(Failure)
+	 */
+	public static def <U,R extends U> Try<U> upcast(Try<R> t) {
+		t as Try<?> as Try<U>
+	}
+	
+	/**
+	 * Returns given {@code Success<T>} as {@code Success<U>} where {@code U} is supertype of {@code T}.
+	 * @see Try#upcast(Try)
+	 * @see Try#upcast(Empty)
+	 * @see Try#upcast(Failure)
+	 */
+	public static def <U,R extends U> Success<U> upcast(Success<R> t) {
+		t as Success<?> as Success<U>
+	}
+	
+	/**
+	 * Returns given {@code Empty<T>} as {@code Empty<U>} where {@code U} is supertype of {@code T}.
+	 * @see Try#upcast(Success)
+	 * @see Try#upcast(Try)
+	 * @see Try#upcast(Failure)
+	 */
+	public static def <U,R extends U> Empty<U> upcast(Empty<R> t) {
+		t as Empty<?> as Empty<U>
+	}
+	
+	/**
+	 * Returns given {@code Failure<T>} as {@code Failure<U>} where {@code U} is supertype of {@code T}.
+	 * @see Try#upcast(Success)
+	 * @see Try#upcast(Empty)
+	 * @see Try#upcast(Try)
+	 */
+	public static def <U,R extends U> Failure<U> upcast(Failure<R> t) {
+		t as Failure<?> as Failure<U>
+	}
 	
 	public final static class Success<R> extends Try<R> {
 		
@@ -333,7 +405,15 @@ abstract class Try<R> {
 			if(test.test(result)) {
 				this
 			} else {
-				
+				completedEmpty
+			}
+		}
+		
+		override <U> filter(Class<U> clazz) {
+			if(clazz.isInstance(result)) {
+				this as Try<?> as Try<U>
+			} else {
+				completedEmpty
 			}
 		}
 		
@@ -343,6 +423,10 @@ abstract class Try<R> {
 		
 		override getResult() {
 			some(result)
+		}
+		
+		override stream() {
+			Stream.of(result)
 		}
 		
 		override getOrNull() {
@@ -363,25 +447,25 @@ abstract class Try<R> {
 		
 	}
 	
-	public static class Empty<R> extends Try<R> {	
+	public final static class Empty<R> extends Try<R> {	
 		private static val Empty<?> INSTANCE = new Empty
 		
-		override <E> recoverException(Class<E> exceptionType, (E)=>R recovery) {
+		override <E> Empty<R> recoverException(Class<E> exceptionType, (E)=>R recovery) {
 			// No exception to recover from
 			this
 		}
 		
-		override <E> tryRecoverException(Class<E> exceptionType, (E)=>R recovery) {
+		override <E> Empty<R> tryRecoverException(Class<E> exceptionType, (E)=>R recovery) {
 			// No exception to recover from
 			this
 		}
 		
-		override recoverException((Exception)=>R recovery) {
+		override Empty<R> recoverException((Exception)=>R recovery) {
 			// No exception to recover from
 			this
 		}
 		
-		override tryRecoverException((Exception)=>R recovery) {
+		override Empty<R> tryRecoverException((Exception)=>R recovery) {
 			// No exception to recover from
 			this
 		}
@@ -398,15 +482,15 @@ abstract class Try<R> {
 			completed(recovery)
 		}
 		
-		override recover(()=>R recovery) {
+		override R recover(()=>R recovery) {
 			recovery.apply
 		}
 		
-		override tryRecover(()=>R recovery) {
+		override Try<R> tryRecover(()=>R recovery) {
 			doTry(recovery)
 		}
 		
-		override recover(R recovery) {
+		override R recover(R recovery) {
 			recovery
 		}
 		
@@ -415,31 +499,31 @@ abstract class Try<R> {
 			this
 		}
 		
-		override <E> ifException((Exception)=>void handler) {
+		override <E> Empty<R> ifException((Exception)=>void handler) {
 			// no exception
 			this
 		}
 		
-		override ifResult((R)=>void handler) {
+		override Empty<R> ifResult((R)=>void handler) {
 			// no result
 			this
 		}
 		
-		override ifEmptyResult(()=>void handler) {
+		override Empty<R> ifEmptyResult(()=>void handler) {
 			handler.apply
 			this
 		}
 		
-		override <U> thenTry((R)=>U action) {
-			this as Try as Try<U>
+		override <U> Empty<U> thenTry((R)=>U action) {
+			this as Empty<?> as Empty<U>
 		}
 		
-		override <U,I extends AutoCloseable> thenTryWith(()=>I resourceProducer, (I, R)=>U action) {
-			this as Try as Try<U>
+		override <U,I extends AutoCloseable> Empty<U> thenTryWith(()=>I resourceProducer, (I, R)=>U action) {
+			this as Empty<?> as Empty<U>
 		}
 		
-		override <U> thenFlatTry((R)=>Try<U> action) {
-			this as Try as Try<U>
+		override <U> Empty<U> thenFlatTry((R)=>Try<U> action) {
+			this as Empty<?> as Empty<U>
 		}
 		
 		override isEmpty() {
@@ -454,15 +538,19 @@ abstract class Try<R> {
 			false
 		}
 		
-		override mapException((Exception)=>Exception mapper) {
+		override Empty<R> mapException((Exception)=>Exception mapper) {
 			this
 		}
 		
-		override filter(Predicate<R> test) {
+		override Empty<R> filter(Predicate<R> test) {
 			this
 		}
 		
-		override <U> transform((R)=>U resultTransformer, (Exception)=>U exceptionTranformer, ()=>U emptyTransformer) {
+		override <U> Empty<U> filter(Class<U> clazz) {
+			this as Empty<?> as Empty<U>
+		}
+		
+		override <U> U transform((R)=>U resultTransformer, (Exception)=>U exceptionTranformer, ()=>U emptyTransformer) {
 			emptyTransformer.apply
 		}
 		
@@ -470,7 +558,11 @@ abstract class Try<R> {
 			none
 		}
 		
-		override getOrNull() {
+		override stream() {
+			Stream.empty
+		}
+		
+		override R getOrNull() {
 			null
 		}
 		
@@ -488,7 +580,7 @@ abstract class Try<R> {
 		
 	}
 	
-	public static final class Failure<R> extends Try<R> {
+	public final static class Failure<R> extends Try<R> {
 		private val Exception e
 		
 		private new (Exception e) {
@@ -552,17 +644,17 @@ abstract class Try<R> {
 		
 		override <U> thenTry((R)=>U action) {
 			// no result
-			this as Try as Try<U>
+			this as Try<?> as Try<U>
 		}
 		
 		override <U,I extends AutoCloseable> thenTryWith(()=>I resourceProducer, (I, R)=>U action) {
 			// no result
-			this as Try as Try<U>
+			this as Try<?> as Try<U>
 		}
 		
 		override <U> thenFlatTry((R)=>Try<U> action) {
 			// no result
-			this as Try as Try<U>
+			this as Try<?> as Try<U>
 		}
 		
 		override isEmpty() {
@@ -581,8 +673,12 @@ abstract class Try<R> {
 			completedExceptionally(mapper.apply(e))
 		}
 		
-		override filter(Predicate<R> test) {
+		override Failure<R> filter(Predicate<R> test) {
 			this
+		}
+		
+		override <U> Failure<U> filter(Class<U> clazz) {
+			this as Failure<?> as Failure<U>
 		}
 		
 		override <U> transform((R)=>U resultTransformer, (Exception)=>U exceptionTranformer, ()=>U emptyTransformer) {
@@ -591,6 +687,10 @@ abstract class Try<R> {
 		
 		override getResult() {
 			none
+		}
+		
+		override stream() {
+			Stream.empty
 		}
 		
 		override getOrNull() {

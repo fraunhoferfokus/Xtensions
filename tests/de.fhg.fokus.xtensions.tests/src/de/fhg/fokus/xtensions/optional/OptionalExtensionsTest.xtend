@@ -859,6 +859,26 @@ class OptionalExtensionsTest {
 		assertEquals(#[0->1, 1->3, 2->5], result)
 	}
 	
+	////////////
+	// upcast //
+	////////////
+	
+	@Test def void upcastSome() {
+		val expected = "Foo"
+		val Optional<CharSequence> o = Optional.of(expected).upcast
+		val result = o.get
+		assertSame(expected, result)
+	}
+	
+	@Test def void upcastNone() {
+		val CharSequence expected = new StringBuilder().append("bar")
+		val Optional<CharSequence> o = Optional.<String>empty.upcast
+		val result = o.orElseGet[expected]
+		assertSame(expected, result)
+		val result2 = o.orElse(expected)
+		assertSame(expected, result2)
+	}
+	
 //	@Test def void getOrReturn() {
 //		val test = callGetOrReturnNoReturn("foo")
 //		assertEquals("Some foo", test.get())
