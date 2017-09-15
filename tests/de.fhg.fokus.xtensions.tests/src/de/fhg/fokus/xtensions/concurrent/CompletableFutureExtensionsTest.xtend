@@ -22,6 +22,8 @@ import java.util.NoSuchElementException
 import java.util.concurrent.TimeoutException
 import java.util.function.Function
 import java.util.function.Consumer
+import java.util.concurrent.ForkJoinPool
+import java.time.Duration
 
 class CompletableFutureExtensionsTest {
 	
@@ -367,6 +369,108 @@ class CompletableFutureExtensionsTest {
 		after.join
 	}
 	
+	////////////////////////
+	// whenCancelledAsync //
+	////////////////////////
+	
+	@Test(expected = NullPointerException) def void testWhenCancelledAsyncNull() {
+		val CompletableFuture<String> cf = null
+		val Runnable handler = [] 
+		cf.whenCancelledAsync(handler)
+	}
+	
+	@Test def void testWhenCancelledAsyncOnSuccess() {
+		var expected = "foo"
+		val success = new AtomicBoolean(true)
+		val cf = new CompletableFuture<String>
+		
+		val after = cf.whenCancelledAsync [
+			success.set(false)
+		]
+		assertFalse("whenCancelled should not create a completed future", after.done)
+		cf.complete(expected)
+		
+		after.join // must not throw exception
+		assertTrue("Then handler only be called on cancellation", success.get)
+		assertSame("Result of whenCancelled should contain input result", expected, after.get)
+	}
+	
+	@Test def void testWhenCancelledAsnycOnSomeException() {
+		val success = new AtomicBoolean(true)
+		val cf = new CompletableFuture<String>
+		val after = cf.whenCancelledAsync[success.set(false)]
+		assertFalse("whenCancelled should not create a completed future", after.done)
+		cf.completeExceptionally(new NullPointerException)
+		
+		assertTrue("Then handler should be called on cancellation", success.get)
+		thrown.expect(CompletionException)
+		thrown.expectCause(instanceOf(NullPointerException))
+		after.join
+	}
+	
+	@Test def void testWhenCancelledAsyncOnCancellation() {
+		val success = new AtomicBoolean(false)
+		val cf = new CompletableFuture<String>
+		val outerThread = Thread.currentThread
+		val pool = new ForkJoinPool
+		val after = cf.whenCancelledAsync(pool) [|
+			assertNotSame(outerThread, Thread.currentThread)
+			success.set(true)
+		]
+		assertFalse("whenCancelled should not create a completed future", after.done)
+		
+		cf.cancel(false)
+		val ex = Util.expectException(CompletionException) [
+			after.join
+		]
+		assertThat(ex.cause, instanceOf(CancellationException))
+		assertTrue("Then handler must be called.", success.get)
+	}
+	
+	@Test def void testWhenCancelledAsyncOnSuccessAfterCompletion() {
+		var expected = "foo"
+		val success = new AtomicBoolean(true)
+		val cf = new CompletableFuture<String>
+		
+		cf.complete(expected)
+		val after = cf.whenCancelledAsync[success.set(false)]
+		
+		after.join // must not throw exception
+		assertTrue("Then handler only be called on cancellation", success.get)
+		assertSame("Result of whenCancelled should contain input result", expected, after.get)
+	}
+	
+	@Test def void testWhenCancelledAsyncOnSomeExceptionAfterCompletion() {
+		val success = new AtomicBoolean(true)
+		
+		val cf = new CompletableFuture<String>
+		cf.completeExceptionally(new NullPointerException)
+		val after = cf.whenCancelledAsync[success.set(false)]
+		
+		assertFalse("Future result of whenCancelled should not be cancelled", after.isCancelled)
+		thrown.expect(CompletionException)
+		thrown.expectCause(instanceOf(NullPointerException))
+		after.join
+	}
+	
+	@Test def void testWhenCancelledAsyncOnCancellationAfterCompletion() {
+		val success = new AtomicBoolean(false)
+		val cf = new CompletableFuture<String>
+		val outerThread = Thread.currentThread
+		val pool = new ForkJoinPool
+		
+		cf.cancel(false)
+		val after = cf.whenCancelledAsync(pool) [|
+			assertNotSame(outerThread,Thread.currentThread)
+			success.set(true)
+		]
+		val ex = Util.expectException(ExecutionException) [
+			after.get
+		]
+		assertThat(ex.cause, instanceOf(CancellationException))
+		assertTrue("Then handler must be called.", success.get)
+	}
+	
 	///////////////////
 	// whenException //
 	///////////////////
@@ -476,6 +580,167 @@ class CompletableFutureExtensionsTest {
 	}
 	
 	////////////////////////
+	// whenExceptionAsync //
+	////////////////////////
+	
+	@Test(expected = NullPointerException) def void testWhenExceptionAsyncNullFuture() {
+		val CompletableFuture<String> cf = null
+		val (Throwable)=>void handler = [] 
+		cf.whenExceptionAsync(handler)
+	}
+	
+	@Test(expected = NullPointerException) def void testWhenExceptionAsyncWithExecutorNullFuture() {
+		val CompletableFuture<String> cf = null
+		val pool = ForkJoinPool.commonPool
+		val (Throwable)=>void handler = [] 
+		cf.whenExceptionAsync(pool,handler)
+	}
+	
+	@Test(expected = NullPointerException) def void testWhenExceptionAsyncNullHandler() {
+		val cf = new CompletableFuture<String>
+		cf.whenExceptionAsync(null)
+	}
+	
+	@Test(expected = NullPointerException) def void testWhenExceptionAsyncWithExecutorNullHandler() {
+		val cf = new CompletableFuture<String>
+		val pool = ForkJoinPool.commonPool
+		cf.whenExceptionAsync(pool,null)
+	}
+	
+	@Test(expected = NullPointerException) def void testWhenExceptionAsyncWithExecutorNullExecutor() {
+		val cf = new CompletableFuture<String>
+		val pool = null
+		cf.whenExceptionAsync(pool,[])
+	}
+	
+	@Test def void testWhenExceptionAsyncOnSuccess() {
+		var expected = "foo"
+		val success = new AtomicBoolean(true)
+		val cf = new CompletableFuture<String>
+		val pool = Executors.newCachedThreadPool
+		val outerThread = Thread.currentThread
+		val after = cf.whenExceptionAsync(pool)[
+			assertNotSame(outerThread, Thread.currentThread)
+			success.set(false)
+		]
+		assertFalse("whenException should not create a completed future", after.done)
+		cf.complete(expected)
+		
+		after.join // must not throw exception
+		assertTrue("Then handler only be called on exception", success.get)
+		assertSame("Result of whenException should contain input result", expected, after.get)
+	}
+	
+	@Test def void testWhenExceptionAsyncOnException() {
+		val success = new AtomicBoolean(false)
+		val cf = new CompletableFuture<String>
+		val pool = Executors.newCachedThreadPool
+		val outerThread = Thread.currentThread
+		val after = cf.whenExceptionAsync(pool)[
+			assertNotSame(outerThread, Thread.currentThread)
+			success.set(true)
+		]
+		assertFalse("whenException should not create a completed future", after.done)
+		cf.completeExceptionally(new NullPointerException)
+		
+		val ex = Util.expectException(CompletionException) [
+			after.join
+		]
+		assertTrue(ex.cause instanceof NullPointerException)
+		assertTrue("Then handler should be called on exception", success.get)
+	}
+	
+	@Test def void testWhenExceptionOnExceptionAsyncThrowing() {
+		val success = new AtomicBoolean(false)
+		val cf = new CompletableFuture<String>
+		val outerThread = Thread.currentThread
+		val pool = Executors.newCachedThreadPool
+		val after = cf.whenExceptionAsync(pool)[
+			assertNotSame(outerThread, Thread.currentThread)
+			success.set(true)
+			throw new IllegalStateException
+		]
+		assertFalse("whenException should not create a completed future", after.done)
+		cf.completeExceptionally(new NullPointerException)
+		
+		val ex = Util.expectException(CompletionException) [
+			after.join
+		]
+		assertTrue("Expected cause to be NullPointerException",ex.cause instanceof NullPointerException)
+		assertTrue("Then handler should be called on exception", success.get)
+	}
+	
+	@Test def void testWhenExceptionAsyncOnCancellation() {
+		val success = new AtomicBoolean(false)
+		val cf = new CompletableFuture<String>
+		val outerThread = Thread.currentThread
+		val pool = Executors.newCachedThreadPool
+		val after = cf.whenExceptionAsync(pool) [
+			assertNotSame(outerThread, Thread.currentThread)
+			success.set(true)
+		]
+		
+		assertFalse("whenException should not create a completed future", after.done)
+		cf.cancel(false)
+		val ex = Util.expectException(CompletionException) [
+			after.join
+		]
+		assertTrue("Expected cause to be CancellationException", ex.cause instanceof CancellationException)
+		assertTrue("Then handler must be called.", success.get)
+	}
+	
+	@Test def void testWhenExceptionAsyncOnSuccessAfterCompletion() {
+		var expected = "foo"
+		val success = new AtomicBoolean(true)
+		val cf = new CompletableFuture<String>
+		
+		cf.complete(expected)
+		val after = cf.whenExceptionAsync[success.set(false)]
+		
+		after.join // must not throw exception
+		assertTrue("Then handler only be called on exception", success.get)
+		assertSame("Result of whenException should contain input result", expected, after.get)
+	}
+	
+	@Test def void testWhenExceptionOnExceptionAsyncAfterCompletion() {
+		val success = new AtomicBoolean(false)
+		val cf = new CompletableFuture<String>
+		cf.completeExceptionally(new NullPointerException)
+		val pool = Executors.newCachedThreadPool
+		val outerThread = Thread.currentThread
+		val after = cf.whenExceptionAsync(pool)[
+			assertNotSame(outerThread, Thread.currentThread)
+			success.set(true)
+		]
+		
+		val ex = Util.expectException(CompletionException) [
+			after.join
+		]
+		assertTrue("Expected cause to be NullPointerException", ex.cause instanceof NullPointerException)
+		assertTrue("Then handler should be called on exception", success.get)
+	}
+	
+	@Test def void testWhenExceptionAsyncOnCancellationAfterCompletion() {
+		val success = new AtomicBoolean(false)
+		val cf = new CompletableFuture<String>
+		val pool = Executors.newCachedThreadPool
+		val outerThread = Thread.currentThread
+		
+		cf.cancel(false)
+		val after = cf.whenExceptionAsync(pool) [
+			assertNotSame(outerThread, Thread.currentThread)
+			success.set(true)
+		]
+		
+		val ex = Util.expectException(CompletionException) [
+			after.join
+		]
+		assertTrue("Expected cause to be CancellationException", ex.cause instanceof CancellationException)
+		assertTrue("Then handler must be called.", success.get)
+	}
+	
+	
+	////////////////////////
 	// exceptionallyAsync //
 	////////////////////////
 	
@@ -522,9 +787,16 @@ class CompletableFutureExtensionsTest {
 	@Test def void testExceptionallyAsyncOnException() {
 		val cf = new CompletableFuture<String>
 		val expected = "baz"
-		val result = cf.exceptionallyAsync[expected]
+		val expectedException = new ArithmeticException
+		val outerThread = Thread.currentThread
+		val pool = new ForkJoinPool
+		val result = cf.exceptionallyAsync(pool) [
+			assertSame(it, expectedException)
+			assertNotSame(outerThread, Thread.currentThread)
+			expected
+		]
 		assertFalse("whenException should not create a completed future", result.done)
-		cf.completeExceptionally(new ArithmeticException)
+		cf.completeExceptionally(expectedException)
 		
 		val resultVal = result.get // must not fail
 		assertSame("Result of exceptionallyAsync should have ", expected, resultVal)
@@ -533,8 +805,16 @@ class CompletableFutureExtensionsTest {
 	@Test def void testExceptionallyAsyncOnExceptionAfterCompletion() {
 		val cf = new CompletableFuture<String>
 		val expected = "baz"
-		cf.completeExceptionally(new ArithmeticException)
-		val result = cf.exceptionallyAsync[expected]
+		val expectedException = new ArithmeticException
+		val outerThread = Thread.currentThread
+		cf.completeExceptionally(expectedException)
+		val pool = new ForkJoinPool
+		
+		val result = cf.exceptionallyAsync(pool) [
+			assertSame(it, expectedException)
+			assertNotSame(outerThread, Thread.currentThread)
+			expected
+		]
 		
 		val resultVal = result.get // must not fail
 		assertSame("Result of exceptionallyAsync should have ", expected, resultVal)
@@ -543,8 +823,14 @@ class CompletableFutureExtensionsTest {
 	@Test def void testExceptionallyAsyncOnCancellation() {
 		val success = new AtomicBoolean(true)
 		val expected = "baz"
+		val outerThread = Thread.currentThread
 		val cf = new CompletableFuture<String>
-		val result = cf.exceptionallyAsync[expected]
+		val pool = new ForkJoinPool
+		
+		val result = cf.exceptionallyAsync(pool) [
+			assertNotSame(outerThread, Thread.currentThread)
+			expected
+		]
 		assertFalse("whenException should not create a completed future", result.done)
 		cf.cancel(true)
 		
@@ -556,9 +842,15 @@ class CompletableFutureExtensionsTest {
 	@Test def void testExceptionallyAsyncOnCancellationAfterCompletion() {
 		val success = new AtomicBoolean(true)
 		val expected = "baz"
+		val outerThread = Thread.currentThread
 		val cf = new CompletableFuture<String>
 		cf.cancel(true)
-		val result = cf.exceptionallyAsync[expected]
+		val pool = new ForkJoinPool
+		
+		val result = cf.exceptionallyAsync(pool) [
+			assertNotSame(outerThread, Thread.currentThread)
+			expected
+		]
 		
 		val resultVal = result.get // must not fail
 		assertTrue("Handler should not be called on success.", success.get)
@@ -616,6 +908,58 @@ class CompletableFutureExtensionsTest {
 	@Test def void testCancelOnTimeoutResultBeforeTimeout() {
 		val cf = new CompletableFuture<String>
 		cf.cancelOnTimeout(10, TimeUnit.MILLISECONDS)
+		val expected = "foo"
+		cf.complete(expected)
+		Thread.sleep(15)
+		val actual = cf.get
+		assertSame("Expecting set result, no timeout.", expected, actual)
+	}
+	
+	/////////////////////////////
+	// cancelOnTimeoutDuration //
+	/////////////////////////////
+	
+	@Test(expected = NullPointerException) def void testCancelOnTimeoutDurationNullFuture() {
+		cancelOnTimeout(null, Duration.ofSeconds(10))
+	}
+	
+	@Test def void testCancelOnTimeoutDurationOnCompletedSuccess() {
+		val cf = new CompletableFuture<String>
+		val expected = "foo"
+		cf.complete(expected)
+		cf.cancelOnTimeout(Duration.ofMillis(1))
+		Thread.sleep(2)
+		val result = cf.get
+		assertSame("When calling cancelOnTimeout on completed future, should have no effect", expected, result)
+	}
+	
+	@Test def void testCancelOnTimeoutDurationOnCompletedExceptionally() {
+		val cf = new CompletableFuture<String>
+		val expected = new IllegalStateException
+		cf.completeExceptionally(expected)
+		cf.cancelOnTimeout(Duration.ofMillis(2))
+		Thread.sleep(2)
+		thrown.expect(CompletionException)
+		thrown.expectCause(instanceOf(IllegalStateException))
+		cf.join
+	}
+	
+	@Test def void testCancelOnTimeoutDurationReturnSelf() {
+		val cf = new CompletableFuture<String>
+		val result = cf.cancelOnTimeout(Duration.ofMillis(2))
+		assertSame("cancelOnTimeout must return self future", cf, result)
+	}
+	
+	@Test def void testCancelOnTimeoutDurationOnTimeOut() {
+		val cf = new CompletableFuture<String>
+		cf.cancelOnTimeout(Duration.ofMillis(10))
+		thrown.expect(CancellationException)
+		cf.get(15, TimeUnit.MILLISECONDS)
+	}
+	
+	@Test def void testCancelOnTimeoutDurationResultBeforeTimeout() {
+		val cf = new CompletableFuture<String>
+		cf.cancelOnTimeout(Duration.ofMillis(10))
 		val expected = "foo"
 		cf.complete(expected)
 		Thread.sleep(15)
@@ -943,6 +1287,145 @@ class CompletableFutureExtensionsTest {
 		assertSame("CompletableFuture should complete with provided result", expected, actual)
 	}
 	
+	//////////////////////
+	// recoverWithAsync //
+	//////////////////////
+	
+	@Test(expected = NullPointerException) def void testRecoverWithAsyncNullFuture() {
+		val cf = new CompletableFuture<String>
+		recoverWithAsync(null)[cf]
+	}
+	
+	@Test(expected = NullPointerException) def void testRecoverWithAsyncNullRecovery() {
+		val cf = new CompletableFuture<String>
+		cf.recoverWithAsync(null)
+	}
+	
+	@Test def void testRecoverWithAsyncRecoveryReturningNull() {
+		val cf = new CompletableFuture<String>
+		val outerThread = Thread.currentThread
+		val pool = new ForkJoinPool
+		
+		val result = cf.recoverWithAsync(pool)[
+			assertNotSame(outerThread, Thread.currentThread)
+			null
+		]
+		
+		cf.completeExceptionally(new IllegalStateException)
+		thrown.expect(CompletionException)
+		thrown.expectCause(instanceOf(NullPointerException))
+		result.join
+	}
+	
+	@Test def void testRecoverWithAsnyRecoveryReturningNullAfterCompletion() {
+		val cf = new CompletableFuture<String>
+		cf.completeExceptionally(new IllegalStateException)
+		val outerThread = Thread.currentThread
+		val pool = new ForkJoinPool
+		
+		val result = cf.recoverWithAsync(pool) [
+			assertNotSame(outerThread, Thread.currentThread)
+			null
+		]
+		
+		thrown.expect(CompletionException)
+		thrown.expectCause(instanceOf(NullPointerException))
+		result.join
+	}
+	
+	@Test def void testRecoverWithAsnycRecoveryThrowingException() {
+		val cf = new CompletableFuture<String>
+		val outerThread = Thread.currentThread
+		val pool = new ForkJoinPool
+		
+		val result = cf.recoverWithAsync(pool)[
+			assertNotSame(outerThread, Thread.currentThread)
+			throw new ArrayStoreException
+		]
+		
+		cf.completeExceptionally(new IllegalStateException)
+		thrown.expect(CompletionException)
+		thrown.expectCause(instanceOf(ArrayStoreException))
+		result.join
+	}
+	
+	@Test def void testRecoverWithAsyncRecoveryRecoverWithCompleted() {
+		val cf = new CompletableFuture<String>
+		val expected = "bar"
+		val outerThread = Thread.currentThread
+		val pool = new ForkJoinPool
+		
+		val result = cf.recoverWithAsync(pool)[
+			assertNotSame(outerThread, Thread.currentThread)
+			CompletableFuture.completedFuture(expected)
+		]
+		cf.completeExceptionally(new IllegalStateException)
+		val actual = result.join
+		assertSame("CompletableFuture should complete with provided result", expected, actual)
+	}
+	
+	@Test def void testRecoverWithAsyncRecoveryRecoverWithCompletedAfterCompletion() {
+		val cf = new CompletableFuture<String>
+		val expected = "bar"
+		val outerThread = Thread.currentThread
+		val pool = new ForkJoinPool
+		
+		cf.completeExceptionally(new IllegalStateException)
+		val result = cf.recoverWithAsync(pool) [
+			assertNotSame(outerThread, Thread.currentThread)
+			CompletableFuture.completedFuture(expected)
+		]
+		
+		val actual = result.join
+		assertSame("CompletableFuture should complete with provided result", expected, actual)
+	}
+	
+	@Test def void testRecoverWithAsyncRecoveryRecoverWithDelay() {
+		val cf = new CompletableFuture<String>
+		val expected = "bar"
+		val recovery = new CompletableFuture<String>
+		val outerThread = Thread.currentThread
+		val pool = new ForkJoinPool
+		
+		val result = cf.recoverWithAsync(pool)[
+			assertNotSame(outerThread, Thread.currentThread)
+			recovery
+		]
+		cf.completeExceptionally(new IllegalStateException)
+		assertFalse("When recovery is not available, result cannot be present." ,result.isDone)
+		recovery.complete(expected)
+		val actual = result.join
+		assertSame("CompletableFuture should complete with provided result", expected, actual)
+	}
+	
+	@Test def void testRecoverWithAsyncRecoveryRecoverWithDelayAfterCompletion() {
+		val cf = new CompletableFuture<String>
+		val expected = "bar"
+		val recovery = new CompletableFuture<String>
+		cf.completeExceptionally(new IllegalStateException)
+		val outerThread = Thread.currentThread
+		val pool = new ForkJoinPool
+		
+		val result = cf.recoverWithAsync(pool)[
+			assertNotSame(outerThread, Thread.currentThread)
+			recovery
+		]
+		
+		assertFalse("When recovery is not available, result cannot be present." ,result.isDone)
+		recovery.complete(expected)
+		val actual = result.join
+		assertSame("CompletableFuture should complete with provided result", expected, actual)
+	}
+	
+	@Test(timeout=1000) def void testRecoverWithAsnycNothingToRecover() {
+		val cf = new CompletableFuture<String>
+		val expected = "bar"
+		val result = cf.recoverWithAsync[fail()null]
+		cf.complete(expected)
+		val actual = result.join
+		assertSame("CompletableFuture should complete with provided result", expected, actual)
+	}
+	
 	////////////////////////////
 	// whenCancelledInterrupt //
 	////////////////////////////
@@ -1035,6 +1518,65 @@ class CompletableFutureExtensionsTest {
 		val cf = new CompletableFuture<String>
 		val expected = "hui-buh"
 		val result = cf.handleCancellation[expected]
+		cf.cancel(false)
+		
+		val actual = result.get // must not fail
+		
+		assertSame("The result is expected holding the handler provided value.", expected, actual)
+	}
+	
+	/////////////////////////////
+	// handleCancellationAsync //
+	/////////////////////////////
+	
+	@Test(expected = NullPointerException) def void testHandleCancellationAsyncNullFut() {
+		handleCancellationAsync(null,[])
+	}
+	
+	@Test(expected = NullPointerException) def void testHandleCancellationAsyncNullHandler() {
+		val cf = new CompletableFuture<String>
+		cf.handleCancellationAsync(null)
+	}
+	
+	@Test def void testHandleCancellationAsyncOnSuccess() {
+		val expected = "zoo"
+		val cf = new CompletableFuture<String>
+		val success = new AtomicBoolean(true)
+		val result = cf.handleCancellationAsync[
+			success.set(false)
+			throw new IllegalStateException
+		]
+		cf.complete(expected)
+		val actual = result.get // must not fail
+		
+		assertTrue("Handler must not be called on successful call.", success.get)
+		assertSame("The result is expected the forwarded successful result.", expected, actual)
+	}
+	
+	@Test def void testHandleCancellationAsyncOnError() {
+		val cf = new CompletableFuture<String>
+		val success = new AtomicBoolean(true)
+		val pool = new ForkJoinPool
+		
+		val result = cf.handleCancellationAsync(pool) [
+			success.set(false)
+			throw new IllegalStateException
+		]
+		cf.completeExceptionally(new ArrayStoreException)
+		
+		assertTrue("Handler must not be called on successful call.", success.get)
+		thrown.expect(CompletionException)
+		thrown.expectCause(instanceOf(ArrayStoreException))
+		result.join // must not fail
+	}
+	
+	@Test def void testHandleCancellationAsyncOnCancellation() {
+		val cf = new CompletableFuture<String>
+		val expected = "hui-buh"
+		val pool = new ForkJoinPool
+		val result = cf.handleCancellationAsync(pool) [
+			expected
+		]
 		cf.cancel(false)
 		
 		val actual = result.get // must not fail

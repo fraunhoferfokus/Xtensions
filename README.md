@@ -264,7 +264,7 @@ Examples:
 	
 	def printHex(IntIterable ints) {
 		ints.forEachInt [
-			val hex = Long.toHexString(it)
+			val hex = Integer.toHexString(it)
 			println(hex)
 		]
 	}
@@ -285,6 +285,18 @@ Examples:
 			println(hex)
 		]
 	}
+
+
+#### From Iterables
+
+Iterables can be mapped to primitive iterables by the special map extension functions `mapInt`, `mapLong`
+and `mapDouble` defined in `de.fhg.fokus.xtensions.iteration.IterableExtensions`.
+
+Example:
+
+	import static extension de.fhg.fokus.xtensions.iteration.IterableExtensions.*
+	...
+	val lengths = newArrayList("foo", "baaaar", "bz").mapInt[length]
 
 
 #### From Arrays

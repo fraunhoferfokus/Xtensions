@@ -6,6 +6,7 @@ import java.util.stream.StreamSupport
 import java.util.Spliterator
 import java.util.Spliterators
 import com.google.common.collect.AbstractIterator
+import java.util.function.Predicate
 
 /**
  * Extension methods to the {@link Iterator} class.
@@ -79,6 +80,25 @@ class IteratorExtensions {
 			
 		}
 		result
+	}
+	
+	public static def <Y,T extends Y> Iterator<Y> mapIf(Iterator<T> iterator, Predicate<T> test, (T)=>Y mapper) {
+		new Iterator<Y>() {
+			
+			override hasNext() {
+				iterator.hasNext
+			}
+			
+			override next() {
+				val current = iterator.next
+				if(test.test(current)) {
+					mapper.apply(current)
+				} else {
+					current
+				}
+			}
+			
+		}
 	}
 	
 	// TODO create same for Iterable

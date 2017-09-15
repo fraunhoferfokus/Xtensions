@@ -5,16 +5,21 @@ import java.util.Objects
 import java.util.stream.Stream
 import java.util.stream.StreamSupport
 import java.util.stream.Collector
+import java.util.function.ToIntFunction
+import java.util.function.IntConsumer
+import java.util.PrimitiveIterator.OfInt
+import static extension java.util.Objects.*
+import java.util.function.ToLongFunction
+import java.util.PrimitiveIterator.OfLong
+import java.util.function.LongConsumer
+import java.util.function.ToDoubleFunction
+import java.util.PrimitiveIterator.OfDouble
+import java.util.function.DoubleConsumer
 
 /**
  * Additional extension functions for the {@link Iterable} class.
  */
 final class IterableExtensions {
-
-// static def <T> IntItreable mapInt(Iterable<T> it, ToIntFunction mapper){}
-// static def <T> LongItreable mapLong(Iterable<T> it, ToLongFunction mapper){}
-// static def <T> DoubleItreable mapDouble(Iterable<T> it, ToDoubleFunction mapper){}
-// Optimize stream() by streaming original Iterable and call mapToX on Stream
 
 // static def <X,Y> Iterable<Pair<X,Y>> combinations(Iterable<X>,Iterable<Y>)
 // static def <X,Y> Iterable<Pair<X,Y>> combinations(Iterable<X>,Iterable<Y>, BiPredicate<X,Y>)
@@ -22,6 +27,135 @@ final class IterableExtensions {
 	
 	private new() {
 		throw new IllegalStateException
+	}
+	
+	/**
+	 * This function maps an {@link Iterable} to an {@link IntIterable}, using the 
+	 * {@code mapper} function for each element of the original {@code iterable}. 
+	 * The returned {@code IntIterable} is lazy, only performing
+	 * the {@code mapper} function when iterating over the original {@code iterable}
+	 * object. If the returned iterable will be traversed multiple times 
+	 */
+	static def <T> IntIterable mapInt(Iterable<T> iterable, ToIntFunction<T> mapper){
+		iterable.requireNonNull
+		mapper.requireNonNull
+		new IntIterable {
+			override iterator() {
+				// TODO move into IteratorExtensions to allow Iterator#mapInt
+				new OfInt {
+					val iterator = iterable.iterator
+					
+					override nextInt() {
+						val current = iterator.next
+						mapper.applyAsInt(current)
+					}
+					
+					override hasNext() {
+						iterator.hasNext
+					}
+					
+				}
+			}
+			
+			override forEachInt(IntConsumer consumer) {
+				val iterator = iterable.iterator
+				while(iterator.hasNext) {
+					val currentBefore = iterator.next
+					val current = mapper.applyAsInt(currentBefore)
+					consumer.accept(current)
+				}
+			}
+			
+			override stream() {
+				iterable.stream().mapToInt(mapper)
+			}
+		}
+	}
+	
+	/**
+	 * This function maps an {@link Iterable} to a {@link LongIterable}, using the 
+	 * {@code mapper} function for each element of the original {@code iterable}. 
+	 * The returned {@code LongIterable} is lazy, only performing
+	 * the {@code mapper} function when iterating over the original {@code iterable}
+	 * object. If the returned iterable will be traversed multiple times 
+	 */
+	static def <T> LongIterable mapLong(Iterable<T> iterable, ToLongFunction<T> mapper){
+		iterable.requireNonNull
+		mapper.requireNonNull
+		new LongIterable {
+			override iterator() {
+				// TODO move into IteratorExtensions to allow Iterator#mapLong
+				new OfLong {
+					val iterator = iterable.iterator
+					
+					override nextLong() {
+						val current = iterator.next
+						mapper.applyAsLong(current)
+					}
+					
+					override hasNext() {
+						iterator.hasNext
+					}
+					
+				}
+			}
+			
+			override forEachLong(LongConsumer consumer) {
+				val iterator = iterable.iterator
+				while(iterator.hasNext) {
+					val currentBefore = iterator.next
+					val current = mapper.applyAsLong(currentBefore)
+					consumer.accept(current)
+				}
+			}
+			
+			override stream() {
+				iterable.stream().mapToLong(mapper)
+			}
+		}
+	}
+	
+	/**
+	 * This function maps an {@link Iterable} to a {@link DoubleIterable}, using the 
+	 * {@code mapper} function for each element of the original {@code iterable}. 
+	 * The returned {@code DoubleIterable} is lazy, only performing
+	 * the {@code mapper} function when iterating over the original {@code iterable}
+	 * object. If the returned iterable will be traversed multiple times 
+	 */
+	static def <T> DoubleIterable mapDouble(Iterable<T> iterable, ToDoubleFunction<T> mapper){
+		iterable.requireNonNull
+		mapper.requireNonNull
+		new DoubleIterable {
+			override iterator() {
+				// TODO move into IteratorExtensions to allow Iterator#mapLong
+				new OfDouble {
+					val iterator = iterable.iterator
+					
+					override nextDouble() {
+						val current = iterator.next
+						mapper.applyAsDouble(current)
+					}
+					
+					override hasNext() {
+						iterator.hasNext
+					}
+					
+				}
+			}
+			
+			override forEachDouble(DoubleConsumer consumer) {
+				val iterator = iterable.iterator
+				while(iterator.hasNext) {
+					val currentBefore = iterator.next
+					val current = mapper.applyAsDouble(currentBefore)
+					consumer.accept(current)
+				}
+			}
+			
+			override stream() {
+				iterable.stream().mapToDouble(mapper)
+			}
+		}
 	}
 
 	/**

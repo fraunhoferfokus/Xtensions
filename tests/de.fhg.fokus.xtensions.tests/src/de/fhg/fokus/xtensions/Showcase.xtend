@@ -28,7 +28,6 @@ import java.util.stream.StreamSupport
 import java.util.function.Predicate
 
 import static de.fhg.fokus.xtensions.concurrent.AsyncCompute.*
-import static de.fhg.fokus.xtensions.concurrent.FutureCompletion.*
 import java.util.concurrent.CompletableFuture
 import org.junit.Assert
 
