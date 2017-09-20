@@ -20,6 +20,10 @@ class SafeIterableExtensions {
 //	public static def <T> Optional<T> safeMax(Iterable<T> iterable, Comparator<? super T> comparator) {...}
 //	public static def <T extends Comparable<? super T>> Optional<T> safeMin(Iterable<T> iterable) {...}
 //	public static def <T> Optional<T> safeMin(Iterable<T> iterable, Comparator<? super T> comparator) {...}
+//	public static def <T> T safeHead(Iterable<T> iterable, T recovery){}
+//	public static def <T> T safeHead(Iterable<T> iterable, =>T recovery){}
+//	public static def <T> T safeHead(Iterable<T> iterable, T ifNull, T ifEmpty){}
+//	public static def <T> T safeHead(Iterable<T> iterable, =>T ifNull, =>T ifEmpty){}
 	
 //	public static def <T> safeExists(Iterable<T> iterable, Predicate<T> test) {
 //		if(iterable === null) {

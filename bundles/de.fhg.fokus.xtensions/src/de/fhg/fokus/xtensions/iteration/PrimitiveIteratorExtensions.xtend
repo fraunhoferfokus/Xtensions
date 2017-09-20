@@ -15,6 +15,10 @@ import java.util.stream.DoubleStream
  */
 final class PrimitiveIteratorExtensions {
 	
+	// static def IntSummaryStatistics summaryStatistics(PrimitiveIterator.OfInt)
+	// static def OptionalInt reduce(PrimitiveIterator.OfInt,IntBinaryOperator op)
+	// static def int reduce(PrimitiveIterator.OfInt, int identity, IntBinaryOperator op)
+	
 	private new() {
 		throw new IllegalStateException("PrimitiveIteratorExtensions not intended to be instantiated")
 	}

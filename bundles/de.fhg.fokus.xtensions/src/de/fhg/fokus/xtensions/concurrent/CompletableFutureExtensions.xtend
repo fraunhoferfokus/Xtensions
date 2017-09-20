@@ -54,6 +54,9 @@ class CompletableFutureExtensions {
 // TODO static def <T> CompletableFuture<T> void filter(Predicate<T>) // returns future holding NoSuchElementException if not present (may be cached). Not filtering to null, there are too many methods on CF that can fail on null
 // TODO static def <T> CompletableFuture<U> void filter(Class<U>) // returns future holding NoSuchElementException if not present (may be cached). Not filtering to null, there are too many methods on CF that can fail on null
 // TODO static def <T> CompletableFuture<T> void filter(Predicate<T>, ()=>Throwable) // returns future holding provided Throwable if not present. Not filtering to null, there are too many methods on CF that can fail on null
+// TODO static def <R> CompletableFuture<R> handleNull(CompletableFuture<R> fut, ()=>R handler)
+// TODO static def <R,T> CompletableFuture<T> thenNoNull(CompletableFuture<R> fut, (R)=>T handler)
+// TODO static def <R> CompletableFuture<T> whenNotNull(CompletableFuture<R> fut, (R)=>void handler)
 
 	/**
 	 * Calls {@link CompletableFuture#cancel(boolean)} on the given {@code future} with parameter {@code false}.
