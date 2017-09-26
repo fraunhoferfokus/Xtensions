@@ -1,6 +1,5 @@
 package de.fhg.fokus.xtensions.iteration
 
-import java.util.PrimitiveIterator
 import java.util.PrimitiveIterator.OfLong
 import java.util.function.LongConsumer
 import java.util.stream.LongStream
@@ -47,8 +46,10 @@ interface LongIterable extends Iterable<Long> {
 	 */
 	def LongStream stream() {
 		val OfLong iterator = iterator()
-		return PrimitiveIteratorExtensions.streamRemaining(iterator)
-	} // TODO public static LongIterable generate(final LongSupplier s)
+		PrimitiveIteratorExtensions.streamRemaining(iterator)
+	} 
+	
+	// TODO public static LongIterable generate(final LongSupplier s)
 	// TODO public static LongIterable iterate(final long seed, final LongUnaryOperator f)
 	// TODO public static LongIterable iterate(final long seed, LongPredicate hasNext, final LongUnaryOperator next)
 }

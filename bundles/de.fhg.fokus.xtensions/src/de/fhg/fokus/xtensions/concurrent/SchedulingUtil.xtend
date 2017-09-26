@@ -49,13 +49,29 @@ final class SchedulingUtil {
 	}
 
 	/**
-	 * May cause loss in time precision, if the overall duration exceeds Long.MAX_VALUE nanoseconds, 
+	 * This method will schedule the given {@code action} to run in a fixed interval specified via {@code duration}
+	 * starting from the time this method is called. If {@code action} throws, the action will un-scheduled and not
+	 * called anymore. The returned {@code ScheduledCompletableFuture} will also be passed to the action on every 
+	 * scheduled call. The future will only completed via an exception
+	 * thrown from {@code action}, from the outside by the caller or by the {@code action}. When the future is be completed
+	 * (no matter how), the {@code action} will be un-scheduled and not be called again.<br><br>
+	 * Be aware that the execution of {@code action} will be performed on a single Thread, so if the execution of {@code action}
+	 * takes longer than the specified {@code period}, following executions are delayed. Consider using 
+	 * {@link SchedulingUtil#repeatEvery(ScheduledExecutorService, Duration, Procedure1) repeatEvery(ScheduledExecutorService, Duration, (CompletableFuture<?>)=>void)}
+	 * to specify an own {@code ScheduledExecutorService} which may provide more threads for execution.<br><br>
+	 * Note: The use of {@code Duration} may cause a loss in time precision, if the overall duration exceeds Long.MAX_VALUE nanoseconds, 
 	 * which is roughly a duration of 292.5 years. At most at most 999,999,999 nanoseconds (less than one 
-	 * second) may be stripped.
+	 * second) may be stripped. Alternatively you can call 
+	 * {@link SchedulingUtil#repeatEvery(long, TimeUnit, Procedure1) repeatEvery(long, TimeUnit, (CompletableFuture<?>)=>void)} or 
+	 * {@link SchedulingUtil#repeatEvery(ScheduledExecutorService, long, TimeUnit, Procedure1) repeatEvery(ScheduledExecutorService, long, TimeUnit, (CompletableFuture<?>)=>void)}
+	 * to specify the time without loss of precision.
+	 * @param period at which the given {@code action} should be called.
+	 * @param action 
+	 * @see SchedulingUtil#repeatEvery(long, TimeUnit, Procedure1)
 	 */
-	public static def ScheduledCompletableFuture<?> repeatEvery(Duration duration, (CompletableFuture<?>)=>void action) {
+	public static def ScheduledCompletableFuture<?> repeatEvery(Duration period, (ScheduledCompletableFuture<?>)=>void action) {
 		// TODO check parameters
-		val time = duration.toTime
+		val time = period.toTime
 		repeatEvery(time.amount, time.unit, action)
 	}
 	
@@ -70,9 +86,9 @@ final class SchedulingUtil {
 		scheduler.repeatEvery(time.amount, time.unit, action)
 	}
 
-	public static def ScheduledCompletableFuture<?> repeatEvery(long time, TimeUnit unit, (CompletableFuture<?>)=>void action) {
+	public static def ScheduledCompletableFuture<?> repeatEvery(long period, TimeUnit unit, (ScheduledCompletableFuture<?>)=>void action) {
 		// TODO sanity check on params
-		scheduleAtFixedRate(0, time, unit, action)
+		scheduleAtFixedRate(0, period, unit, action)
 	}
 	
 	public static def ScheduledCompletableFuture<?> repeatEvery(ScheduledExecutorService scheduler, long time, TimeUnit unit, (CompletableFuture<?>)=>void action) {
@@ -121,10 +137,10 @@ final class SchedulingUtil {
 		}
 	}
 
-	private static def ScheduledCompletableFuture<?> scheduleAtFixedRate(long initialDelay, long rate, TimeUnit unit,
-		(CompletableFuture<?>)=>void action) {
+	private static def ScheduledCompletableFuture<?> scheduleAtFixedRate(long initialDelay, long period, TimeUnit unit,
+		(ScheduledCompletableFuture<?>)=>void action) {
 		val scheduler = Executors.newScheduledThreadPool(1)
-		val result = scheduler.scheduleAtFixedRate(initialDelay, rate, unit, action)
+		val result = scheduler.scheduleAtFixedRate(initialDelay, period, unit, action)
 		result.whenComplete [
 			scheduler.shutdown()
 		]
@@ -132,7 +148,7 @@ final class SchedulingUtil {
 	}
 	
 	private static def ScheduledCompletableFuture<?> scheduleAtFixedRate(ScheduledExecutorService scheduler, long initialDelay, long rate, TimeUnit unit,
-		(CompletableFuture<?>)=>void action) {
+		(ScheduledCompletableFuture<?>)=>void action) {
 		val result = new ScheduledCompletableFuture<Void>() {
 			val Runnable task = [
 				try {
@@ -153,6 +169,7 @@ final class SchedulingUtil {
 			override compareTo(Delayed o) {
 				scheduled.compareTo(o)
 			}
+			
 		}
 		result
 	}

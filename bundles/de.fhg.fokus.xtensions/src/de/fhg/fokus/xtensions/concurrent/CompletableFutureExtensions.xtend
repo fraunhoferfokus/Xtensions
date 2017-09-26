@@ -12,7 +12,6 @@ import java.util.concurrent.CompletionStage
 import java.util.concurrent.Executor
 import java.util.concurrent.ForkJoinPool
 import java.util.concurrent.TimeoutException
-import java.util.concurrent.RejectedExecutionException
 import java.util.concurrent.Executors
 import java.util.concurrent.ThreadFactory
 import static extension de.fhg.fokus.xtensions.concurrent.internal.DurationToTimeConversion.*
@@ -57,6 +56,7 @@ class CompletableFutureExtensions {
 // TODO static def <R> CompletableFuture<R> handleNull(CompletableFuture<R> fut, ()=>R handler)
 // TODO static def <R,T> CompletableFuture<T> thenNoNull(CompletableFuture<R> fut, (R)=>T handler)
 // TODO static def <R> CompletableFuture<T> whenNotNull(CompletableFuture<R> fut, (R)=>void handler)
+// TODO static def <R> CompletableFuture<T> failOnTimeout(CompletableFuture<R> fut, long time, TimeUnit unit, (R)=>Throwable exceptionProvider)
 
 	/**
 	 * Calls {@link CompletableFuture#cancel(boolean)} on the given {@code future} with parameter {@code false}.
@@ -117,7 +117,7 @@ class CompletableFutureExtensions {
 			return fut
 		}
 
-		val scheduler = defaultScheduler
+		val scheduler = createDefaultScheduler
 		val task = scheduler.schedule([|
 			try {
 				fut.cancel
@@ -143,7 +143,7 @@ class CompletableFutureExtensions {
 	 * ScheduledThreadPoolExecutor using daemon threads and allow task
 	 * removal on cancellation of task.
 	 */
-	private def static getDefaultScheduler() {
+	private def static createDefaultScheduler() {
 		val scheduler = new ScheduledThreadPoolExecutor(1, daemonThreadFactory)
 		scheduler.removeOnCancelPolicy = true
 		scheduler
@@ -266,6 +266,7 @@ class CompletableFutureExtensions {
 	 *     }
 	 *   ]
 	 * ]
+	 * sleepy.cancel // may interrupt Thread.sleep
 	 * </pre></code>
 	 * 
 	 * @param fut future that if cancelled will interrupt the thread calling {@code interruptableBlock}.
@@ -917,7 +918,7 @@ class CompletableFutureExtensions {
 				configData.executor
 			} else {
 				isDefaultScheduler = true
-				defaultScheduler
+				createDefaultScheduler
 			}
 		val ()=>Throwable exceptionProvider = configData.exceptionProvider ?: [new TimeoutException]
 		val cancelBackPropagation = configData.cancelBackPropagation
@@ -1019,7 +1020,7 @@ class CompletableFutureExtensions {
 		val cancelBackPropagation = false
 		val shutdownScheduler = true
 		val cancelOriginalOnTimeout = false
-		val scheduler = defaultScheduler
+		val scheduler = createDefaultScheduler
 		fut.orTimeout(scheduler, shutdownScheduler, timeoutTime, unit, exceptionProvider, cancelBackPropagation,
 			cancelOriginalOnTimeout)
 	}

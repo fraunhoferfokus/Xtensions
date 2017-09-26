@@ -1,6 +1,5 @@
 package de.fhg.fokus.xtensions.iteration
 
-import java.util.PrimitiveIterator
 import java.util.PrimitiveIterator.OfDouble
 import java.util.function.DoubleConsumer
 import java.util.stream.DoubleStream
@@ -48,8 +47,10 @@ interface DoubleIterable extends Iterable<Double> {
 	 */
 	def DoubleStream stream() {
 		val OfDouble iterator = iterator()
-		return PrimitiveIteratorExtensions.streamRemaining(iterator)
-	} // TODO public static DoubleIterable generate(final DoubleSupplier s)
+		PrimitiveIteratorExtensions.streamRemaining(iterator)
+	} 
+	
+	// TODO public static DoubleIterable generate(final DoubleSupplier s)
 	// TODO public static DoubleIterable iterate(final double seed, final DoubleUnaryOperator f)
 	// TODO public static DoubleIterable iterate(final double seed, DoublePredicate hasNext, final DoubleUnaryOperator next)
 }

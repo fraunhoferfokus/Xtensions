@@ -71,7 +71,7 @@ interface IntIterable extends Iterable<Integer> {
 	 */
 	def IntStream stream() {
 		val OfInt iterator = iterator()
-		return PrimitiveIteratorExtensions::streamRemaining(iterator)
+		PrimitiveIteratorExtensions::streamRemaining(iterator)
 	}
 
 	/** 
@@ -81,7 +81,7 @@ interface IntIterable extends Iterable<Integer> {
 	 * @return IntIterable based on the supplier {@code s}.
 	 */
 	def static IntIterable generate(Supplier<IntSupplier> s) {
-		return new SupplierIntIterable(s)
+		new SupplierIntIterable(s)
 	}
 
 	/** 
@@ -95,7 +95,7 @@ interface IntIterable extends Iterable<Integer> {
 	 * based on {@code seed} and {@code op}.
 	 */
 	def static IntIterable iterate(int seed, IntUnaryOperator op) {
-		return new IterateIntIterable(seed, op)
+		new IterateIntIterable(seed, op)
 	}
 
 	/** 
@@ -112,6 +112,6 @@ interface IntIterable extends Iterable<Integer> {
 	 * @return iterable, providing an iterator based on {@code seed}, {@code hasNext}, and {@code next}.
 	 */
 	def static IntIterable iterate(int seed, IntPredicate hasNext, IntUnaryOperator next) {
-		return new IterateIntIterableLimited(seed, hasNext, next)
+		new IterateIntIterableLimited(seed, hasNext, next)
 	}
 }

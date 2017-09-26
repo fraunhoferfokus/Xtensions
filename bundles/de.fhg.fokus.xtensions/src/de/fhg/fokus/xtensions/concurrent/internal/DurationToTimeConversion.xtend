@@ -24,7 +24,7 @@ class DurationToTimeConversion {
 	/**
 	 * Shortcut for constructor of {@link Time}.
 	 */
-	private static def Time operator_mappedTo(long time, TimeUnit unit) {
+	private static def Time -> (long time, TimeUnit unit) {
 		new Time(time, unit)
 	}
 

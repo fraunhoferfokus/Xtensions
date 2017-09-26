@@ -24,6 +24,8 @@ final class IterableExtensions {
 // static def <X,Y> Iterable<Pair<X,Y>> combinations(Iterable<X>,Iterable<Y>)
 // static def <X,Y> Iterable<Pair<X,Y>> combinations(Iterable<X>,Iterable<Y>, BiPredicate<X,Y>)
 // static def <T> List<T> toImmutableList(Iterable<T>)
+// static def <T> Map<Boolean,Set<T>> partition(Iterable<T>, Predicate<T>) // Own impl of Map extending AbstractMap
+// static def <T,A,D> Pair<D,D> partition(Iterable<T>, Collector<? super T, A, D>, Predicate<T>)
 	
 	private new() {
 		throw new IllegalStateException
