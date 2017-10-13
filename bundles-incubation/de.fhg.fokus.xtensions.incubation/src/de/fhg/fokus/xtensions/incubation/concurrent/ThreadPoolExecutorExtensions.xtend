@@ -9,21 +9,22 @@ import java.util.concurrent.Executors
 import java.util.concurrent.ThreadPoolExecutor.AbortPolicy
 import java.util.concurrent.ThreadPoolExecutor
 import static extension de.fhg.fokus.xtensions.function.FunctionExtensions.*
+import org.eclipse.xtend.lib.annotations.Accessors
 
 class ThreadPoolExecutorExtensions {
 
 	public static class ThreadPoolExecutorParam {
 		private static val defaultPolicy = new AbortPolicy
 
-		var int corePoolSize = 0
-		var int maximumPoolSize = Integer.MAX_VALUE
+		@Accessors var int corePoolSize = 0
+		@Accessors var int maximumPoolSize = Integer.MAX_VALUE
 		var long keepAliveTime = 60L
 		var TimeUnit unit = TimeUnit.SECONDS
-		var BlockingQueue<Runnable> workQueue = new SynchronousQueue<Runnable>()
-		var ThreadFactory threadFactory = Executors.defaultThreadFactory()
-		var RejectedExecutionHandler handler = defaultPolicy
+		@Accessors var BlockingQueue<Runnable> workQueue = new SynchronousQueue<Runnable>()
+		@Accessors var ThreadFactory threadFactory = Executors.defaultThreadFactory()
+		@Accessors var RejectedExecutionHandler handler = defaultPolicy
 		
-		// TODO setters, setKeepAlive(Pair<Long, TimeUnit>) + setKeepAlive(Duration)
+		// TODO setKeepAlive(Pair<Long, TimeUnit>) + setKeepAlive(Duration)
 	}
 
 	new() {

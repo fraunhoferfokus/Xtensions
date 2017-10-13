@@ -42,14 +42,19 @@ import java.util.function.Consumer
  */
 class CompletableFutureExtensions {
 
+// /////////////////////////////////
+// Java 9 forward compatibility: //
+// /////////////////////////////////
 // TODO static def <T> CompletableFuture<T> completeOnTimeout​(CompletableFuture<T> it, T value, long timeout, TimeUnit unit)
 // TODO static def <T> CompletableFuture<T> completeAsync​(CompletableFuture<R> it, Supplier<? extends T> supplier, Executor executor)
 // TODO static def <T> CompletableFuture<T> completeAsync​(CompletableFuture<R> it, Supplier<? extends T> supplier)
+// Alias for better readability and Xtend compatibility
+// TODO static def <T> CompletableFuture<T> completeAsync​(CompletableFuture<R> it, Executor executor, Supplier<? extends T> supplier)
 // ///////////////
 // Other Ideas //
 // ///////////////
 // TODO handleComposeAsync variants
-// TODO thenAsync? all variants
+// TODO thenAsync? all variants, with Executor as first parameter
 // TODO static def <T> CompletableFuture<T> void filter(Predicate<T>) // returns future holding NoSuchElementException if not present (may be cached). Not filtering to null, there are too many methods on CF that can fail on null
 // TODO static def <T> CompletableFuture<U> void filter(Class<U>) // returns future holding NoSuchElementException if not present (may be cached). Not filtering to null, there are too many methods on CF that can fail on null
 // TODO static def <T> CompletableFuture<T> void filter(Predicate<T>, ()=>Throwable) // returns future holding provided Throwable if not present. Not filtering to null, there are too many methods on CF that can fail on null
@@ -57,6 +62,10 @@ class CompletableFutureExtensions {
 // TODO static def <R,T> CompletableFuture<T> thenNoNull(CompletableFuture<R> fut, (R)=>T handler)
 // TODO static def <R> CompletableFuture<T> whenNotNull(CompletableFuture<R> fut, (R)=>void handler)
 // TODO static def <R> CompletableFuture<T> failOnTimeout(CompletableFuture<R> fut, long time, TimeUnit unit, (R)=>Throwable exceptionProvider)
+// TODO maybe thenFlat or flatMap as alias to thenCompose
+// TODO operation to compose CompletableFuture chain, where default handling on finished future will be performed on the given executor:
+// static def <T,R> CompletableFuture<R> composeAsync(CompletableFuture<T> fut, Executor executor, (CompletableFuture<T>)=>CompletableFuture<R> composition) which will result in:
+// val start = new CompletableFuture<Void>; val delayed = start.thenCompose[fut]; val result = combinations.apply(delayed); executor.run[start.complete(null)];
 
 	/**
 	 * Calls {@link CompletableFuture#cancel(boolean)} on the given {@code future} with parameter {@code false}.

@@ -29,7 +29,11 @@ import java.util.function.Predicate
 
 import static de.fhg.fokus.xtensions.concurrent.AsyncCompute.*
 import java.util.concurrent.CompletableFuture
+import static extension de.fhg.fokus.xtensions.datetime.DurationExtensions.*
 import org.junit.Assert
+
+import static extension de.fhg.fokus.xtensions.concurrent.SchedulingUtil.*
+import java.util.concurrent.TimeUnit
 
 //@Ignore
 class Showcase {
@@ -229,5 +233,29 @@ class Showcase {
 			println(it)
 		]
 	}
+	
+	@Test def void schdulingDemo() {
+		
+		// Cancelling from outside
+		val hundredMs = 100.milliseconds
+		val fut = repeatEvery(hundredMs) [
+			for(i : 0..Integer.MAX_VALUE) {
+				if(cancelled) {
+					println("I've been cancelled at iteration " + i)
+					return
+				}
+			}
+		]
+		fut.cancel(false)
+		
+		val fut2 = repeatEvery(100, TimeUnit.MILLISECONDS).withInitialDelay(50) [
+			println("Delayed start, repeated every 100 milis period")
+		]
+		
+		delay(500.milliseconds) [
+			fut2.cancel(false)
+		]
+	}
+	
 	
 }

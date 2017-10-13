@@ -12,6 +12,54 @@ import java.util.Set
 
 class StreamExtensionsTest {
 	
+	///////////////////////
+	// flatMap(Iterable) //
+	///////////////////////
+	
+	@Test(expected=NullPointerException) def void testFlatMapStreamNull() {
+		val Stream<String> stream = null;
+		stream.flatMap[newArrayList]
+	}
+	
+	@Test(expected=NullPointerException) def void testFlatMapMapperNull() {
+		val stream = Stream.of("foo", "bar", "baz")
+		val (String)=>Iterable<String> mapper = null
+		stream.flatMap(mapper)
+	}
+	
+	@Test def void testFlatMapEmptyStream() {
+		val stream = Stream.<String>of()
+		val (String)=>Iterable<String> mapper = [throw new IllegalStateException]
+		val result = stream.flatMap(mapper)
+		assertEquals(0, result.count)
+	}
+	
+	@Test def void testFlatMapSingleElementStream() {
+		val expected = "foo"
+		val expectedOut = #["hui", "boo"]
+		val stream = Stream.of(expected)
+		val result = stream.flatMap[
+			assertSame(expected,it)
+			expectedOut
+		].toArray
+		assertArrayEquals(expectedOut, result)
+	}
+	
+	@Test def void testFlatMapMultipleElements() {
+		val input = #["hui", "boo", "bar"]
+		val expectedOut = input.join
+		val output = input.stream.flatMap [
+			val Iterable<String> result = it.split("")
+			result
+		].collect(Collectors.joining)
+		assertEquals(expectedOut, output)
+	}
+	
+	@Test(expected = NullPointerException) def void testFlatMapMapperReturningNull() {
+		val input = #["hui", "boo", "bar"]
+		input.stream.flatMap [null].toArray
+	}
+	
 	///////////////////
 	// filter(Class) //
 	///////////////////

@@ -101,7 +101,7 @@ class IteratorExtensions {
 		}
 	}
 	
-	// TODO create same for Iterable
+	// TODO create same for Iterable: def <T,U> Iterable<U> flatMap(Iterable<T> iterable, (T)=>Iterable<U> mapper)
 	public static def <T,U> Iterator<U> flatMap(Iterator<T> iterator, (T)=>Iterator<U> mapper) {
 		new AbstractIterator<U>() {
 			var Iterator<U> currentMappedIterator = null

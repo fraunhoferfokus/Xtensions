@@ -6,7 +6,7 @@ for classes in the Java 8 standard library and the Xtend standard library. A few
 * Smooth iterop between Java 8 JDK types and types from the Xtend standard library
 * Making a select few Java 9 methods available on Java 8
 * Providing support for iteration over primitive values without having to use boxing
-* Adding some useful additional methods to existing standard classes
+* Adding some useful additional methods to existing standard JDK and Xtend standard lib classes
 
 ## Usage
 
@@ -19,7 +19,7 @@ and split into multiple bundles in future releases.
 
 The following chapters will give an overview over the most important extensions and types provided 
 by the library. It does not include all methods. Please have a look at the sources or the JavaDocs
-to explore all possible functionality.
+to explore all available functionality.
 
 ### Extensions to Optional
 
@@ -32,11 +32,11 @@ which are implemented to be inlined to the factory methods used by the JDK.
 Examples:
 
 	import static extension de.fhg.fokus.xtensions.optional.OptionalIntExtensions.*
-	...
+	// ...
 	val Optional<String> no = none
 	val Optional<String> yes = some("yesss!")
 	val Optional<String> dunno = maybe(possiblyNull())
-	...
+	// ...
 	private def possiblyNull() {
 		if(System.currentTimeMillis % 2 == 0) {
 			"I'm in ur optional"
@@ -52,7 +52,7 @@ The `OptionalIntExtensions` adds such a method, providing an instance check of t
 Example:
 
 	import static extension de.fhg.fokus.xtensions.optional.OptionalIntExtensions.*
-	...
+	// ...
 	val Optional<Object> optObj = some("Hi there!")
 	val Optional<String> optStr = optObj.filter(String)
 	optStr.ifPresent [
@@ -66,7 +66,7 @@ are provided to create immutable implementations of common JVM collection APIs.
 Examples:
 
 	import static extension de.fhg.fokus.xtensions.optional.OptionalIntExtensions.*
-	...
+	// ...
 	val Optional<String> yes = some("yesss!")
 	
 	// view as iterable
@@ -90,7 +90,7 @@ box the resulting value.
 Example:
 
 	import static extension de.fhg.fokus.xtensions.optional.OptionalIntExtensions.*
-	...
+	// ...
 	val Optional<String> yes = some("yesss!")
 	val OptionalInt lenOpt = yes.mapInt[length]
 	val len = lenOpt.orElse(0)
@@ -140,7 +140,7 @@ One way to iterate over the range is to use Java 8 streams, by using the
 Exmaple: 
 
 	import static extension de.fhg.fokus.xtensions.range.RangeExtensions.*
-	...
+	// ...
 	val range = (0..20).withStep(2)
 	range.stream.filter[it % 5 == 0].sum
 
@@ -149,7 +149,7 @@ Another way to iterate over the elements of a range is to use the `forEachInt` m
 Example:
 
 	import static extension de.fhg.fokus.xtensions.range.RangeExtensions.*
-	...
+	// ...
 	val range = (0..20).withStep(2)
 	range.forEachInt [
 		println(it)
@@ -198,7 +198,7 @@ Example:
 
 
 	import static extension de.fhg.fokus.xtensions.stream.StreamExtensions.*
-	...
+	// ...
 	val s = Stream.of(42, "Hello", Double.NaN, "World")
 		.filter(String)
 		.collect(Collectors.joining(" "))
@@ -214,7 +214,7 @@ extension methods to the `Stream` class.
 Example:
 
 	import static extension de.fhg.fokus.xtensions.stream.StreamExtensions.*
-	...
+	// ...
 	val list = Stream.of("Foo", "Hello" , "Boo", "World")
 		.filter[!contains("oo")]
 		.map[toUpperCase]
@@ -260,7 +260,7 @@ In the following sections we will explore the ways to create those primitive Ite
 Examples:
 
 	import static extension de.fhg.fokus.xtensions.iteration.IntIterable.*
-	...
+	// ...
 	
 	def printHex(IntIterable ints) {
 		ints.forEachInt [
@@ -295,7 +295,7 @@ and `mapDouble` defined in `de.fhg.fokus.xtensions.iteration.IterableExtensions`
 Example:
 
 	import static extension de.fhg.fokus.xtensions.iteration.IterableExtensions.*
-	...
+	// ...
 	val lengths = newArrayList("foo", "baaaar", "bz").mapInt[length]
 
 
@@ -309,7 +309,7 @@ an excluding end index.
 Example:
 
 	import static extension de.fhg.fokus.xtensions.iteration.PrimitiveArrayExtensions.*
-	...
+	// ...
 	val int[] arr = #[0,2,4,19,-10,10_000,Integer.MAX_VALUE,Integer.MIN_VALUE]
 	var ints = arr.asIntIterable(1, arr.length - 1)  // omit first and last element
 
@@ -323,7 +323,7 @@ TODO: Describe IntIterable.generate
 Example:
 
 	import static extension de.fhg.fokus.xtensions.iteration.IntIterable.*
-	...
+	// ...
 	val ints = IntIterable.generate [
 		val rand = new Random;
 		[rand.nextInt]
@@ -335,7 +335,7 @@ TODO: Describe IntIterable.iterate(int, IntUnaryOperator)
 Example:
 
 	import static extension de.fhg.fokus.xtensions.iteration.IntIterable.*
-	...
+	// ...
 	val ints = IntIterable.iterate(1)[it * 2]
 
 
@@ -344,7 +344,7 @@ TODO: Describe IntIterable.iterate(int, IntPredicate, IntUnaryOperator)
 Example:
 
 	import static extension de.fhg.fokus.xtensions.iteration.IntIterable.*
-	...
+	// ...
 	val ints = IntIterable.iterate(0, [it<=10], [it+2])
 
 
@@ -356,7 +356,7 @@ class `de.fhg.fokus.xtensions.range.RangeExtensions`.
 Example:
 
 	import static org.eclipse.xtext.xbase.lib.IntegerRange.*
-	...
+	// ...
 	val iter = (0..50).withStep(2).asIntIterable
 
 
@@ -372,7 +372,7 @@ iteration over either one or no value, depending on the source Optional.
 Example:
 
 	import static extension de.fhg.fokus.xtensions.optional.OptionalIntExtensions.*
-	...
+	// ...
 	val ints = some(42).asIterable
 
 ### Extensions to String 
@@ -448,10 +448,73 @@ TODO: Describe async methods
 
 ### Scheduling Util
 
-TODO: Describe repeatEvery methods  
-TODO: Describe repeatWithFixedDelay methods  
-TODO: Describe waitFor methods  
-TODO: Describe delay methods  
+The class `de.fhg.fokus.xtensions.concurrent.SchedulingUtil` provides several static methods 
+and static extension methods to easily schedule action for deferred or repeated execution.  
+All operations have overloaded variants taking a `java.util.concurrent.ScheduledExecutorService`
+as the first parameter, so these methods can be used as extension methods.
+
+To repeat an action with a given period of time (starting immediately) you can use one of the overloaded 
+versions of the `repeatEvery` method.
+
+TOTO: repeatEvery example e.g. 
+
+	import static extension de.fhg.fokus.xtensions.concurrent.SchedulingUtil.*
+	import static extension de.fhg.fokus.xtensions.datetime.DurationExtensions.*
+	// ...
+	val hundredMs = 100.milliseconds
+	repeatEvery(hundredMs) [
+		println(currentTimeMillis)
+	]
+
+To repeat an action with a given period, starting with a delay instead of immediately, an overloaded
+version of the `repeatEvery` method can be used:
+
+TODO repeatEvery example with delay
+
+	import static extension de.fhg.fokus.xtensions.concurrent.SchedulingUtil.*
+	import java.util.concurrent.TimeUnit
+	// ...
+	repeatEvery(100, TimeUnit.MILLISECONDS).withInitialDelay(200) [
+		println("Delayed start, repeated every 100 milis period")
+	]
+
+Note that the action will stop being repeatedly called if the action throws an exception or the future
+returned by the `repeatEvery` method will be completed (e.g. by canceling it). This can either either 
+be done by the action itself (the future will be passed to the action as parameter), or from the outside.  
+Since the future is both passed to the action and returned, this also allows the action to check e.g. for
+cancellation from the outside and aborting the action early.
+
+
+	import static extension de.fhg.fokus.xtensions.concurrent.SchedulingUtil.*
+	import static extension de.fhg.fokus.xtensions.datetime.DurationExtensions.*
+	// ...
+	val hundredMs = 100.milliseconds
+	val fut = repeatEvery(hundredMs) [
+		for(i : 0..Integer.MAX_VALUE) {
+			if(cancelled) {
+				println("I've been cancelled at iteration " + i)
+				return
+			}
+		}
+	]
+	fut.cancel(false)
+
+
+The method `delay` will defer the one-time execution of a given action by the given duration.
+The delayed execution can be aborted before being started by completing the future returned by 
+the `delay` method.  
+The future returned by the `delay` method is also passed as a parameter to the deferred action.
+If the future is completed before the delay is expired, the action will not be executed. If the 
+action is performed, it can check during execution if the future is completed, e.g. to return 
+prematurely (abort the action early).
+
+TODO: Example
+
+The method `waitFor` will create a `CompletableFuture` that will be completed successfully
+with a `null` value when the given duration expires.
+
+TODO: Example
+
 
 ## Build
 

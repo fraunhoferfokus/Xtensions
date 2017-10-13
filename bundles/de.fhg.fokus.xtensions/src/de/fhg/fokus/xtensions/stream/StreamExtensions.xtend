@@ -33,10 +33,30 @@ final class StreamExtensions {
 // static def <T, Z> Stream<Pair<T, Z>> combinations(Stream<T> stream, ()=>Stream<Z> streamSupplier, BiPredicate<T,Z> where) 
 // static def <T, Z, R> Stream<R> combinations(Stream<T> stream, Iterable<Z> combineWith, (T, Z)=>R combiner, BiPredicate<T,Z> where)
 // static def <T, Z, R> Stream<R> combinations(Stream<T> stream, ()=>Stream<Z> streamSupplier, (T, Z)=>R combiner, BiPredicate<T,Z> where)	
-// static def IntStream
+// static def <T> IntStream flatMap(Stream<T> stream, (T)=>IntIterable mapper) etc.
+// static def <T, Y> ImmutableListMultimap<Y,T> groupBy(Stream<T> stream, (T)=>Y grouping)
 	
 	private new() {
 		throw new IllegalStateException
+	}
+	
+	/**
+	 * This method provides a convenient way to {@link Stream#flatMap(Stream) flatMap} on a {@code Stream} by providing an 
+	 * {@code Iterable} instead of a {@code Stream}. If a given {@code Iterable} is instance of 
+	 * {@link Collection}, the {@code stream()} method of the interface will be called.
+	 * 
+	 * @param stream the input stream; each element will be passed to {@code flatMapper}. The resulting
+	 *  elements will be concatenated to a flat {@code Stream} containing all elements of the returned
+	 *  {@code Iterable}s.
+	 * @param flatMapper function returning an {@code Iterable} for each element in {@code stream}.
+	 * @return Stream concatenating all elements returned by {@code flatMapper} for each elements
+	 *  provided by {@code stream}.
+	 * @throws NullPointerException if {@code stream} or {@code flatMapper} is {@code null}, or if 
+	 *   {@code flatMapper} returns a {@code null} object.
+	 */
+	static def <T> Stream<T> flatMap(Stream<T> stream, (T)=>Iterable<? extends T> flatMapper) {
+		Objects.requireNonNull(flatMapper)
+		stream.flatMap[flatMapper.apply(it).stream]
 	}
 
 	// ////////////////

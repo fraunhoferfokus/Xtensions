@@ -1112,6 +1112,7 @@ class CompletableFutureExtensionsTest {
 		
 		cf.cancel(false)
 		
+		assertTrue(to.cancelled)
 		thrown.expect(CancellationException)
 		to.join
 	}
@@ -1123,6 +1124,7 @@ class CompletableFutureExtensionsTest {
 		cf.cancel(false)
 		cf.forwardTo(to)
 		
+		assertTrue(to.cancelled)
 		thrown.expect(CancellationException)
 		to.join
 	}

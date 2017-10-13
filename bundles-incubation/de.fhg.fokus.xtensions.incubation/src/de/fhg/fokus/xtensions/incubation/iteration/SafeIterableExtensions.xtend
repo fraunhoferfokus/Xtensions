@@ -38,7 +38,13 @@ class SafeIterableExtensions {
 	}
 	
 	public static def <T,U> safeFilter(Iterable<T> iterable, extension (T)=>boolean test) {
-		iterable?.filter[it?.apply ?: false].orEmpty
+		iterable?.filter[ 
+			try {
+				it?.apply ?: false
+			} catch(NullPointerException e) {
+				false
+			}
+		].orEmpty
 	}
 	
 	public static def <T,U> Iterable<U> safeFilter(Iterable<T> iterable, Class<U> clazz) {
