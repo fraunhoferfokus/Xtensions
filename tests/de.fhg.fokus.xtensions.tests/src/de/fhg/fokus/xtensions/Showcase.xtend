@@ -7,13 +7,16 @@ import org.junit.Test
 import static java.util.stream.Collectors.*
 
 import static extension de.fhg.fokus.xtensions.iteration.PrimitiveArrayExtensions.*
+import static extension de.fhg.fokus.xtensions.function.FunctionExtensions.*
 import static extension de.fhg.fokus.xtensions.iteration.IterableExtensions.*
 import static extension de.fhg.fokus.xtensions.optional.OptionalExtensions.*
 import static extension de.fhg.fokus.xtensions.optional.OptionalIntExtensions.*
 import static extension de.fhg.fokus.xtensions.range.RangeExtensions.*
 import static extension de.fhg.fokus.xtensions.stream.StreamExtensions.*
 import static extension de.fhg.fokus.xtensions.string.StringSplitExtensions.*
+import static extension de.fhg.fokus.xtensions.pair.PairExtensions.*
 import static extension java.util.Arrays.*
+import static extension org.eclipse.xtext.xbase.lib.InputOutput.*
 import org.junit.Ignore
 import java.util.Random
 import java.util.stream.IntStream
@@ -232,6 +235,17 @@ class Showcase {
 		i.takeWhile[!startsWith("b")].forEach[
 			println(it)
 		]
+	}
+	
+	@Test def void pairDemo() {
+		
+		val pair = "Foo" -> 3
+		pair => [k,v|
+			println(k + ' -> ' + v)
+		]
+		
+		pair.combine[k,v| k + ' -> ' + v].println
+		
 	}
 	
 	@Test def void schdulingDemo() {

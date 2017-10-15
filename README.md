@@ -3,9 +3,9 @@
 This library is mainly a collection of [Xtend](https://www.eclipse.org/xtend/) extension methods
 for classes in the Java 8 standard library and the Xtend standard library. A few goals are:
 
-* Smooth iterop between Java 8 JDK types and types from the Xtend standard library
+* Adding extension methods to Java 8 JDK types to make them work more naturally with Xtend
 * Making a select few Java 9 methods available on Java 8
-* Providing support for iteration over primitive values without having to use boxing
+* Providing support for iteration over primitive values without resort to boxing
 * Adding some useful additional methods to existing standard JDK and Xtend standard lib classes
 
 ## Usage
@@ -98,7 +98,8 @@ Example:
 
 
 Some methods on Optional introduced in Java 9 are available as retrofitted extension methods.
-When compiling a class using the extension method targeting Java 9, the native Optional method will be used.
+When compiling a class using the extension method targeting Java 9, the native Optional method has precedence and will be used.
+No changes in the source code has to be done to switch to the native Java 9 implementation.
 The following instance methods of Optional are backported for Java 8:
 
 * [Optional<T> or​(Supplier<? extends Optional<? extends T>> supplier)](http://docs.oracle.com/javase/9/docs/api/java/util/Optional.html#or-java.util.function.Supplier-)
@@ -179,8 +180,28 @@ The with-operator `=>` can be used to destructure a Pair into `key` and `value`.
 
 Example:
 
+	import static extension de.fhg.fokus.xtensions.pair.PairExtensions.*
+	// ...
+	val pair = "Foo" -> 3
+	pair => [k,v|
+		println(k + ' -> ' + v)
+	]
+
+
+The `combine` extension method takes a function to which key and value of a Pair is passed to,
+to merge both objects. The result returned by the function will be returned by the `combine` method.
+The difference to the `>>>` operator, provided by the [`FunctionExtensions`](#extensions-to-functions)
+is only that due to operator precedence calling further methods on the result needs further braces.
+
+Example:
+
+	import static extension de.fhg.fokus.xtensions.pair.PairExtensions.*
+	import static extension org.eclipse.xtext.xbase.lib.InputOutput.*
+	// ...
+	val pair = "Foo" -> 3
+	pair.combine[k,v| k + ' -> ' + v].println
+
 <!---
-TODO: Describe combine   
 TODO: Describe safeCombine   
 -->
 
@@ -239,8 +260,9 @@ Example:
 		.map[toUpperCase]
 		.toList
 
+As a shortcut for the [concat](http://docs.oracle.com/javase/8/docs/api/java/util/stream/Stream.html#concat-java.util.stream.Stream-java.util.stream.Stream-) method the `StreamExtensions` class provides a `+` operator.
+
 <!---
-TODO: Describe concatenation operator +  
 TODO: Describe Java 9 forward compatibility for Stream.iterate  
 TODO: Describe combinations extension methods  
 -->
@@ -407,38 +429,47 @@ Example:
 
 ### Extensions to String 
 
-Advantages of iterator: Allows return in loop, some iterator extensions are not (yet) available 
-on Stream (such as `takeWhile` and `dropWhile`)
+The class `de.fhg.fokus.xtensions.string.StringSplitExtensions` provides extension methods
+for `java.lang.String` allowing to lazily split a string value.
 
-<!---
-TODO: Describe extension method matchIt  
-TODO: Describe extension method matchResultIt  
-TODO: Describe extension method splitIt. 
--->
+
+The extension method `splitIt` returns an `Iterator` which lazily performs string split 
+operations based on a regular expression (same `String#split(String)`) would do, but 
+lazily. This allows the use of Iterator extension methods provided by Xtend and to stop splitting
+a string when a condition is met without splitting the complete input string beforehand.
 
 Example: 
 
+	import static extension de.fhg.fokus.xtensions.string.StringSplitExtensions.*
+	// ...
 	val Iterator<String> i = "foozoobaar".splitIt("(?<=oo)")
 	i.takeWhile[!startsWith("b")].forEach[
 		println(it)
 	]
 
-<!---
-TODO: Describe extension method splitStream  
--->
+
 If a split pattern is known in advance the following is possible with the JDK types to obtain a Stream of split elements:
 
 	static extension val pattern = Pattern.compile("mypattern")
 	// ...
 	"tosplit".splitAsStream  // actually calls pattern.splitAsStream("tosplit")
 	
-If a pattern String has to be produced on the fly, the extension method `splitAsStream` is provided
+If a pattern String has to be produced dynamically, the extension method `splitAsStream` is provided
 as a shortcut for the sequence of calls from above:
 
 	import static extension de.fhg.fokus.xtensions.string.StringSplitExtensions.*
 	// ...
-	"tosplit".splitAsStream("mypattern")
+	val String patternStr = ... // dynamically created pattern
+	"tosplit".splitAsStream(patternStr)
 
+
+The class `de.fhg.fokus.xtensions.string.SptringMatchExtensions` provides extension methods to
+`java.lang.String`, allowing to match regular expressions lazily via iterators.
+
+<!---
+TODO: Describe extension method matchIt  
+TODO: Describe extension method matchResultIt  
+-->
 
 ### Extensions to Duration 
 

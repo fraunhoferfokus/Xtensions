@@ -14,11 +14,14 @@ final class PairExtensions {
 	
 	/**
 	 * Will call the given {@code consumer} with the key and value extracted from {@code pair}.
+	 * If the given {@code consumer} throws an exception it will be thrown out of this method.
 	 * @param pair the Pair from which key and value are taken and passed to {@code consumer}.
 	 * @param consumer will be called with key and value from {@code pair}
+	 * @return the same reference passed in as {@code pair}
 	 */
-	static def <K,V> void =>(Pair<K,V> pair, (K,V)=>void consumer) {
+	static def <K,V> Pair<K,V> =>(Pair<K,V> pair, (K,V)=>void consumer) {
 		consumer.apply(pair.key, pair.value)
+		pair
 	}
 	
 	/**
