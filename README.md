@@ -37,7 +37,7 @@ Examples:
 	val Optional<String> yes = some("yesss!")
 	val Optional<String> dunno = maybe(possiblyNull())
 	// ...
-	private def possiblyNull() {
+	private def String possiblyNull() {
 		if(System.currentTimeMillis % 2 == 0) {
 			"I'm in ur optional"
 		} else {
@@ -97,19 +97,30 @@ Example:
 	println("Length is " + len)
 
 
-TODO: describe Java 9 Forward Compatibility  
-* TODO: Describe or  
-* TODO: Describe ifPresentOrElse  
-* TODO: Describe stream  
+Some methods on Optional introduced in Java 9 are available as retrofitted extension methods.
+When compiling a class using the extension method targeting Java 9, the native Optional method will be used.
+The following instance methods of Optional are backported for Java 8:
 
-TODO: Describe || operator ?: operators
+* [Optional<T> or​(Supplier<? extends Optional<? extends T>> supplier)](http://docs.oracle.com/javase/9/docs/api/java/util/Optional.html#or-java.util.function.Supplier-)
+* [void ifPresentOrElse​(Consumer<? super T> action, Runnable emptyAction)](http://docs.oracle.com/javase/9/docs/api/java/util/Optional.html#ifPresentOrElse-java.util.function.Consumer-java.lang.Runnable-)
+* [Stream<T> stream​()](http://docs.oracle.com/javase/9/docs/api/java/util/Optional.html#stream--)
 ​
+
+As a shortcut for the `or` extension method, the `||` operator is provided. The `?:` operator is a shortcut for the `orElse` method on Optional.
 
 ### Extensions to Primitive Optionals
 
-TODO: Describe some / noInt / noLong / noDouble
+Extensions to the primitive versions of Optional are provided by the following classes:
 
-The Oracle JDK currently does not cache OptionalInt and OptionalLong instances in the static factory method 
+	de.fhg.fokus.xtensions.optional.OptionalIntExtensions
+	de.fhg.fokus.xtensions.optional.OptionalLongExtensions
+	de.fhg.fokus.xtensions.optional.OptionalDoubleExtensions
+
+Same as for Optional, there is a `some` alias for the `OptionalInt.of`, `OptionalLong.of`, and `OptionalDouble.of`
+methods (see [Extensions to Optional](#extensions-to-optional)).  
+The methods `noInt`, `noLong`, and `noDouble` provide empty primitive Optionals.
+
+The Open JDK / Oracle JDK currently does not cache OptionalInt and OptionalLong instances in the static factory method 
 `OptionalInt.of(int)` and `OptionalLong.of(long)` as it is currently done for Integer creation in 
 `Integer.valueOf(int)`. To provide such a caching static factory methods, the 
 `OptionalIntExtensions.someOf(int)` and `OptionalLongExtensions.someOf(long)` method were 
@@ -121,8 +132,8 @@ Example:
 		println("someOf caches instances")
 	}
 
-
-TODO: Describe map/mapX/filter to IterableX
+Stunningly, the primitive versions of Optional do not provide `map` and `filter` methods. These 
+are provided as extension methods by this library.
 
 ### Extensions to IntegerRange
 
@@ -161,9 +172,17 @@ for iteration over primitive int values provided by this library, the extension 
 
 ### Extensions to Pair
 
-TODO: Describe with operator  
+The class `de.fhg.fokus.xtensions.pair.PairExtensions` provides extension methods for the type 
+`org.eclipse.xtext.xbase.lib.Pair`.
+
+The with-operator `=>` can be used to destructure a Pair into `key` and `value`.
+
+Example:
+
+<!---
 TODO: Describe combine   
 TODO: Describe safeCombine   
+-->
 
 ### Extensions to Primitive Arrays
 
@@ -220,31 +239,37 @@ Example:
 		.map[toUpperCase]
 		.toList
 
-
+<!---
 TODO: Describe concatenation operator +  
 TODO: Describe Java 9 forward compatibility for Stream.iterate  
 TODO: Describe combinations extension methods  
+-->
 
 ### Extensions to Streams of Strings
 
+<!---
 TODO: Describe join collector extension method  
 TODO: Describe matching filter extension method  
 TODO: Describe flatSplit mapping extension method  
 TODO: Describe flatMatches mapping extension method  
 TODO: Describe join collector
+-->
 
 ### Extensions to Iterable
 
 `de.fhg.fokus.xtensions.iteration.IterableExtensions`
 
+<!---
 TODO: Describe extension method `stream`  
 TODO: Describe extension method `parallelStream`  
 TODO: Describe extension method `collect`  
+-->
 
 ### Extensions to PrimitiveIterators
 
+<!---
 TODO: Describe extension methods `streamRemaining` / `streamRemainingAsync`  
-
+-->
 
 ### Primitive Iterables
 
@@ -318,7 +343,9 @@ Example:
 
 Currently only available on IntIterable
 
+<!---
 TODO: Describe IntIterable.generate  
+-->
 
 Example:
 
@@ -329,8 +356,9 @@ Example:
 		[rand.nextInt]
 	]
 
-
+<!---
 TODO: Describe IntIterable.iterate(int, IntUnaryOperator)  
+-->
 
 Example:
 
@@ -339,7 +367,9 @@ Example:
 	val ints = IntIterable.iterate(1)[it * 2]
 
 
+<!---
 TODO: Describe IntIterable.iterate(int, IntPredicate, IntUnaryOperator)  
+-->
 
 Example:
 
@@ -380,9 +410,11 @@ Example:
 Advantages of iterator: Allows return in loop, some iterator extensions are not (yet) available 
 on Stream (such as `takeWhile` and `dropWhile`)
 
+<!---
 TODO: Describe extension method matchIt  
 TODO: Describe extension method matchResultIt  
 TODO: Describe extension method splitIt. 
+-->
 
 Example: 
 
@@ -391,7 +423,9 @@ Example:
 		println(it)
 	]
 
+<!---
 TODO: Describe extension method splitStream  
+-->
 If a split pattern is known in advance the following is possible with the JDK types to obtain a Stream of split elements:
 
 	static extension val pattern = Pattern.compile("mypattern")
@@ -408,11 +442,14 @@ as a shortcut for the sequence of calls from above:
 
 ### Extensions to Duration 
 
+<!---
 TODO: Describe constructor extensions (e.g. long#seconds)  
 TODO: Describe operators (+, -, /, *, >, <, >=, <=)
+-->
 
 ### Extensions to Functions
 
+<!---
 TODO: Describe >>> operator, also for Pair (should be inlined)  
 
 Function Composition  
@@ -422,9 +459,11 @@ TODO: Describe Bool functions and / or / negate
 
 Throwing Functions  
 TODO: Describe Function#filterException, Function#recoverException, etc.
+-->
 
 ### Extensions to CompletableFuture
 
+<!---
 TODO: Describe then-Methods  
 TODO: Describe whenCancelled/whenCancelledAsync extension method  
 TODO: Describe whenException/whenExceptionAsync extension method  
@@ -439,12 +478,14 @@ TODO: Describe whenCancelledInterrupt method
 TODO: Describe Java 9 forward compatibility  
 * TODO: Describe extension method orTimeout
 * TODO: Describe extension method copy
+-->
 
 ### Async Computations
 
+<!---
 TODO: Describe asyncRun methods  
 TODO: Describe asyncSupply methods  
-TODO: Describe async methods
+-->
 
 ### Scheduling Util
 
@@ -456,7 +497,7 @@ as the first parameter, so these methods can be used as extension methods.
 To repeat an action with a given period of time (starting immediately) you can use one of the overloaded 
 versions of the `repeatEvery` method.
 
-TOTO: repeatEvery example e.g. 
+Example:
 
 	import static extension de.fhg.fokus.xtensions.concurrent.SchedulingUtil.*
 	import static extension de.fhg.fokus.xtensions.datetime.DurationExtensions.*
@@ -469,7 +510,7 @@ TOTO: repeatEvery example e.g.
 To repeat an action with a given period, starting with a delay instead of immediately, an overloaded
 version of the `repeatEvery` method can be used:
 
-TODO repeatEvery example with delay
+Example:
 
 	import static extension de.fhg.fokus.xtensions.concurrent.SchedulingUtil.*
 	import java.util.concurrent.TimeUnit
@@ -525,3 +566,24 @@ To build the libraries from source, simply drop into the root directory and call
 The main library will be located in `bundles/de.fhg.fokus.xtensions/target`
 
 ## Setting up the Development Environment
+
+The repository contains the Oomph setup file [Xtensions.setup](releng/de.fhg.fokus.xtensions.releng/Xtensions.setup) for the Eclipse IDE.
+
+## Status of the Project
+
+The following tasks are the next goals for this project, roughly in this order:
+
+- [ ] Complete this README.md file
+    - [ ] Complete Usage section
+    - [ ] Complete IDE Setup section
+- [ ] Complete JavaDocs for all public methods
+- [ ] Cover each method with test cases
+- [ ] Add Jacoco test coverage to maven build
+- [ ] Add source bundle build to maven config
+- [ ] Move to a public GitHub repository
+- [ ] Create CI build on travis.io
+- [ ] Publish Jacoco results to coveralls.io + add badge to this file
+- [ ] Publish p2 repo on bintray
+- [ ] Figure out how to best publish to Maven Central
+- [ ] Release first version
+- [ ] Add javadoc.io badge to this file
