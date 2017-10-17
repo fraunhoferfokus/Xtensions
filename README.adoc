@@ -1,5 +1,6 @@
 = Xtensions Library
 :toc:
+:toclevels: 4
 
 == Introduction
 
