@@ -659,7 +659,7 @@ The main library will be located in `bundles/de.fhg.fokus.xtensions/target`
 
 == Setting up the Development Environment
 
-The repository contains the Oomph setup file link:../../../raw/master/releng/de.fhg.fokus.xtensions.releng/Xtensions.setup[Xtensions.setup] for the Eclipse IDE.
+The repository contains the Oomph setup file link:releng/de.fhg.fokus.xtensions.releng/Xtensions.setup[Xtensions.setup] for the Eclipse IDE.
 
 
 == Status of the Project
