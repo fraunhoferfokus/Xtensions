@@ -1,5 +1,5 @@
 = Xtensions Library
-:toc:
+:toc: right
 :toclevels: 4
 
 
