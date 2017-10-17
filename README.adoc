@@ -1,9 +1,6 @@
 = Xtensions Library
-:toc: right
+:toc: preamble
 :toclevels: 4
-
-
-== Introduction
 
 This library is mainly a collection of https://www.eclipse.org/xtend/[Xtend] extension methods
 for classes in the Java 8 standard library and the Xtend standard library. A few goals are:
