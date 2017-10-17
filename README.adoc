@@ -15,13 +15,13 @@ for classes in the Java 8 standard library and the Xtend standard library. A few
 == Usage
 
 Currently there is no p2 update site or maven repository available. To add this library to your project
-you have to compile the library yourself. Please have a look at the <<build>> section.
+you have to compile the library yourself. Please have a look at the <<Build>> section.
 
 == Provided Functionality
 
 This chapter will provide a high level overview on how to use the different parts of this library.
 Unfortunately there is currently no built available via a maven or p2 repository. So the library
-has to be built from source. See chapter <<build>>.
+has to be built from source. See chapter <<Build>>.
 
 When using the library in OSGi it is recommended to use package imports since the library may evolve
 and split into multiple bundles in future releases.
