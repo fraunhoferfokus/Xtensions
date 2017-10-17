@@ -158,4 +158,10 @@ class PairExtensionTests {
 		]
 		assertTrue(entered.get)
 	}
+	
+	@Test def void testWithReturningSelf() {
+		val Pair<String,Integer> expected = "Foo" -> 3
+		val result = expected => [k,v|]
+		assertSame(expected,result)
+	}
 }

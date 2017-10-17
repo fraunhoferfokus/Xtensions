@@ -8,6 +8,7 @@ import static java.util.stream.Collectors.*
 
 import static extension de.fhg.fokus.xtensions.iteration.PrimitiveArrayExtensions.*
 import static extension de.fhg.fokus.xtensions.function.FunctionExtensions.*
+import static extension de.fhg.fokus.xtensions.string.StringMatchExtensions.*
 import static extension de.fhg.fokus.xtensions.iteration.IterableExtensions.*
 import static extension de.fhg.fokus.xtensions.optional.OptionalExtensions.*
 import static extension de.fhg.fokus.xtensions.optional.OptionalIntExtensions.*
@@ -271,5 +272,31 @@ class Showcase {
 		]
 	}
 	
+	@Test def void stringMatchIteratorDemo() {
+		val String input = "foo bar boo"
+		val Pattern pattern = Pattern.compile("(\\woo)")
+		
+		// Iterate over matches of pattern in input
+		val matcher = pattern.matcher(input)
+		while(matcher.find) {
+			val match = input.subSequence(matcher.start, matcher.end)
+			// Do something with match
+			println(match)
+		}
+		
+		// Same iteration, now with iterator
+		input.matchIt(pattern).forEach [
+			println(it)
+		]
+	}
+	
+	@Test def void functionDemo() {
+		val pair = getPair() >>> [k,v| k.toUpperCase -> v]
+		println(pair)
+	}
+	
+	private def Pair<String,Integer> getPair() {
+		"Foo" -> 3
+	}
 	
 }

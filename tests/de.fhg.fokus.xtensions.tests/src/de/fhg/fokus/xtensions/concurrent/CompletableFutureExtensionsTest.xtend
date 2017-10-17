@@ -902,7 +902,7 @@ class CompletableFutureExtensionsTest {
 		val cf = new CompletableFuture<String>
 		cf.cancelOnTimeout(10, TimeUnit.MILLISECONDS)
 		thrown.expect(CancellationException)
-		cf.get(15, TimeUnit.MILLISECONDS)
+		cf.get(50, TimeUnit.MILLISECONDS)
 	}
 	
 	@Test def void testCancelOnTimeoutResultBeforeTimeout() {
@@ -954,7 +954,7 @@ class CompletableFutureExtensionsTest {
 		val cf = new CompletableFuture<String>
 		cf.cancelOnTimeout(Duration.ofMillis(10))
 		thrown.expect(CancellationException)
-		cf.get(15, TimeUnit.MILLISECONDS)
+		cf.get(50, TimeUnit.MILLISECONDS)
 	}
 	
 	@Test def void testCancelOnTimeoutDurationResultBeforeTimeout() {

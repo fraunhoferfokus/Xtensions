@@ -165,14 +165,14 @@ class AsyncComputeTest {
 	
 	@Test def void testAsyncRunExceptionallyOnTimeout() {
 		val fut = asyncRun(1, TimeUnit.MILLISECONDS) [
-			Thread.sleep(10)
+			Thread.sleep(50)
 			throw new NullPointerException
 		]
 		
 		Util.expectException(CancellationException) [
 			fut.join
 		]
-		Thread.sleep(20)
+		Thread.sleep(100)
 		val msg = "After cancellation, exceptional completion of action should not overwrite future result"
 		assertTrue(msg, fut.cancelled)
 	}

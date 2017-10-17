@@ -1,6 +1,7 @@
-# Xtensions Library
+= Xtensions Library
+:toc:
 
-This library is mainly a collection of [Xtend](https://www.eclipse.org/xtend/) extension methods
+This library is mainly a collection of https://www.eclipse.org/xtend/[Xtend] extension methods
 for classes in the Java 8 standard library and the Xtend standard library. A few goals are:
 
 * Adding extension methods to Java 8 JDK types to make them work more naturally with Xtend
@@ -8,16 +9,16 @@ for classes in the Java 8 standard library and the Xtend standard library. A few
 * Providing support for iteration over primitive values without resort to boxing
 * Adding some useful additional methods to existing standard JDK and Xtend standard lib classes
 
-## Usage
+== Usage
 
 Currently there is no p2 update site or maven repository available. To add this library to your project
-you have to compile the library yourself. Please have a look at the [Build](#build) section.
+you have to compile the library yourself. Please have a look at the <<build>> section.
 
-## Provided Functionality
+== Provided Functionality
 
 This chapter will provide a high level overview on how to use the different parts of this library.
 Unfortunately there is currently no built available via a maven or p2 repository. So the library
-has to be built from source. See chapter [Build](#build).
+has to be built from source. See chapter <<build>>.
 
 When using the library in OSGi it is recommended to use package imports since the library may evolve
 and split into multiple bundles in future releases.
@@ -28,9 +29,9 @@ to explore all available functionality.
 
 Most of the given examples in the following sections and some more are defined in the following 
 test class:
-[Showcase.xtend](/tests/de.fhg.fokus.xtensions.tests/src/de/fhg/fokus/xtensions/Showcase.xtend)
+link:tests/de.fhg.fokus.xtensions.tests/src/de/fhg/fokus/xtensions/Showcase.xtend[Showcase.xtend]
 
-### Extensions to Optional
+=== Extensions to Optional
 
 The static factory Methods for creating `Optional` instances are not really meant to be used as 
 statically imported methods. They have no meaningful names to be used this way. They also differ from
@@ -94,14 +95,14 @@ When compiling a class using the extension method targeting Java 9, the native O
 No changes in the source code has to be done to switch to the native Java 9 implementation.
 The following instance methods of Optional are backported for Java 8:
 
-* [Optional<T> or​(Supplier<? extends Optional<? extends T>> supplier)](http://docs.oracle.com/javase/9/docs/api/java/util/Optional.html#or-java.util.function.Supplier-)
-* [void ifPresentOrElse​(Consumer<? super T> action, Runnable emptyAction)](http://docs.oracle.com/javase/9/docs/api/java/util/Optional.html#ifPresentOrElse-java.util.function.Consumer-java.lang.Runnable-)
-* [Stream<T> stream​()](http://docs.oracle.com/javase/9/docs/api/java/util/Optional.html#stream--)
+* http://docs.oracle.com/javase/9/docs/api/java/util/Optional.html#or-java.util.function.Supplier-[Optional<T> or​(Supplier<? extends Optional<? extends T>> supplier)]
+* http://docs.oracle.com/javase/9/docs/api/java/util/Optional.html#ifPresentOrElse-java.util.function.Consumer-java.lang.Runnable-[void ifPresentOrElse​(Consumer<? super T> action, Runnable emptyAction)]
+* http://docs.oracle.com/javase/9/docs/api/java/util/Optional.html#stream--[Stream<T> stream​()]
 ​
 
 As a shortcut for the `or` extension method, the `||` operator is provided. The `?:` operator is a shortcut for the `orElse` method on Optional.
 
-### Extensions to Primitive Optionals
+=== Extensions to Primitive Optionals
 
 Extensions to the primitive versions of Optional are provided by the following classes:
 
@@ -128,7 +129,7 @@ Example:
 Stunningly, the primitive versions of Optional do not provide `map` and `filter` methods. These 
 are provided as extension methods by this library.
 
-### Extensions to IntegerRange
+=== Extensions to IntegerRange
 
 IntegerRange is a handy type from the Xtend standard library which can
 be constructed using the `..` operator. But the only way to iterate 
@@ -163,7 +164,7 @@ To interact with consumers expecting an `IntIterable` (see [Primitive Iterables]
 for iteration over primitive int values provided by this library, the extension method
 `asIntIterable` was provided.
 
-### Extensions to Pair
+=== Extensions to Pair
 
 The class `de.fhg.fokus.xtensions.pair.PairExtensions` provides extension methods for the type 
 `org.eclipse.xtext.xbase.lib.Pair`.
@@ -193,11 +194,11 @@ Example:
 	val pair = "Foo" -> 3
 	pair.combine[k,v| k + ' -> ' + v].println
 
-<!---
+////
 TODO: Describe safeCombine   
--->
+////
 
-### Extensions to Primitive Arrays
+=== Extensions to Primitive Arrays
 
 The class `de.fhg.fokus.xtensions.iteration.PrimitiveArrayExtensions` contains extension methods for 
 arrays of primitive values (int, long, double) to iterate with a forEach method consuming primitive values.
@@ -211,13 +212,11 @@ Example:
 
 Additionally the class allows to create primitive iterable wrapper objects (see [Primitive Iterables](#primitive-iterables)).
 
-Tip:
-
-Note that the JDK class [`java.util.Arrays`](http://docs.oracle.com/javase/8/docs/api/java/util/Arrays.html) already contains 
+TIP: Note that the JDK class http://docs.oracle.com/javase/8/docs/api/java/util/Arrays.html[`java.util.Arrays`] already contains 
 static `stream` methods that can be used as extension methods to create Java 8 streams from primitive arrays.
 
 
-### Extensions to Streams
+=== Extensions to Streams
 
 The class `de.fhg.fokus.xtensions.stream.StreamExtensions`
 
@@ -252,28 +251,28 @@ Example:
 		.map[toUpperCase]
 		.toList
 
-As a shortcut for the [concat](http://docs.oracle.com/javase/8/docs/api/java/util/stream/Stream.html#concat-java.util.stream.Stream-java.util.stream.Stream-) method the `StreamExtensions` class provides a `+` operator.
+As a shortcut for the http://docs.oracle.com/javase/8/docs/api/java/util/stream/Stream.html#concat-java.util.stream.Stream-java.util.stream.Stream-[concat] method the `StreamExtensions` class provides a `+` operator.
 
-<!---
+////
 TODO: Describe Java 9 forward compatibility for Stream.iterate  
 TODO: Describe combinations extension methods  
--->
+////
 
-### Extensions to Streams of Strings
+=== Extensions to Streams of Strings
 
 Since Xtend can provide extension methods specifically for specializations of generic types,
 it is possible to provide methods only available for `java.util.stream.Stream<String>`.
 The class `de.fhg.fokus.xtensions.stream.StringStreamExtensions` provides such extension methods.
 
-<!---
+////
 TODO: Describe join collector extension method  
 TODO: Describe matching filter extension method  
 TODO: Describe flatSplit mapping extension method  
 TODO: Describe flatMatches mapping extension method  
 TODO: Describe join collector
--->
+////
 
-### Extensions to Iterable
+=== Extensions to Iterable
 
 The `de.fhg.fokus.xtensions.iteration.IterableExtensions` class provides extension methods to `java.lang.Iterable`
 
@@ -287,14 +286,14 @@ otherwise it will construct a stream from the spliterator provided by the iterab
 
 Analogous to the `stream` method the `IterableExtensions` class also provides a `parallelStream` method.
 
-It is also possible to map an iterable to a primitive iterable (see [Primitve Iterables / From Iterables](#from-iterables)).
+It is also possible to map an iterable to a primitive iterable (see <<from-iterables,Primitve Iterables / From Iterables>>).
 
 
-<!---
+////
 TODO: Describe extension method `collect`  
--->
+////
 
-### Extensions to PrimitiveIterators
+=== Extensions to PrimitiveIterators
 
 The primitive iterators defined in the JDK as sub-interfaces of `java.util.PrimitiveIterator` 
 do not provide combinators like the ones provided by Xtend. These combinators, however, do take some 
@@ -302,9 +301,9 @@ efforts to implement. Instread, this library provides the class `de.fhg.fokus.xt
 create primitive streams (from `java.util.stream`) for the remaining elements of a given iterator via the 
 extension methods `streamRemaining` or `parallelStreamRemaining`.
 
-### Primitive Iterables
+=== Primitive Iterables
 
-The JDK provides a generic [`java.util.Iterator<T>`](http://docs.oracle.com/javase/8/docs/api/java/util/Iterator.html) interface and primitive versions of the Iterator in form of the sub-interfaces of [`java.util.PrimitiveIterator<T,T_CONS>`](http://docs.oracle.com/javase/8/docs/api/java/util/PrimitiveIterator.html). However, there are no primitive versions of the [`java.lang.Iterable<T>`](http://docs.oracle.com/javase/8/docs/api/java/lang/Iterable.html) interface, constructing primitive iterators.
+The JDK provides a generic http://docs.oracle.com/javase/8/docs/api/java/util/Iterator.html[`java.util.Iterator<T>`] interface and primitive versions of the Iterator in form of the sub-interfaces of http://docs.oracle.com/javase/8/docs/api/java/util/PrimitiveIterator.html[`java.util.PrimitiveIterator<T,T_CONS>`]. However, there are no primitive versions of the http://docs.oracle.com/javase/8/docs/api/java/lang/Iterable.html[`java.lang.Iterable<T>`] interface, constructing primitive iterators.
 
 So the JDK is missing an interface to abstract over "a bunch" of primitive numbers to iterate over. A primitive iterator or primitive stream can only traversed once, which is not very satisfying in many cases. Ideally there should be in interface allowing the iteration over a (possibly infinite) sequence of primitive numbers. We want to be able to get a primitive iterator, a primitive stream, or directly iterate over the elements with a `forEach` method. A set of these interfaces is provided in package `de.fhg.fokus.xtensions.iteration`.<br>
 The primitive Iterable versions provided in the package all specialize `java.lang.Iterable` with the boxed
@@ -343,7 +342,7 @@ Examples:
 	}
 
 
-#### From Iterables
+==== From Iterables
 
 Iterables can be mapped to primitive iterables by the special map extension functions `mapInt`, `mapLong`
 and `mapDouble` defined in `de.fhg.fokus.xtensions.iteration.IterableExtensions`.
@@ -355,7 +354,7 @@ Example:
 	val lengths = newArrayList("foo", "baaaar", "bz").mapInt[length]
 
 
-#### From Arrays
+==== From Arrays
 
 The `asIntIterable` extension method method creates a primitive iterable for primitive arrays.
 There are two versions: One version creates an iterable over the complete array, the other one produces
@@ -370,13 +369,13 @@ Example:
 	var ints = arr.asIntIterable(1, arr.length - 1)  // omit first and last element
 
 
-#### From Computations
+==== From Computations
 
 Currently only available on IntIterable
 
-<!---
+////
 TODO: Describe IntIterable.generate  
--->
+////
 
 Example:
 
@@ -387,9 +386,9 @@ Example:
 		[rand.nextInt]
 	]
 
-<!---
+////
 TODO: Describe IntIterable.iterate(int, IntUnaryOperator)  
--->
+////
 
 Example:
 
@@ -398,9 +397,9 @@ Example:
 	val ints = IntIterable.iterate(1)[it * 2]
 
 
-<!---
+////
 TODO: Describe IntIterable.iterate(int, IntPredicate, IntUnaryOperator)  
--->
+////
 
 Example:
 
@@ -409,7 +408,7 @@ Example:
 	val ints = IntIterable.iterate(0, [it<=10], [it+2])
 
 
-#### From Xtend Ranges
+==== From Xtend Ranges
 
 Creating iterables from `org.eclipse.xtext.xbase.lib.IntegerRange` can be done via the extensions 
 class `de.fhg.fokus.xtensions.range.RangeExtensions`.
@@ -425,7 +424,7 @@ Creating iterables from `org.eclipse.xtext.xbase.lib.ExclusiveRange`s is current
 due to the API limitations on that class. 
 
 
-#### From Primitive Optionals
+==== From Primitive Optionals
 
 The extension classes for primitive Optionals allow the creation of primitive iterables allowing 
 iteration over either one or no value, depending on the source Optional.
@@ -436,7 +435,7 @@ Example:
 	// ...
 	val ints = some(42).asIterable
 
-### Extensions to String 
+=== Extensions to String 
 
 The class `de.fhg.fokus.xtensions.string.StringSplitExtensions` provides extension methods
 for `java.lang.String` allowing to lazily split a string value.
@@ -503,23 +502,23 @@ can be used on them.
 The method `matchIt` is overloaded to also take a string of the pattern, which internally compiles 
 it to a pattern.
 
-<!---
+////
 TODO: Describe extension method matchResultIt  
--->
+////
 
-### Extensions to Duration 
+=== Extensions to Duration 
 
 The class `de.fhg.fokus.xtensions.datetime.DurationExtensions` provides static extension
 method for the JDK class `java.time.Duration`
 
-<!---
+////
 TODO: Describe constructor extensions (e.g. long#seconds)  
 TODO: Describe operators (+, -, /, *, >, <, >=, <=)
--->
+////
 
-### Extensions to Functions
+=== Extensions to Functions
 
-<!---
+////
 TODO: Describe >>> operator, also for Pair (should be inlined). Usefull when   
 
 Function Composition  
@@ -529,11 +528,11 @@ TODO: Describe Bool functions and / or / negate
 
 Throwing Functions  
 TODO: Describe Function#filterException, Function#recoverException, etc.
--->
+////
 
-### Extensions to CompletableFuture
+=== Extensions to CompletableFuture
 
-<!---
+////
 TODO: Describe then-Methods  
 TODO: Describe whenCancelled/whenCancelledAsync extension method  
 TODO: Describe whenException/whenExceptionAsync extension method  
@@ -548,16 +547,16 @@ TODO: Describe whenCancelledInterrupt method
 TODO: Describe Java 9 forward compatibility  
 * TODO: Describe extension method orTimeout
 * TODO: Describe extension method copy
--->
+////
 
-### Async Computations
+=== Async Computations
 
-<!---
+////
 TODO: Describe asyncRun methods  
 TODO: Describe asyncSupply methods  
--->
+////
 
-### Scheduling Util
+=== Scheduling Util
 
 The class `de.fhg.fokus.xtensions.concurrent.SchedulingUtil` provides several static methods 
 and static extension methods to easily schedule action for deferred or repeated execution.  
@@ -626,25 +625,25 @@ with a `null` value when the given duration expires.
 
 TODO: Example
 
-## Build
+== Build
 
-The build is based on maven tycho, so [Maven 3.0](http://maven.apache.org/download.cgi) or higher has to be installed on 
+The build is based on maven tycho, so http://maven.apache.org/download.cgi[Maven 3.0] or higher has to be installed on 
 the machine.
 
 To build the libraries from source, simply drop into the root directory and call `mvn clean package`.
 The main library will be located in `bundles/de.fhg.fokus.xtensions/target`
 
-<!--- TODO describe where p2 is located -->
+// TODO describe where p2 is located
 
-## Setting up the Development Environment
+== Setting up the Development Environment
 
-The repository contains the Oomph setup file [Xtensions.setup](releng/de.fhg.fokus.xtensions.releng/Xtensions.setup) for the Eclipse IDE.
+The repository contains the Oomph setup file link:releng/de.fhg.fokus.xtensions.releng/Xtensions.setup[Xtensions.setup] for the Eclipse IDE.
 
-## Status of the Project
+== Status of the Project
 
 The following tasks are the next goals for this project, roughly in this order:
 
-- [ ] Complete this README.md file
+- [ ] Complete this README.adoc file
     - [ ] Complete Usage section
     - [ ] Complete IDE Setup section
 - [ ] Complete JavaDocs for all public methods
