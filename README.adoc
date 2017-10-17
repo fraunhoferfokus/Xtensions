@@ -2,6 +2,7 @@
 :toc:
 :toclevels: 4
 
+
 == Introduction
 
 This library is mainly a collection of https://www.eclipse.org/xtend/[Xtend] extension methods
@@ -118,7 +119,7 @@ Extensions to the primitive versions of Optional are provided by the following c
 	de.fhg.fokus.xtensions.optional.OptionalDoubleExtensions
 
 Same as for Optional, there is a `some` alias for the `OptionalInt.of`, `OptionalLong.of`, and `OptionalDouble.of`
-methods (see [Extensions to Optional](#extensions-to-optional)).  
+methods (see <<Extensions to Optional>>).  
 The methods `noInt`, `noLong`, and `noDouble` provide empty primitive Optionals.
 
 The Open JDK / Oracle JDK currently does not cache OptionalInt and OptionalLong instances in the static factory method 
@@ -168,7 +169,7 @@ Example:
 		println(it)
 	]
 
-To interact with consumers expecting an `IntIterable` (see [Primitive Iterables](#primitive-iterables)), which is a generic interface 
+To interact with consumers expecting an `IntIterable` (see <<Primitive Iterables>>), which is a generic interface 
 for iteration over primitive int values provided by this library, the extension method
 `asIntIterable` was provided.
 
@@ -192,7 +193,7 @@ Example:
 
 The `combine` extension method takes a function to which key and value of a Pair is passed to,
 to merge both objects. The result returned by the function will be returned by the `combine` method.
-The difference to the `>>>` operator, provided by the [`FunctionExtensions`](#extensions-to-functions)
+The difference to the `>>>` operator, provided by the <<Extensions to Functions,`FunctionExtensions`>>
 is only that due to operator precedence calling further methods on the result needs further braces.
 
 Example:
@@ -220,7 +221,7 @@ Example:
 		println(it)
 	]
 
-Additionally the class allows to create primitive iterable wrapper objects (see [Primitive Iterables](#primitive-iterables)).
+Additionally the class allows to create primitive iterable wrapper objects (see <<Primitive Iterables>>).
 
 TIP: Note that the JDK class http://docs.oracle.com/javase/8/docs/api/java/util/Arrays.html[`java.util.Arrays`] already contains 
 static `stream` methods that can be used as extension methods to create Java 8 streams from primitive arrays.
@@ -245,7 +246,7 @@ Example:
 		.collect(Collectors.joining(" "))
 
 Note: Since joining Strings is a common operation, the `StringStreamExtensions` allow to call `join`
-directly on the Stream. Have a look at [Extensions to Streams of Strings](#extensions-to-streams-of-strings).
+directly on the Stream. Have a look at <<Extensions to Streams of Strings>>.
 
 Some other collectors, especially the ones bridging to the collections API are also used very often,
 but using the collect method with the methods from the `Collectors` class is a bit verbose.  
@@ -263,8 +264,31 @@ Example:
 
 As a shortcut for the http://docs.oracle.com/javase/8/docs/api/java/util/stream/Stream.html#concat-java.util.stream.Stream-java.util.stream.Stream-[concat] method the `StreamExtensions` class provides a `+` operator.
 
+
+Sometimes it is interesting to produce the cartesian product of two containers of elements. To produce all combinations of the elements of a stream with the elements of an `Iterable` (or a different source of a stream) this library provides the `combinations` extension methods. If no merging function is provided, the `combinations` extension methods will create a `org.eclipse.xtext.xbase.lib.Pair` object for each combination. If a merging function is provided, the resulting stream will hold the result of the merge of each combination.
+
+Example:
+
+	Stream.of("foo", "bar")
+		.combinations(#["fun", "boo", "faz"])[a,b|a+b]
+		.forEach[
+			println(it)
+		]
+
+
+Java 9 provides a static factory methods for an infinite stream http://docs.oracle.com/javase/9/docs/api/java/util/stream/Stream.html#Iterate-java.lang.Object-java.util.function.UnaryOperator-[Stream.iterate(T,UnaryOperator<T>)]. A function with the same functionality is provided via `StreamExtensions`. There is even
+an overloaded version of the static method that can be written as if the method would exist in the Stream class:
+
+	Stream.iterate("na ")[it + it]
+		.filter[length > 15]
+		.findFirst
+		.ifPresent [
+			println(it + "Batman!")
+		]
+
+This method can be handy traversing a nested data structure of same-kind elements (e.g. moving up a containment hierarchy).
+
 ////
-TODO: Describe Java 9 forward compatibility for Stream.iterate  
 TODO: Describe combinations extension methods  
 ////
 

@@ -223,6 +223,19 @@ class Showcase {
 	
 		val min = Stream.of("ac", "aa", "ab").min
 		Assert.assertEquals("aa", min.get)
+		
+		Stream.iterate("na ")[it + it]
+			.filter[length > 15]
+			.findFirst
+			.ifPresent [
+				println(it + "Batman!")
+			]
+		
+		Stream.of("foo", "bar")
+			.combinations(#["fun", "boo", "faz"])[a,b|a+b]
+			.forEach[
+				println(it)
+			]
 	}
 	
 	
