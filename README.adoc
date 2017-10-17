@@ -177,7 +177,7 @@ for iteration over primitive int values provided by this library, the extension 
 === Extensions to Pair
 
 The class `de.fhg.fokus.xtensions.pair.PairExtensions` provides extension methods for the type 
-`org.eclipse.xtext.xbase.lib.Pair`.
+http://download.eclipse.org/modeling/tmf/xtext/javadoc/2.9/org/eclipse/xtext/xbase/lib/Pair.html[`org.eclipse.xtext.xbase.lib.Pair`].
 
 The with-operator `=>` can be used to destructure a Pair into `key` and `value`.
 
@@ -276,7 +276,8 @@ Example:
 		]
 
 
-Java 9 provides a static factory methods for an infinite stream http://docs.oracle.com/javase/9/docs/api/java/util/stream/Stream.html#Iterate-java.lang.Object-java.util.function.UnaryOperator-[Stream.iterate(T,UnaryOperator<T>)]. A function with the same functionality is provided via `StreamExtensions`. There is even
+Java 9 provides a static factory methods for an infinite stream 
+http://docs.oracle.com/javase/9/docs/api/java/util/stream/Stream.html#iterate-T-java.util.function.UnaryOperator-[Stream.iterate(T,UnaryOperator<T>)]. A function with the same functionality is provided via `StreamExtensions`. There is even
 an overloaded version of the static method that can be written as if the method would exist in the Stream class:
 
 	Stream.iterate("na ")[it + it]
@@ -287,10 +288,6 @@ an overloaded version of the static method that can be written as if the method 
 		]
 
 This method can be handy traversing a nested data structure of same-kind elements (e.g. moving up a containment hierarchy).
-
-////
-TODO: Describe combinations extension methods  
-////
 
 
 === Extensions to Streams of Strings
@@ -322,7 +319,7 @@ otherwise it will construct a stream from the spliterator provided by the iterab
 
 Analogous to the `stream` method the `IterableExtensions` class also provides a `parallelStream` method.
 
-It is also possible to map an iterable to a primitive iterable (see <<from-iterables,Primitve Iterables / From Iterables>>).
+It is also possible to map an iterable to a primitive iterable (see <<From Iterables,Primitve Iterables / From Iterables>>).
 
 
 ////
