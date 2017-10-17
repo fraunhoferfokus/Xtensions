@@ -1,5 +1,4 @@
 = Xtensions Library
-:toc:
 
 This library is mainly a collection of https://www.eclipse.org/xtend/[Xtend] extension methods
 for classes in the Java 8 standard library and the Xtend standard library. A few goals are:
@@ -8,6 +7,8 @@ for classes in the Java 8 standard library and the Xtend standard library. A few
 * Making a select few Java 9 methods available on Java 8
 * Providing support for iteration over primitive values without resort to boxing
 * Adding some useful additional methods to existing standard JDK and Xtend standard lib classes
+
+:toc:
 
 == Usage
 
