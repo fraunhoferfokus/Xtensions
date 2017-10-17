@@ -645,8 +645,8 @@ The repository contains the Oomph setup file [Xtensions.setup](releng/de.fhg.fok
 The following tasks are the next goals for this project, roughly in this order:
 
 - [ ] Complete this README.md file
-    - [ ] Complete Usage section
-    - [ ] Complete IDE Setup section
+ - [ ] Complete Usage section
+ - [ ] Complete IDE Setup section
 - [ ] Complete JavaDocs for all public methods
 - [ ] Cover each method with test cases
 - [ ] Add Jacoco test coverage to maven build
