@@ -177,7 +177,7 @@ for iteration over primitive int values provided by this library, the extension 
 The class `de.fhg.fokus.xtensions.pair.PairExtensions` provides extension methods for the type 
 http://download.eclipse.org/modeling/tmf/xtext/javadoc/2.9/org/eclipse/xtext/xbase/lib/Pair.html[`org.eclipse.xtext.xbase.lib.Pair`].
 
-The with-operator `=>` can be used to destructure a Pair into `key` and `value`.
+The with-operator `=>` can be used to destructure a Pair into `key` and `value` and .
 
 Example:
 
@@ -710,8 +710,8 @@ The repository contains the Oomph setup file link:releng/de.fhg.fokus.xtensions.
 The following tasks are the next goals for this project, roughly in this order:
 
 - [ ] Complete this README.adoc file
-    - [ ] Complete Usage section
-    - [ ] Complete IDE Setup section
+* [ ] Complete Usage section
+* [ ] Complete IDE Setup section
 - [ ] Complete JavaDocs for all public methods
 - [ ] Cover each method with test cases
 - [ ] Add Jacoco test coverage to maven build
