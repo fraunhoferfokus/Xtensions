@@ -571,10 +571,12 @@ This can be useful, if other group captures have to be accessed when handling ma
 The class `de.fhg.fokus.xtensions.datetime.DurationExtensions` provides static extension
 method for the JDK class `java.time.Duration`
 
+
 Since Java does not allow operator overloading, the Duration class provides many methods with names 
 corresponding to operators, like `plus`, `minus`, `dividedBy`, `multipliedBy`, and `negated`.
 Since Xtend does allow operator overloading for the corresponding operators, aliases for the operators
 `+`, `-`, `/`, `*`, and unary `-` are defined.
+
 
 The Duration class also provides static factory methods for durations of a given time units
 (e.g. http://docs.oracle.com/javase/9/docs/api/java/time/Duration.html#ofNanos-long-[`Duration ofNanos(long nanos)`]). +
