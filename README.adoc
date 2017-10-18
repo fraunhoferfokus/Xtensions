@@ -1,6 +1,7 @@
 = Xtensions Library
 :toc: preamble
 :toclevels: 4
+:toc-title: Contents of this document:
 
 This library is mainly a collection of https://www.eclipse.org/xtend/[Xtend] extension methods
 for classes in the Java 8 standard library and the Xtend standard library. A few goals are:
@@ -39,7 +40,7 @@ link:tests/de.fhg.fokus.xtensions.tests/src/de/fhg/fokus/xtensions/Showcase.xten
 
 The static factory Methods for creating `Optional` instances are not really meant to be used as 
 statically imported methods. They have no meaningful names to be used this way. They also differ from
-the commonly used names `some`, `none` and `maybe` which are used in many other languages.  
+the commonly used names `some`, `none` and `maybe` which are used in many other languages. +
 The class `OptionalIntExtensions` provides static factory methods with these common names
 which are implemented to be inlined to the factory methods used by the JDK.
 
@@ -116,7 +117,7 @@ Extensions to the primitive versions of Optional are provided by the following c
 	de.fhg.fokus.xtensions.optional.OptionalDoubleExtensions
 
 Same as for Optional, there is a `some` alias for the `OptionalInt.of`, `OptionalLong.of`, and `OptionalDouble.of`
-methods (see <<Extensions to Optional>>).  
+methods (see <<Extensions to Optional>>). +
 The methods `noInt`, `noLong`, and `noDouble` provide empty primitive Optionals.
 
 The Open JDK / Oracle JDK currently does not cache OptionalInt and OptionalLong instances in the static factory method 
@@ -147,7 +148,7 @@ values of the range.
 One way to iterate over the range is to use Java 8 streams, by using the 
 `stream` or `parallelStream` extension method from the class 
 `de.fhg.fokus.xtensions.range.RangeExtensions`.
-  
+
 Exmaple: 
 
 	import static extension de.fhg.fokus.xtensions.range.RangeExtensions.*
@@ -246,7 +247,7 @@ Note: Since joining Strings is a common operation, the `StringStreamExtensions` 
 directly on the Stream. Have a look at <<Extensions to Streams of Strings>>.
 
 Some other collectors, especially the ones bridging to the collections API are also used very often,
-but using the collect method with the methods from the `Collectors` class is a bit verbose.  
+but using the collect method with the methods from the `Collectors` class is a bit verbose. +
 As a shortcut the `StreamExtensions` class provides `toList`, `toSet`, and `toCollection` 
 extension methods to the `Stream` class.
 
@@ -259,13 +260,17 @@ Example:
 		.map[toUpperCase]
 		.toList
 
-As a shortcut for the http://docs.oracle.com/javase/8/docs/api/java/util/stream/Stream.html#concat-java.util.stream.Stream-java.util.stream.Stream-[concat] method the `StreamExtensions` class provides a `+` operator.
+As a shortcut for the 
+http://docs.oracle.com/javase/8/docs/api/java/util/stream/Stream.html#concat-java.util.stream.Stream-java.util.stream.Stream-[concat]
+method the `StreamExtensions` class provides a `+` operator.
 
 
 Sometimes it is interesting to produce the cartesian product of two containers of elements. To produce all combinations of the elements of a stream with the elements of an `Iterable` (or a different source of a stream) this library provides the `combinations` extension methods. If no merging function is provided, the `combinations` extension methods will create a `org.eclipse.xtext.xbase.lib.Pair` object for each combination. If a merging function is provided, the resulting stream will hold the result of the merge of each combination.
 
 Example:
 
+	import static extension de.fhg.fokus.xtensions.stream.StreamExtensions.*
+	// ...
 	Stream.of("foo", "bar")
 		.combinations(#["fun", "boo", "faz"])[a,b|a+b]
 		.forEach[
@@ -274,9 +279,12 @@ Example:
 
 
 Java 9 provides a static factory methods for an infinite stream 
-http://docs.oracle.com/javase/9/docs/api/java/util/stream/Stream.html#iterate-T-java.util.function.UnaryOperator-[Stream.iterate(T,UnaryOperator<T>)]. A function with the same functionality is provided via `StreamExtensions`. There is even
-an overloaded version of the static method that can be written as if the method would exist in the Stream class:
+http://docs.oracle.com/javase/9/docs/api/java/util/stream/Stream.html#iterate-T-java.util.function.UnaryOperator-[Stream.iterate(T,UnaryOperator<T>)]. A function with the same functionality is provided via `StreamExtensions`. 
+There is even an overloaded version of the static method that can be written as if the method would exist in the Stream class:
 
+	// This is using Java 8
+	import static extension de.fhg.fokus.xtensions.stream.StreamExtensions.*
+	// ...
 	Stream.iterate("na ")[it + it]
 		.filter[length > 15]
 		.findFirst
@@ -284,7 +292,7 @@ an overloaded version of the static method that can be written as if the method 
 			println(it + "Batman!")
 		]
 
-This method can be handy traversing a nested data structure of same-kind elements (e.g. moving up a containment hierarchy).
+This method can be handy traversing a nested data structure of same-type elements (e.g. moving up a containment hierarchy).
 
 
 === Extensions to Streams of Strings
@@ -293,8 +301,15 @@ Since Xtend can provide extension methods specifically for specializations of ge
 it is possible to provide methods only available for `java.util.stream.Stream<String>`.
 The class `de.fhg.fokus.xtensions.stream.StringStreamExtensions` provides such extension methods.
 
+The most used collectors on streams of strings are the joining collectors from `java.util.stream.Collectors`.
+To make these easy to use `join` methods have been introduced as extension methods to `Stream<String>`.
+
+Example:
+
+	val joined = Stream.of("Hello", "Xtend", "aficionados").join(" ")
+	println(joined)
+
 ////
-TODO: Describe join collector extension method  
 TODO: Describe matching filter extension method  
 TODO: Describe flatSplit mapping extension method  
 TODO: Describe flatMatches mapping extension method  
@@ -304,11 +319,12 @@ TODO: Describe join collector
 
 === Extensions to Iterable
 
-The `de.fhg.fokus.xtensions.iteration.IterableExtensions` class provides extension methods to `java.lang.Iterable`
+The `de.fhg.fokus.xtensions.iteration.IterableExtensions` class provides extension methods to 
+`java.lang.Iterable`
 
 Unfortunately the `java.lang.Iterable` interface does not provide a (default)
-method for creating a `java.lang.Stream`.  It does provide a method to obtain a 
-`Spliterator` which can be used to create a stream, but this is rather unpleasant to use.  
+method for creating a `java.lang.Stream`. It does provide a method to obtain a 
+`Spliterator` which can be used to create a stream, but this is rather unpleasant to use. +
 The `IterableExtensions` class provides the `stream` extension method to easily create
 a stream from an iterable. This method will first check if the given iterable is instance of
 `java.util.Collection`, since this class does provide a default `stream` method,
@@ -328,16 +344,25 @@ TODO: Describe extension method `collect`
 
 The primitive iterators defined in the JDK as sub-interfaces of `java.util.PrimitiveIterator` 
 do not provide combinators like the ones provided by Xtend. These combinators, however, do take some 
-efforts to implement. Instread, this library provides the class `de.fhg.fokus.xtensions.iteration.PrimitiveIteratorExtensions` provides methods to 
+efforts to implement. Instread, this library provides the class 
+`de.fhg.fokus.xtensions.iteration.PrimitiveIteratorExtensions` provides methods to 
 create primitive streams (from `java.util.stream`) for the remaining elements of a given iterator via the 
 extension methods `streamRemaining` or `parallelStreamRemaining`.
 
 
 === Primitive Iterables
 
-The JDK provides a generic http://docs.oracle.com/javase/8/docs/api/java/util/Iterator.html[`java.util.Iterator<T>`] interface and primitive versions of the Iterator in form of the sub-interfaces of http://docs.oracle.com/javase/8/docs/api/java/util/PrimitiveIterator.html[`java.util.PrimitiveIterator<T,T_CONS>`]. However, there are no primitive versions of the http://docs.oracle.com/javase/8/docs/api/java/lang/Iterable.html[`java.lang.Iterable<T>`] interface, constructing primitive iterators.
+The JDK provides a generic http://docs.oracle.com/javase/8/docs/api/java/util/Iterator.html[`java.util.Iterator<T>`] interface and 
+primitive versions of the Iterator in form of the sub-interfaces of 
+http://docs.oracle.com/javase/8/docs/api/java/util/PrimitiveIterator.html[`java.util.PrimitiveIterator<T,T_CONS>`]. However, 
+there are no primitive versions of the http://docs.oracle.com/javase/8/docs/api/java/lang/Iterable.html[`java.lang.Iterable<T>`] 
+interface, constructing primitive iterators.
 
-So the JDK is missing an interface to abstract over "a bunch" of primitive numbers to iterate over. A primitive iterator or primitive stream can only traversed once, which is not very satisfying in many cases. Ideally there should be in interface allowing the iteration over a (possibly infinite) sequence of primitive numbers. We want to be able to get a primitive iterator, a primitive stream, or directly iterate over the elements with a `forEach` method. A set of these interfaces is provided in package `de.fhg.fokus.xtensions.iteration`.<br>
+So the JDK is missing an interface to abstract over "a bunch" of primitive numbers to iterate over. A primitive iterator or primitive 
+stream can only traversed once, which is not very satisfying in many cases. Ideally there should be in interface allowing the 
+iteration over a (possibly infinite) sequence of primitive numbers. We want to be able to get a primitive iterator, a primitive 
+stream, or directly iterate over the elements with a `forEach` method. A set of these interfaces is provided in package 
+`de.fhg.fokus.xtensions.iteration`. +
 The primitive Iterable versions provided in the package all specialize `java.lang.Iterable` with the boxed
 number type, but also provide specialized functions for providing primitive iterators, primitive streams, and 
 forEach methods that do not rely on boxing the primitive values when passing them on to the consumer.
@@ -597,7 +622,7 @@ TODO: Describe asyncSupply methods
 === Scheduling Util
 
 The class `de.fhg.fokus.xtensions.concurrent.SchedulingUtil` provides several static methods 
-and static extension methods to easily schedule action for deferred or repeated execution.  
+and static extension methods to easily schedule action for deferred or repeated execution. +
 All operations have overloaded variants taking a `java.util.concurrent.ScheduledExecutorService`
 as the first parameter, so these methods can be used as extension methods.
 
@@ -628,7 +653,7 @@ Example:
 
 Note that the action will stop being repeatedly called if the action throws an exception or the future
 returned by the `repeatEvery` method will be completed (e.g. by canceling it). This can either either 
-be done by the action itself (the future will be passed to the action as parameter), or from the outside.  
+be done by the action itself (the future will be passed to the action as parameter), or from the outside. +
 Since the future is both passed to the action and returned, this also allows the action to check e.g. for
 cancellation from the outside and aborting the action early.
 
@@ -650,7 +675,7 @@ cancellation from the outside and aborting the action early.
 
 The method `delay` will defer the one-time execution of a given action by the given duration.
 The delayed execution can be aborted before being started by completing the future returned by 
-the `delay` method.  
+the `delay` method. +
 The future returned by the `delay` method is also passed as a parameter to the deferred action.
 If the future is completed before the delay is expired, the action will not be executed. If the 
 action is performed, it can check during execution if the future is completed, e.g. to return 
