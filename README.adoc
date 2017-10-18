@@ -319,14 +319,44 @@ To make these easy to use `join` methods have been introduced as extension metho
 
 Example:
 
+	import static extension de.fhg.fokus.xtensions.stream.StringStreamExtensions.*
+	// ...
 	val joined = Stream.of("Hello", "Xtend", "aficionados").join(" ")
 	println(joined)
 
+
+Another operation often performed on streams of strings is filtering it based on a regular expression.
+This is provided via the extension method `matching`. The pattern can either be passed in as string
+or as a pre-compiled 
+
+Example:
+
+	import static extension de.fhg.fokus.xtensions.stream.StringStreamExtensions.*
+	// ...
+	Stream.of("foo", "bar", "kazoo", "baz", "oomph", "shoot")
+		.matching(".+oo.*")
+		.forEach [
+			println(it)
+		]
+
+
+When splitting strings provided as a stream it is handy to get an operation providing a single
+stream of the result of splitting all elements, which also works as lazy as possible. A use case
+would be to to use http://docs.oracle.com/javase/8/docs/api/java/nio/file/Files.html#lines-java.nio.file.Path-[Files.lines(Path)]
+and then split the resulting lines of this operation.
+
+Example:
+
+	import static extension de.fhg.fokus.xtensions.stream.StringStreamExtensions.*
+	// ...
+	Stream.of("Hello users", "welcome to this demo", "hope it helps")
+		.flatSplit("\\s+")
+		.forEach [
+			println(it)
+		]
+
 ////
-TODO: Describe matching filter extension method  
-TODO: Describe flatSplit mapping extension method  
 TODO: Describe flatMatches mapping extension method  
-TODO: Describe join collector
 ////
 
 
