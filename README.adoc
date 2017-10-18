@@ -3,6 +3,10 @@
 :toclevels: 4
 :toc-title: Contents of this document:
 
+
+[link=https://www.eclipse.org/legal/epl-2.0/]
+image::https://img.shields.io/badge/License-EPL%202.0-blue.svg[License : EPL v2.0]
+
 This library is mainly a collection of https://www.eclipse.org/xtend/[Xtend] extension methods
 for classes in the Java 8 standard library and the Xtend standard library. A few goals are:
 
@@ -11,6 +15,15 @@ for classes in the Java 8 standard library and the Xtend standard library. A few
 * Providing support for iteration over primitive values without resort to boxing
 * Adding some useful additional methods to existing standard JDK and Xtend standard lib classes
 
+Note that the policy of using functional interfaces is the following:
+
+* Generally, the Xtend interfaces defined in 
+  http://download.eclipse.org/modeling/tmf/xtext/javadoc/2.9/org/eclipse/xtext/xbase/lib/Functions.html[`org.eclipse.xtext.xbase.lib.Functions`] 
+  are preferred over the ones defined in JDK 8 package.
+  http://docs.oracle.com/javase/8/docs/api/index.html?java/util/function/package-summary.html[`java.util.function`]
+* When primitive values are involved, the specialized interfaces from `java.util.function` are preferred.
+* When a shim over JDK 8 APIs is provided and Xtend interfaces would introduce unnecessary object allocations
+  the JDK interfaces are preferred.
 
 == Usage
 
@@ -593,6 +606,13 @@ Example:
 
 === Extensions to Functions
 
+Xtend provides own functional interfaces in the 
+http://download.eclipse.org/modeling/tmf/xtext/javadoc/2.9/org/eclipse/xtext/xbase/lib/Functions.html[`org.eclipse.xtext.xbase.lib.Functions`]
+Interface. These are used all over the Xtend standard library and they allow a compact declaration syntax, e.g. the type 
+`Function1<? super String,? extends String>` can be written as `(String)=>String`.
+
+When comparing Xtend's `Function1` type (and their extensions in `org.eclipse.xtext.xbase.lib.FunctionExtensions`) to Java 8's `java.util.function.Function` type 
+
 ////
 TODO: Describe >>> operator, also for Pair (should be inlined). Usefull when   
 
@@ -719,6 +739,14 @@ The main library will be located in `bundles/de.fhg.fokus.xtensions/target`
 
 The repository contains the Oomph setup file link:releng/de.fhg.fokus.xtensions.releng/Xtensions.setup[Xtensions.setup] for the Eclipse IDE.
 
+
+== External Contributions
+
+External contributions in form of pull requests are welcome, if they include sufficient tests and documentation (JavaDoc and, if valuable,
+description in this README). Please note that contributions may be rejected if they do not seem beneficial to the project. Please get in touch
+beforehand (e.g. via ticket) to get to know if a certain enhancement is deemed beneficial.
+
+Contributions will be licensed under https://www.eclipse.org/legal/epl-2.0/[EPL 2.0].
 
 == Status of the Project
 
