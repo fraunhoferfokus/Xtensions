@@ -14,10 +14,12 @@ import static extension de.fhg.fokus.xtensions.optional.OptionalExtensions.*
 import static extension de.fhg.fokus.xtensions.optional.OptionalIntExtensions.*
 import static extension de.fhg.fokus.xtensions.range.RangeExtensions.*
 import static extension de.fhg.fokus.xtensions.stream.StreamExtensions.*
+import static extension de.fhg.fokus.xtensions.stream.StringStreamExtensions.*
 import static extension de.fhg.fokus.xtensions.string.StringSplitExtensions.*
 import static extension de.fhg.fokus.xtensions.pair.PairExtensions.*
 import static extension java.util.Arrays.*
 import static extension org.eclipse.xtext.xbase.lib.InputOutput.*
+import static extension de.fhg.fokus.xtensions.datetime.DurationExtensions.*
 import org.junit.Ignore
 import java.util.Random
 import java.util.stream.IntStream
@@ -27,17 +29,13 @@ import java.util.Optional
 import java.util.regex.Pattern
 import java.util.Iterator
 import java.util.OptionalInt
-import de.fhg.fokus.xtensions.stream.StreamExtensions
-import java.util.stream.StreamSupport
-import java.util.function.Predicate
 
-import static de.fhg.fokus.xtensions.concurrent.AsyncCompute.*
-import java.util.concurrent.CompletableFuture
 import static extension de.fhg.fokus.xtensions.datetime.DurationExtensions.*
 import org.junit.Assert
 
 import static extension de.fhg.fokus.xtensions.concurrent.SchedulingUtil.*
 import java.util.concurrent.TimeUnit
+import java.time.Duration
 
 //@Ignore
 class Showcase {
@@ -238,6 +236,23 @@ class Showcase {
 			]
 	}
 	
+	@Test def void stringStreamDemo() {
+		val joined = Stream.of("Hello", "Xtend", "aficionados").join(" ")
+		println(joined)
+		
+		Stream.of("foo", "bar", "kazoo", "baz", "oomph", "shoot")
+			.matching(".+oo.*")
+			.forEach [
+				println(it)
+			]
+			
+		Stream.of("Hello users", "welcome to this demo", "hope it helps")
+			.flatSplit("\\s+")
+			.forEach [
+				println(it)
+			]
+	}
+	
 	
 	@Test def void stringDemo() {
 		
@@ -247,6 +262,24 @@ class Showcase {
 		
 		val Iterator<String> i = "foozoobaar".splitIt("(?<=oo)")
 		i.takeWhile[!startsWith("b")].forEach[
+			println(it)
+		]
+	}
+	
+	@Test def void stringMatchIteratorDemo() {
+		val String input = "foo bar boo"
+		val Pattern pattern = Pattern.compile("(\\woo)")
+		
+		// Iterate over matches of pattern in input
+		val matcher = pattern.matcher(input)
+		while(matcher.find) {
+			val match = input.subSequence(matcher.start, matcher.end)
+			// Do something with match
+			println(match)
+		}
+		
+		// Same iteration, now with iterator
+		input.matchIt(pattern).forEach [
 			println(it)
 		]
 	}
@@ -285,27 +318,13 @@ class Showcase {
 		]
 	}
 	
-	@Test def void stringMatchIteratorDemo() {
-		val String input = "foo bar boo"
-		val Pattern pattern = Pattern.compile("(\\woo)")
-		
-		// Iterate over matches of pattern in input
-		val matcher = pattern.matcher(input)
-		while(matcher.find) {
-			val match = input.subSequence(matcher.start, matcher.end)
-			// Do something with match
-			println(match)
-		}
-		
-		// Same iteration, now with iterator
-		input.matchIt(pattern).forEach [
-			println(it)
-		]
-	}
-	
 	@Test def void functionDemo() {
 		val pair = getPair() >>> [k,v| k.toUpperCase -> v]
 		println(pair)
+	}
+	
+	@Test def void durationDemo() {
+		val Duration twoPointFiveSeconds = 2.seconds + 500.milliseconds
 	}
 	
 	private def Pair<String,Integer> getPair() {

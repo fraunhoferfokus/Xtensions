@@ -16,7 +16,7 @@ import java.util.Objects
  * <br>
  * This class is not intended to be instantiated.
  */
-class RangeExtensions {
+final class RangeExtensions {
 		
 	private new() {}
 	

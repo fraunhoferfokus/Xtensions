@@ -40,7 +40,7 @@ import java.util.function.Consumer
  * </ul>
  * <p>
  */
-class CompletableFutureExtensions {
+final class CompletableFutureExtensions {
 
 // /////////////////////////////////
 // Java 9 forward compatibility: //

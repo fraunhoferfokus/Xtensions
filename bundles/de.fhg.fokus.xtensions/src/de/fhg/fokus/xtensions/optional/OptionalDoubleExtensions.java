@@ -42,7 +42,7 @@ import de.fhg.fokus.xtensions.iteration.internal.PrimitiveIterableUtil;
  * @see OptionalLongExtensions
  * @author Max Bureck
  */
-public class OptionalDoubleExtensions {
+public final class OptionalDoubleExtensions {
 
 	private OptionalDoubleExtensions() {
 	}

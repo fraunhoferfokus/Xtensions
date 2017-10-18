@@ -42,7 +42,7 @@ import de.fhg.fokus.xtensions.iteration.internal.PrimitiveIterableUtil;
  * @see OptionalDoubleExtensions
  * @author Max Bureck
  */
-public class OptionalIntExtensions {
+public final class OptionalIntExtensions {
 	
 	private static int cacheLowBound = -127;
 	private static int cacheUpperBound = 128;

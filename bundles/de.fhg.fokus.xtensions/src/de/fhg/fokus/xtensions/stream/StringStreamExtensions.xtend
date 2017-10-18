@@ -18,6 +18,8 @@ import java.util.stream.Collectors
  */
 final class StringStreamExtensions {
 	
+	// TODO filterNullOrEmpty
+	
 	private new() {
 		throw new IllegalStateException
 	}

@@ -12,7 +12,7 @@ import java.util.Objects
  * The static methods of this class start asynchronous computation, such as the {@code asyncSupply},
  * and {@code asyncRun} methods.
  */
-class AsyncCompute {
+final class AsyncCompute {
 	
 	private new(){}
 	

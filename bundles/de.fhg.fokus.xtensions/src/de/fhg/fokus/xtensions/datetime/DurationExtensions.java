@@ -17,7 +17,7 @@ import org.eclipse.xtext.xbase.lib.Inline;
  *  
  * @author Max Bureck
  */
-public class DurationExtensions {
+public final class DurationExtensions {
 
 	/**
 	 * Alias for {@link Duration#ofNanos(long)}.

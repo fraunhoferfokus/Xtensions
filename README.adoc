@@ -640,8 +640,12 @@ Xtend provides own functional interfaces in the
 http://download.eclipse.org/modeling/tmf/xtext/javadoc/2.9/org/eclipse/xtext/xbase/lib/Functions.html[`org.eclipse.xtext.xbase.lib.Functions`]
 Interface. These are used all over the Xtend standard library and they allow a compact declaration syntax, e.g. the type 
 `Function1<? super String,? extends String>` can be written as `(String)=>String`.
+Extensions to Xtends functional interfaces are provided in `de.fhg.fokus.xtensions.function.FunctionExtensions`.
 
-When comparing Xtend's `Function1` type (and their extensions in `org.eclipse.xtext.xbase.lib.FunctionExtensions`) to Java 8's `java.util.function.Function` type 
+When comparing Xtend's `Function1` type (and their extensions in 
+http://download.eclipse.org/modeling/tmf/xtext/javadoc/2.9/org/eclipse/xtext/xbase/lib/FunctionExtensions.html[`org.eclipse.xtext.xbase.lib.FunctionExtensions`])
+to Java 8's `java.util.function.Function` type the method `andThen` from Java 8 is missing, so the same functionality is provided
+in this librarie's `FunctionExtensions`
 
 ////
 TODO: Describe >>> operator, also for Pair (should be inlined). Usefull when   
