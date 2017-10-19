@@ -141,6 +141,8 @@ introduced.
 
 Example:
 
+	import static de.fhg.fokus.xtensions.optional.OptionalIntExtensions.*
+	// ...
 	if(someOf(42) === someOf(42)) {
 		println("someOf caches instances")
 	}
@@ -227,6 +229,8 @@ arrays of primitive values (int, long, double) to iterate with a forEach method 
 
 Example:
 
+	import static extension de.fhg.fokus.xtensions.iteration.PrimitiveArrayExtensions.*
+	// ...
 	val int[] arr = #[3,4,6]
 	arr.forEachInt [
 		println(it)
@@ -240,7 +244,8 @@ static `stream` methods that can be used as extension methods to create Java 8 s
 
 === Extensions to Streams
 
-The class `de.fhg.fokus.xtensions.stream.StreamExtensions`
+The class `de.fhg.fokus.xtensions.stream.StreamExtensions` provides extension
+methods to the `java.util.stream.Stream` inteface.
 
 Java 8 streams are missing a few methods known from the Xtend iterable extension methods.
 The one method that is probably most often used is the method to filter by type. This can easily
@@ -248,7 +253,6 @@ be retrofitted on the Streams API by an extension method. This extension method 
 in the `StreamExtensions` class.
 
 Example: 
-
 
 	import static extension de.fhg.fokus.xtensions.stream.StreamExtensions.*
 	// ...
@@ -272,6 +276,7 @@ Example:
 		.filter[!contains("oo")]
 		.map[toUpperCase]
 		.toList
+
 
 As a shortcut for the 
 http://docs.oracle.com/javase/8/docs/api/java/util/stream/Stream.html#concat-java.util.stream.Stream-java.util.stream.Stream-[concat]
@@ -363,6 +368,9 @@ pre-compiled `java.util.regex.Pattern` object.
 
 Example:
 
+	import java.util.regex.Pattern
+	import static extension de.fhg.fokus.xtensions.stream.StringStreamExtensions.*
+	// ...
 	val Pattern pattern = Pattern.compile("(\\woo)")		
 	Stream.of("Welcome to the zoo", "Where cows do moo", "And all animals poo")
 		.flatMatches(pattern)

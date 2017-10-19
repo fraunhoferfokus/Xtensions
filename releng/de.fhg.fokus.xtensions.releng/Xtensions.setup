@@ -168,9 +168,12 @@
     <requirement
         name="org.eclipse.pde.feature.group"
         versionRange="[3.12.3,4.0.0)"/>
-	<requirement
-		name="org.eclipse.eclemma.feature.feature.group"
-		versionRange="[3.0.0,4.0.0)"/>
+    <requirement
+        name="org.eclipse.eclemma.feature.feature.group"
+        versionRange="[3.0.0,4.0.0)"/>
+    <requirement
+        name="org.eclipse.releng.tools.feature.group"
+        versionRange="[3.9.0,4.0.0)"/>
     <requirement
         name="org.eclipse.oomph.targlets.feature.group"/>
     <requirement
@@ -188,39 +191,11 @@
     <requirement
         name="org.eclipse.oomph.setup.workingsets.feature.group"/>
     <requirement
-        name="org.eclipse.oomph.targlets.feature.group"/>
-    <requirement
-        name="org.eclipse.oomph.setup.targlets.feature.group"/>
-    <requirement
-        name="org.eclipse.oomph.setup.pde.feature.group"/>
-    <requirement
-        name="org.eclipse.oomph.setup.pde.feature.group"/>
-    <requirement
-        name="org.eclipse.oomph.setup.jdt.feature.group"/>
-    <requirement
-        name="org.eclipse.oomph.setup.git.feature.group"/>
-    <requirement
         name="org.eclipse.egit.feature.group"/>
-    <requirement
-        name="org.eclipse.oomph.setup.workingsets.feature.group"/>
-    <requirement
-        name="org.eclipse.oomph.targlets.feature.group"/>
-    <requirement
-        name="org.eclipse.oomph.setup.targlets.feature.group"/>
-    <requirement
-        name="org.eclipse.oomph.setup.pde.feature.group"/>
-    <requirement
-        name="org.eclipse.oomph.setup.pde.feature.group"/>
-    <requirement
-        name="org.eclipse.oomph.setup.jdt.feature.group"/>
-    <requirement
-        name="org.eclipse.oomph.setup.git.feature.group"/>
-    <requirement
-        name="org.eclipse.egit.feature.group"/>
-    <requirement
-        name="org.eclipse.oomph.setup.workingsets.feature.group"/>
     <repository
         url="http://download.eclipse.org/releases/oxygen"/>
+    <repository
+        url="http://download.eclipse.org/eclipse/updates/4.7"/>
     <repository
         url="${setup.targlets.p2}"/>
     <repository
