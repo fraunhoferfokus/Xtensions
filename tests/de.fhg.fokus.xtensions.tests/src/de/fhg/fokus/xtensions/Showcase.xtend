@@ -349,8 +349,13 @@ class Showcase {
 		val (LocalDate)=>String yearString = [it.year.toString]
 		val ()=>String nextYear = inOneYear.andThen(yearString)
 		println(nextYear.apply)
+
 		
-		System.getProperty("user.name") >>> []
+		val (LocalDate)=>LocalDate oneYearLater = [LocalDate.now.plusYears(1)]
+		val (LocalDate)=>String yearAfter = oneYearLater >> yearString
+		
+		LocalDate.now >>> yearAfter >>> [println(it)]
+		
 		
 		val (String)=>boolean notThere = [it.nullOrEmpty]
 		val (String)=>boolean tooShort = [it.length < 3]

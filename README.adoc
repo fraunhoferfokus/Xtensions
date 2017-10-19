@@ -822,7 +822,15 @@ just with a different return value.
 
 Example:
 
-	val 
+[source,xtend]
+----
+val (LocalDate)=>LocalDate oneYearLater = [LocalDate.now.plusYears(1)]
+val (LocalDate)=>String yearString = [it.year.toString]
+
+val (LocalDate)=>String yearAfter = oneYearLater >> yearString
+
+LocalDate.now >>> yearAfter >>> [println(it)]
+----
 
 
 To compose functions, the shortcut operators `>>` for `andThen` and `<<` for `compose` 
@@ -850,7 +858,7 @@ val (String)=>boolean valid = notThere.or(tooShort).negate
 ////
 
 Function Composition  
-TODO: Example for >> 
+TODO: >>> operator for Pair
 
 ////
 
