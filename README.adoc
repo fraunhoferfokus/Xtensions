@@ -848,7 +848,7 @@ Example:
 import static extension de.fhg.fokus.xtensions.function.FunctionExtensions.*
 import java.time.LocalDate
 // ...
-val (LocalDate)=>LocalDate oneYearLater = [LocalDate.now.plusYears(1)]
+val (LocalDate)=>LocalDate oneYearLater = [it.plusYears(1)]
 val (LocalDate)=>String yearString = [it.year.toString]
 
 val (LocalDate)=>String yearAfter = oneYearLater >> yearString

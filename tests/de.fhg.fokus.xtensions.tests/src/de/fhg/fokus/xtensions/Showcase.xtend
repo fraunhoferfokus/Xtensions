@@ -47,6 +47,7 @@ import static extension de.fhg.fokus.xtensions.concurrent.SchedulingUtil.*
 import java.util.concurrent.TimeUnit
 import java.time.Duration
 import java.time.LocalDate
+import java.nio.file.Paths
 
 //@Ignore
 class Showcase {
@@ -351,11 +352,13 @@ class Showcase {
 		println(nextYear.apply)
 
 		
-		val (LocalDate)=>LocalDate oneYearLater = [LocalDate.now.plusYears(1)]
+		val (LocalDate)=>LocalDate oneYearLater = [it.plusYears(1)]
 		val (LocalDate)=>String yearAfter = oneYearLater >> yearString
 		
 		LocalDate.now >>> yearAfter >>> [println(it)]
 		
+		val path = System.getProperty("user.home") >>> [Paths.get(it)]
+		println(path.parent)
 		
 		val (String)=>boolean notThere = [it.nullOrEmpty]
 		val (String)=>boolean tooShort = [it.length < 3]
