@@ -581,7 +581,7 @@ Example:
 	]
 
 [TIP]
-....
+====
 If a split pattern is known in advance the following is possible with the JDK types to obtain a Stream of split elements:
 
 	import java.util.regex.Pattern
@@ -589,7 +589,8 @@ If a split pattern is known in advance the following is possible with the JDK ty
 	extension val pattern = Pattern.compile("mypattern")
 	// ...
 	"tosplit".splitAsStream  // actually calls pattern.splitAsStream("tosplit")
-....
+
+====
 	
 If a pattern String has to be produced dynamically, the extension method `splitAsStream` is provided
 as a shortcut for the sequence of calls from above:
