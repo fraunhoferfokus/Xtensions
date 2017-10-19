@@ -19,6 +19,13 @@ import static java.util.Objects.*;
  */
 public final class FunctionExtensions {
 
+	// TODO andThenDo Function -> Procedure returns procedure
+	// TODO Function1<T,R>#andThen(Procedure1<R>): (T)=>void // if no ambiguity
+	// TODO Function1<T,Pair<X,Y>>#andThen(Function2<X,Y,V>) -> Function1<T,V>  // if no ambiguity introduced
+	// TODO Function0<Pair<X,Y>>#andThen(Function2<X,Y,V>) -> Function0<V> // if no ambiguity introduced
+	// TODO Function2<T,T> till Function6<T,...,T>#spread (Iterable<T>/T[]), throw if too little params. Non type save variant?
+	// TODO Predicate#on -> .then((U)=>U) : Function1<U,U> ???
+
 	
 	private FunctionExtensions() {
 		throw new IllegalStateException("FunctionExtensions is not allowed to be instantiated");
@@ -135,23 +142,15 @@ public final class FunctionExtensions {
 	// Feature parity to Java 8 functional interfaces //
 	////////////////////////////////////////////////////
 	
-	public static <T> Function1<T, Boolean> and (Function1<T, Boolean> test, Function1<? super T, Boolean> test2) {
+	public static <T> Function1<T, Boolean> and (Function1<? super T, Boolean> test, Function1<? super T, Boolean> test2) {
 		return (t) -> test.apply(t) && test2.apply(t);
 	}
 
-	public static <T> Function1<T, Boolean> or (Function1<T, Boolean> test, Function1<? super T, Boolean> test2) {
+	public static <T> Function1<T, Boolean> or (Function1<? super T, Boolean> test, Function1<? super T, Boolean> test2) {
 		return (t) -> test.apply(t) || test2.apply(t);
 	}
 	
 	public static <T> Function1<T, Boolean> negate (Function1<T, Boolean> test) {
 		return (t) -> !test.apply(t);
 	}
-
-	
-	// TODO andThenDo Function -> Procedure returns procedure
-	// TODO Function1<T,R>#andThen(Procedure1<R>): (T)=>void // if no amiguity
-	// TODO Function1<T,Pair<X,Y>>#andThen(Function2<X,Y,V>) -> Function1<T,V>  // if no ambiguity introduced
-	// TODO Function0<Pair<X,Y>>#andThen(Function2<X,Y,V>) -> Function0<V> // if no ambiguity introduced
-	// TODO Function2<T,T> till Function6<T,...,T>#spread (Iterable<T>/T[]), throw if too little params. Non type save variant?
-	// TODO Predicate#on -> .then((U)=>U) : Function1<U,U> ???
 }

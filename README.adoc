@@ -190,7 +190,7 @@ for iteration over primitive int values provided by this library, the extension 
 The class `de.fhg.fokus.xtensions.pair.PairExtensions` provides extension methods for the type 
 http://download.eclipse.org/modeling/tmf/xtext/javadoc/2.9/org/eclipse/xtext/xbase/lib/Pair.html[`org.eclipse.xtext.xbase.lib.Pair`].
 
-The with-operator `=>` can be used to destructure a Pair into `key` and `value` and .
+The with-operator `=>` can be used to destructure a Pair into `key` and `value` and returns the input Pair.
 
 Example:
 
@@ -256,7 +256,7 @@ Example:
 		.filter(String)
 		.collect(Collectors.joining(" "))
 
-Note: Since joining Strings is a common operation, the `StringStreamExtensions` allow to call `join`
+NOTE: Since joining Strings is a common operation, the `StringStreamExtensions` allow to call `join`
 directly on the Stream. Have a look at <<Extensions to Streams of Strings>>.
 
 Some other collectors, especially the ones bridging to the collections API are also used very often,
@@ -355,9 +355,20 @@ Example:
 			println(it)
 		]
 
-////
-TODO: Describe flatMatches mapping extension method  
-////
+
+Sometimes it is also wanted to find all matches of a regular expressions in a stream of strings and
+produce a single stream of all the matches in all strings. This can be done using the `flatMatches`
+extension method. The pattern of the regular expression can either be provided as a string or as a 
+pre-compiled `java.util.regex.Pattern` object.
+
+Example:
+
+	val Pattern pattern = Pattern.compile("(\\woo)")		
+	Stream.of("Welcome to the zoo", "Where cows do moo", "And all animals poo")
+		.flatMatches(pattern)
+		.forEach [
+			println(it)
+		]
 
 
 === Extensions to Iterable
@@ -375,12 +386,25 @@ otherwise it will construct a stream from the spliterator provided by the iterab
 
 Analogous to the `stream` method the `IterableExtensions` class also provides a `parallelStream` method.
 
-It is also possible to map an iterable to a primitive iterable (see <<From Iterables,Primitve Iterables / From Iterables>>).
+It is also possible to map an iterable to a primitive iterable 
+(see <<From Iterables,Primitve Iterables / From Iterables>>).
 
 
-////
-TODO: Describe extension method `collect`  
-////
+The JDK since Java 8 provides the class `java.util.stream.Collector` which can be used with streams
+to perform a reduction operation over all elements in a stream. The class `java.util.stream.Collectors`
+already provides constructor methods for a bunch of useful collectors. The `IterableExtensions` class
+of this library provides a `collect` extension method directly for `Iterable` to easily reduce the elements
+of the iterable.
+
+Example:
+
+	import java.util.stream.Collectors
+	import static extension de.fhg.fokus.xtensions.iteration.IterableExtensions.*
+	// ...
+	val Iterable<String> strings = #["fooooo", "baar", "baz"]
+	val summary = strings.collect(Collectors.summarizingInt[length])
+	println("Average: " + summary.average)
+	println("Max: " + summary.max)
 
 
 === Extensions to PrimitiveIterators
@@ -466,7 +490,7 @@ Example:
 	import static extension de.fhg.fokus.xtensions.iteration.PrimitiveArrayExtensions.*
 	// ...
 	val int[] arr = #[0,2,4,19,-10,10_000,Integer.MAX_VALUE,Integer.MIN_VALUE]
-	var ints = arr.asIntIterable(1, arr.length - 1)  // omit first and last element
+	var IntIterable ints = arr.asIntIterable(1, arr.length - 1)  // omit first and last element
 
 
 ==== From Computations
@@ -481,7 +505,7 @@ Example:
 
 	import static extension de.fhg.fokus.xtensions.iteration.IntIterable.*
 	// ...
-	val ints = IntIterable.generate [
+	val IntIterable ints = IntIterable.generate [
 		val rand = new Random;
 		[rand.nextInt]
 	]
@@ -494,7 +518,7 @@ Example:
 
 	import static extension de.fhg.fokus.xtensions.iteration.IntIterable.*
 	// ...
-	val ints = IntIterable.iterate(1)[it * 2]
+	val IntIterable ints = IntIterable.iterate(1)[it * 2]
 
 
 ////
@@ -505,7 +529,7 @@ Example:
 
 	import static extension de.fhg.fokus.xtensions.iteration.IntIterable.*
 	// ...
-	val ints = IntIterable.iterate(0, [it<=10], [it+2])
+	val IntIterable ints = IntIterable.iterate(0, [it<=10], [it+2])
 
 
 ==== From Xtend Ranges
@@ -517,7 +541,7 @@ Example:
 
 	import static org.eclipse.xtext.xbase.lib.IntegerRange.*
 	// ...
-	val iter = (0..50).withStep(2).asIntIterable
+	val IntIterable iter = (0..50).withStep(2).asIntIterable
 
 
 Creating iterables from `org.eclipse.xtext.xbase.lib.ExclusiveRange`s is currently not supported,
@@ -533,7 +557,7 @@ Example:
 
 	import static extension de.fhg.fokus.xtensions.optional.OptionalIntExtensions.*
 	// ...
-	val ints = some(42).asIterable
+	val IntItreable ints = some(42).asIterable
 
 
 === Extensions to String 
@@ -642,21 +666,63 @@ Interface. These are used all over the Xtend standard library and they allow a c
 `Function1<? super String,? extends String>` can be written as `(String)=>String`.
 Extensions to Xtends functional interfaces are provided in `de.fhg.fokus.xtensions.function.FunctionExtensions`.
 
-When comparing Xtend's `Function1` type (and their extensions in 
-http://download.eclipse.org/modeling/tmf/xtext/javadoc/2.9/org/eclipse/xtext/xbase/lib/FunctionExtensions.html[`org.eclipse.xtext.xbase.lib.FunctionExtensions`])
-to Java 8's `java.util.function.Function` type the method `andThen` from Java 8 is missing, so the same functionality is provided
-in this librarie's `FunctionExtensions`
+This library's `FunctionExtensions` provides another overload of the method `andThen` which allows composition of a 
+`()=>T` function with a `(T)=>U` function, resulting in a composed `()=>U` function. 
+
+Example:
+
+	val ()=>LocalDate inOneYear = [LocalDate.now.plusYears(1)]
+	val (LocalDate)=>String yearString = [it.year.toString]
+	val ()=>String nextYear = inOneYear.andThen(yearString)
+	println(nextYear.apply)
+
+
+Inspired by the `|>` operator of F# and Elixir, this library introduces the `>>>` operator,
+which can be seen as a "pipe through" operator. It takes the value of the left hand side and 
+calls the function on the right hand side with the value. This means that  
+
+	val (X)=>Y f = ...
+	val X x = ...
+	x >>> f
+	// equal to 
+	f.apply(x)
+
+This is especially handy when having to call several functions in a row, 
+so `a.apply(b.apply(x))` can be written as `x >>> b >>> a`.
+It can also be useful to transforming transform the value returned by a method call
+before assigning it to a final variable without having to define a separate method. 
+It can also be used like the `=>` operator (to have a value as a context value `it`) 
+just with a different return value.
+
+Example:
+
+	val 
+
+
+To compose functions, the shortcut operators `>>` for `andThen` and `<<` for `compose` 
+were introduced.
+
+
+When working with the Xtend extension methods on `Iterator` and `Iterable` sometimes 
+`(X)=>Boolean` types are needed, e.g. for the `exists` and `filter` combinator.
+Unfortunately the Xtend boolean functions do not have the combosition functions as the 
+Java 8 `java.util.function.Predicate` interface. This library's `FunctionExtensions`
+class does provides the equivilant methods `and`, `or`, and `negate`.
+
+	val (String)=>boolean notThere = [it.nullOrEmpty]
+	val (String)=>boolean tooShort = [it.length < 3]
+	val (String)=>boolean valid = notThere.or(tooShort).negate
+	#["ay", "caramba", "", "we", "fools"]
+		.filter(valid)
+		.forEach[
+			println(it)
+		]
 
 ////
-TODO: Describe >>> operator, also for Pair (should be inlined). Usefull when   
 
 Function Composition  
-TODO: Describe andThen, >> etc.
+TODO: Example for >> 
 
-TODO: Describe Bool functions and / or / negate
-
-Throwing Functions  
-TODO: Describe Function#filterException, Function#recoverException, etc.
 ////
 
 

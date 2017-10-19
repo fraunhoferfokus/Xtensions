@@ -36,6 +36,7 @@ import org.junit.Assert
 import static extension de.fhg.fokus.xtensions.concurrent.SchedulingUtil.*
 import java.util.concurrent.TimeUnit
 import java.time.Duration
+import java.time.LocalDate
 
 //@Ignore
 class Showcase {
@@ -78,7 +79,7 @@ class Showcase {
 		
 		// From array
 		val int[] arr = #[0,2,4,19,-10,10_000,Integer.MAX_VALUE,Integer.MIN_VALUE]
-		var ints = arr.asIntIterable(1, arr.length - 1) // omit first and last
+		var IntIterable ints = arr.asIntIterable(1, arr.length - 1) // omit first and last
 //		ints.print(5)
 		ints.printHex
 		
@@ -118,6 +119,11 @@ class Showcase {
 		// stream() from Iterable
 		val charSum = strings.stream.flatMapToInt[it.chars].sum
 		println('''Char sum: «charSum»''')
+		
+		
+		val summary = strings.collect(Collectors.summarizingInt[length])
+		println("Average: " + summary.average)
+		println("Max: " + summary.max)
 		
 	}
 	
@@ -251,6 +257,13 @@ class Showcase {
 			.forEach [
 				println(it)
 			]
+		
+		val Pattern pattern = Pattern.compile("(\\woo)")		
+		Stream.of("Welcome to the zoo", "Where cows do moo", "And all animals poo")
+			.flatMatches(pattern)
+			.forEach [
+				println(it)
+			]
 	}
 	
 	
@@ -321,6 +334,22 @@ class Showcase {
 	@Test def void functionDemo() {
 		val pair = getPair() >>> [k,v| k.toUpperCase -> v]
 		println(pair)
+		
+		val ()=>LocalDate inOneYear = [LocalDate.now.plusYears(1)]
+		val (LocalDate)=>String yearString = [it.year.toString]
+		val ()=>String nextYear = inOneYear.andThen(yearString)
+		println(nextYear.apply)
+		
+		System.getProperty("user.name") >>> []
+		
+		val (String)=>boolean notThere = [it.nullOrEmpty]
+		val (String)=>boolean tooShort = [it.length < 3]
+		val (String)=>boolean valid = notThere.or(tooShort).negate
+		#["ay", "caramba", "", "we", "fools"]
+			.filter(valid)
+			.forEach[
+				println(it)
+			]
 	}
 	
 	@Test def void durationDemo() {
