@@ -15,7 +15,6 @@ import java.util.function.IntConsumer
 import java.util.function.IntPredicate
 import java.util.function.IntSupplier
 import java.util.function.IntUnaryOperator
-import java.util.function.Supplier
 import java.util.stream.IntStream
 import de.fhg.fokus.xtensions.iteration.IterateIntIterable
 import de.fhg.fokus.xtensions.iteration.PrimitiveArrayExtensions
@@ -90,7 +89,7 @@ interface IntIterable extends Iterable<Integer> {
 	 * iterator or stream created.
 	 * @return IntIterable based on the supplier {@code s}.
 	 */
-	def static IntIterable generate(Supplier<IntSupplier> s) {
+	def static IntIterable generate(()=>IntSupplier s) {
 		new SupplierIntIterable(s)
 	}
 

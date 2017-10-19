@@ -10,7 +10,6 @@
  *******************************************************************************/
 package de.fhg.fokus.xtensions.iteration
 
-import java.util.function.Supplier
 import java.util.function.IntSupplier
 import java.util.PrimitiveIterator.OfInt
 import java.util.stream.IntStream
@@ -22,22 +21,22 @@ import java.util.function.IntConsumer
  */
 package class SupplierIntIterable implements IntIterable {
 	
-	val Supplier<IntSupplier> supplier
+	val ()=>IntSupplier supplier
 	
-	new(Supplier<IntSupplier> supplier) {
+	new(()=>IntSupplier supplier) {
 		this.supplier = supplier
 	}
 	
 	override iterator() {
-		new SupplierIntInterator(supplier.get)
+		new SupplierIntInterator(supplier.apply)
 	}
 	
 	override stream() {
-		IntStream.generate(supplier.get)
+		IntStream.generate(supplier.apply)
 	}
 	
 	override forEachInt(IntConsumer consumer) {
-		val ints = supplier.get
+		val ints = supplier.apply
 		while(true) {
 			val i = ints.getAsInt
 			consumer.accept(i)

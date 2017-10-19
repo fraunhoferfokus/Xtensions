@@ -797,6 +797,9 @@ Example:
 
 [source,xtend]
 ----
+import static extension de.fhg.fokus.xtensions.function.FunctionExtensions.*
+import java.time.LocalDate
+// ...
 val ()=>LocalDate inOneYear = [LocalDate.now.plusYears(1)]
 val (LocalDate)=>String yearString = [it.year.toString]
 val ()=>String nextYear = inOneYear.andThen(yearString)
@@ -823,10 +826,28 @@ before assigning it to a final variable without having to define a separate meth
 It can also be used like the `=>` operator (to have a value as a context value `it`) 
 just with a different return value.
 
+
 Example:
 
 [source,xtend]
 ----
+import static extension de.fhg.fokus.xtensions.function.FunctionExtensions.*
+import java.nio.file.Paths
+// ...
+val path = System.getProperty("user.home") >>> [Paths.get(it)]
+println(path.parent)
+----
+
+To compose functions, the shortcut operators `>>` for `andThen` and `<<` for `compose` 
+were introduced.
+
+Example:
+
+[source,xtend]
+----
+import static extension de.fhg.fokus.xtensions.function.FunctionExtensions.*
+import java.time.LocalDate
+// ...
 val (LocalDate)=>LocalDate oneYearLater = [LocalDate.now.plusYears(1)]
 val (LocalDate)=>String yearString = [it.year.toString]
 
@@ -834,10 +855,6 @@ val (LocalDate)=>String yearAfter = oneYearLater >> yearString
 
 LocalDate.now >>> yearAfter >>> [println(it)]
 ----
-
-
-To compose functions, the shortcut operators `>>` for `andThen` and `<<` for `compose` 
-were introduced.
 
 
 When working with the Xtend extension methods on `Iterator` and `Iterable` sometimes 
@@ -848,6 +865,8 @@ class does provides the equivilant methods `and`, `or`, and `negate`.
 
 [source,xtend]
 ----
+import static extension de.fhg.fokus.xtensions.function.FunctionExtensions.*
+// ...
 val (String)=>boolean notThere = [it.nullOrEmpty]
 val (String)=>boolean tooShort = [it.length < 3]
 val (String)=>boolean valid = notThere.or(tooShort).negate
@@ -859,10 +878,7 @@ val (String)=>boolean valid = notThere.or(tooShort).negate
 ----
 
 ////
-
-Function Composition  
 TODO: >>> operator for Pair
-
 ////
 
 
@@ -1009,7 +1025,7 @@ The following tasks are the next goals for this project, roughly in this order:
 - [ ] Add Jacoco test coverage to maven build
 - [ ] Add source bundle build to maven config
 - [ ] Move to a public GitHub repository
-- [ ] Create CI build on travis.io
+- [ ] Create CI build on travis.io + add badge to this file
 - [ ] Publish Jacoco results to coveralls.io + add badge to this file
 - [ ] Publish p2 repo on bintray
 - [ ] Figure out how to best publish to Maven Central
