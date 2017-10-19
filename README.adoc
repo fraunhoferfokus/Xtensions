@@ -18,7 +18,7 @@ for classes in the Java 8 standard library and the Xtend standard library. A few
 Note that the policy of using functional interfaces is the following:
 
 * Generally, the Xtend interfaces defined in 
-  http://download.eclipse.org/modeling/tmf/xtext/javadoc/2.9/org/eclipse/xtext/xbase/lib/Functions.html[`org.eclipse.xtext.xbase.lib.Functions`] 
+  http://static.javadoc.io/org.eclipse.xtext/org.eclipse.xtext.xbase.lib/2.12.0/org/eclipse/xtext/xbase/lib/Functions.html[`org.eclipse.xtext.xbase.lib.Functions`] 
   are preferred over the ones defined in JDK 8 package.
   http://docs.oracle.com/javase/8/docs/api/index.html?java/util/function/package-summary.html[`java.util.function`]
 * When primitive values are involved, the specialized interfaces from `java.util.function` are preferred.
@@ -211,7 +211,7 @@ for iteration over primitive int values provided by this library, the extension 
 === Extensions to Pair
 
 The class `de.fhg.fokus.xtensions.pair.PairExtensions` provides extension methods for the type 
-http://download.eclipse.org/modeling/tmf/xtext/javadoc/2.9/org/eclipse/xtext/xbase/lib/Pair.html[`org.eclipse.xtext.xbase.lib.Pair`].
+http://static.javadoc.io/org.eclipse.xtext/org.eclipse.xtext.xbase.lib/2.12.0/org/eclipse/xtext/xbase/lib/Pair.html[`org.eclipse.xtext.xbase.lib.Pair`].
 
 The with-operator `=>` can be used to destructure a Pair into `key` and `value` and returns the input Pair.
 
@@ -782,7 +782,7 @@ val Duration twoPointFiveSeconds = 2.seconds + 500.milliseconds
 === Extensions to Functions
 
 Xtend provides own functional interfaces in the 
-http://download.eclipse.org/modeling/tmf/xtext/javadoc/2.9/org/eclipse/xtext/xbase/lib/Functions.html[`org.eclipse.xtext.xbase.lib.Functions`]
+http://static.javadoc.io/org.eclipse.xtext/org.eclipse.xtext.xbase.lib/2.12.0/org/eclipse/xtext/xbase/lib/Functions.html[`org.eclipse.xtext.xbase.lib.Functions`]
 Interface. These are used all over the Xtend standard library and they allow a compact declaration syntax, e.g. the type 
 `Function1<? super String,? extends String>` can be written as `(String)=>String`.
 Extensions to Xtends functional interfaces are provided in `de.fhg.fokus.xtensions.function.FunctionExtensions`.
