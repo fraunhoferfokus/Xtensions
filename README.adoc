@@ -59,19 +59,22 @@ which are implemented to be inlined to the factory methods used by the JDK.
 
 Examples:
 
-	import static extension de.fhg.fokus.xtensions.optional.OptionalIntExtensions.*
-	// ...
-	val Optional<String> no = none
-	val Optional<String> yes = some("yesss!")
-	val Optional<String> dunno = maybe(possiblyNull())
-	// ...
-	private def String possiblyNull() {
-		if(System.currentTimeMillis % 2 == 0) {
-			"I'm in ur optional"
-		} else {
-			null
-		}
+[source,xtend]
+----
+import static extension de.fhg.fokus.xtensions.optional.OptionalIntExtensions.*
+// ...
+val Optional<String> no = none
+val Optional<String> yes = some("yesss!")
+val Optional<String> dunno = maybe(possiblyNull())
+// ...
+private def String possiblyNull() {
+	if(System.currentTimeMillis % 2 == 0) {
+		"I'm in ur optional"
+	} else {
+		null
 	}
+}
+----
 
 The optional class does not provide a `filter` method, that filters the optional based on the class
 the wrapped object is instance of, as known e.g. from Xtend's filter methods on `Iterable`. 
@@ -79,13 +82,16 @@ The `OptionalIntExtensions` adds such a method, providing an instance check of t
 
 Example:
 
-	import static extension de.fhg.fokus.xtensions.optional.OptionalIntExtensions.*
-	// ...
-	val Optional<Object> optObj = some("Hi there!")
-	val Optional<String> optStr = optObj.filter(String)
-	optStr.ifPresent [
-		println(it.toUpperCase)
-	]
+[source,xtend]
+----
+import static extension de.fhg.fokus.xtensions.optional.OptionalIntExtensions.*
+// ...
+val Optional<Object> optObj = some("Hi there!")
+val Optional<String> optStr = optObj.filter(String)
+optStr.ifPresent [
+	println(it.toUpperCase)
+]
+----
 
 To bridge between APIs providing an `Optional` value and ones that expect
 multiple values, the extension methods `asIterable`, `toList` and `toSet`
@@ -100,12 +106,15 @@ box the resulting value.
 
 Example:
 
-	import static extension de.fhg.fokus.xtensions.optional.OptionalIntExtensions.*
-	// ...
-	val Optional<String> yes = some("yesss!")
-	val OptionalInt lenOpt = yes.mapInt[length]
-	val len = lenOpt.orElse(0)
-	println("Length is " + len)
+[source,xtend]
+----
+import static extension de.fhg.fokus.xtensions.optional.OptionalIntExtensions.*
+// ...
+val Optional<String> yes = some("yesss!")
+val OptionalInt lenOpt = yes.mapInt[length]
+val len = lenOpt.orElse(0)
+println("Length is " + len)
+----
 
 
 Some methods on Optional introduced in Java 9 are available as retrofitted extension methods.
@@ -141,11 +150,15 @@ introduced.
 
 Example:
 
-	import static de.fhg.fokus.xtensions.optional.OptionalIntExtensions.*
-	// ...
-	if(someOf(42) === someOf(42)) {
-		println("someOf caches instances")
-	}
+
+[source,xtend]
+----
+import static de.fhg.fokus.xtensions.optional.OptionalIntExtensions.*
+// ...
+if(someOf(42) === someOf(42)) {
+	println("someOf caches instances")
+}
+----
 
 Stunningly, the primitive versions of Optional do not provide `map` and `filter` methods. These 
 are provided as extension methods by this library.
@@ -166,21 +179,29 @@ One way to iterate over the range is to use Java 8 streams, by using the
 
 Exmaple: 
 
-	import static extension de.fhg.fokus.xtensions.range.RangeExtensions.*
-	// ...
-	val range = (0..20).withStep(2)
-	range.stream.filter[it % 5 == 0].sum
+
+[source,xtend]
+----
+import static extension de.fhg.fokus.xtensions.range.RangeExtensions.*
+// ...
+val range = (0..20).withStep(2)
+range.stream.filter[it % 5 == 0].sum
+----
 
 Another way to iterate over the elements of a range is to use the `forEachInt` method.
 
 Example:
 
-	import static extension de.fhg.fokus.xtensions.range.RangeExtensions.*
-	// ...
-	val range = (0..20).withStep(2)
-	range.forEachInt [
-		println(it)
-	]
+
+[source,xtend]
+----
+import static extension de.fhg.fokus.xtensions.range.RangeExtensions.*
+// ...
+val range = (0..20).withStep(2)
+range.forEachInt [
+	println(it)
+]
+----
 
 To interact with consumers expecting an `IntIterable` (see <<Primitive Iterables>>), which is a generic interface 
 for iteration over primitive int values provided by this library, the extension method
@@ -196,12 +217,16 @@ The with-operator `=>` can be used to destructure a Pair into `key` and `value` 
 
 Example:
 
-	import static extension de.fhg.fokus.xtensions.pair.PairExtensions.*
-	// ...
-	val pair = "Foo" -> 3
-	pair => [k,v|
-		println(k + ' -> ' + v)
-	]
+
+[source,xtend]
+----
+import static extension de.fhg.fokus.xtensions.pair.PairExtensions.*
+// ...
+val pair = "Foo" -> 3
+pair => [k,v|
+	println(k + ' -> ' + v)
+]
+----
 
 
 The `combine` extension method takes a function to which key and value of a Pair is passed to,
@@ -211,11 +236,15 @@ is only that due to operator precedence calling further methods on the result ne
 
 Example:
 
-	import static extension de.fhg.fokus.xtensions.pair.PairExtensions.*
-	import static extension org.eclipse.xtext.xbase.lib.InputOutput.*
-	// ...
-	val pair = "Foo" -> 3
-	pair.combine[k,v| k + ' -> ' + v].println
+
+[source,xtend]
+----
+import static extension de.fhg.fokus.xtensions.pair.PairExtensions.*
+import static extension org.eclipse.xtext.xbase.lib.InputOutput.*
+// ...
+val pair = "Foo" -> 3
+pair.combine[k,v| k + ' -> ' + v].println
+----
 
 ////
 TODO: Describe safeCombine   
@@ -229,12 +258,16 @@ arrays of primitive values (int, long, double) to iterate with a forEach method 
 
 Example:
 
-	import static extension de.fhg.fokus.xtensions.iteration.PrimitiveArrayExtensions.*
-	// ...
-	val int[] arr = #[3,4,6]
-	arr.forEachInt [
-		println(it)
-	]
+
+[source,xtend]
+----
+import static extension de.fhg.fokus.xtensions.iteration.PrimitiveArrayExtensions.*
+// ...
+val int[] arr = #[3,4,6]
+arr.forEachInt [
+	println(it)
+]
+----
 
 Additionally the class allows to create primitive iterable wrapper objects (see <<Primitive Iterables>>).
 
@@ -254,11 +287,15 @@ in the `StreamExtensions` class.
 
 Example: 
 
-	import static extension de.fhg.fokus.xtensions.stream.StreamExtensions.*
-	// ...
-	val s = Stream.of(42, "Hello", Double.NaN, "World")
-		.filter(String)
-		.collect(Collectors.joining(" "))
+
+[source,xtend]
+----
+import static extension de.fhg.fokus.xtensions.stream.StreamExtensions.*
+// ...
+val s = Stream.of(42, "Hello", Double.NaN, "World")
+	.filter(String)
+	.collect(Collectors.joining(" "))
+----
 
 NOTE: Since joining Strings is a common operation, the `StringStreamExtensions` allow to call `join`
 directly on the Stream. Have a look at <<Extensions to Streams of Strings>>.
@@ -270,13 +307,16 @@ extension methods to the `Stream` class.
 
 Example:
 
-	import static extension de.fhg.fokus.xtensions.stream.StreamExtensions.*
-	// ...
-	val list = Stream.of("Foo", "Hello" , "Boo", "World")
-		.filter[!contains("oo")]
-		.map[toUpperCase]
-		.toList
 
+[source,xtend]
+----
+import static extension de.fhg.fokus.xtensions.stream.StreamExtensions.*
+// ...
+val list = Stream.of("Foo", "Hello" , "Boo", "World")
+	.filter[!contains("oo")]
+	.map[toUpperCase]
+	.toList
+----
 
 As a shortcut for the 
 http://docs.oracle.com/javase/8/docs/api/java/util/stream/Stream.html#concat-java.util.stream.Stream-java.util.stream.Stream-[concat]
@@ -287,28 +327,36 @@ Sometimes it is interesting to produce the cartesian product of two containers o
 
 Example:
 
-	import static extension de.fhg.fokus.xtensions.stream.StreamExtensions.*
-	// ...
-	Stream.of("foo", "bar")
-		.combinations(#["fun", "boo", "faz"])[a,b|a+b]
-		.forEach[
-			println(it)
-		]
+
+[source,xtend]
+----
+import static extension de.fhg.fokus.xtensions.stream.StreamExtensions.*
+// ...
+Stream.of("foo", "bar")
+	.combinations(#["fun", "boo", "faz"])[a,b|a+b]
+	.forEach[
+		println(it)
+	]
+----
 
 
 Java 9 provides a static factory methods for an infinite stream 
 http://docs.oracle.com/javase/9/docs/api/java/util/stream/Stream.html#iterate-T-java.util.function.UnaryOperator-[Stream.iterate(T,UnaryOperator<T>)]. A function with the same functionality is provided via `StreamExtensions`. 
 There is even an overloaded version of the static method that can be written as if the method would exist in the Stream class:
 
-	// This is using Java 8
-	import static extension de.fhg.fokus.xtensions.stream.StreamExtensions.*
-	// ...
-	Stream.iterate("na ")[it + it]
-		.filter[length > 15]
-		.findFirst
-		.ifPresent [
-			println(it + "Batman!")
-		]
+
+[source,xtend]
+----
+// This is using Java 8
+import static extension de.fhg.fokus.xtensions.stream.StreamExtensions.*
+// ...
+Stream.iterate("na ")[it + it]
+	.filter[length > 15]
+	.findFirst
+	.ifPresent [
+		println(it + "Batman!")
+	]
+----
 
 This method can be handy traversing a nested data structure of same-type elements (e.g. moving up a containment hierarchy).
 
@@ -324,10 +372,13 @@ To make these easy to use `join` methods have been introduced as extension metho
 
 Example:
 
-	import static extension de.fhg.fokus.xtensions.stream.StringStreamExtensions.*
-	// ...
-	val joined = Stream.of("Hello", "Xtend", "aficionados").join(" ")
-	println(joined)
+[source,xtend]
+----
+import static extension de.fhg.fokus.xtensions.stream.StringStreamExtensions.*
+// ...
+val joined = Stream.of("Hello", "Xtend", "aficionados").join(" ")
+println(joined)
+----
 
 
 Another operation often performed on streams of strings is filtering it based on a regular expression.
@@ -336,13 +387,17 @@ or as a pre-compiled
 
 Example:
 
-	import static extension de.fhg.fokus.xtensions.stream.StringStreamExtensions.*
-	// ...
-	Stream.of("foo", "bar", "kazoo", "baz", "oomph", "shoot")
-		.matching(".+oo.*")
-		.forEach [
-			println(it)
-		]
+
+[source,xtend]
+----
+import static extension de.fhg.fokus.xtensions.stream.StringStreamExtensions.*
+// ...
+Stream.of("foo", "bar", "kazoo", "baz", "oomph", "shoot")
+	.matching(".+oo.*")
+	.forEach [
+		println(it)
+	]
+----
 
 
 When splitting strings provided as a stream it is handy to get an operation providing a single
@@ -352,14 +407,16 @@ and then split the resulting lines of this operation.
 
 Example:
 
-	import static extension de.fhg.fokus.xtensions.stream.StringStreamExtensions.*
-	// ...
-	Stream.of("Hello users", "welcome to this demo", "hope it helps")
-		.flatSplit("\\s+")
-		.forEach [
-			println(it)
-		]
-
+[source,xtend]
+----
+import static extension de.fhg.fokus.xtensions.stream.StringStreamExtensions.*
+// ...
+Stream.of("Hello users", "welcome to this demo", "hope it helps")
+	.flatSplit("\\s+")
+	.forEach [
+		println(it)
+	]
+----
 
 Sometimes it is also wanted to find all matches of a regular expressions in a stream of strings and
 produce a single stream of all the matches in all strings. This can be done using the `flatMatches`
@@ -368,15 +425,19 @@ pre-compiled `java.util.regex.Pattern` object.
 
 Example:
 
-	import java.util.regex.Pattern
-	import static extension de.fhg.fokus.xtensions.stream.StringStreamExtensions.*
-	// ...
-	val Pattern pattern = Pattern.compile("(\\woo)")		
-	Stream.of("Welcome to the zoo", "Where cows do moo", "And all animals poo")
-		.flatMatches(pattern)
-		.forEach [
-			println(it)
-		]
+
+[source,xtend]
+----
+import java.util.regex.Pattern
+import static extension de.fhg.fokus.xtensions.stream.StringStreamExtensions.*
+// ...
+val Pattern pattern = Pattern.compile("(\\woo)")		
+Stream.of("Welcome to the zoo", "Where cows do moo", "And all animals poo")
+	.flatMatches(pattern)
+	.forEach [
+		println(it)
+	]
+----
 
 
 === Extensions to Iterable
@@ -406,13 +467,16 @@ of the iterable.
 
 Example:
 
-	import java.util.stream.Collectors
-	import static extension de.fhg.fokus.xtensions.iteration.IterableExtensions.*
-	// ...
-	val Iterable<String> strings = #["fooooo", "baar", "baz"]
-	val summary = strings.collect(Collectors.summarizingInt[length])
-	println("Average: " + summary.average)
-	println("Max: " + summary.max)
+[source,xtend]
+----
+import java.util.stream.Collectors
+import static extension de.fhg.fokus.xtensions.iteration.IterableExtensions.*
+// ...
+val Iterable<String> strings = #["fooooo", "baar", "baz"]
+val summary = strings.collect(Collectors.summarizingInt[length])
+println("Average: " + summary.average)
+println("Max: " + summary.max)
+----
 
 
 === Extensions to PrimitiveIterators
@@ -446,32 +510,35 @@ In the following sections we will explore the ways to create those primitive Ite
 
 Examples:
 
-	import static extension de.fhg.fokus.xtensions.iteration.IntIterable.*
-	// ...
-	
-	def printHex(IntIterable ints) {
-		ints.forEachInt [
-			val hex = Integer.toHexString(it)
-			println(hex)
-		]
+[source,xtend]
+----
+import static extension de.fhg.fokus.xtensions.iteration.IntIterable.*
+// ...
+
+def printHex(IntIterable ints) {
+	ints.forEachInt [
+		val hex = Integer.toHexString(it)
+		println(hex)
+	]
+}
+
+def printHex(IntIterable ints, int limit) {
+	val PrimitiveIterator.OfInt iter = ints.iterator
+	for(var counter = 0; iter.hasNext && counter < limit; counter++) {
+		val i = iter.nextInt
+		val hex = Integer.toHexString(i)
+		println(hex)
 	}
-	
-	def printHex(IntIterable ints, int limit) {
-		val PrimitiveIterator.OfInt iter = ints.iterator
-		for(var counter = 0; iter.hasNext && counter < limit; counter++) {
-			val i = iter.nextInt
-			val hex = Integer.toHexString(i)
-			println(hex)
-		}
-	}
-	
-	def printHexOdd(IntIterable ints) {
-		val IntStream s = ints.stream.filter[it % 2 == 1]
-		s.forEach [
-			val hex = Long.toHexString(it)
-			println(hex)
-		]
-	}
+}
+
+def printHexOdd(IntIterable ints) {
+	val IntStream s = ints.stream.filter[it % 2 == 1]
+	s.forEach [
+		val hex = Long.toHexString(it)
+		println(hex)
+	]
+}
+----
 
 
 ==== From Iterables
@@ -481,9 +548,12 @@ and `mapDouble` defined in `de.fhg.fokus.xtensions.iteration.IterableExtensions`
 
 Example:
 
-	import static extension de.fhg.fokus.xtensions.iteration.IterableExtensions.*
-	// ...
-	val lengths = newArrayList("foo", "baaaar", "bz").mapInt[length]
+[source,xtend]
+----
+import static extension de.fhg.fokus.xtensions.iteration.IterableExtensions.*
+// ...
+val lengths = newArrayList("foo", "baaaar", "bz").mapInt[length]
+----
 
 
 ==== From Arrays
@@ -495,10 +565,14 @@ an excluding end index.
 
 Example:
 
-	import static extension de.fhg.fokus.xtensions.iteration.PrimitiveArrayExtensions.*
-	// ...
-	val int[] arr = #[0,2,4,19,-10,10_000,Integer.MAX_VALUE,Integer.MIN_VALUE]
-	var IntIterable ints = arr.asIntIterable(1, arr.length - 1)  // omit first and last element
+
+[source,xtend]
+----
+import static extension de.fhg.fokus.xtensions.iteration.PrimitiveArrayExtensions.*
+// ...
+val int[] arr = #[0,2,4,19,-10,10_000,Integer.MAX_VALUE,Integer.MIN_VALUE]
+var IntIterable ints = arr.asIntIterable(1, arr.length - 1)  // omit first and last element
+----
 
 
 ==== From Computations
@@ -511,12 +585,15 @@ TODO: Describe IntIterable.generate
 
 Example:
 
-	import static extension de.fhg.fokus.xtensions.iteration.IntIterable.*
-	// ...
-	val IntIterable ints = IntIterable.generate [
-		val rand = new Random;
-		[rand.nextInt]
-	]
+[source,xtend]
+----
+import static extension de.fhg.fokus.xtensions.iteration.IntIterable.*
+// ...
+val IntIterable ints = IntIterable.generate [
+	val rand = new Random;
+	[rand.nextInt]
+]
+----
 
 ////
 TODO: Describe IntIterable.iterate(int, IntUnaryOperator)  
@@ -524,9 +601,12 @@ TODO: Describe IntIterable.iterate(int, IntUnaryOperator)
 
 Example:
 
-	import static extension de.fhg.fokus.xtensions.iteration.IntIterable.*
-	// ...
-	val IntIterable ints = IntIterable.iterate(1)[it * 2]
+[source,xtend]
+----
+import static extension de.fhg.fokus.xtensions.iteration.IntIterable.*
+// ...
+val IntIterable ints = IntIterable.iterate(1)[it * 2]
+----
 
 
 ////
@@ -535,9 +615,12 @@ TODO: Describe IntIterable.iterate(int, IntPredicate, IntUnaryOperator)
 
 Example:
 
-	import static extension de.fhg.fokus.xtensions.iteration.IntIterable.*
-	// ...
-	val IntIterable ints = IntIterable.iterate(0, [it<=10], [it+2])
+[source,xtend]
+----
+import static extension de.fhg.fokus.xtensions.iteration.IntIterable.*
+// ...
+val IntIterable ints = IntIterable.iterate(0, [it<=10], [it+2])
+----
 
 
 ==== From Xtend Ranges
@@ -547,9 +630,12 @@ class `de.fhg.fokus.xtensions.range.RangeExtensions`.
 
 Example:
 
-	import static org.eclipse.xtext.xbase.lib.IntegerRange.*
-	// ...
-	val IntIterable iter = (0..50).withStep(2).asIntIterable
+[source,xtend]
+----
+import static org.eclipse.xtext.xbase.lib.IntegerRange.*
+// ...
+val IntIterable iter = (0..50).withStep(2).asIntIterable
+----
 
 
 Creating an iterable from an `org.eclipse.xtext.xbase.lib.ExclusiveRange` is currently not supported
@@ -563,9 +649,13 @@ iteration over either one or no value, depending on the source Optional.
 
 Example:
 
-	import static extension de.fhg.fokus.xtensions.optional.OptionalIntExtensions.*
-	// ...
-	val IntItreable ints = some(42).asIterable
+
+[source,xtend]
+----
+import static extension de.fhg.fokus.xtensions.optional.OptionalIntExtensions.*
+// ...
+val IntItreable ints = some(42).asIterable
+----
 
 
 === Extensions to String 
@@ -581,32 +671,41 @@ a string when a condition is met without splitting the complete input string bef
 
 Example: 
 
-	import static extension de.fhg.fokus.xtensions.string.StringSplitExtensions.*
-	// ...
-	val Iterator<String> i = "foozoobaar".splitIt("(?<=oo)")
-	i.takeWhile[!startsWith("b")].forEach[
-		println(it)
-	]
+[source,xtend]
+----
+import static extension de.fhg.fokus.xtensions.string.StringSplitExtensions.*
+// ...
+val Iterator<String> i = "foozoobaar".splitIt("(?<=oo)")
+i.takeWhile[!startsWith("b")].forEach[
+	println(it)
+]
+----
 
 [TIP]
 ====
 If a split pattern is known in advance the following is possible with the JDK types to obtain a Stream of split elements:
 
-	import java.util.regex.Pattern
-	// ...
-	extension val pattern = Pattern.compile("mypattern")
-	// ...
-	"tosplit".splitAsStream  // actually calls pattern.splitAsStream("tosplit")
+[source,xtend]
+----
+import java.util.regex.Pattern
+// ...
+extension val pattern = Pattern.compile("mypattern")
+// ...
+"tosplit".splitAsStream  // actually calls pattern.splitAsStream("tosplit")
+----
 
 ====
 	
 If a pattern String has to be produced dynamically, the extension method `splitAsStream` is provided
 as a shortcut for the sequence of calls from above:
 
-	import static extension de.fhg.fokus.xtensions.string.StringSplitExtensions.*
-	// ...
-	val String patternStr = ... // dynamically created pattern
-	"tosplit".splitAsStream(patternStr)
+[source,xtend]
+----
+import static extension de.fhg.fokus.xtensions.string.StringSplitExtensions.*
+// ...
+val String patternStr = ... // dynamically created pattern
+"tosplit".splitAsStream(patternStr)
+----
 
 
 The class `de.fhg.fokus.xtensions.string.SptringMatchExtensions` provides extension methods to
@@ -614,28 +713,34 @@ The class `de.fhg.fokus.xtensions.string.SptringMatchExtensions` provides extens
 
 To manually get matches for a pattern from an input string with JDK classes the following sequence has to be used:
 
-	import java.util.regex.Pattern
-	// ...
-	val String input = "foo bar boo"
-	val Pattern pattern = Pattern.compile("(\\woo)")
-	val matcher = pattern.matcher(input)
-	while(matcher.find) {
-		val match = input.subSequence(matcher.start, matcher.end)
-		// Do something with match
-		println(match)
-	}
+[source,xtend]
+----
+import java.util.regex.Pattern
+// ...
+val String input = "foo bar boo"
+val Pattern pattern = Pattern.compile("(\\woo)")
+val matcher = pattern.matcher(input)
+while(matcher.find) {
+	val match = input.subSequence(matcher.start, matcher.end)
+	// Do something with match
+	println(match)
+}
+----
 
 The extension method `matchIt` elegantly wrapps this usage pattern into an Iterator, so the Xtend combinators
 can be used on them.
 
-	import static extension de.fhg.fokus.xtensions.string.StringMatchExtensions.*
-	import java.util.regex.Pattern
-	// ...
-	val String input = "foo bar boo"
-	val Pattern pattern = Pattern.compile("(\\woo)")
-	input.matchIt(pattern).forEach [
-		println(it)
-	]
+[source,xtend]
+----
+import static extension de.fhg.fokus.xtensions.string.StringMatchExtensions.*
+import java.util.regex.Pattern
+// ...
+val String input = "foo bar boo"
+val Pattern pattern = Pattern.compile("(\\woo)")
+input.matchIt(pattern).forEach [
+	println(it)
+]
+----
 
 The method `matchIt` is overloaded to also take a string of the pattern, which internally compiles 
 it to a pattern.
@@ -665,10 +770,13 @@ to the `long` type.
 
 Example:
 
-	import static extension de.fhg.fokus.xtensions.datetime.DurationExtensions.*
-	import java.time.Duration
-	// ...
-	val Duration twoPointFiveSeconds = 2.seconds + 500.milliseconds
+[source,xtend]
+----
+import static extension de.fhg.fokus.xtensions.datetime.DurationExtensions.*
+import java.time.Duration
+// ...
+val Duration twoPointFiveSeconds = 2.seconds + 500.milliseconds
+----
 
 
 === Extensions to Functions
@@ -684,21 +792,26 @@ This library's `FunctionExtensions` provides another overload of the method `and
 
 Example:
 
-	val ()=>LocalDate inOneYear = [LocalDate.now.plusYears(1)]
-	val (LocalDate)=>String yearString = [it.year.toString]
-	val ()=>String nextYear = inOneYear.andThen(yearString)
-	println(nextYear.apply)
-
+[source,xtend]
+----
+val ()=>LocalDate inOneYear = [LocalDate.now.plusYears(1)]
+val (LocalDate)=>String yearString = [it.year.toString]
+val ()=>String nextYear = inOneYear.andThen(yearString)
+println(nextYear.apply)
+----
 
 Inspired by the `|>` operator of F# and Elixir, this library introduces the `>>>` operator,
 which can be seen as a "pipe through" operator. It takes the value of the left hand side and 
 calls the function on the right hand side with the value. This means that  
 
-	val (X)=>Y f = ...
-	val X x = ...
-	x >>> f
-	// equal to 
-	f.apply(x)
+[source,xtend]
+----
+val (X)=>Y f = ...
+val X x = ...
+x >>> f
+// equal to 
+f.apply(x)
+----
 
 This is especially handy when having to call several functions in a row, 
 so `a.apply(b.apply(x))` can be written as `x >>> b >>> a`.
@@ -722,14 +835,17 @@ Unfortunately the Xtend boolean functions do not have the combosition functions 
 Java 8 `java.util.function.Predicate` interface. This library's `FunctionExtensions`
 class does provides the equivilant methods `and`, `or`, and `negate`.
 
-	val (String)=>boolean notThere = [it.nullOrEmpty]
-	val (String)=>boolean tooShort = [it.length < 3]
-	val (String)=>boolean valid = notThere.or(tooShort).negate
-	#["ay", "caramba", "", "we", "fools"]
-		.filter(valid)
-		.forEach[
-			println(it)
-		]
+[source,xtend]
+----
+val (String)=>boolean notThere = [it.nullOrEmpty]
+val (String)=>boolean tooShort = [it.length < 3]
+val (String)=>boolean valid = notThere.or(tooShort).negate
+#["ay", "caramba", "", "we", "fools"]
+	.filter(valid)
+	.forEach[
+		println(it)
+	]
+----
 
 ////
 
@@ -779,25 +895,31 @@ versions of the `repeatEvery` method.
 
 Example:
 
-	import static extension de.fhg.fokus.xtensions.concurrent.SchedulingUtil.*
-	import static extension de.fhg.fokus.xtensions.datetime.DurationExtensions.*
-	// ...
-	val hundredMs = 100.milliseconds
-	repeatEvery(hundredMs) [
-		println(currentTimeMillis)
-	]
+[source,xtend]
+----
+import static extension de.fhg.fokus.xtensions.concurrent.SchedulingUtil.*
+import static extension de.fhg.fokus.xtensions.datetime.DurationExtensions.*
+// ...
+val hundredMs = 100.milliseconds
+repeatEvery(hundredMs) [
+	println(currentTimeMillis)
+]
+----
 
 To repeat an action with a given period, starting with a delay instead of immediately, an overloaded
 version of the `repeatEvery` method can be used:
 
 Example:
 
-	import static extension de.fhg.fokus.xtensions.concurrent.SchedulingUtil.*
-	import java.util.concurrent.TimeUnit
-	// ...
-	repeatEvery(100, TimeUnit.MILLISECONDS).withInitialDelay(200) [
-		println("Delayed start, repeated every 100 milis period")
-	]
+[source,xtend]
+----
+import static extension de.fhg.fokus.xtensions.concurrent.SchedulingUtil.*
+import java.util.concurrent.TimeUnit
+// ...
+repeatEvery(100, TimeUnit.MILLISECONDS).withInitialDelay(200) [
+	println("Delayed start, repeated every 100 milis period")
+]
+----
 
 Note that the action will stop being repeatedly called if the action throws an exception or the future
 returned by the `repeatEvery` method will be completed (e.g. by canceling it). This can either either 
@@ -806,19 +928,22 @@ Since the future is both passed to the action and returned, this also allows the
 cancellation from the outside and aborting the action early.
 
 
-	import static extension de.fhg.fokus.xtensions.concurrent.SchedulingUtil.*
-	import static extension de.fhg.fokus.xtensions.datetime.DurationExtensions.*
-	// ...
-	val hundredMs = 100.milliseconds
-	val fut = repeatEvery(hundredMs) [
-		for(i : 0..Integer.MAX_VALUE) {
-			if(cancelled) {
-				println("I've been cancelled at iteration " + i)
-				return
-			}
+[source,xtend]
+----
+import static extension de.fhg.fokus.xtensions.concurrent.SchedulingUtil.*
+import static extension de.fhg.fokus.xtensions.datetime.DurationExtensions.*
+// ...
+val hundredMs = 100.milliseconds
+val fut = repeatEvery(hundredMs) [
+	for(i : 0..Integer.MAX_VALUE) {
+		if(cancelled) {
+			println("I've been cancelled at iteration " + i)
+			return
 		}
-	]
-	fut.cancel(false)
+	}
+]
+fut.cancel(false)
+----
 
 
 The method `delay` will defer the one-time execution of a given action by the given duration.
