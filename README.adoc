@@ -544,8 +544,8 @@ Example:
 	val IntIterable iter = (0..50).withStep(2).asIntIterable
 
 
-Creating iterables from `org.eclipse.xtext.xbase.lib.ExclusiveRange`s is currently not supported,
-due to the API limitations on that class. 
+Creating an iterable from an `org.eclipse.xtext.xbase.lib.ExclusiveRange` is currently not supported
+due to the public API limitations on that class. 
 
 
 ==== From Primitive Optionals
@@ -580,12 +580,16 @@ Example:
 		println(it)
 	]
 
-
+[TIP]
+....
 If a split pattern is known in advance the following is possible with the JDK types to obtain a Stream of split elements:
 
-	static extension val pattern = Pattern.compile("mypattern")
+	import java.util.regex.Pattern
+	// ...
+	extension val pattern = Pattern.compile("mypattern")
 	// ...
 	"tosplit".splitAsStream  // actually calls pattern.splitAsStream("tosplit")
+....
 	
 If a pattern String has to be produced dynamically, the extension method `splitAsStream` is provided
 as a shortcut for the sequence of calls from above:
