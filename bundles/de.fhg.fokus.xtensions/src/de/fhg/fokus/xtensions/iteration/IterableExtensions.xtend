@@ -39,7 +39,6 @@ final class IterableExtensions {
 // static def <T,Y> Pair<Set<Y>,Set<T>> partitionBy(Iterable<T>,  Class<Y>)
 // static def <T,Y,AT,AY,DT,DY> Pair<DY,DT> partitionBy(Iterable<T>, Class<Y>, Collector<? super T, AT, DT>, Collector<? super Y, AY, DY>)
 // static def <T,A,D> void partitionInto(Iterable<T>, Predicate<T>, Collection<T> onTrue, Collection<T> onFalse)
-// static def <T,R> Iterable<R> flatMap(Iterable<T>, (T)=>Iterable<R> flatMapper) // see incubation IteratorExtensions
 // static def <T> Iterable<T> without(Iterable<T>, Collection<T> other) // Note most performant using Set as other
 	
 	private new() {

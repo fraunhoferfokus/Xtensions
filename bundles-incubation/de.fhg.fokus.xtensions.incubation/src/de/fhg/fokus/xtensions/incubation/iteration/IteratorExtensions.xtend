@@ -100,29 +100,6 @@ class IteratorExtensions {
 			
 		}
 	}
-	
-	// TODO create same for Iterable: def <T,U> Iterable<U> flatMap(Iterable<T> iterable, (T)=>Iterable<U> mapper)
-	public static def <T,U> Iterator<U> flatMap(Iterator<T> iterator, (T)=>Iterator<U> mapper) {
-		new AbstractIterator<U>() {
-			var Iterator<U> currentMappedIterator = null
-			
-			override protected computeNext() {
-				var Iterator<U> currIt = currentMappedIterator
-				// if no current iterator, or iterator is empty, get next one
-				if(currIt === null || !currIt.hasNext) {
-					currIt = currentMappedIterator = iterator.nextIterator(mapper)
-				}
-				// if we have a current iterator, return next element
-				// otherwise the iterator finished
-				if(currIt !== null) {
-					currIt.next
-				} else {
-					endOfData
-				}
-			}
-			
-		}
-	}
 
 	private static def <T,U> Iterator<U> nextIterator(Iterator<T> iterator, (T)=>Iterator<U> mapper) {
 		while(iterator.hasNext) {

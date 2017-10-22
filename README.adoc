@@ -246,10 +246,6 @@ val pair = "Foo" -> 3
 pair.combine[k,v| k + ' -> ' + v].println
 ----
 
-////
-TODO: Describe safeCombine   
-////
-
 
 === Extensions to Primitive Arrays
 
@@ -278,7 +274,7 @@ static `stream` methods that can be used as extension methods to create Java 8 s
 === Extensions to Streams
 
 The class `de.fhg.fokus.xtensions.stream.StreamExtensions` provides extension
-methods to the `java.util.stream.Stream` inteface.
+methods to the `java.util.stream.Stream` interface.
 
 Java 8 streams are missing a few methods known from the Xtend iterable extension methods.
 The one method that is probably most often used is the method to filter by type. This can easily
@@ -318,15 +314,52 @@ val list = Stream.of("Foo", "Hello" , "Boo", "World")
 	.toList
 ----
 
+A useful extension method from Xtend on `java.lang.Iterable` is the `filterNull` method, which
+produces a view for an iterable excluding the `null` elements. An equivalent is not provided on the 
+`Stream` interface. This library provides such an extension method on stream.
+
+Example:
+
+[source,xtend]
+----
+import static extension de.fhg.fokus.xtensions.stream.StreamExtensions.*
+// ...
+Stream.of(42.0, null, "foo", 100_000_000_000bi)
+	.filterNull
+	.forEach [
+		// it is guaranteed to be != null 
+		println(it.toString.toUpperCase)
+	]
+----
+
+
 As a shortcut for the 
 http://docs.oracle.com/javase/8/docs/api/java/util/stream/Stream.html#concat-java.util.stream.Stream-java.util.stream.Stream-[concat]
 method the `StreamExtensions` class provides a `+` operator.
 
 
-Sometimes it is interesting to produce the cartesian product of two containers of elements. To produce all combinations of the elements of a stream with the elements of an `Iterable` (or a different source of a stream) this library provides the `combinations` extension methods. If no merging function is provided, the `combinations` extension methods will create a `org.eclipse.xtext.xbase.lib.Pair` object for each combination. If a merging function is provided, the resulting stream will hold the result of the merge of each combination.
+The `flatMap` method on `Stream` expects a function mapping to another stream. Oftentimes data structures
+do not provide streams, but `Collection` or `Iterable` types, so the user has to create a stream based on
+them. This usually leads to some visual noise. This library provides a `flatMap` extension method which allows to 
+be called with a function providing an iterable, since it is known how to construct a stream from an iterable.
 
 Example:
 
+[source,xtend]
+----
+import static extension de.fhg.fokus.xtensions.stream.StreamExtensions.*
+// ...
+
+----
+
+Sometimes it is interesting to produce the cartesian product of two containers of elements. To produce 
+all combinations of the elements of a stream with the elements of an `Iterable` (or a different source 
+of a stream) this library provides the `combinations` extension methods. If no merging function is 
+provided, the `combinations` extension methods will create a `org.eclipse.xtext.xbase.lib.Pair` 
+object for each combination. If a merging function is provided, the resulting stream will hold the result 
+of the merge of each combination.
+
+Example:
 
 [source,xtend]
 ----
@@ -383,7 +416,7 @@ println(joined)
 
 Another operation often performed on streams of strings is filtering it based on a regular expression.
 This is provided via the extension method `matching`. The pattern can either be passed in as string
-or as a pre-compiled 
+or as a pre-compiled `java.util.regex.Pattern`
 
 Example:
 
@@ -469,13 +502,13 @@ Example:
 
 [source,xtend]
 ----
-import java.util.stream.Collectors
+import static java.util.stream.Collectors.*
 import static extension de.fhg.fokus.xtensions.iteration.IterableExtensions.*
 // ...
 val Iterable<String> strings = #["fooooo", "baar", "baz"]
-val summary = strings.collect(Collectors.summarizingInt[length])
-println("Average: " + summary.average)
-println("Max: " + summary.max)
+val summary = strings.collect(summarizingInt[length])
+println("Average length: " + summary.average)
+println("Max length: " + summary.max)
 ----
 
 
@@ -581,9 +614,10 @@ var IntIterable ints = arr.asIntIterable(1, arr.length - 1)  // omit first and l
 
 Currently only available on IntIterable
 
-////
-TODO: Describe IntIterable.generate  
-////
+To create an IntIterable representing an infinite number of int values the static `generate`
+factory method can be used. This method has to provided with a function which itself provides
+an `IntSupplier`. The function will be called each time a `PrimitiveIterator.OfInt`
+is needed or an `IntStream` is created from the `IntIterable`.
 
 Example:
 
@@ -598,9 +632,11 @@ val IntIterable ints = IntIterable.generate [
 ]
 ----
 
-////
-TODO: Describe IntIterable.iterate(int, IntUnaryOperator)  
-////
+
+For IntIterables of infinite int values that can be simply computed from a 
+seed value and a mapping function from the previous to the next value, the 
+`iterate` factory method can be used. The seed value provided will be returned
+as the first element of the iterable.
 
 Example:
 
@@ -611,10 +647,12 @@ import static extension de.fhg.fokus.xtensions.iteration.IntIterable.*
 val IntIterable ints = IntIterable.iterate(1)[it * 2]
 ----
 
-
-////
-TODO: Describe IntIterable.iterate(int, IntPredicate, IntUnaryOperator)  
-////
+If a finite IntIterable is needed that can be constructed similar to the classical 
+for-loop, the `iterate` method with three parameters can be used. The first argument
+defines the first (seed) value , the second argument defines the termination condition.
+While this condition holds a next value is provided. If the condition does not hold 
+for the initial value, an empty IntIterable is created.
+The third argument defines the function calculating the next value from the previous one.
 
 Example:
 
@@ -623,6 +661,7 @@ Example:
 import static extension de.fhg.fokus.xtensions.iteration.IntIterable.*
 // ...
 val IntIterable ints = IntIterable.iterate(0, [it<=10], [it+2])
+// will provide values 0, 2, 4, 6, 8, and 10
 ----
 
 
@@ -730,7 +769,7 @@ while(matcher.find) {
 }
 ----
 
-The extension method `matchIt` elegantly wrapps this usage pattern into an Iterator, so the Xtend combinators
+The extension method `matchIt` elegantly wraps this usage pattern into an Iterator, so the Xtend combinators
 can be used on them.
 
 [source,xtend]
@@ -838,6 +877,31 @@ val path = System.getProperty("user.home") >>> [Paths.get(it)]
 println(path.parent)
 ----
 
+The `>>>` operator is overloaded to also destructure a `Pair` value into `key` and `value` on call.
+This means that the left hand side of the operator must be evaluated to a value of type Pair and the 
+right hand side of the operator must be a function with two parameters of the types of key and value of 
+the Pair `(K,V)=>Y`.
+
+Example:
+
+[source,xtend]
+----
+import static extension de.fhg.fokus.xtensions.function.FunctionExtensions.*
+// ...
+val list = #["foo", "bar", "foo", "baz", "foo", "bar"]
+list.splitHead 
+	>>> [head,tail| head -> tail.toSet.size]
+	>>> [head,remaining| '''Head: "«head»", remaining: «remaining» unique elements''']
+	>>> [println(it)]
+
+// ...
+
+def <T> Pair<T,Iterable<T>> splitHead(Iterable<T> elements) {
+	elements.head -> elements.tail
+}
+----
+
+
 To compose functions, the shortcut operators `>>` for `andThen` and `<<` for `compose` 
 were introduced.
 
@@ -877,19 +941,60 @@ val (String)=>boolean valid = notThere.or(tooShort).negate
 	]
 ----
 
-////
-TODO: >>> operator for Pair
-////
-
 
 === Extensions to CompletableFuture
 
+Some might complain that the `java.util.concurrent.CompletionStage`/`java.util.concurrent.CompletableFuture`
+API surface is too large and difficult to wrap your head around. But actually many methods are similar and certain
+use cases are verbose to express with the given methods. Therefore we provide a couple of extension methods to
+make certain actions more convenient on `CompletableFuture`. These extension methods are provided via the class
+`de.fhg.fokus.xtensions.concurrent.CompletableFutureExtensions`.
+
+
+The first thing one usually notices is that there are three methods that to handle the success case case 
+on `CompletableFuture`: `thenApply`, `thenAccept`, and `thenRun`. These methods are only named 
+differently, because the Java compiler cannot figure out which functional interface a lambda is conforming
+to if a method is overloaded with two or more versions with different functional interface parameters.
+Interestingly Xtend does not have this restrictions and can figure out pretty well which overloaded version
+of a method is called, based on inspection of the lambda passed to the method. +
+Therefore the `CompletableFutureExtensions` class provides `then` methods simply redirecting to the
+JDK methods. 
+
+Example:
+
+[source,xtend]
+----
+val pool = Executors.newSingleThreadExecutor
+val fut = CompletableFuture.supplyAsync([
+	new Random().nextInt(1000)
+],pool).then [ // thenApply, since has input and output value
+	it / 10.0
+].then [ // thenAccept, since has input, but expression does not return value
+	System.out.println('''Random percent: «it»''')
+].then [| // thenRun, since lambda does not take input
+	System.out.println("The end.")
+]
+----
+
+NOTE: You may have noticed that the syntax for spawning a supplier via CompletableFuture#supplyAsync on a 
+custom executor does not look elegant, since the pool parameter is the last one. So the lambda cannot be 
+written behind the parenthesis. Have a look at the section <<Async Computations>> for a more Xtend style API.
+
+INFO: Currently there there are no `thenAsync` versions of the `then` methods implemented, but they are 
+planned to be provided in the future.
+
+
+The extension methods starting with `when` register a callback on a `CompletableFuture` which is invoked
+when it is completed an in a certain state, depending on the method. The returned future will always be completed
+with the original value (successfully or exceptionally), except if the callback throws an exception. In this case
+the returned future will be completed exceptionally with the exception thrown by the callback.
+
 ////
-TODO: Describe then-Methods  
+
 TODO: Describe whenCancelled/whenCancelledAsync extension method  
 TODO: Describe whenException/whenExceptionAsync extension method  
 TODO: Describe whenException/whenExceptionAsync extension method  
-TODO: Describe recoverWith/recoverWithAsnyc extension method  
+TODO: Describe recoverWith/recoverWithAsnyc extension method  (like thenCompose method for error case, could be named exceptionallyCompose)
 TODO: Describe handleCancellation/handleCancellationAsync extension method  
 TODO: Describe forwardTo extension method  
 TODO: Describe forwardCancellation extension method  
@@ -905,6 +1010,7 @@ TODO: Describe Java 9 forward compatibility
 === Async Computations
 
 ////
+Problems with CompletableFuture supplyAsync: Executor wrong arg, cancellation info
 TODO: Describe asyncRun methods  
 TODO: Describe asyncSupply methods  
 ////

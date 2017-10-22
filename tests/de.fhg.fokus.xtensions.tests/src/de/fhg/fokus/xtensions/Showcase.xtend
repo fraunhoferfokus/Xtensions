@@ -27,9 +27,11 @@ import static extension de.fhg.fokus.xtensions.stream.StreamExtensions.*
 import static extension de.fhg.fokus.xtensions.stream.StringStreamExtensions.*
 import static extension de.fhg.fokus.xtensions.string.StringSplitExtensions.*
 import static extension de.fhg.fokus.xtensions.pair.PairExtensions.*
-import static extension java.util.Arrays.*
+import static extension java.util.Arrays.stream
 import static extension org.eclipse.xtext.xbase.lib.InputOutput.*
 import static extension de.fhg.fokus.xtensions.datetime.DurationExtensions.*
+import static extension de.fhg.fokus.xtensions.concurrent.CompletableFutureExtensions.*
+
 import org.junit.Ignore
 import java.util.Random
 import java.util.stream.IntStream
@@ -48,6 +50,24 @@ import java.util.concurrent.TimeUnit
 import java.time.Duration
 import java.time.LocalDate
 import java.nio.file.Paths
+import java.util.List
+import java.util.Map
+import org.eclipse.xtend.lib.annotations.Accessors
+import java.util.ArrayList
+import org.eclipse.xtend.lib.annotations.FinalFieldsConstructor
+import java.util.concurrent.CompletableFuture
+import java.net.URL
+import java.net.URLConnection
+import java.io.BufferedReader
+import java.io.InputStreamReader
+import java.nio.charset.StandardCharsets
+import java.util.Scanner
+import java.net.URLEncoder
+import javax.xml.stream.XMLInputFactory
+import javax.xml.stream.XMLStreamReader
+import javax.xml.stream.XMLStreamConstants
+import java.util.NoSuchElementException
+import java.util.concurrent.Executors
 
 //@Ignore
 class Showcase {
@@ -132,9 +152,9 @@ class Showcase {
 		println('''Char sum: «charSum»''')
 		
 		
-		val summary = strings.collect(Collectors.summarizingInt[length])
-		println("Average: " + summary.average)
-		println("Max: " + summary.max)
+		val summary = strings.collect(summarizingInt[length])
+		println("Average length: " + summary.average)
+		println("Max length: " + summary.max)
 		
 	}
 	
@@ -251,6 +271,58 @@ class Showcase {
 			.forEach[
 				println(it)
 			]
+			
+		Stream.of(42.0, null, "foo", 100_000_000_000bi)
+			.filterNull
+			.forEach [
+				// it is guaranteed to be != null 
+				println(it.toString.toUpperCase)
+			]
+			
+		
+		Stream.of("boo", "ya", "zoo", "ha")
+			.flatMap[it.toCharArray.stream]
+		
+		// Combined example
+		
+		val max = new Person("Max","Bureck") => [
+			vehicles += new Car("Imaginary Cars")
+		]
+		val persons = #[max,null]
+		persons.stream
+			.filter[it !== null]
+			.flatMap[vehicles.stream]
+			.filter[it instanceof Car]
+			.map[it as Car]
+			.collect(toList)
+		// same as compact
+		persons.stream
+			.filterNull
+			.flatMap[vehicles]
+			.filter(Car)
+			.toList
+	}
+	
+	@Accessors
+	static class Person {
+		val String firstName
+		val String lastName
+		val List<Vehicle> vehicles = new ArrayList 
+	}
+	
+	abstract static class Vehicle {
+	}
+	
+	@Accessors
+	@FinalFieldsConstructor
+	static class Car extends Vehicle {
+		val String make
+	}
+	
+	@Accessors
+	@FinalFieldsConstructor
+	static class Bicycle extends Vehicle {
+		val String manufacturer
 	}
 	
 	@Test def void stringStreamDemo() {
@@ -368,10 +440,36 @@ class Showcase {
 			.forEach[
 				println(it)
 			]
+			
+		val list = #["foo", "bar", "foo", "baz", "foo", "bar"]
+		list.splitHead 
+			>>> [head,tail| head -> tail.toSet.size]
+			>>> [head,tailSize| '''Head: "«head»", remaining: «tailSize» unique elements''']
+			>>> [println(it)]
+	}
+	
+	def <T> Pair<T,Iterable<T>> splitHead(Iterable<T> elements) {
+		elements.head -> elements.tail
 	}
 	
 	@Test def void durationDemo() {
 		val Duration twoPointFiveSeconds = 2.seconds + 500.milliseconds
+	}
+	
+	@Test def void futureDemo() {
+		val pool = Executors.newSingleThreadExecutor
+		val fut = CompletableFuture.supplyAsync([
+			new Random().nextInt(1000)
+		],pool).then [ // thenApply, since has input and output value
+			it / 10.0
+		].then [ // thenAccept, since has input, but expression does not return value
+			System.out.println('''Random percent: «it»''')
+		].then [| // thenRun, since lambda does not take input
+			System.out.println("The end.")
+		]
+		
+		fut.join
+		pool.shutdown()
 	}
 	
 	private def Pair<String,Integer> getPair() {

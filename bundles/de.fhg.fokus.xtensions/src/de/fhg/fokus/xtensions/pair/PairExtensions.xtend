@@ -17,6 +17,9 @@ import static extension de.fhg.fokus.xtensions.optional.OptionalExtensions.*
  * Provides static extension methods for the {@code Pair} class.
  */
 final class PairExtensions {
+	
+	// TODO static def <K,K2,V> Pair<K2,V> mapKey(Pair<K,V> pair, (K)=>K2 keyMapper)
+	// TODO static def <K,V,V2> Pair<K,V2> mapValue(Pair<K,V> pair, (V)=>V2 valueMapper)
 
 	private new() {
 		throw new IllegalStateException

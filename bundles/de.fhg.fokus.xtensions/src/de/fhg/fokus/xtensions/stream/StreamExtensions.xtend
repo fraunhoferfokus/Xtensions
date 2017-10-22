@@ -64,7 +64,7 @@ final class StreamExtensions {
 	 * @throws NullPointerException if {@code stream} or {@code flatMapper} is {@code null}, or if 
 	 *   {@code flatMapper} returns a {@code null} object.
 	 */
-	static def <T> Stream<T> flatMap(Stream<T> stream, (T)=>Iterable<? extends T> flatMapper) {
+	static def <T,U> Stream<U> flatMap(Stream<T> stream, (T)=>Iterable<? extends U> flatMapper) {
 		Objects.requireNonNull(flatMapper)
 		stream.flatMap[flatMapper.apply(it).stream]
 	}
@@ -165,6 +165,7 @@ final class StreamExtensions {
 	 */
 	static def <T> Stream<T> filterNull(Stream<T> stream) {
 		Objects.requireNonNull(stream)
+		// When method references supported use Objects#nonNull
 		stream.filter[it !== null]
 	}
 
