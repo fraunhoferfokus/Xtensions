@@ -978,22 +978,30 @@ val fut = CompletableFuture.supplyAsync([
 
 NOTE: You may have noticed that the syntax for spawning a supplier via CompletableFuture#supplyAsync on a 
 custom executor does not look elegant, since the pool parameter is the last one. So the lambda cannot be 
-written behind the parenthesis. Have a look at the section <<Async Computations>> for a more Xtend style API.
+written behind the closing parenthesis of the parameter list. Have a look at the section <<Async Computations>> 
+for a more Xtend style API.
 
-INFO: Currently there there are no `thenAsync` versions of the `then` methods implemented, but they are 
+NOTE: Currently there there are no `thenAsync` versions of the `then` methods implemented, but they are 
 planned to be provided in the future.
 
 
 The extension methods starting with `when` register a callback on a `CompletableFuture` which is invoked
 when it is completed an in a certain state, depending on the method. The returned future will always be completed
 with the original value (successfully or exceptionally), except if the callback throws an exception. In this case
-the returned future will be completed exceptionally with the exception thrown by the callback.
+the returned future will be completed exceptionally with the exception thrown by the callback. If the callback
+is registered before completion of the future, the callback is invoked on the thread completing the future. If
+the callback is registered after completion of the future, the callback is invoked on the thread registering 
+the callback. The async version of the `when` methods are always completed on the executor passed to the
+method, or on the common `ForkJoinPool` for the async version which does not take an executor as argument.
 
+The extension method `whenCancelled` allows registering a callback on a `CompletableFuture`. The callback is 
+invoked when the future was completed via cancellation.
+
+The method `whenException` registers a callback which is invoked when the future is completed exceptionally.
+
+The extension method ``
 ////
 
-TODO: Describe whenCancelled/whenCancelledAsync extension method  
-TODO: Describe whenException/whenExceptionAsync extension method  
-TODO: Describe whenException/whenExceptionAsync extension method  
 TODO: Describe recoverWith/recoverWithAsnyc extension method  (like thenCompose method for error case, could be named exceptionallyCompose)
 TODO: Describe handleCancellation/handleCancellationAsync extension method  
 TODO: Describe forwardTo extension method  
