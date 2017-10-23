@@ -531,9 +531,10 @@ import java.util.OptionalDouble
 //...
 
 private def OptionalDouble averageSize(Iterable<String> strings) {
-	strings.stream.mapToInt[length].average
+	strings.stream.mapToInt[length].average // <1>
 }
 ----
+<1> In this like the extension method `stream` is called on the iterable `strings`.
 
 Analogous to the `stream` method the `IterableExtensions` class also provides a `parallelStream` method.
 
