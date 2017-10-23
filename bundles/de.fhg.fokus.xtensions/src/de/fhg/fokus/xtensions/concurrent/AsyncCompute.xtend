@@ -216,9 +216,10 @@ final class AsyncCompute {
 		val CompletableFuture<Object> fut = new CompletableFuture
 		executor.execute [|
 			try {
-				if (fut.cancelled) {
-					return
-				}
+// TODO introduce flag for this behavior
+//				if (fut.cancelled) {
+//					return
+//				}
 				runAsync.apply(fut);
 				fut.complete(null);
 			} catch (Throwable t) {
