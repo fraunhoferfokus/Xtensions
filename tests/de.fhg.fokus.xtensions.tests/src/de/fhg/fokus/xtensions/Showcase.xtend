@@ -11,63 +11,48 @@
 package de.fhg.fokus.xtensions
 
 import de.fhg.fokus.xtensions.iteration.IntIterable
+import java.nio.file.Paths
+import java.time.Duration
+import java.time.LocalDate
+import java.util.ArrayList
+import java.util.Iterator
+import java.util.List
+import java.util.Optional
+import java.util.OptionalInt
+import java.util.PrimitiveIterator
+import java.util.Random
+import java.util.concurrent.CompletableFuture
+import java.util.concurrent.Executors
+import java.util.concurrent.TimeUnit
+import java.util.concurrent.atomic.AtomicBoolean
+import java.util.regex.Pattern
+import java.util.stream.Collectors
+import java.util.stream.IntStream
 import java.util.stream.Stream
+import org.eclipse.xtend.lib.annotations.Accessors
+import org.eclipse.xtend.lib.annotations.FinalFieldsConstructor
+import org.junit.Assert
 import org.junit.Test
 
+import static de.fhg.fokus.xtensions.concurrent.SchedulingUtil.*
+import static java.util.concurrent.CompletableFuture.*
 import static java.util.stream.Collectors.*
 
-import static extension de.fhg.fokus.xtensions.iteration.PrimitiveArrayExtensions.*
+import static extension de.fhg.fokus.xtensions.concurrent.AsyncCompute.*
+import static extension de.fhg.fokus.xtensions.concurrent.CompletableFutureExtensions.*
+import static extension de.fhg.fokus.xtensions.datetime.DurationExtensions.*
 import static extension de.fhg.fokus.xtensions.function.FunctionExtensions.*
-import static extension de.fhg.fokus.xtensions.string.StringMatchExtensions.*
 import static extension de.fhg.fokus.xtensions.iteration.IterableExtensions.*
+import static extension de.fhg.fokus.xtensions.iteration.PrimitiveArrayExtensions.*
 import static extension de.fhg.fokus.xtensions.optional.OptionalExtensions.*
 import static extension de.fhg.fokus.xtensions.optional.OptionalIntExtensions.*
+import static extension de.fhg.fokus.xtensions.pair.PairExtensions.*
 import static extension de.fhg.fokus.xtensions.range.RangeExtensions.*
 import static extension de.fhg.fokus.xtensions.stream.StreamExtensions.*
 import static extension de.fhg.fokus.xtensions.stream.StringStreamExtensions.*
+import static extension de.fhg.fokus.xtensions.string.StringMatchExtensions.*
 import static extension de.fhg.fokus.xtensions.string.StringSplitExtensions.*
-import static extension de.fhg.fokus.xtensions.pair.PairExtensions.*
 import static extension java.util.Arrays.stream
-import static extension org.eclipse.xtext.xbase.lib.InputOutput.*
-import static extension de.fhg.fokus.xtensions.datetime.DurationExtensions.*
-import static extension de.fhg.fokus.xtensions.concurrent.CompletableFutureExtensions.*
-
-import org.junit.Ignore
-import java.util.Random
-import java.util.stream.IntStream
-import java.util.PrimitiveIterator
-import java.util.stream.Collectors
-import java.util.Optional
-import java.util.regex.Pattern
-import java.util.Iterator
-import java.util.OptionalInt
-
-import static extension de.fhg.fokus.xtensions.datetime.DurationExtensions.*
-import org.junit.Assert
-
-import static extension de.fhg.fokus.xtensions.concurrent.SchedulingUtil.*
-import java.util.concurrent.TimeUnit
-import java.time.Duration
-import java.time.LocalDate
-import java.nio.file.Paths
-import java.util.List
-import java.util.Map
-import org.eclipse.xtend.lib.annotations.Accessors
-import java.util.ArrayList
-import org.eclipse.xtend.lib.annotations.FinalFieldsConstructor
-import java.util.concurrent.CompletableFuture
-import java.net.URL
-import java.net.URLConnection
-import java.io.BufferedReader
-import java.io.InputStreamReader
-import java.nio.charset.StandardCharsets
-import java.util.Scanner
-import java.net.URLEncoder
-import javax.xml.stream.XMLInputFactory
-import javax.xml.stream.XMLStreamReader
-import javax.xml.stream.XMLStreamConstants
-import java.util.NoSuchElementException
-import java.util.concurrent.Executors
 
 //@Ignore
 class Showcase {
@@ -387,8 +372,8 @@ class Showcase {
 			println(k + ' -> ' + v)
 		]
 		
-		pair.combine[k,v| k + ' -> ' + v].println
-		
+		val s = pair.combine[k,v| k + ' -> ' + v].toLowerCase
+		println(s)
 	}
 	
 	@Test def void schdulingDemo() {
@@ -412,6 +397,37 @@ class Showcase {
 		delay(500.milliseconds) [
 			fut2.cancel(false)
 		]
+	}
+	
+	@Test def void asyncDemo() {
+		
+		// Java 8
+		val ex = Executors.newCachedThreadPool
+		val isCancelled = new AtomicBoolean(false)
+		runAsync([
+			if(isCancelled.get) {
+				println("Oh no, I've been cancelled")
+			} else {
+				println("I'm fine")				
+			}
+		], ex)
+		isCancelled.set(true)
+		
+		// using AsyncCompute
+		val pool = Executors.newCachedThreadPool
+		val fut = pool.asyncRun [
+			if(cancelled) {
+				println("Oh no, I've been cancelled")
+			} else {
+				println("I'm fine")				
+			}
+		]
+		fut.cancel(false)
+		
+		ex.shutdown()
+		ex.awaitTermination(500, TimeUnit.MILLISECONDS)
+		pool.shutdown()
+		pool.awaitTermination(500, TimeUnit.MILLISECONDS)
 	}
 	
 	@Test def void functionDemo() {
@@ -470,6 +486,19 @@ class Showcase {
 		
 		fut.join
 		pool.shutdown()
+		
+		val toCancel = new CompletableFuture
+		toCancel.whenCancelled [|
+			println("I've been canceled")
+		]
+		toCancel.cancel
+		
+		CompletableFuture.supplyAsync [
+			throw new IllegalStateException
+		].whenException [
+			println('''failed with «it.class» and cause «it.cause.class»''')
+		]
+		
 	}
 	
 	private def Pair<String,Integer> getPair() {

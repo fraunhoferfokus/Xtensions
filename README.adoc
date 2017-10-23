@@ -24,6 +24,9 @@ Note that the policy of using functional interfaces is the following:
 * When primitive values are involved, the specialized interfaces from `java.util.function` are preferred.
 * When a shim over JDK 8 APIs is provided and Xtend interfaces would introduce unnecessary object allocations
   the JDK interfaces are preferred.
+  
+WARN: This library is pre 1.0.0, so public API may change or disappear. Do not shy away opening up tickets if 
+you think some API method seems to be unnecessary cruft to you.
 
 == Usage
 
@@ -240,10 +243,10 @@ Example:
 [source,xtend]
 ----
 import static extension de.fhg.fokus.xtensions.pair.PairExtensions.*
-import static extension org.eclipse.xtext.xbase.lib.InputOutput.*
 // ...
 val pair = "Foo" -> 3
-pair.combine[k,v| k + ' -> ' + v].println
+val s = pair.combine[k,v| k + ' = ' + v].toLowerCase
+println(s)
 ----
 
 
@@ -997,9 +1000,43 @@ method, or on the common `ForkJoinPool` for the async version which does not tak
 The extension method `whenCancelled` allows registering a callback on a `CompletableFuture`. The callback is 
 invoked when the future was completed via cancellation.
 
+Example:
+
+[source,xtend]
+----
+val toCancel = new CompletableFuture
+toCancel.whenCancelled [|
+	println("I've been canceled")
+]
+toCancel.cancel
+----
+
 The method `whenException` registers a callback which is invoked when the future is completed exceptionally.
 
-The extension method ``
+
+Example:
+
+[source,xtend]
+----
+CompletableFuture.supplyAsync [
+	throw new IllegalStateException
+].whenException [
+	println('''failed with «it.class» and cause «it.cause.class»''')
+]
+----
+
+The `recoverWith` extension method is similar to the `thenCompose` method for the exceptional case. The 
+registered callback of type `(Throwable)=>CompletionStage<? extends R>` will be invoked if the future
+the callback is registered on completes exceptionally. The callback will be called with the exception the
+original future was completed with exceptionally. The future returned from the callback will be returned from
+the `recoverWith` extension method.
+
+[source,xtend]
+----
+
+----
+
+
 ////
 
 TODO: Describe recoverWith/recoverWithAsnyc extension method  (like thenCompose method for error case, could be named exceptionallyCompose)
@@ -1017,11 +1054,59 @@ TODO: Describe Java 9 forward compatibility
 
 === Async Computations
 
-////
-Problems with CompletableFuture supplyAsync: Executor wrong arg, cancellation info
-TODO: Describe asyncRun methods  
-TODO: Describe asyncSupply methods  
-////
+Starting asynchronous computations and providing the result via a `CompletableFuture` is
+provided via the JDK methods `CompletableFuture#runAsync` and `CompletableFuture#suppyAsync`.
+
+These methods have a few drawbacks. The first one is that in Xtend it is good practice to
+place the callback function as the last parameter in a parameter list to allow for more 
+elegant and readable syntax, placing the lambda behind the closing parentheses. The JDK methods,
+however, have overloaded versions placing a executor for operation executor as last parameter.
+
+The other drawback is that these methods need a further concept to allow cancellation of an operation
+from the caller side, e.g. when the user cancels an operation. This can e.g. be achieved via an 
+additional `java.util.concurrent.atomic.AtomicBoolean` which is passed to the operation. 
+This is unfortunate, since the `CompletableFuture` already knows the concept of cancellation.
+
+This library provides the class `de.fhg.fokus.xtensions.concurrent.AsyncCompute` introducing 
+the methods `asyncRun` and `asyncSupply`. These methods allow asynchronous computations
+like the JDK methods, but with a shuffled parameter list and passing the created `CompletableFuture`
+into the operation to be computed asynchronously.
+
+Example:
+
+[source,xtend]
+----
+// Java 8
+import static java.util.concurrent.CompletableFuture.*
+import java.util.concurrent.Executors
+// ...
+val ex = Executors.newCachedThreadPool
+val isCancelled = new AtomicBoolean(false)
+runAsync([
+	if(isCancelled.get) {
+		println("Oh no, I've been cancelled")
+	} else {
+		println("I'm fine")				
+	}
+], ex)
+isCancelled.set(true)
+----
+
+[source,xtend]
+----
+import static extension de.fhg.fokus.xtensions.concurrent.AsyncCompute.*
+import java.util.concurrent.Executors
+// ...
+val pool = Executors.newCachedThreadPool
+val fut = pool.asyncRun [
+	if(cancelled) {
+		println("Oh no, I've been cancelled")
+	} else {
+		println("I'm fine")				
+	}
+]
+fut.cancel(false)
+----
 
 
 === Scheduling Util
