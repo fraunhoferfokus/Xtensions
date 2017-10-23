@@ -25,7 +25,7 @@ Note that the policy of using functional interfaces is the following:
 * When a shim over JDK 8 APIs is provided and Xtend interfaces would introduce unnecessary object allocations
   the JDK interfaces are preferred.
   
-WARN: This library is pre 1.0.0, so public API may change or disappear. Do not shy away opening up tickets if 
+WARNING: This library is pre 1.0.0, so public API may change or disappear. Do not shy away opening up tickets if 
 you think some API method seems to be unnecessary cruft to you.
 
 == Usage
