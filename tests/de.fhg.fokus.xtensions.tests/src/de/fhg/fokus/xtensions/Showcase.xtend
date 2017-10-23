@@ -53,6 +53,7 @@ import static extension de.fhg.fokus.xtensions.stream.StringStreamExtensions.*
 import static extension de.fhg.fokus.xtensions.string.StringMatchExtensions.*
 import static extension de.fhg.fokus.xtensions.string.StringSplitExtensions.*
 import static extension java.util.Arrays.stream
+import java.util.OptionalDouble
 
 //@Ignore
 class Showcase {
@@ -141,6 +142,16 @@ class Showcase {
 		println("Average length: " + summary.average)
 		println("Max length: " + summary.max)
 		
+		#["foo", null, "BAR", "bazzzz"]
+			.filterNull
+			.averageSize
+			.ifPresent [
+				println('''The average string lenght is «it»''')
+			]
+	}
+	
+	private def OptionalDouble averageSize(Iterable<String> strings) {
+		strings.stream.mapToInt[length].average
 	}
 	
 	private def print(IntIterable ints, int count) {

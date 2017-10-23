@@ -512,6 +512,29 @@ a stream from an iterable. This method will first check if the given iterable is
 `java.util.Collection`, since this class does provide a default `stream` method,
 otherwise it will construct a stream from the spliterator provided by the iterable.
 
+// TODO: Provide example
+
+Example:
+
+[source,xtend]
+----
+import static extension de.fhg.fokus.xtensions.iteration.IterableExtensions.*
+import java.util.OptionalDouble
+//...
+#["foo", null, "BAR", "bazzzz"]
+	.filterNull
+	.averageSize
+	.ifPresent [
+		println('''The average string lenght is «it»''')
+	]
+
+//...
+
+private def OptionalDouble averageSize(Iterable<String> strings) {
+	strings.stream.mapToInt[length].average
+}
+----
+
 Analogous to the `stream` method the `IterableExtensions` class also provides a `parallelStream` method.
 
 It is also possible to map an iterable to a primitive iterable 
