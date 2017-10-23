@@ -10,9 +10,6 @@
  *******************************************************************************/
 package de.fhg.fokus.xtensions.optional
 
-import java.util.function.BiConsumer
-import java.util.function.Consumer
-
 /** 
  * Class with method {@link Else#elseDo(Runnable) elseDo(Runnable)}, which either
  * executes the given runnable or not, depending on the sub-class.
@@ -23,26 +20,26 @@ import java.util.function.Consumer
  */
 abstract class Else {
 	/*package*/ static final package Else PRESENT = new Else() {
-		override void elseDo(Runnable elseBlock) {
+		override void elseDo(()=>void elseBlock) {
 		}
 
-		override <T> void elseDo(T value, Consumer<T> elseBlock) {
+		override <T> void elseDo(T value, (T)=>void elseBlock) {
 		}
 
-		override <T, U> void elseDo(T t, U u, BiConsumer<T, U> elseBlock) {
+		override <T, U> void elseDo(T t, U u, (T,U)=>void elseBlock) {
 		}
 	}
 	/*package*/ static final package Else NOT_PRESENT = new Else() {
-		override void elseDo(Runnable elseBlock) {
-			elseBlock.run()
+		override void elseDo(()=>void elseBlock) {
+			elseBlock.apply()
 		}
 
-		override <T> void elseDo(T value, Consumer<T> elseBlock) {
-			elseBlock.accept(value)
+		override <T> void elseDo(T value, (T)=>void elseBlock) {
+			elseBlock.apply(value)
 		}
 
-		override <T, U> void elseDo(T t, U u, BiConsumer<T, U> elseBlock) {
-			elseBlock.accept(t, u)
+		override <T, U> void elseDo(T t, U u, (T,U)=>void elseBlock) {
+			elseBlock.apply(t, u)
 		}
 	}
 
@@ -54,7 +51,7 @@ abstract class Else {
 	 * based on the sub-class of {@code Else}.
 	 * @param elseBlock code to be executed or not.
 	 */
-	def abstract void elseDo(Runnable elseBlock)
+	def abstract void elseDo(()=>void elseBlock)
 
 	/** 
 	 * This method either executes the given {@code elseBlock} or not,
@@ -64,7 +61,7 @@ abstract class Else {
 	 * @param value value to be forwarded to {@code elseBlock}, if it is executed.
 	 * @param elseBlock code to be executed or not.
 	 */
-	def abstract <T> void elseDo(T value, Consumer<T> elseBlock)
+	def abstract <T> void elseDo(T value, (T)=>void elseBlock)
 
 	/** 
 	 * This method either executes the given {@code elseBlock} or not,
@@ -75,6 +72,6 @@ abstract class Else {
 	 * @param u value to be forwarded to {@code elseBlock}, if it is executed.
 	 * @param elseBlock code to be executed or not.
 	 */
-	def abstract <T, U> void elseDo(T t, U u, BiConsumer<T, U> elseBlock)
+	def abstract <T, U> void elseDo(T t, U u, (T,U)=>void elseBlock)
 
 }

@@ -1,3 +1,14 @@
+////
+Copyright (c) 2017 Max Bureck (Fraunhofer FOKUS) and others.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Eclipse Public License v2.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/epl-v20.html
+
+Contributors:
+    Max Bureck (Fraunhofer FOKUS) - initial text
+////
+
 = Xtensions Library
 :toc: preamble
 :toclevels: 4
@@ -17,16 +28,14 @@ for classes in the Java 8 standard library and the Xtend standard library. A few
 
 Note that the policy of using functional interfaces is the following:
 
-* Generally, the Xtend interfaces defined in 
-  http://static.javadoc.io/org.eclipse.xtext/org.eclipse.xtext.xbase.lib/2.12.0/org/eclipse/xtext/xbase/lib/Functions.html[`org.eclipse.xtext.xbase.lib.Functions`] 
+* Generally, the Xtend interfaces defined in  http://static.javadoc.io/org.eclipse.xtext/org.eclipse.xtext.xbase.lib/2.12.0/org/eclipse/xtext/xbase/lib/Functions.html[`org.eclipse.xtext.xbase.lib.Functions`] 
   are preferred over the ones defined in JDK 8 package.
   http://docs.oracle.com/javase/8/docs/api/index.html?java/util/function/package-summary.html[`java.util.function`]
 * When primitive values are involved, the specialized interfaces from `java.util.function` are preferred.
 * When a shim over JDK 8 APIs is provided and Xtend interfaces would introduce unnecessary object allocations
   the JDK interfaces are preferred.
   
-WARNING: This library is pre 1.0.0, so public API may change or disappear. Do not shy away opening up tickets if 
-you think some API method seems to be unnecessary cruft to you.
+WARNING: This library is pre 1.0.0, so public API may change or disappear if considered unnecessary cruft.
 
 == Usage
 
@@ -64,6 +73,7 @@ Examples:
 
 [source,xtend]
 ----
+import java.util.Optional
 import static extension de.fhg.fokus.xtensions.optional.OptionalIntExtensions.*
 // ...
 val Optional<String> no = none
@@ -87,6 +97,7 @@ Example:
 
 [source,xtend]
 ----
+import java.util.Optional
 import static extension de.fhg.fokus.xtensions.optional.OptionalIntExtensions.*
 // ...
 val Optional<Object> optObj = some("Hi there!")
@@ -111,6 +122,7 @@ Example:
 
 [source,xtend]
 ----
+import java.util.Optional
 import static extension de.fhg.fokus.xtensions.optional.OptionalIntExtensions.*
 // ...
 val Optional<String> yes = some("yesss!")
@@ -270,7 +282,7 @@ arr.forEachInt [
 
 Additionally the class allows to create primitive iterable wrapper objects (see <<Primitive Iterables>>).
 
-TIP: Note that the JDK class http://docs.oracle.com/javase/8/docs/api/java/util/Arrays.html[`java.util.Arrays`] already contains 
+TIP: The JDK class http://docs.oracle.com/javase/8/docs/api/java/util/Arrays.html[`java.util.Arrays`] already contains 
 static `stream` methods that can be used as extension methods to create Java 8 streams from primitive arrays.
 
 
@@ -289,6 +301,7 @@ Example:
 
 [source,xtend]
 ----
+import java.util.stream.Stream
 import static extension de.fhg.fokus.xtensions.stream.StreamExtensions.*
 // ...
 val s = Stream.of(42, "Hello", Double.NaN, "World")
@@ -296,7 +309,7 @@ val s = Stream.of(42, "Hello", Double.NaN, "World")
 	.collect(Collectors.joining(" "))
 ----
 
-NOTE: Since joining Strings is a common operation, the `StringStreamExtensions` allow to call `join`
+TIP: Since joining Strings is a common operation, the `StringStreamExtensions` allow to call `join`
 directly on the Stream. Have a look at <<Extensions to Streams of Strings>>.
 
 Some other collectors, especially the ones bridging to the collections API are also used very often,
@@ -309,6 +322,7 @@ Example:
 
 [source,xtend]
 ----
+import java.util.stream.Stream
 import static extension de.fhg.fokus.xtensions.stream.StreamExtensions.*
 // ...
 val list = Stream.of("Foo", "Hello" , "Boo", "World")
@@ -325,6 +339,7 @@ Example:
 
 [source,xtend]
 ----
+import java.util.stream.Stream
 import static extension de.fhg.fokus.xtensions.stream.StreamExtensions.*
 // ...
 Stream.of(42.0, null, "foo", 100_000_000_000bi)
@@ -348,6 +363,8 @@ be called with a function providing an iterable, since it is known how to constr
 
 Example:
 
+// TODO: Provide Example
+
 [source,xtend]
 ----
 import static extension de.fhg.fokus.xtensions.stream.StreamExtensions.*
@@ -366,6 +383,7 @@ Example:
 
 [source,xtend]
 ----
+import java.util.stream.Stream
 import static extension de.fhg.fokus.xtensions.stream.StreamExtensions.*
 // ...
 Stream.of("foo", "bar")
@@ -384,6 +402,7 @@ There is even an overloaded version of the static method that can be written as 
 [source,xtend]
 ----
 // This is using Java 8
+import java.util.stream.Stream
 import static extension de.fhg.fokus.xtensions.stream.StreamExtensions.*
 // ...
 Stream.iterate("na ")[it + it]
@@ -410,6 +429,7 @@ Example:
 
 [source,xtend]
 ----
+import java.util.stream.Stream
 import static extension de.fhg.fokus.xtensions.stream.StringStreamExtensions.*
 // ...
 val joined = Stream.of("Hello", "Xtend", "aficionados").join(" ")
@@ -426,6 +446,7 @@ Example:
 
 [source,xtend]
 ----
+import java.util.stream.Stream
 import static extension de.fhg.fokus.xtensions.stream.StringStreamExtensions.*
 // ...
 Stream.of("foo", "bar", "kazoo", "baz", "oomph", "shoot")
@@ -445,6 +466,7 @@ Example:
 
 [source,xtend]
 ----
+import java.util.stream.Stream
 import static extension de.fhg.fokus.xtensions.stream.StringStreamExtensions.*
 // ...
 Stream.of("Hello users", "welcome to this demo", "hope it helps")
@@ -465,6 +487,7 @@ Example:
 [source,xtend]
 ----
 import java.util.regex.Pattern
+import java.util.stream.Stream
 import static extension de.fhg.fokus.xtensions.stream.StringStreamExtensions.*
 // ...
 val Pattern pattern = Pattern.compile("(\\woo)")		
@@ -548,6 +571,7 @@ Examples:
 
 [source,xtend]
 ----
+import java.util.PrimitiveIterator
 import static extension de.fhg.fokus.xtensions.iteration.IntIterable.*
 // ...
 
@@ -626,7 +650,6 @@ Example:
 
 [source,xtend]
 ----
-import static extension de.fhg.fokus.xtensions.iteration.IntIterable.*
 import de.fhg.fokus.xtensions.iteration.IntIterable
 // ...
 val IntIterable ints = IntIterable.generate [
@@ -645,7 +668,7 @@ Example:
 
 [source,xtend]
 ----
-import static extension de.fhg.fokus.xtensions.iteration.IntIterable.*
+import de.fhg.fokus.xtensions.iteration.IntIterable
 // ...
 val IntIterable ints = IntIterable.iterate(1)[it * 2]
 ----
@@ -661,7 +684,7 @@ Example:
 
 [source,xtend]
 ----
-import static extension de.fhg.fokus.xtensions.iteration.IntIterable.*
+import de.fhg.fokus.xtensions.iteration.IntIterable
 // ...
 val IntIterable ints = IntIterable.iterate(0, [it<=10], [it+2])
 // will provide values 0, 2, 4, 6, 8, and 10
@@ -967,6 +990,9 @@ Example:
 
 [source,xtend]
 ----
+import java.util.concurrent.CompletableFuture
+import java.util.concurrent.Executors
+// ...
 val pool = Executors.newSingleThreadExecutor
 val fut = CompletableFuture.supplyAsync([
 	new Random().nextInt(1000)
@@ -979,7 +1005,7 @@ val fut = CompletableFuture.supplyAsync([
 ]
 ----
 
-NOTE: You may have noticed that the syntax for spawning a supplier via CompletableFuture#supplyAsync on a 
+TIP: You may have noticed that the syntax for spawning a supplier via CompletableFuture#supplyAsync on a 
 custom executor does not look elegant, since the pool parameter is the last one. So the lambda cannot be 
 written behind the closing parenthesis of the parameter list. Have a look at the section <<Async Computations>> 
 for a more Xtend style API.
@@ -1004,6 +1030,9 @@ Example:
 
 [source,xtend]
 ----
+import java.util.concurrent.CompletableFuture
+import static extension de.fhg.fokus.xtensions.concurrent.CompletableFutureExtensions.*
+// ...
 val toCancel = new CompletableFuture
 toCancel.whenCancelled [|
 	println("I've been canceled")
@@ -1018,6 +1047,9 @@ Example:
 
 [source,xtend]
 ----
+import java.util.concurrent.CompletableFuture
+import static extension de.fhg.fokus.xtensions.concurrent.CompletableFutureExtensions.*
+// ...
 CompletableFuture.supplyAsync [
 	throw new IllegalStateException
 ].whenException [
@@ -1030,6 +1062,8 @@ registered callback of type `(Throwable)=>CompletionStage<? extends R>` will be 
 the callback is registered on completes exceptionally. The callback will be called with the exception the
 original future was completed with exceptionally. The future returned from the callback will be returned from
 the `recoverWith` extension method.
+
+// TODO: Provide example
 
 [source,xtend]
 ----
@@ -1072,11 +1106,10 @@ the methods `asyncRun` and `asyncSupply`. These methods allow asynchronous compu
 like the JDK methods, but with a shuffled parameter list and passing the created `CompletableFuture`
 into the operation to be computed asynchronously.
 
-Example:
+Example using JDK classes:
 
 [source,xtend]
 ----
-// Java 8
 import static java.util.concurrent.CompletableFuture.*
 import java.util.concurrent.Executors
 // ...
@@ -1091,6 +1124,8 @@ runAsync([
 ], ex)
 isCancelled.set(true)
 ----
+
+Same example using `AsyncCompute`:
 
 [source,xtend]
 ----
@@ -1208,7 +1243,9 @@ The repository contains the Oomph setup file link:releng/de.fhg.fokus.xtensions.
 
 External contributions in form of pull requests are welcome, if they include sufficient tests and documentation (JavaDoc and, if valuable,
 description in this README). Please note that contributions may be rejected if they do not seem beneficial to the project. Please get in touch
-beforehand (e.g. via ticket) to get to know if a certain enhancement is deemed beneficial.
+beforehand (e.g. via ticket) to get to know if a certain enhancement is regarded beneficial.
+
+Better code examples for this document are very welcome 😊.
 
 Contributions will be licensed under https://www.eclipse.org/legal/epl-2.0/[EPL 2.0].
 
@@ -1217,16 +1254,20 @@ Contributions will be licensed under https://www.eclipse.org/legal/epl-2.0/[EPL 
 The following tasks are the next goals for this project, roughly in this order:
 
 - [ ] Complete this README.adoc file
-* [ ] Complete Usage section
-* [ ] Complete IDE Setup section
+ * [ ] Complete Usage section
+ * [ ] Complete IDE Setup section
 - [ ] Complete JavaDocs for all public methods
 - [ ] Cover each method with test cases
 - [ ] Add Jacoco test coverage to maven build
 - [ ] Add source bundle build to maven config
 - [ ] Move to a public GitHub repository
-- [ ] Create CI build on travis.io + add badge to this file
-- [ ] Publish Jacoco results to coveralls.io + add badge to this file
+- [ ] Create CI build on travis.io
+ * [ ] Add badge to this file when done
+- [ ] Publish Jacoco results to coveralls.io
+ * [ ] Add badge to this file when done
 - [ ] Publish p2 repo on bintray
+ * [ ] Update this file when done
 - [ ] Figure out how to best publish to Maven Central
+ * [ ] Update this file when done
 - [ ] Release first version
 - [ ] Add javadoc.io badge to this file

@@ -32,9 +32,12 @@ import java.util.stream.Stream;
 
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
+import org.eclipse.xtext.xbase.lib.Functions.Function0;
 import org.eclipse.xtext.xbase.lib.Inline;
 import org.eclipse.xtext.xbase.lib.IntegerRange;
 import org.eclipse.xtext.xbase.lib.Procedures.Procedure0;
+import org.eclipse.xtext.xbase.lib.Procedures.Procedure1;
+import org.eclipse.xtext.xbase.lib.Procedures.Procedure2;
 import org.eclipse.xtext.xbase.lib.Pure;
 
 import com.google.common.collect.ImmutableList;
@@ -258,8 +261,8 @@ public final class OptionalExtensions {
 									// can
 									// only be taken from Optional
 	public static <U> @NonNull Optional<U> orSuper(@NonNull Optional<? extends U> self,
-			@NonNull Supplier<@NonNull Optional<U>> alternativeSupplier) {
-		return self.isPresent() ? (Optional<U>) self : alternativeSupplier.get();
+			@NonNull Function0<@NonNull Optional<U>> alternativeSupplier) {
+		return self.isPresent() ? (Optional<U>) self : alternativeSupplier.apply();
 	}
 
 	/**
@@ -355,10 +358,10 @@ public final class OptionalExtensions {
 	 * @return instance of {@code Else} that either execute an else block if {@code self} has no value present,
 	 *  or ignore the else block if the value is present.
 	 */
-	public static <T> Else whenPresent(@NonNull Optional<T> self, @NonNull Consumer<@NonNull T> onPresent) {
+	public static <T> Else whenPresent(@NonNull Optional<T> self, @NonNull Procedure1<@NonNull ? super T> onPresent) {
 		if(self.isPresent()) {
 			@NonNull T value = self.get();
-			onPresent.accept(value);
+			onPresent.apply(value);
 			return Else.PRESENT;
 		} else {
 			return Else.NOT_PRESENT;
@@ -397,10 +400,10 @@ public final class OptionalExtensions {
 	 * @param consumer
 	 */
 	public static <T> void ifAllPresent(@NonNull List<@NonNull Optional<T>> opts,
-			@NonNull Consumer<@NonNull List<@NonNull T>> consumer) {
+			@NonNull Procedure1<@NonNull ? super List<@NonNull T>> consumer) {
 		if (opts.stream().allMatch(Optional::isPresent)) {
 			final List<T> result = Lists.transform(opts, o -> o.get());
-			consumer.accept(result);
+			consumer.apply(result);
 		}
 	}
 
@@ -410,9 +413,9 @@ public final class OptionalExtensions {
 	 * @param b value from this optional and value from {@code a} will be used to call {@code consumer}, if both present
 	 * @param consumer will be called with values from {@code a} and {@code b}, iff both present
 	 */
-	public static <T, U> void ifBothPresent(@NonNull Optional<T> a, @NonNull Optional<U> b, BiConsumer<T, U> consumer) {
+	public static <T, U> void ifBothPresent(@NonNull Optional<T> a, @NonNull Optional<U> b, @NonNull Procedure2<? super T, ? super U> consumer) {
 		if (a.isPresent() && b.isPresent()) {
-			consumer.accept(a.get(), b.get());
+			consumer.apply(a.get(), b.get());
 		}
 	}
 

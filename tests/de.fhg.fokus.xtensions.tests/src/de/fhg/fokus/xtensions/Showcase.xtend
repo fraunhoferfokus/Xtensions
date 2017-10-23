@@ -396,7 +396,7 @@ class Showcase {
 		
 		delay(500.milliseconds) [
 			fut2.cancel(false)
-		]
+		].join
 	}
 	
 	@Test def void asyncDemo() {
