@@ -534,7 +534,7 @@ private def OptionalDouble averageSize(Iterable<String> strings) {
 	strings.stream.mapToInt[length].average // <1>
 }
 ----
-<1> In this like the extension method `stream` is called on the iterable `strings`.
+<1> In this line the extension method `stream` is called on the iterable `strings`.
 
 Analogous to the `stream` method the `IterableExtensions` class also provides a `parallelStream` method.
 
@@ -1278,7 +1278,7 @@ Contributions will be licensed under https://www.eclipse.org/legal/epl-2.0/[EPL 
 The following tasks are the next goals for this project, roughly in this order:
 
 - [ ] Complete this README.adoc file
- * [ ] Complete Usage section
+ * [ ] Complete Functionality section
  * [ ] Complete IDE Setup section
 - [ ] Complete JavaDocs for all public methods
 - [ ] Cover each method with test cases

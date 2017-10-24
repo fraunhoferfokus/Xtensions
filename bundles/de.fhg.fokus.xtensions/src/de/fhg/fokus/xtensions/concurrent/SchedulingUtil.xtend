@@ -36,7 +36,7 @@ final class SchedulingUtil {
 	 * This class implements both {@link CompletableFuture} and {@link ScheduledFuture},
 	 * so it can be used in a non-blocking fashion, but still be asked for the delay for
 	 * the next execution of a scheduled task.<br>
-	 * This class is not intended to be sub-classed outside of the SchdulingExtensions.
+	 * This class is not intended to be sub-classed outside of the SchedulingUtil.
 	 */
 	public abstract static class ScheduledCompletableFuture<T> extends CompletableFuture<T> implements ScheduledFuture<T> {
 
@@ -46,7 +46,13 @@ final class SchedulingUtil {
 	}
 
 	/**
-	 * Adds delay information to an action to be scheduled. When the {@link DelaySpecifier#withInitialDelay(long, Procedure0)}
+	 * Adds delay information to an action to be scheduled. Instances of this class are created via one of the 
+	 * following methods:
+	 * <ul>
+	 * 	<li>{@link SchedulingUtil#repeatEvery(long, TimeUnit)}</li>
+	 * 	<li>{@link SchedulingUtil#repeatEvery(ScheduledExecutorService, long, TimeUnit)}</li>
+	 * </ul>
+	 * When the {@link DelaySpecifier#withInitialDelay(long, Procedure0) withInitialDelay(long initialDelay, (CompletableFuture<?>)=>void action)}
 	 * method is called the scheduling will be started, by scheduling the given action according to the scheduling 
 	 * information given to the function producing the DelaySpecifier and the given delay passed to withInitialDelay.<br>
 	 * This class is not intended to be sub-classed outside of the SchdulingExtensions.
@@ -56,6 +62,14 @@ final class SchedulingUtil {
 		private new() {
 		}
 
+		/**
+		 * Schedules the given {@code action} according to the time interval specified in the {@code repeatEvery}
+		 * method used to construct this {@code DelaySpecifier}. The given {@code initalDelay} specifies
+		 * the initial time (in the time unit specified in the {@code repeatEvery} method) before the 
+		 * {@code action} is invoked the first time.
+		 * @throws IllegalArgumentException if {@code initialDelay <= 0}
+		 * @throws NullPointerException if {@code action === null}
+		 */
 		abstract def ScheduledCompletableFuture<?> withInitialDelay(long initialDelay, (CompletableFuture<?>)=>void action);
 	}
 
@@ -170,28 +184,81 @@ final class SchedulingUtil {
 	 * @throws NullPointerException if {@code action} or {@code unit} is {@code null}.
 	 * @throws IllegalArgumentException if {@code period} is {@code <= 0}
 	 */
-	public static def ScheduledCompletableFuture<?> repeatEvery(ScheduledExecutorService scheduler, long period, TimeUnit unit, (CompletableFuture<?>)=>void action) {
+	public static def ScheduledCompletableFuture<?> repeatEvery(ScheduledExecutorService scheduler, long period, TimeUnit unit, (ScheduledCompletableFuture<?>)=>void action) {
 		// TODO sanity check on params
 		Objects.requireNonNull(unit)
 		scheduler.scheduleAtFixedRate(0, period, unit, action)
 	}
 
+	/**
+	 * This method specifies the fixed time interval in which an action will be repeatedly invoked.
+	 * The returned {@link DelaySpecifier} allows to specify an initial delay and the actual action
+	 * to be scheduled.<br>
+	 * Be aware that the execution of the scheduled action will be performed on a single Thread, so if the execution of
+	 * the action takes longer than the specified {@code period}, following executions are delayed. 
+	 * Consider using {@link SchedulingUtil#repeatEvery(ScheduledExecutorService, long, TimeUnit) repeatEvery(ScheduledExecutorService, long, TimeUnit)}
+	 * if you want to provide a custom {@code ScheduledExecutorService}.
+	 * 
+	 * @param period duration in {@code unit} at which action, specified on the returned {@code DelaySpecifier}, should be called.
+	 * @param unit time unit of {@code period} for scheduling action specified on the returned {@code DelaySpecifier}.
+	 * @return object to specify initial delay (of time unit {@code unit}) and the action to be scheduled.
+	 * @throws NullPointerException if {@code unit} is {@code null}.
+	 * @throws IllegalArgumentException if {@code period} is {@code <= 0}
+	 */
 	public static def DelaySpecifier repeatEvery(long period, TimeUnit unit) {
+		if(period <= 0) { 
+			throw new IllegalArgumentException("period must be > 0")
+		}
+		if(unit === null) {
+			throw new NullPointerException
+		}
 		// TODO check parameters
 		new DelaySpecifier {
 
 			override withInitialDelay(long initialDelay, (CompletableFuture<?>)=>void action) {
+				if(initialDelay <= 0) { 
+					throw new IllegalArgumentException("period must be > 0")
+				}
+				if(action === null) {
+					throw new NullPointerException("action must not be null")
+				}
 				scheduleAtFixedRate(initialDelay, period, unit, action)
 			}
 
 		}
 	}
 	
+	/**
+	 * This method specifies the fixed time interval in which an action will be repeatedly invoked.
+	 * The returned {@link DelaySpecifier} allows to specify an initial delay and the actual action
+	 * to be scheduled.<br>
+	 * The action is scheduled using the given {@code scheduler}.
+	 * 
+	 * @param period duration in {@code unit} at which action, specified on the returned {@code DelaySpecifier}, should be called.
+	 * @param unit time unit of {@code period} for scheduling action specified on the returned {@code DelaySpecifier}.
+	 * @return object to specify initial delay (of time unit {@code unit}) and the action to be scheduled.
+	 * @throws NullPointerException if {@code unit} or {@code scheduler} is {@code null}.
+	 * @throws IllegalArgumentException if {@code period} is {@code <= 0}
+	 */
 	public static def DelaySpecifier repeatEvery(ScheduledExecutorService scheduler, long period, TimeUnit unit) {
-		// TODO check parameters
+		if(period <= 0) { 
+			throw new IllegalArgumentException("period must be > 0")
+		}
+		if(unit === null) {
+			throw new NullPointerException("Time unit must not be null")
+		}
+		if(scheduler === null) {
+			throw new NullPointerException("Scheduler must not be null")
+		}
 		new DelaySpecifier {
 
 			override withInitialDelay(long initialDelay, (CompletableFuture<?>)=>void action) {
+				if(initialDelay <= 0) { 
+					throw new IllegalArgumentException("period must be > 0")
+				}
+				if(action === null) {
+					throw new NullPointerException("action must not be null")
+				}
 				scheduler.scheduleAtFixedRate(initialDelay, period, unit, action)
 			}
 
@@ -320,9 +387,10 @@ final class SchedulingUtil {
 	/**
 	 * The thread calling this method will not block, but immediately return
 	 * a CompletableFuture that will be completed after the delay specified 
-	 * by the parameters.
-	 * The returned CompletableFuture will be completed on a new thread.
-	 * So all non-asynchronous callbacks will be executed on that thread.
+	 * by the parameters.<br>
+	 * The returned CompletableFuture will be completed on a new thread with a {@code null} value.
+	 * @param time in {@code unit} after which
+	 * @param unit is the time unit of {@code time}
 	 */
 	// TODO version with scheduler
 	public static def ScheduledCompletableFuture<?> waitFor(long time, TimeUnit unit) {

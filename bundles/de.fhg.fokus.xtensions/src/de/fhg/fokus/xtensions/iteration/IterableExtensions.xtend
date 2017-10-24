@@ -35,6 +35,11 @@ final class IterableExtensions {
 // static def <X,Y> Iterable<Pair<X,Y>> combinations(Iterable<X>,Iterable<Y>, BiPredicate<X,Y>)
 // static def <T> List<T> toImmutableList(Iterable<T>)
 // static def <T> Map<Boolean,Set<T>> partitionBy(Iterable<T>, Predicate<T>) // Own impl of Map extending AbstractMap
+// static def <T> ClassGrouping groupBy(Iterable<T>, Class<?>... classes) // extend HashMap, maybe provide as Collector
+// interface ClassGrouping { 
+// 	Set<T> get(Class<T> clazz); 
+//	Map<Class<?>,Set<?>> toMap();
+// }
 // static def <T,A,D> Map<Boolean,D> partitionBy(Iterable<T>, Collector<? super T, A, D>, Predicate<T>)
 // static def <T,Y> Pair<Set<Y>,Set<T>> partitionBy(Iterable<T>,  Class<Y>)
 // static def <T,Y,AT,AY,DT,DY> Pair<DY,DT> partitionBy(Iterable<T>, Class<Y>, Collector<? super T, AT, DT>, Collector<? super Y, AY, DY>)
