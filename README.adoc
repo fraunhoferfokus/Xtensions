@@ -363,14 +363,39 @@ be called with a function providing an iterable, since it is known how to constr
 
 Example:
 
-// TODO: Provide Example
-
 [source,xtend]
 ----
+import org.eclipse.xtend.lib.annotations.Accessors
+import org.eclipse.xtend.lib.annotations.FinalFieldsConstructor
+import java.util.stream.Stream
+import java.util.function.Function
+import static java.util.stream.Collectors.*
 import static extension de.fhg.fokus.xtensions.stream.StreamExtensions.*
 // ...
+val stream = Stream.of(
+	new Developer("Max", #{"Java", "Xtend", "Rust", "C++"}), 
+	new Developer("Joe", #{"Xtend", "JavaScript", "Dart"}) 
+);
+val langPopularity = stream
+	.flatMap[languages] // <1>
+	.collect(groupingBy(Function.identity, counting))
+langPopularity.entrySet
+	.stream
+	.max(Map.Entry.comparingByValue)
+	.ifPresent [
+		println('''Most pobular language: «it.key», count: «it.value»''')
+	]
 
+// ...
+
+@FinalFieldsConstructor
+@Accessors
+static class Developer {
+	val String name
+	val Set<String> languages;
+}
 ----
+<1> Here `languages` can be returned directly instead of `languages.stream`
 
 Sometimes it is interesting to produce the cartesian product of two containers of elements. To produce 
 all combinations of the elements of a stream with the elements of an `Iterable` (or a different source 
@@ -511,8 +536,6 @@ The `IterableExtensions` class provides the `stream` extension method to easily 
 a stream from an iterable. This method will first check if the given iterable is instance of
 `java.util.Collection`, since this class does provide a default `stream` method,
 otherwise it will construct a stream from the spliterator provided by the iterable.
-
-// TODO: Provide example
 
 Example:
 
@@ -1242,7 +1265,10 @@ prematurely (abort the action early).
 TODO: Example
 
 The method `waitFor` will create a `CompletableFuture` that will be completed successfully
-with a `null` value when the given duration expires.
+with a `null` value when the given duration expires. An overloaded version of the `waitFor`
+method allows a deferred execution of a given callback, similar to the `delay` method, but 
+the callback does not provide a return value. The returned future will be completed with a 
+`null` value after successful execution.
 
 TODO: Example
 
@@ -1280,7 +1306,7 @@ The following tasks are the next goals for this project, roughly in this order:
 - [ ] Complete this README.adoc file
  * [ ] Complete Functionality section
  * [ ] Complete IDE Setup section
-- [ ] Complete JavaDocs for all public methods
+- [x] Complete JavaDocs for all public methods
 - [ ] Cover each method with test cases
 - [ ] Add Jacoco test coverage to maven build
 - [ ] Add source bundle build to maven config

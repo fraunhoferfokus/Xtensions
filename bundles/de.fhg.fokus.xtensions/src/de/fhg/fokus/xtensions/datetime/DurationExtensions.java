@@ -28,6 +28,8 @@ import org.eclipse.xtext.xbase.lib.Inline;
  * @author Max Bureck
  */
 public final class DurationExtensions {
+	
+	// TODO map unary operator_minus to Duration#negate
 
 	/**
 	 * Alias for {@link Duration#ofNanos(long)}.

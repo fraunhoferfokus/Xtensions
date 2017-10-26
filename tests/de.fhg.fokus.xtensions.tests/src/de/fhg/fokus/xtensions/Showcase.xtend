@@ -54,6 +54,9 @@ import static extension de.fhg.fokus.xtensions.string.StringMatchExtensions.*
 import static extension de.fhg.fokus.xtensions.string.StringSplitExtensions.*
 import static extension java.util.Arrays.stream
 import java.util.OptionalDouble
+import java.util.Set
+import java.util.function.Function
+import java.util.Map
 
 //@Ignore
 class Showcase {
@@ -276,8 +279,19 @@ class Showcase {
 			]
 			
 		
-		Stream.of("boo", "ya", "zoo", "ha")
-			.flatMap[it.toCharArray.stream]
+		val stream = Stream.of(
+			new Developer("Max", #{"Java", "Xtend", "Rust", "C++"}), 
+			new Developer("Joe", #{"Xtend", "JavaScript", "Dart"}) 
+		);
+		val langPopularity = stream
+			.flatMap[languages]
+			.collect(groupingBy(Function.identity, counting))
+		langPopularity.entrySet
+			.stream
+			.max(Map.Entry.comparingByValue)
+			.ifPresent [
+				println('''Most pobular language: «it.key», count: «it.value»''')
+			]
 		
 		// Combined example
 		
@@ -297,6 +311,13 @@ class Showcase {
 			.flatMap[vehicles]
 			.filter(Car)
 			.toList
+	}
+	
+	@FinalFieldsConstructor
+	@Accessors
+	static class Developer {
+		val String name
+		val Set<String> languages;
 	}
 	
 	@Accessors

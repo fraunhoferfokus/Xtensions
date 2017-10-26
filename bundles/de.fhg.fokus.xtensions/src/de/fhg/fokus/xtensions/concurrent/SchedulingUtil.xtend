@@ -24,7 +24,10 @@ import static extension java.util.Objects.*
 
 /**
  * This class provides static functions that can be used to schedule tasks that
- * are either repeated or delayed by a given amount of time.
+ * are either repeated or delayed by a given amount of time. The provided functions
+ * are wrappers around {@link ScheduledExecutorService}, but provides more readable 
+ * method names and work with {@link CompletableFuture}s for better composability 
+ * of actions.
  */
 final class SchedulingUtil {
 
@@ -212,7 +215,6 @@ final class SchedulingUtil {
 		if(unit === null) {
 			throw new NullPointerException
 		}
-		// TODO check parameters
 		new DelaySpecifier {
 
 			override withInitialDelay(long initialDelay, (CompletableFuture<?>)=>void action) {
@@ -385,17 +387,22 @@ final class SchedulingUtil {
 	}
 
 	/**
-	 * The thread calling this method will not block, but immediately return
-	 * a CompletableFuture that will be completed after the delay specified 
-	 * by the parameters.<br>
-	 * The returned CompletableFuture will be completed on a new thread with a {@code null} value.
-	 * @param time in {@code unit} after which
+	 * This method returns a CompletableFuture which will be completed 
+	 * with a {@code null} value on a new thread after after the delay time 
+	 * specified by the parameters.<br>
+	 * The thread calling this method will not block.
+	 * @param time in {@code unit} after which the returned future will be completed with {@code null} value.
+	 *        The value of this parameter must be {> 0}.
 	 * @param unit is the time unit of {@code time}
+	 * @throws NullPointerException if {@code unit} is {@code null}
+	 * @throws IllegalArgumentException if {@code time <= 0}
 	 */
 	// TODO version with scheduler
 	public static def ScheduledCompletableFuture<?> waitFor(long time, TimeUnit unit) {
-		// TODO sanity check on time
 		Objects.requireNonNull(unit)
+		if(time <= 0) {
+			throw new IllegalArgumentException("time must be > 0, but was " + time);
+		}
 		val scheduler = createDefaultScheduledExecutorService
 		val result = waitForInternal(time, unit, scheduler)
 		result.whenComplete[scheduler.shutdown()]
@@ -403,50 +410,187 @@ final class SchedulingUtil {
 	}
 
 	/**
-	 * May cause loss in time precision, if the overall duration exceeds Long.MAX_VALUE nanoseconds, 
+	 * This method returns a CompletableFuture which will be completed 
+	 * with a {@code null} value on a new thread after after the delay time 
+	 * specified by the {@code duration} parameter.<br>
+	 * The thread calling this method will not block.<br>
+	 * <br>
+	 * Note: The use of {@code Duration} may cause a loss in time precision, if the overall duration exceeds Long.MAX_VALUE nanoseconds, 
 	 * which is roughly a duration of 292.5 years. At most at most 999,999,999 nanoseconds (less than one 
 	 * second) may be stripped.
+	 * @throws NullPointerException if {@code duration} is {@code null}
+	 * @throws IllegalArgumentException if {@code duration} value is {@code <= 0}
 	 */
 	// TODO version with scheduler
 	public static def ScheduledCompletableFuture<?> waitFor(Duration duration) {
-		// TODO sanity check on param
+		Objects.requireNonNull(duration)
+		duration.requirePositive
 		var time = duration.toTime
 		waitFor(time.amount, time.unit)
 	}
+	
+	private static def void requirePositive(Duration duration) {
+		val seconds = duration.seconds
+		if(seconds < 0L) {
+			throw new IllegalArgumentException("duration must be positive")
+		}
+		if(seconds === 0L) {
+			if(duration.nano <= 0L) {
+			throw new IllegalArgumentException("duration must be positive")
+			}
+		}
+	}
 
 	/**
-	 * May cause loss in time precision, if the overall duration exceeds Long.MAX_VALUE nanoseconds, 
+	 * This method will run the given {@code then} callback after the delay 
+	 * provided via the parameter {@code duration}. The {@code then} callback
+	 * will be executed on a new thread and the future which will be returned will
+	 * be passed to it. . This allows the callback to check for cancellation during execution.
+	 * The returned future will complete with a {@code null} value 
+	 * after the {@code then} procedure returns without throwing an exception. 
+	 * If {@code then} throws an exception  the returned future will be completed exceptionally 
+	 * with the thrown exception. If the returned future is cancelled before {@code then} 
+	 * is executed, the callback will not be called at all.<br>
+	 * The thread calling this method will not block.<br>
+	 * <br>
+	 * Note: The use of {@code Duration} may cause a loss in time precision, if the overall duration exceeds Long.MAX_VALUE nanoseconds, 
 	 * which is roughly a duration of 292.5 years. At most at most 999,999,999 nanoseconds (less than one 
 	 * second) may be stripped.
+	 * @param duration the time that will at least pass between the method call and the execution of the
+	 *   {@code then} procedure. Must be a positive value.
+	 * @param then the action to be executed when the delay specified via {@code duration} expires.
+	 *   This procedure will be called on a new tread. If the action throws an exception, the returned
+	 *   future will be completed exceptionally with the thrown exception. Otherwise the future will
+	 *   be completed with a {@code null} value after the successful execution of this action.
+	 * @return future that will be completed exceptionally if {@code then} throws an exception. 
+	 *   Otherwise the future will be completed with a {@code null} value after the successful execution of {@code then}.
+	 *   If this future is completed by the caller of this method before {@code then} is started executing,
+	 *   the action will not be called. 
+	 * @throws NullPointerException if {@code duration} or {@code then} is {@code null}
+	 * @throws IllegalArgumentException if {@code duration} value is {@code <= 0}
+	 * @see #waitFor(ScheduledExecutorService, long, TimeUnit, Procedure1)
+	 * @see #waitFor(long, TimeUnit, Procedure1)
 	 */
 	// TODO version with scheduler
 	public static def ScheduledCompletableFuture<?> waitFor(Duration duration, (CompletableFuture<?>)=>void then) {
-		// TODO sanity check on params
+		duration.requirePositive
+		then.requireNonNull
 		val time = duration.toTime
 		waitFor(time.amount, time.unit, then)
 	}
 
+	/**
+	 * This method will run the given {@code then} callback after the delay 
+	 * provided via the parameters {@code time} and {@code unit}. The {@code then} callback
+	 * will be executed on a new thread and the future which will be returned will
+	 * be passed to it. This allows the callback to check for cancellation during execution. 
+	 * The returned future will complete with a {@code null} value 
+	 * after the {@code then} procedure returns without throwing an exception. 
+	 * If {@code then} throws an exception  the returned future will be completed exceptionally 
+	 * with the thrown exception. If the returned future is cancelled before {@code then} 
+	 * is executed, the callback will not be called at all.<br>
+	 * The thread calling this method will not block.<br>
+	 * @param time minimum amount of time specified in {@code unit} that has to elapse before the 
+	 *   {@code then} action is executed. This parameter must be a value {@code > 0}.
+	 * @param unit the unit of time defined for {@code time}.
+	 * @param then the action to be executed when the delay specified via {@code time} and {@code unit} expires.
+	 *   This procedure will be called on a new tread. If the action throws an exception, the returned
+	 *   future will be completed exceptionally with the thrown exception. Otherwise the future will
+	 *   be completed with a {@code null} value after the successful execution of this action.
+	 * @return future that will be completed exceptionally if {@code then} throws an exception. 
+	 *   Otherwise the future will be completed with a {@code null} value after the successful execution of {@code then}.
+	 *   If this future is completed by the caller of this method before {@code then} is started executing,
+	 *   the action will not be called. 
+	 * @throws NullPointerException if {@code then} or {@code unit} is {@code null}
+	 * @throws IllegalArgumentException if {@code time} value is {@code <= 0}
+	 * @see #waitFor(ScheduledExecutorService, long, TimeUnit, Procedure1)
+	 * @see #waitFor(Duration, Procedure1)
+	 */
 	public static def ScheduledCompletableFuture<?> waitFor(long time, TimeUnit unit, (CompletableFuture<?>)=>void then) {
-		// TODO sanity check on params
 		Objects.requireNonNull(unit)
-		val scheduler = new ScheduledThreadPoolExecutor(1)
+		Objects.requireNonNull(then)
+		if(time <= 0) {
+			throw new IllegalArgumentException("time must be > 0, but was " + time);
+		}
+		val scheduler = createDefaultScheduledExecutorService
 		val result = waitForInternal(time, unit, scheduler, then)
 		result.whenComplete[scheduler.shutdown()]
 		result
 	}
 
-	// TODO version with Duration
+	/**
+	 * This method will run the given {@code then} callback after the delay 
+	 * provided via the parameters {@code time} and {@code unit}. The {@code then} callback
+	 * will be scheduled and executed on the given {@code scheduler} and the future which will be returned will
+	 * be passed to it. This allows the callback to check for cancellation during execution.
+	 * The returned future will complete with a {@code null} value 
+	 * after the {@code then} procedure returns without throwing an exception. 
+	 * If {@code then} throws an exception  the returned future will be completed exceptionally 
+	 * with the thrown exception. If the returned future is cancelled before {@code then} 
+	 * is executed, the callback will not be called at all.<br>
+	 * The thread calling this method will not block.<br>
+	 * @param scheduler is the executor used for scheduling the execution of the {@code action} action.
+	 * @param time minimum amount of time specified in {@code unit} that has to elapse before the 
+	 *   {@code then} action is executed. This parameter must be a value {@code > 0}.
+	 * @param unit the unit of time defined for {@code time}.
+	 * @param then the action to be executed when the delay specified via {@code time} and {@code unit} expires.
+	 *   This procedure will be scheduled and called on the {@code scheduler}. If the action throws an exception, the returned
+	 *   future will be completed exceptionally with the thrown exception. Otherwise the future will
+	 *   be completed with a {@code null} value after the successful execution of this action.
+	 * @return future that will be completed exceptionally if {@code then} throws an exception. 
+	 *   Otherwise the future will be completed with a {@code null} value after the successful execution of {@code then}.
+	 *   If this future is completed by the caller of this method before {@code then} is started executing,
+	 *   the action will not be called. 
+	 * @throws NullPointerException if {@code scheduler}, {@code then} or {@code unit} is {@code null}
+	 * @throws IllegalArgumentException if {@code time} value is {@code <= 0}
+	 * @see #waitFor(long, TimeUnit, Procedure1)
+	 * @see #waitFor(Duration, Procedure1)
+	 */
 	public static def ScheduledCompletableFuture<?> waitFor(ScheduledExecutorService scheduler, long time, TimeUnit unit,
-		(CompletableFuture<?>)=>void action) {
+		(CompletableFuture<?>)=>void then) {
 		Objects.requireNonNull(scheduler)
-		Objects.requireNonNull(action)
-		// TODO sanity check on time
-		waitForInternal(time, unit, scheduler, action)
+		Objects.requireNonNull(unit)
+		Objects.requireNonNull(then)
+		if(time <= 0) {
+			throw new IllegalArgumentException("time must be > 0, but was " + time);
+		}
+		waitForInternal(time, unit, scheduler, then)
 	}
 
+	/**
+	 * This method will run the given {@code delayed} function after the delay 
+	 * provided via the parameters {@code delayTime} and {@code delayUnit}. The {@code delayed} function
+	 * will be executed on a new thread and the future which will be returned will
+	 * be passed to it. This allows the function to check for cancellation during execution. 
+	 * The returned future will complete with a the result value of the {@delayed} function
+	 * after executing it, without it throwing an exception. 
+	 * If {@code delayed} throws an exception  the returned future will be completed exceptionally 
+	 * with the thrown exception. If the returned future is cancelled before {@code delayed} 
+	 * is executed, the function will not be called at all.<br>
+	 * The thread calling this method will not block.<br>
+	 * @param delayTime minimum amount of time specified in {@code delayUnit} that has to elapse before the 
+	 *   {@code delayed} action is executed. This parameter must be a value {@code > 0}.
+	 * @param delayUnit the unit of time defined for {@code delayTime}.
+	 * @param delayed the action to be executed when the delay specified via {@code delayTime} and {@code delayUnit} expires.
+	 *   This function will be called on a new tread. If the function throws an exception, the returned
+	 *   future will be completed exceptionally with the thrown exception. Otherwise the future will
+	 *   be completed with the result value returned from successful execution of this function.
+	 * @return future that will be completed exceptionally if {@code delayed} throws an exception. 
+	 *   Otherwise the future will be completed with the result value of the successful execution of {@code delayed}.
+	 *   If this future is completed by the caller of this method before {@code delayed} is started executing,
+	 *   the action will not be called.
+	 * @throws NullPointerException if {@code delayed} or {@code delayUnit} is {@code null}
+	 * @throws IllegalArgumentException if {@code delayTime} value is {@code <= 0}
+	 * @see #delay(Duration, Function1)
+	 * @see #delay(ScheduledExecutorService, long, TimeUnit, Function1)
+	 */
 	public static def <T> ScheduledCompletableFuture<T> delay(long delayTime, TimeUnit delayUnit,
 		(ScheduledCompletableFuture<?>)=>T delayed) {
-		// TODO sanity check on params
+		delayed.requireNonNull
+		delayUnit.requireNonNull
+		if(delayTime <= 0) {
+			throw new IllegalArgumentException("delayTime must be > 0, but was " + delayTime);
+		}
 		val scheduler = createDefaultScheduledExecutorService
 		val result = scheduler.delayInternal(delayTime, delayUnit, delayed)
 		result.whenComplete[scheduler.shutdown()]
@@ -461,25 +605,81 @@ final class SchedulingUtil {
 	}
 
 	/**
-	 * May cause loss in time precision, if the overall duration exceeds Long.MAX_VALUE nanoseconds, 
+	 * This method will run the given {@code delayed} function after the delay 
+	 * provided via the {@code delayBy} parameter. The {@code delayed} function
+	 * will be executed on a new thread and the future which will be returned will
+	 * be passed to it. This allows the function to check for cancellation during execution. 
+	 * The returned future will complete with a the result value of the {@delayed} function
+	 * after executing it, without it throwing an exception. 
+	 * If {@code delayed} throws an exception  the returned future will be completed exceptionally 
+	 * with the thrown exception. If the returned future is cancelled before {@code delayed} 
+	 * is executed, the function will not be called at all.<br>
+	 * The thread calling this method will not block.<br>
+	 * <br>
+	 * Note: The use of {@code Duration} may cause a loss in time precision, if the overall duration exceeds Long.MAX_VALUE nanoseconds, 
 	 * which is roughly a duration of 292.5 years. At most at most 999,999,999 nanoseconds (less than one 
 	 * second) may be stripped.
+	 * @param delayBy minimum duration specified that has to elapse before the 
+	 *   {@code delayed} action is executed. This parameter must be a positive duration.
+	 * @param delayed the action to be executed when the delay specified via {@code delayBy} expires.
+	 *   This function will be called on a new tread. If the function throws an exception, the returned
+	 *   future will be completed exceptionally with the thrown exception. Otherwise the future will
+	 *   be completed with the result value returned from successful execution of this function.
+	 * @return future that will be completed exceptionally if {@code delayed} throws an exception. 
+	 *   Otherwise the future will be completed with the result value of the successful execution of {@code delayed}.
+	 *   If this future is completed by the caller of this method before {@code delayed} is started executing,
+	 *   the action will not be called.
+	 * @throws NullPointerException if {@code delayed} or {@code delayUnit} is {@code null}
+	 * @throws IllegalArgumentException if {@code delayBy} time is {@code <= 0}
+	 * @see #delay(long, TimeUnit, Function1)
+	 * @see #delay(ScheduledExecutorService, long, TimeUnit, Function1)
 	 */
 	 // TODO version with scheduler
 	public static def <T> ScheduledCompletableFuture<T> delay(Duration delayBy, (ScheduledCompletableFuture<?>)=>T delayed) {
-		// TODO sanity check on params
+		delayBy.requireNonNull
+		delayBy.requirePositive
+		delayed.requireNonNull
 		var time = delayBy.toTime
 		delay(time.amount, time.unit, delayed)
 	}
 	
-	// be aware: completing the future outside of this function will not stop the computation of action.
-	// the future can be cancelled though, which will prevent execution, if the computation of action did not start yet
-	public static def <T> ScheduledCompletableFuture<T> delay(ScheduledExecutorService scheduler, long time,
-		TimeUnit unit, (ScheduledCompletableFuture<?>)=>T action) {
-		// TODO sanity check on time
-		Objects.requireNonNull(scheduler)
-		Objects.requireNonNull(action)
-		delayInternal(scheduler, time, unit, action)
+	/**
+	 * This method will run the given {@code delayed} function after the delay 
+	 * provided via the parameters {@code delayTime} and {@code delayUnit}. The {@code delayed} function
+	 * will be scheduled and executed using the given {@code scheduler} and the future which will be returned will
+	 * be passed to it. This allows the function to check for cancellation during execution. 
+	 * The returned future will complete with a the result value of the {@delayed} function
+	 * after executing it, without it throwing an exception. 
+	 * If {@code delayed} throws an exception  the returned future will be completed exceptionally 
+	 * with the thrown exception. If the returned future is cancelled before {@code delayed} 
+	 * is executed, the function will not be called at all.<br>
+	 * The thread calling this method will not block.<br>
+	 * @param scheduler is the executor used for scheduling and executing of the {@code delayed} function.
+	 * @param delayTime minimum amount of time specified in {@code delayUnit} that has to elapse before the 
+	 *   {@code delayed} function is executed. This parameter must be a value {@code > 0}.
+	 * @param delayUnit the unit of time defined for {@code delayTime}.
+	 * @param delayed the action to be executed when the delay specified via {@code delayTime} and {@code delayUnit} expires.
+	 *   This function will be called on a new tread. If the function throws an exception, the returned
+	 *   future will be completed exceptionally with the thrown exception. Otherwise the future will
+	 *   be completed with the result value returned from successful execution of this function.
+	 * @return future that will be completed exceptionally if {@code delayed} throws an exception. 
+	 *   Otherwise the future will be completed with the result value of the successful execution of {@code delayed}.
+	 *   If this future is completed by the caller of this method before {@code delayed} is started executing,
+	 *   the action will not be called.
+	 * @throws NullPointerException if {@code delayed} or {@code delayUnit} is {@code null}
+	 * @throws IllegalArgumentException if {@code delayTime} value is {@code <= 0}
+	 * @see #delay(Duration, Function1)
+	 * @see #delay(long, TimeUnit, Function1)
+	 */
+	public static def <T> ScheduledCompletableFuture<T> delay(ScheduledExecutorService scheduler, long delayTime,
+		TimeUnit delayUnit, (ScheduledCompletableFuture<?>)=>T action) {
+		scheduler.requireNonNull
+		action.requireNonNull
+		delayUnit.requireNonNull
+		if(delayTime <= 0) {
+			throw new IllegalArgumentException("delayTime must be > 0, but was " + delayTime);
+		}
+		delayInternal(scheduler, delayTime, delayUnit, action)
 	}
 	
 	private static def <T> ScheduledCompletableFuture<T> delayInternal(ScheduledExecutorService scheduler, long time,
