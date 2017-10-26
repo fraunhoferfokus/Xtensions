@@ -483,7 +483,7 @@ class Showcase {
 		val (String)=>boolean notThere = [it.nullOrEmpty]
 		val (String)=>boolean tooShort = [it.length < 3]
 		val (String)=>boolean valid = notThere.or(tooShort).negate
-		#["ay", "caramba", "", "we", "fools"]
+		#["ay", "caramba", null, "we", "fools"]
 			.filter(valid)
 			.forEach[
 				println(it)
