@@ -1507,8 +1507,8 @@ so response time may vary.
 
 Contributions will be licensed under https://www.eclipse.org/legal/epl-2.0/[EPL 2.0].
 
-In case this project is transferred to a vendor neutral organization, you agree to transfer
-the IP on your contribution to this organization.
+In case this project is transferred to a vendor neutral organization, every contributor agrees 
+up-front to transfer the IP on his/her contribution to this organization.
 
 == Status of the Project
 
