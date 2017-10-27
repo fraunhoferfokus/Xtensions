@@ -1281,9 +1281,34 @@ CompletableFuture.supplyAsync [
 
 Alternatively, a version of `cancelOnTimeout` is provided taking a `java.time.Duration` as parameter.
 
-////
-TODO: Describe whenCancelledInterrupt method
-////
+
+Sometimes blocking APIs have to be used, but a future based API should be provided to the user.
+In this case it may be desirable that the user can cancel the future to interrupt the thread
+performing a blocking operation. This is tricky when running the blocking operations 
+using a thread pool, since the thread should only be interrupted as long as the operation
+associated with the future is running. To support this use case the `whenCancelledInterrupt`
+method is provided. 
+
+Example:
+
+[source,xtend]
+----
+val blockOpPool = Executors.newCachedThreadPool // pool for running blocking operations
+/// ...
+val sleepy = blockOpPool.asyncRun [ CompletableFuture<?> it | // <1>
+	it.whenCancelledInterrupt [|
+		try {
+			Thread.sleep(100) // perform blocking operation
+		} catch (InterruptedException e) {
+			println("Hey, I was cancelled")
+		}
+	]
+]
+// ...
+sleepy.cancel // may interrupt Thread.sleep
+----
+<1> Here an extension method described in <<Async Computations>> is used.
+
 
 The following functions introduced in JDK 9 on `CompletableFuture` have been back-ported
 in class `de.fhg.fokus.xtensions.concurrent.CompletableFutureExtensions` as extension methods:

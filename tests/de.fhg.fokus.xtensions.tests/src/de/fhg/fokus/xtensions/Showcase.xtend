@@ -610,6 +610,22 @@ class Showcase {
 		} catch(CompletionException e) {
 			println("Value was too late.")
 		}
+		
+		// whenCancelledInterrupt demo
+		
+		val blockOpPool = Executors.newCachedThreadPool
+		val sleepy = blockOpPool.asyncRun [ CompletableFuture<?> it | 
+			it.whenCancelledInterrupt [|
+				try {
+					Thread.sleep(100)
+				} catch (InterruptedException e) {
+					println("Hey, I was cancelled")
+				}
+			]
+		]
+		sleepy.cancel // may interrupt Thread.sleep
+		blockOpPool.shutdown()
+		blockOpPool.awaitTermination(100,TimeUnit.MILLISECONDS)
 	}
 	
 	def void completeWithResult(CompletableFuture<String> res, boolean heavy) {
