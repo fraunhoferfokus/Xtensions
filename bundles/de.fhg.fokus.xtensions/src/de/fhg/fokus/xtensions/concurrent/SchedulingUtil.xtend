@@ -106,7 +106,9 @@ final class SchedulingUtil {
 	 * @throws java.lang.IllegalArgumentException if {@code period} is a negative duration
 	 */
 	public static def ScheduledCompletableFuture<?> repeatEvery(Duration period, (ScheduledCompletableFuture<?>)=>void action) {
-		// TODO check parameters
+		action.requireNonNull
+		period.requireNonNull
+		period.requirePositive
 		val time = period.toTime
 		repeatEvery(time.amount, time.unit, action)
 	}
@@ -138,7 +140,10 @@ final class SchedulingUtil {
 	 * @throws java.lang.IllegalArgumentException if {@code period} is a negative duration
 	 */
 	public static def ScheduledCompletableFuture<?> repeatEvery(ScheduledExecutorService scheduler, Duration period, (CompletableFuture<?>)=>void action) {
-		// TODO check parameters
+		scheduler.requireNonNull
+		action.requireNonNull
+		period.requireNonNull
+		period.requirePositive
 		val time = period.toTime
 		scheduler.repeatEvery(time.amount, time.unit, action)
 	}
@@ -165,7 +170,11 @@ final class SchedulingUtil {
 	 * @throws IllegalArgumentException if {@code period} is {@code <= 0}
 	 */
 	public static def ScheduledCompletableFuture<?> repeatEvery(long period, TimeUnit unit, (ScheduledCompletableFuture<?>)=>void action) {
-		// TODO sanity check on params
+		unit.requireNonNull
+		action.requireNonNull
+		if(period <= 0) {
+			throw new IllegalArgumentException("period must be > 0, but was " + period);
+		}
 		scheduleAtFixedRate(0, period, unit, action)
 	}
 	
@@ -188,8 +197,13 @@ final class SchedulingUtil {
 	 * @throws IllegalArgumentException if {@code period} is {@code <= 0}
 	 */
 	public static def ScheduledCompletableFuture<?> repeatEvery(ScheduledExecutorService scheduler, long period, TimeUnit unit, (ScheduledCompletableFuture<?>)=>void action) {
-		// TODO sanity check on params
-		Objects.requireNonNull(unit)
+		scheduler.requireNonNull
+		unit.requireNonNull
+		action.requireNonNull
+		if(period <= 0) {
+			throw new IllegalArgumentException("period must be > 0, but was " + period);
+		}
+		
 		scheduler.scheduleAtFixedRate(0, period, unit, action)
 	}
 

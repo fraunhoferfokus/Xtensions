@@ -57,6 +57,9 @@ import java.util.OptionalDouble
 import java.util.Set
 import java.util.function.Function
 import java.util.Map
+import de.fhg.fokus.xtensions.concurrent.CompletableFutureExtensions
+import java.util.concurrent.ForkJoinPool
+import java.util.concurrent.Executor
 
 //@Ignore
 class Showcase {
@@ -364,6 +367,7 @@ class Showcase {
 			.forEach [
 				println(it)
 			]
+			
 	}
 	
 	
@@ -531,6 +535,97 @@ class Showcase {
 			println('''failed with «it.class» and cause «it.cause.class»''')
 		]
 		
+		CompletableFuture.supplyAsync [
+			throw new IllegalStateException("Boom!")
+		].recoverWith[
+			if(it.cause instanceof IllegalStateException)
+				CompletableFuture.supplyAsync [
+					"I was expecting you! Here is your asynchronous backup value."
+				]
+			else
+				throw new IllegalArgumentException("Did not expect this!", it)
+		].thenAccept [
+			println(it)
+		].join
+		
+		val lateVal = CompletableFuture.supplyAsync [
+			// Do not do this at home!
+			// We are blocking the common pool
+			Thread.sleep(1000) 
+			"here is some belated value."
+		]
+	
+		val withBackup = lateVal.handleCancellation [
+			"Here is some default value."
+		].thenAccept [
+			println(it)
+		]
+		
+		// let's be impatient
+		lateVal.cancel
+		withBackup.join
+		
+		val forwarded = new CompletableFuture
+		completeWithResult(forwarded, true)
+	
+		val executor = Executors.newCachedThreadPool
+		val cancellable = someCancellableComposition(executor)
+		cancellable.cancel
+		executor.shutdown()
+		executor.awaitTermination(100, TimeUnit.MILLISECONDS)
+	}
+	
+	def void completeWithResult(CompletableFuture<String> res, boolean heavy) {
+		if(heavy){
+			doSomeHeavyWork().forwardTo(res)
+		} else {
+			res.complete("Some light work")
+		}
+	}
+	
+	def CompletableFuture<String> doSomeHeavyWork() {
+		CompletableFuture.supplyAsync [
+			"Did some heavy lifting"
+		]
+	}
+	
+	def CompletableFuture<String> someCancellableComposition(Executor executor) {
+		val result = new CompletableFuture<String>
+		val CompletableFuture<String> firstStep = firstStep(executor)
+		result.forwardCancellation(firstStep)
+		firstStep.thenCompose [
+			val secondStep = secondStep(executor,it)
+			result.forwardCancellation(secondStep)
+			secondStep
+		].forwardTo(result)
+		
+		result
+	}
+	
+	def CompletableFuture<String> firstStep(Executor executor) {
+		val result = new CompletableFuture<String>
+		executor.execute [|
+			Thread.sleep(10) // evil!
+			if(result.cancelled) {
+				println("cancelled in first step")
+			} else {
+				result.complete("Some result")
+			}
+		]
+		result
+	}
+	
+	def CompletableFuture<String> secondStep(Executor executor, String input) {
+		val result = new CompletableFuture<String>
+		executor.execute [|
+			if(result.cancelled) {
+				println("cancelled in first step")
+			} else {
+				val output = input.toUpperCase
+				result.complete(output)
+			}
+		]
+		result
 	}
 	
 	private def Pair<String,Integer> getPair() {

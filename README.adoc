@@ -1104,26 +1104,150 @@ CompletableFuture.supplyAsync [
 ]
 ----
 
-The `recoverWith` extension method is similar to the `thenCompose` method for the exceptional case. The 
-registered callback of type `(Throwable)=>CompletionStage<? extends R>` will be invoked if the future
+
+The `recoverWith` extension method is similar to the `thenCompose` method, but for the exceptional case. 
+The registered callback of type `(Throwable)=>CompletionStage<? extends R>` will be invoked if the future
 the callback is registered on completes exceptionally. The callback will be called with the exception the
-original future was completed with exceptionally. The future returned from the callback will be returned from
-the `recoverWith` extension method.
+original future was completed with exceptionally. The future returned from the callback will be used to
+complete the future returned from the `recoverWith` extension method. This means if the original future
+completes successfully, the result will be used to complete the future returned from the `recoverWith`
+method. Otherwise the result of the recovery callback will be forwarded to the overall result future
+(no matter if the result is successful or exceptional).
 
 // TODO: Provide example
 
 [source,xtend]
 ----
+CompletableFuture.supplyAsync [
+	throw new IllegalStateException("Boom!")
+].recoverWith [
+	if(it.cause instanceof IllegalStateException)
+		CompletableFuture.supplyAsync [
+			"I was expecting you! Here is your asynchronous backup value."
+		]
+	else
+		throw new IllegalArgumentException("Did not expect this!", it)
+].thenAccept [
+	println(it)
+]
+----
 
+There are also `recoverWithAsync` versions where the recovery callback will always be executed on a given
+executor.
+
+It may be useful to abort a computation and get a default value instead. This can be done using the 
+`handleCancellation` extension method and canceling the original future. +
+The `handleCancellation` extension method is called with a supplier function which provides a result
+value when the source future is cancelled. If the original future completes successfully, the returned 
+future will simply be completed with the same value. If the original future was cancelled (or completed
+with a `java.util.concurrent.CancellationException`), the given callback is called. If the callback
+completes successfully, the result will be set on the resulting future. If the callback throws an exception,
+this exception will be set as exceptional result to the resulting future. If the original future was completed 
+exceptionally with a different exception, the same exception will be set as the exceptional result 
+to the returned future.
+
+[source,xtend]
+----
+val lateVal = CompletableFuture.supplyAsync [
+	// Do not do this at home!
+	// We are blocking the common pool
+	Thread.sleep(1000)
+	"here is some belated value."
+]
+
+val withBackup = lateVal.handleCancellation [
+	"Here is some default value."
+].thenAccept [
+	println(it)
+]
+
+// let's be impatient
+lateVal.cancel
+----
+
+The `handleCancellationAsync` variant executes the given handler always on the a provided executor. 
+
+
+Sometimes it is needed to take the result of one `CompletableFuture` and forward the result to another
+future. This can e.g. be needed when a function is handed a future to complete and gets the actual result
+from a method returning a future. For cases like this the `forwardTo` extension method can be used.
+
+Example:
+
+[source,xtend]
+----
+def void completeWithResult(CompletableFuture<String> res, boolean heavy) {
+	if(heavy){
+		doSomeHeavyWork().forwardTo(res)
+	} else {
+		res.complete("Some light work")
+	}
+}
+
+def CompletableFuture<String> doSomeHeavyWork() {
+	CompletableFuture.supplyAsync [
+		"Did some heavy lifting"
+	]
+}
 ----
 
 
-////
+When returning a `CompletableFuture` from a method it may make sense to not return the future itself,
+but a copy, which will be completed 
 
-TODO: Describe recoverWith/recoverWithAsnyc extension method  (like thenCompose method for error case, could be named exceptionallyCompose)
-TODO: Describe handleCancellation/handleCancellationAsync extension method  
-TODO: Describe forwardTo extension method  
-TODO: Describe forwardCancellation extension method  
+
+When returning a `CompletableFuture` from a method which is decoupled from one ore more internal 
+futures (e.g using the `copy` or `forwardTo` extension method) it may still make sense to forward 
+cancellation from the returned future to the futures used internally to abort sub-tasks.
+
+Example:
+
+[source,xtend]
+----
+def CompletableFuture<String> someCancellableComposition(Executor executor) {
+	val result = new CompletableFuture<String>
+	val CompletableFuture<String> firstStep = firstStep(executor)
+	result.forwardCancellation(firstStep)
+	firstStep.thenCompose [
+		val secondStep = secondStep(executor,it)
+		result.forwardCancellation(secondStep)
+		secondStep
+	].forwardTo(result)
+	
+	result
+}
+
+def CompletableFuture<String> firstStep(Executor executor) {
+	val result = new CompletableFuture<String>
+	executor.execute [|
+		Thread.sleep(10) // evil!
+		if(result.cancelled) {
+			println("cancelled in first step")
+		} else {
+			result.complete("Some result")
+		}
+	]
+	result
+}
+
+def CompletableFuture<String> secondStep(Executor executor, String input) {
+	val result = new CompletableFuture<String>
+	executor.execute [|
+		if(result.cancelled) {
+			println("cancelled in first step")
+		} else {
+			val output = input.toUpperCase
+			result.complete(output)
+		}
+	]
+	result
+}
+----
+As you see in the example, the cancellation is forwarded to the two futures that are 
+composed to calculate the overall result. Yet the returned future cannot be used to 
+complete any internal future with a bogus result value.
+
+////
 TODO: Describe cancelOnTimeout extension method  
 TODO: Describe whenCancelledInterrupt method  
 
@@ -1286,7 +1410,8 @@ The main library will be located in `bundles/de.fhg.fokus.xtensions/target`
 
 == Setting up the Development Environment
 
-The repository contains the Oomph setup file link:releng/de.fhg.fokus.xtensions.releng/Xtensions.setup[Xtensions.setup] for the Eclipse IDE.
+The repository contains the Oomph setup file link:releng/de.fhg.fokus.xtensions.releng/Xtensions.setup[Xtensions.setup] 
+for the Eclipse IDE.
 
 
 == External Contributions
@@ -1307,7 +1432,7 @@ The following tasks are the next goals for this project, roughly in this order:
  * [ ] Complete Functionality section
  * [ ] Complete IDE Setup section
 - [x] Complete JavaDocs for all public methods
-- [ ] Cover each method with test cases
+- [ ] Cover each public method with test cases
 - [ ] Add Jacoco test coverage to maven build
 - [ ] Add source bundle build to maven config
 - [ ] Move to a public GitHub repository

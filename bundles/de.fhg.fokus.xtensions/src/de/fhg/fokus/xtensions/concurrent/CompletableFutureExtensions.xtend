@@ -693,7 +693,7 @@ final class CompletableFutureExtensions {
 
 	private static def <R> recover(R r, Throwable ex, CompletableFuture<R> result,
 		(Throwable)=>CompletionStage<? extends R> recovery) {
-		// did the original
+		// did the original action complete with error or successfully?
 		if (ex !== null) {
 			// error occurred, we need to recover
 			var CompletionStage<? extends R> recoverFut
@@ -706,7 +706,7 @@ final class CompletableFutureExtensions {
 			// did we actually get a future to recover with?
 			if (recoverFut === null) {
 				// nope, NPE
-				result.completeExceptionally(new NullPointerException)
+				result.completeExceptionally(new NullPointerException("Recovery future was null."))
 			} else {
 				// yes, complete result with the recovery future value 
 				// (may be exceptionally too)
@@ -1054,7 +1054,8 @@ final class CompletableFutureExtensions {
 	 * @return A copy of {@code fut}, meaning that the result of {@code fut} will be forwarded to 
 	 *   the returned {@code CompletableFuture}.
 	 */
+	 @Inline("$1.apply(java.util.function.Function.identity())")
 	static def <R> CompletableFuture<R> copy(CompletableFuture<R> fut) {
-		fut.thenApply[it]
+		fut.thenApply(Function.identity)
 	}
 }
