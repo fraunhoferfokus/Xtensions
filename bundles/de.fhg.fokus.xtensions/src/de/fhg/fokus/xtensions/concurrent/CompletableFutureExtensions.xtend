@@ -129,6 +129,9 @@ final class CompletableFutureExtensions {
 	static def <R> CompletableFuture<R> cancelOnTimeout(CompletableFuture<R> fut, long timeout, TimeUnit unit) {
 		Objects.requireNonNull(fut)
 		Objects.requireNonNull(unit)
+		if(timeout <= 0) {
+			throw new IllegalArgumentException("timeout must be > 0")
+		}
 
 		// if the future is already completed, there is no point in even 
 		// starting a timer

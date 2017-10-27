@@ -5,14 +5,14 @@
 	<version>1.0.0-SNAPSHOT</version>
 	<name>Xtensions Build Releng</name>
 	<packaging>pom</packaging>
-	
+
 	<properties>
 		<tycho-version>1.0.0</tycho-version>
 		<xtend-version>2.11.0</xtend-version>
 		<maven.compiler.source>1.8</maven.compiler.source>
-    	<maven.compiler.target>1.8</maven.compiler.target>
+		<maven.compiler.target>1.8</maven.compiler.target>
 	</properties>
-	
+
 	<repositories>
 		<repository>
 			<id>oxygen</id>
@@ -20,7 +20,7 @@
 			<url>http://download.eclipse.org/releases/oxygen</url>
 		</repository>
 	</repositories>
-	
+
 	<build>
 		<plugins>
 			<plugin>
@@ -49,6 +49,12 @@
 					</execution>
 				</executions>
 			</plugin>
+			<plugin>
+				<groupId>org.eclipse.tycho.extras</groupId>
+				<artifactId>tycho-document-bundle-plugin</artifactId>
+				<version>1.0.0</version>
+			</plugin>
 		</plugins>
 	</build>
+
 </project>

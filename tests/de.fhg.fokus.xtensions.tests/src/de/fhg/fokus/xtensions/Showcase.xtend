@@ -60,6 +60,10 @@ import java.util.Map
 import de.fhg.fokus.xtensions.concurrent.CompletableFutureExtensions
 import java.util.concurrent.ForkJoinPool
 import java.util.concurrent.Executor
+import java.util.concurrent.TimeoutException
+import java.util.concurrent.ScheduledExecutorService
+import java.util.concurrent.ScheduledThreadPoolExecutor
+import java.util.concurrent.CompletionException
 
 //@Ignore
 class Showcase {
@@ -565,6 +569,7 @@ class Showcase {
 		lateVal.cancel
 		withBackup.join
 		
+		// Example for forwardCancellation (see someCancellableComposition)
 		val forwarded = new CompletableFuture
 		completeWithResult(forwarded, true)
 	
@@ -573,6 +578,38 @@ class Showcase {
 		cancellable.cancel
 		executor.shutdown()
 		executor.awaitTermination(100, TimeUnit.MILLISECONDS)
+		
+		
+		// Example for cancelOnTimeout
+		
+		CompletableFuture.supplyAsync [
+			Thread.sleep(100) // Never actually do this!
+			"Wow, so late"
+		].cancelOnTimeout(50, TimeUnit.MILLISECONDS)
+		.whenCancelled[|
+			println("Oh no! It took too long.")
+		]
+		
+		// Example for complex orTimeout
+		
+		val slowFut = CompletableFuture.supplyAsync [
+			Thread.sleep(100) // Never actually do this!
+			"Phew, so late"
+		]
+		val withTimeout = slowFut.orTimeout [
+			backwardPropagateCancel = false // do not cancel slowFut if withTimeout is cancelled
+			cancelOriginalOnTimeout = false // do not cancel slowFut on timeout
+			exceptionProvider = [new TimeoutException] // exception used to complete withTimeout on timeout
+			scheduler = new ScheduledThreadPoolExecutor(1) // scheduler used for timeout
+			timeout = (50L -> TimeUnit.MILLISECONDS) // time after which withTimeout is completed exceptionally
+			tryShutdownScheduler = true // if true tries to shutdown the given scheduler when slowFut completes
+		]
+		
+		try {
+			withTimeout.join
+		} catch(CompletionException e) {
+			println("Value was too late.")
+		}
 	}
 	
 	def void completeWithResult(CompletableFuture<String> res, boolean heavy) {
