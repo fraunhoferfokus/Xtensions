@@ -1054,7 +1054,7 @@ final class CompletableFutureExtensions {
 	 * @return A copy of {@code fut}, meaning that the result of {@code fut} will be forwarded to 
 	 *   the returned {@code CompletableFuture}.
 	 */
-	 @Inline("$1.apply(java.util.function.Function.identity())")
+//	 @Inline("$1.apply(java.util.function.Function.identity())")
 	static def <R> CompletableFuture<R> copy(CompletableFuture<R> fut) {
 		fut.thenApply(Function.identity)
 	}

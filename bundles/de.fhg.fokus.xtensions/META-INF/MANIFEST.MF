@@ -17,3 +17,4 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-Vendor: Fraunhofer FOKUS
 Require-Bundle: org.eclipse.xtend.lib;bundle-version="2.8.4",
  org.eclipse.jdt.annotation;bundle-version="[2.0.0,3.0.0)";resolution:=optional
+Automatic-Module-Name: de.fhg.fokus.xtensions

@@ -56,75 +56,11 @@
   <setupTask
       xsi:type="setup:VariableTask"
       name="eclipse.target.platform"
-      defaultValue="Neon"
+      defaultValue="Oxygen"
       storageURI="scope://Workspace"
       label="Target Platform">
     <annotation
         source="http://www.eclipse.org/oomph/setup/GlobalVariable"/>
-    <annotation
-        source="http://www.eclipse.org/oomph/setup/GlobalVariable"/>
-    <annotation
-        source="http://www.eclipse.org/oomph/setup/GlobalVariable"/>
-    <choice
-        value="Oxygen"
-        label="Eclipse Oxygen - 4.7"/>
-    <choice
-        value="Neon"
-        label="Eclipse Neon - 4.6"/>
-    <choice
-        value="Mars"
-        label="Eclipse Mars - 4.5"/>
-    <choice
-        value="Luna"
-        label="Eclipse Luna - 4.4"/>
-    <choice
-        value="Kepler"
-        label="Eclipse Kepler - 4.3"/>
-    <choice
-        value="Juno"
-        label="Eclipse Juno - 4.2"/>
-    <choice
-        value="Indigo"
-        label="Eclipse Indigo - 3.7"/>
-    <choice
-        value="Helios"
-        label="Eclipse Helios - 3.6"/>
-    <choice
-        value="Galileo"
-        label="Eclipse Galileo - 3.5"/>
-    <choice
-        value="None"
-        label="None"/>
-    <choice
-        value="Oxygen"
-        label="Eclipse Oxygen - 4.7"/>
-    <choice
-        value="Neon"
-        label="Eclipse Neon - 4.6"/>
-    <choice
-        value="Mars"
-        label="Eclipse Mars - 4.5"/>
-    <choice
-        value="Luna"
-        label="Eclipse Luna - 4.4"/>
-    <choice
-        value="Kepler"
-        label="Eclipse Kepler - 4.3"/>
-    <choice
-        value="Juno"
-        label="Eclipse Juno - 4.2"/>
-    <choice
-        value="Indigo"
-        label="Eclipse Indigo - 3.7"/>
-    <choice
-        value="Helios"
-        label="Eclipse Helios - 3.6"/>
-    <choice
-        value="Galileo"
-        label="Eclipse Galileo - 3.5"/>
-    <choice
-        value="None"
-        label="None"/>
     <choice
         value="Oxygen"
         label="Eclipse Oxygen - 4.7"/>
@@ -181,8 +117,6 @@
     <requirement
         name="org.eclipse.oomph.setup.pde.feature.group"/>
     <requirement
-        name="org.eclipse.oomph.setup.pde.feature.group"/>
-    <requirement
         name="org.eclipse.oomph.setup.jdt.feature.group"/>
     <requirement
         name="org.eclipse.oomph.setup.git.feature.group"/>
@@ -190,16 +124,14 @@
         name="org.eclipse.egit.feature.group"/>
     <requirement
         name="org.eclipse.oomph.setup.workingsets.feature.group"/>
-    <requirement
-        name="org.eclipse.egit.feature.group"/>
     <repository
         url="http://download.eclipse.org/releases/oxygen"/>
     <repository
         url="http://download.eclipse.org/eclipse/updates/4.7"/>
     <repository
-        url="${setup.targlets.p2}"/>
+        url="http://download.eclipse.org/modeling/tmf/xtext/updates/composite/releases/"/>
     <repository
-        url="${setup.pde.p2}"/>
+        url="${setup.targlets.p2}"/>
     <repository
         url="${setup.pde.p2}"/>
     <repository
@@ -212,32 +144,6 @@
         url="${setup.workingsets.p2}"/>
     <repository
         url="${setup.targlets.p2}"/>
-    <repository
-        url="${setup.pde.p2}"/>
-    <repository
-        url="${setup.pde.p2}"/>
-    <repository
-        url="${setup.jdt.p2}"/>
-    <repository
-        url="${setup.git.p2}"/>
-    <repository
-        url="${setup.egit.p2}"/>
-    <repository
-        url="${setup.workingsets.p2}"/>
-    <repository
-        url="${setup.targlets.p2}"/>
-    <repository
-        url="${setup.pde.p2}"/>
-    <repository
-        url="${setup.pde.p2}"/>
-    <repository
-        url="${setup.jdt.p2}"/>
-    <repository
-        url="${setup.git.p2}"/>
-    <repository
-        url="${setup.egit.p2}"/>
-    <repository
-        url="${setup.workingsets.p2}"/>
     <description>Install the tools needed in the IDE to work with the source code for ${scope.project.label}</description>
   </setupTask>
   <setupTask
@@ -272,108 +178,6 @@
           name="Neon">
         <repository
             url="http://download.eclipse.org/releases/neon"/>
-      </repositoryList>
-    </targlet>
-    <targlet
-        name="Eclipse Platform"
-        activeRepositoryList="${eclipse.target.platform}">
-      <repositoryList
-          name="None"/>
-      <repositoryList
-          name="Oxygen">
-        <repository
-            url="http://download.eclipse.org/eclipse/updates/4.7"/>
-      </repositoryList>
-      <repositoryList
-          name="Neon">
-        <repository
-            url="http://download.eclipse.org/eclipse/updates/4.6"/>
-      </repositoryList>
-      <repositoryList
-          name="Mars">
-        <repository
-            url="http://download.eclipse.org/eclipse/updates/4.5"/>
-      </repositoryList>
-      <repositoryList
-          name="Luna">
-        <repository
-            url="http://download.eclipse.org/eclipse/updates/4.4"/>
-      </repositoryList>
-      <repositoryList
-          name="Kepler">
-        <repository
-            url="http://download.eclipse.org/eclipse/updates/4.3"/>
-      </repositoryList>
-      <repositoryList
-          name="Juno">
-        <repository
-            url="http://download.eclipse.org/eclipse/updates/4.2"/>
-      </repositoryList>
-      <repositoryList
-          name="Indigo">
-        <repository
-            url="http://download.eclipse.org/eclipse/updates/3.7"/>
-      </repositoryList>
-      <repositoryList
-          name="Helios">
-        <repository
-            url="http://download.eclipse.org/eclipse/updates/3.6"/>
-      </repositoryList>
-      <repositoryList
-          name="Galileo">
-        <repository
-            url="http://download.eclipse.org/eclipse/updates/3.5"/>
-      </repositoryList>
-    </targlet>
-    <targlet
-        name="Eclipse Platform"
-        activeRepositoryList="${eclipse.target.platform}">
-      <repositoryList
-          name="None"/>
-      <repositoryList
-          name="Oxygen">
-        <repository
-            url="http://download.eclipse.org/eclipse/updates/4.7"/>
-      </repositoryList>
-      <repositoryList
-          name="Neon">
-        <repository
-            url="http://download.eclipse.org/eclipse/updates/4.6"/>
-      </repositoryList>
-      <repositoryList
-          name="Mars">
-        <repository
-            url="http://download.eclipse.org/eclipse/updates/4.5"/>
-      </repositoryList>
-      <repositoryList
-          name="Luna">
-        <repository
-            url="http://download.eclipse.org/eclipse/updates/4.4"/>
-      </repositoryList>
-      <repositoryList
-          name="Kepler">
-        <repository
-            url="http://download.eclipse.org/eclipse/updates/4.3"/>
-      </repositoryList>
-      <repositoryList
-          name="Juno">
-        <repository
-            url="http://download.eclipse.org/eclipse/updates/4.2"/>
-      </repositoryList>
-      <repositoryList
-          name="Indigo">
-        <repository
-            url="http://download.eclipse.org/eclipse/updates/3.7"/>
-      </repositoryList>
-      <repositoryList
-          name="Helios">
-        <repository
-            url="http://download.eclipse.org/eclipse/updates/3.6"/>
-      </repositoryList>
-      <repositoryList
-          name="Galileo">
-        <repository
-            url="http://download.eclipse.org/eclipse/updates/3.5"/>
       </repositoryList>
     </targlet>
     <targlet

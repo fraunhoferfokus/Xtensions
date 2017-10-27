@@ -42,6 +42,7 @@ final class StreamExtensions {
 // static def <T> IntStream flatMap(Stream<T> stream, (T)=>IntIterable mapper) // etc. for long, double, boolean
 // static def <T, K> Map<K,List<T>> groupBy(Stream<T> stream, Function<? super T, ? extends K> grouping) // shortcut for stream.collect(Collectors.groupingBy(grouping)).
 // static def <T> Stream<T> without(Stream<T>, Collection<?> other) // Note most performant using Set as other
+// static def <T> Stream<T> boolean exists(Stream<T> stream, Predicate<? super T> test) // alias for anyMatch
 	
 	private new() {
 		throw new IllegalStateException
