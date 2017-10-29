@@ -416,7 +416,7 @@ class Showcase {
 		println(s)
 	}
 	
-	@Test def void schdulingDemo() {
+	@Test def void schedulingDemo() {
 		
 		// Cancelling from outside
 		val hundredMs = 100.milliseconds
@@ -430,13 +430,29 @@ class Showcase {
 		]
 		fut.cancel(false)
 		
-		val fut2 = repeatEvery(100, TimeUnit.MILLISECONDS).withInitialDelay(50) [
+		val repeatingFut = repeatEvery(100, TimeUnit.MILLISECONDS).withInitialDelay(50) [
 			println("Delayed start, repeated every 100 milis period")
 		]
 		
-		delay(500.milliseconds) [
-			fut2.cancel(false)
-		].join
+		waitFor(50.milliseconds) [
+			repeatingFut.cancel(false)
+		]
+		
+		val result = new CompletableFuture<String>
+		result.thenAccept [
+			println(it)
+		]
+		
+		Executors.newCachedThreadPool.submit [
+			Thread.sleep(100)
+			result.complete("late response")
+		]
+		
+		delay(50.milliseconds) [
+			"default value"
+		].forwardTo(result)
+		
+		result.join
 	}
 	
 	@Test def void asyncDemo() {

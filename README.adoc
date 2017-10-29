@@ -1465,7 +1465,28 @@ If the future is completed before the delay is expired, the action will not be e
 action is performed, it can check during execution if the future is completed, e.g. to return 
 prematurely (abort the action early).
 
-TODO: Example
+[source,xtend]
+----
+import static extension de.fhg.fokus.xtensions.concurrent.SchedulingUtil.*
+import static extension de.fhg.fokus.xtensions.concurrent.CompletableFutureExtensions.*
+// ...
+
+val result = new CompletableFuture<String>
+result.thenAccept [
+	println(it)
+]
+
+Executors.newCachedThreadPool.submit [
+	Thread.sleep(100)
+	result.complete("late response")
+]
+
+delay(50.milliseconds) [
+	"default value"
+].forwardTo(result) <1>
+----
+<1> This extension method is explained in <<Extensions to CompletableFuture>>
+
 
 The method `waitFor` will create a `CompletableFuture` that will be completed successfully
 with a `null` value when the given duration expires. An overloaded version of the `waitFor`
@@ -1473,7 +1494,21 @@ method allows a deferred execution of a given callback, similar to the `delay` m
 the callback does not provide a return value. The returned future will be completed with a 
 `null` value after successful execution.
 
-TODO: Example
+[source,xtend]
+----
+import static extension de.fhg.fokus.xtensions.concurrent.SchedulingUtil.*
+//...
+
+val repeatingFut = repeatEvery(100, TimeUnit.MILLISECONDS).withInitialDelay(50) [
+	println("Delayed start, repeated every 100 milis period")
+]
+
+waitFor(50.milliseconds) [
+	repeatingFut.cancel(false)
+]
+----
+The same effect as shown here can be achieved with the `cancelOnTimeout` extension method on CompletableFuture, 
+described in <<Extensions to CompletableFuture>>.
 
 
 == Build
