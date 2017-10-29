@@ -1550,7 +1550,7 @@ up-front to transfer the IP on his/her contribution to this organization.
 The following tasks are the next goals for this project, roughly in this order:
 
 - [ ] Complete this README.adoc file
- * [ ] Complete Functionality section
+ * [x] Complete Functionality section
  * [ ] Complete IDE Setup section
 - [x] Complete JavaDocs for all public methods
 - [ ] Cover each public method with test cases
