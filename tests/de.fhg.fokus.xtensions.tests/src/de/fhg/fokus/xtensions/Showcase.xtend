@@ -64,8 +64,9 @@ import java.util.concurrent.TimeoutException
 import java.util.concurrent.ScheduledExecutorService
 import java.util.concurrent.ScheduledThreadPoolExecutor
 import java.util.concurrent.CompletionException
+import org.junit.Ignore
 
-//@Ignore
+@Ignore
 class Showcase {
 	
 	@Test def rangeDemo() {

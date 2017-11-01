@@ -444,14 +444,8 @@ final class SchedulingUtil {
 	}
 	
 	private static def void requirePositive(Duration duration) {
-		val seconds = duration.seconds
-		if(seconds < 0L) {
+		if(duration.negative) {
 			throw new IllegalArgumentException("duration must be positive")
-		}
-		if(seconds === 0L) {
-			if(duration.nano <= 0L) {
-			throw new IllegalArgumentException("duration must be positive")
-			}
 		}
 	}
 
