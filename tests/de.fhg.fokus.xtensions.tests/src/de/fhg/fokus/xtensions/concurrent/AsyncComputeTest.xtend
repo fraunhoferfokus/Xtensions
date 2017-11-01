@@ -31,7 +31,7 @@ class AsyncComputeTest {
 	@Rule public var thrown = ExpectedException.none;
 	@Rule public var timeout = Timeout.seconds(1);
 
-	///////////////
+	//////////////
 	// asyncRun //
 	//////////////
 	

@@ -40,9 +40,15 @@ final class StreamExtensions {
 // static def <T, Z, R> Stream<R> combinations(Stream<T> stream, Iterable<Z> combineWith, (T, Z)=>R combiner, BiPredicate<T,Z> where)
 // static def <T, Z, R> Stream<R> combinations(Stream<T> stream, ()=>Stream<Z> streamSupplier, (T, Z)=>R combiner, BiPredicate<T,Z> where)	
 // static def <T> IntStream flatMap(Stream<T> stream, (T)=>IntIterable mapper) // etc. for long, double, boolean
-// static def <T, K> Map<K,List<T>> groupBy(Stream<T> stream, Function<? super T, ? extends K> grouping) // shortcut for stream.collect(Collectors.groupingBy(grouping)).
 // static def <T> Stream<T> without(Stream<T>, Collection<?> other) // Note most performant using Set as other
-// static def <T> Stream<T> boolean exists(Stream<T> stream, Predicate<? super T> test) // alias for anyMatch
+// JDK9 support: static def <T> Stream<T> ofNullable​(Class<Stream> clazz, T t)
+// "Unification" with Xtend APIs:
+// static def <T> boolean exists(Stream<T> stream, Predicate<? super T> test) // alias for anyMatch
+// static def <T> Stream<T> take(Stream<T> stream, long limit) // alias for limit
+// static def <T> Stream<T> drop(Stream<T> stream, long limit) // alias for skip
+// static def <T> Optional<T> head(Stream<T> stream) // alias for findFirst
+// static def <T> Stream<T> tail(Stream<T> stream) // alias for skip(1)
+// static def <T, K> Map<K,List<T>> groupBy(Stream<T> stream, Function<? super T, ? extends K> grouping) // shortcut for stream.collect(Collectors.groupingBy(grouping))
 	
 	private new() {
 		throw new IllegalStateException

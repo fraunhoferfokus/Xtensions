@@ -13,7 +13,7 @@ import java.util.function.Predicate
  */
 class IteratorExtensions {
 	
-	// TODO excluding(T... obj) /*maybe use set under the hood*/, excluding(Iterable<T>), excluding(Set<T>)
+	// TODO excluding(T... obj) /*maybe use set under the hood*/, excluding(Collection<T>)
 	// TODO public static def <T,Y> Iterator<Y> mapIf(Iterator<T>, Predicate<T>, Function1<T,Y>)
 	// TODO public static def <T,Y> Optional<Y> findFirst(Iterator<T>, Class<? extends Y> clazz)
 	// TODO public static def <T  extends Comparable<? super T>> Optional<Pair<T,T>> minMax(Iterator<T>)

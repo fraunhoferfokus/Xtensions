@@ -318,34 +318,6 @@ final class SchedulingUtil {
 		}
 		result
 	}
-	
-	private static def ScheduledCompletableFuture<?> scheduleWithFixedDelay(ScheduledExecutorService scheduler, long initialDelay, long rate, TimeUnit unit,
-		(CompletableFuture<?>)=>void action) {
-		val result = new ScheduledCompletableFuture<Void>() {
-			val Runnable task = [
-				try {
-					action.apply(this)
-				} catch (Throwable t) {
-					this.completeExceptionally(t)
-				}
-			]
-			val scheduled = scheduler.scheduleWithFixedDelay(task, initialDelay, rate, unit);
-
-			@SuppressWarnings("unused") // we need to call whenCancelled in anonymous class
-			val afterCancel = this.whenComplete[scheduled.cancel(false)]
-
-			override getDelay(TimeUnit unit) {
-				scheduled.getDelay(unit)
-			}
-
-			override compareTo(Delayed o) {
-				scheduled.compareTo(o)
-			}
-
-		}
-		result
-			
-	}
 
 	private static def ScheduledCompletableFuture<Void> waitForInternal(long time, TimeUnit unit,
 		ScheduledExecutorService scheduler) {
