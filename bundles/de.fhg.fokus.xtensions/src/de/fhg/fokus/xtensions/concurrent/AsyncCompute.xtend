@@ -31,7 +31,7 @@ final class AsyncCompute {
 	// RetryStrategy{ scheduleNextRetry(Runnable) }
 	// RetryStrategy.fixed(int,TimeUnit)
 	// RetryStrategy.fixed(ScheduledThreadPoolExecutor,int,TimeUnit)
-	// TODO asyncRun variants taking AtomicBoolean for checking cancellation
+	// TODO asyncRun variants taking AtomicBoolean for checking cancellation?
 	// TODO allow java.time.Duration for specifying timeouts
 
 
@@ -47,6 +47,7 @@ final class AsyncCompute {
 	 *  result of this function will be used to complete the CompletableFuture returned by this method.
 	 * @return future that will used to provide result from concurrently executed {@code runAsync}. This future
 	 *  may be cancelled by the user, the {@code runAsync} function is advised to check the future for cancellation.
+	 * @throws NullPointerException if {@code runAsync} is {@code null}
 	 */
 	public static def <R> CompletableFuture<R> asyncSupply((CompletableFuture<?>)=>R runAsync) {
 		asyncSupply(ForkJoinPool.commonPool, runAsync)
@@ -64,8 +65,10 @@ final class AsyncCompute {
 	 * @param runAsync function to be executed using the provided {@code executor}.
 	 * @return future that will used to provide result from concurrently executed {@code runAsync}. This future
 	 *  may be cancelled by the user, the {@code runAsync} function is advised to check the future for cancellation.
+	 * @throws NullPointerException if {@code runAsync} is {@code null}
 	 */
 	public static def <R> CompletableFuture<R> asyncSupply(Executor executor, (CompletableFuture<?>)=>R runAsync) {
+		Objects.requireNonNull(runAsync)
 		val CompletableFuture<R> fut = new CompletableFuture
 		executor.execute [|
 			try {
@@ -96,6 +99,7 @@ final class AsyncCompute {
 	 *  result of this function will be used to complete the CompletableFuture returned by this method.
 	 * @return future that will used to provide result from concurrently executed {@code runAsync}. This future
 	 *  may be cancelled by the user, the {@code runAsync} function is advised to check the future for cancellation.
+	 * @throws NullPointerException if {@code runAsync} is {@code null}
 	 */
 	public static def <R> CompletableFuture<R> asyncSupply(long timeout, TimeUnit unit,
 		(CompletableFuture<?>)=>R runAsync) {
