@@ -1,6 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+	Copyright (c) 2017 Max Bureck (Fraunhofer FOKUS) and others.
+	All rights reserved. This program and the accompanying materials
+	are made available under the terms of the Eclipse Public License v2.0
+	which accompanies this distribution, and is available at
+	http://www.eclipse.org/legal/epl-v20.html
+	
+	Contributors:
+	    Max Bureck (Fraunhofer FOKUS) - initial config
+ -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-			xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>de.fhg.fokus</groupId>
 	<artifactId>xtensions.releng</artifactId>
@@ -23,6 +33,15 @@
 			<url>http://download.eclipse.org/releases/oxygen</url>
 		</repository>
 	</repositories>
+
+	<dependencies>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.12</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
 
 	<build>
 		<plugins>
@@ -66,10 +85,45 @@
 				</executions>
 			</plugin>
 			<plugin>
+				<groupId>org.eclipse.tycho.extras</groupId>
+				<artifactId>tycho-source-feature-plugin</artifactId>
+				<version>${tycho-version}</version>
+				<executions>
+					<execution>
+						<id>source-feature</id>
+						<phase>package</phase>
+						<goals>
+							<goal>source-feature</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.eclipse.tycho.extras</groupId>
+				<artifactId>tycho-document-bundle-plugin</artifactId>
+				<version>${tycho-version}</version>
+			</plugin>
+			<plugin>
+				<groupId>org.eclipse.tycho</groupId>
+				<artifactId>tycho-p2-plugin</artifactId>
+				<version>${tycho-version}</version>
+				<executions>
+					<execution>
+						<id>attach-p2-metadata</id>
+						<phase>package</phase>
+						<goals>
+							<goal>p2-metadata</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
 				<groupId>org.eclipse.tycho</groupId>
 				<artifactId>tycho-p2-repository-plugin</artifactId>
 				<version>${tycho-version}</version>
 			</plugin>
+			
+			<!-- Generate Java from Xtend sources -->
 			<plugin>
 				<groupId>org.eclipse.xtend</groupId>
 				<artifactId>xtend-maven-plugin</artifactId>
@@ -81,22 +135,21 @@
 							<goal>testCompile</goal>
 						</goals>
 						<configuration>
-							<outputDirectory>${basedir}/xtend-gen</outputDirectory>
+							<!-- Tried to make maven build output to ${project.basedir}/xtend-gen 
+								But the tycho-compiler-plugin somehow does not pick up the directory, even 
+								with the build-helper-maven-plugin configuration below. -->
+							<outputDirectory>${project.basedir}/xtend-gen</outputDirectory>
+							<testOutputDirectory>${project.basedir}/xtend-gen</testOutputDirectory>
 						</configuration>
 					</execution>
 				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.eclipse.tycho.extras</groupId>
-				<artifactId>tycho-document-bundle-plugin</artifactId>
-				<version>1.0.0</version>
 			</plugin>
 
 			<!-- Let build know about generated Java sources -->
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>build-helper-maven-plugin</artifactId>
-				<version>1.3</version>
+				<version>3.0.0</version>
 				<executions>
 					<execution>
 						<id>add-source</id>
@@ -106,13 +159,46 @@
 						</goals>
 						<configuration>
 							<sources>
-								<source>${project.build.directory}/xtend-gen</source>
+								<source>${project.basedir}/xtend-gen</source>
+							</sources>
+						</configuration>
+					</execution>
+					<execution>
+						<id>add-test-source</id>
+						<phase>generate-test-sources</phase>
+						<goals>
+							<goal>add-test-source</goal>
+						</goals>
+						<configuration>
+							<sources>
+								<source>${project.basedir}/xtend-gen</source>
 							</sources>
 						</configuration>
 					</execution>
 				</executions>
 			</plugin>
 		</plugins>
+
+		<!-- Set default versions for plugins used by sub-projects -->
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.jacoco</groupId>
+					<artifactId>jacoco-maven-plugin</artifactId>
+					<version>0.7.9</version>
+				</plugin>
+				<plugin>
+					<groupId>org.eluder.coveralls</groupId>
+					<artifactId>covrealls-maven-plugin</artifactId>
+					<version>4.3.0</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-surefire-plugin</artifactId>
+					<version>2.20</version>
+				</plugin>
+			</plugins>
+		</pluginManagement>
 	</build>
 
 </project>

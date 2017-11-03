@@ -1517,10 +1517,10 @@ described in <<Extensions to CompletableFuture>>.
 
 == Build
 
-The build is based on maven tycho, so http://maven.apache.org/download.cgi[Maven 3.0] or higher has to be installed on 
-the machine.
+The build is based on maven tycho, the wrapper script `mvnw` takes care of the maven installation.
+On Linux and Mac you might need to call `chmod +x mvnw`.
 
-To build the libraries from source, simply drop into the root directory and call `mvn clean package`.
+To build the libraries from source, simply drop into the root directory and call `mvnw clean package`.
 The main library will be located in `bundles/de.fhg.fokus.xtensions/target`
 
 // TODO describe where p2 is located

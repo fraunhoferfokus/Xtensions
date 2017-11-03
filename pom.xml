@@ -1,27 +1,48 @@
-<project>
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+	Copyright (c) 2017 Max Bureck (Fraunhofer FOKUS) and others.
+	All rights reserved. This program and the accompanying materials
+	are made available under the terms of the Eclipse Public License v2.0
+	which accompanies this distribution, and is available at
+	http://www.eclipse.org/legal/epl-v20.html
+	
+	Contributors:
+	    Max Bureck (Fraunhofer FOKUS) - initial config
+ -->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>de.fhg.fokus</groupId>
 	<artifactId>xtensions.master</artifactId>
 	<version>1.0.0-SNAPSHOT</version>
 	<name>Xtensions Build Master</name>
 	<packaging>pom</packaging>
-	
+
 	<parent>
 		<groupId>de.fhg.fokus</groupId>
 		<artifactId>xtensions.releng</artifactId>
 		<version>1.0.0-SNAPSHOT</version>
 		<relativePath>releng/de.fhg.fokus.xtensions.releng/pom.xml</relativePath>
-	 </parent>
-	
+	</parent>
+
 	<modules>
 		<module>bundles/de.fhg.fokus.xtensions</module>
 		<module>tests/de.fhg.fokus.xtensions.tests</module>
-		
-		<!-- Incubation bundles -->
-		<module>bundles-incubation/de.fhg.fokus.xtensions.incubation</module>
-		<module>tests-incubation/de.fhg.fokus.xtensions.incubation.tests</module>
-		<module>bundles-incubation/de.fhg.fokus.xtensions.circuitbreaker</module>
-		<module>tests-incubation/de.fhg.fokus.xtensions.circuitbreaker.tests</module>
+		<module>features/de.fhg.fokus.xtensions.feature</module>
+		<module>p2/de.fhg.fokus.xtensions.p2</module>
 	</modules>
-	
+
+	<profiles>
+		<profile>
+			<id>incubation</id>
+			<modules>
+				<!-- Incubation bundles -->
+				<module>bundles-incubation/de.fhg.fokus.xtensions.incubation</module>
+				<module>tests-incubation/de.fhg.fokus.xtensions.incubation.tests</module>
+				<module>bundles-incubation/de.fhg.fokus.xtensions.circuitbreaker</module>
+				<module>tests-incubation/de.fhg.fokus.xtensions.circuitbreaker.tests</module>
+			</modules>
+		</profile>
+	</profiles>
+
 </project>

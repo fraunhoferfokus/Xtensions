@@ -245,7 +245,7 @@ class AsyncComputeTest {
 	@Test def void testAsyncRunWithTimeout() {
 		val sema = new Semaphore(0)
 		val fut = asyncRun(1,TimeUnit.NANOSECONDS) [
-			Thread.sleep(10)
+			Thread.sleep(50)
 			sema.release
 		]
 		Util.expectException(CancellationException) [
@@ -334,10 +334,10 @@ class AsyncComputeTest {
 	
 	@Test def void testAsyncRunExceptionallyTimeout() {
 		val fut = asyncRun(1,TimeUnit.NANOSECONDS) [
-			Thread.sleep(10)
+			Thread.sleep(50)
 			throw new IllegalStateException
 		]
-		Thread.sleep(20)
+		Thread.sleep(50)
 		assertTrue("Timeout should not be overwritten by exceptional asyncRun block",fut.cancelled)
 	}
 	
@@ -391,7 +391,7 @@ class AsyncComputeTest {
 		val scheduler = Executors.newScheduledThreadPool(1)
 		val sema = new Semaphore(0)
 		val fut = scheduler.asyncRun(1,TimeUnit.NANOSECONDS) [
-			Thread.sleep(10)
+			Thread.sleep(50)
 			sema.release
 		]
 		Util.expectException(CancellationException) [
@@ -467,7 +467,7 @@ class AsyncComputeTest {
 		]
 		fut.cancel(false)
 		sema.release
-		Thread.sleep(10)
+		Thread.sleep(20)
 		assertTrue("Cancellation should not be overwritten by successful asyncRun block",fut.cancelled)
 	}
 	
@@ -480,7 +480,7 @@ class AsyncComputeTest {
 		]
 		fut.cancel(false)
 		sema.release
-		Thread.sleep(10)
+		Thread.sleep(50)
 		assertTrue("Cancellation should not be overwritten by exceptional asyncRun block",fut.cancelled)
 	}
 	
@@ -490,7 +490,7 @@ class AsyncComputeTest {
 			Thread.sleep(10)
 			throw new IllegalStateException
 		]
-		Thread.sleep(20)
+		Thread.sleep(50)
 		assertTrue("Timeout should not be overwritten by exceptional asyncRun block",fut.cancelled)
 	}
 	
@@ -579,7 +579,7 @@ class AsyncComputeTest {
 		]
 		fut.cancel(false)
 		sema.release
-		Thread.sleep(10)
+		Thread.sleep(50)
 		assertTrue("Cancellation should not be overwritten by successful asyncRun block",fut.cancelled)
 	}
 	
@@ -641,7 +641,7 @@ class AsyncComputeTest {
 	@Test def void testAsyncSupplyWithTimeout() {
 		val sema = new Semaphore(0)
 		val fut = asyncSupply(1,TimeUnit.NANOSECONDS) [
-			Thread.sleep(10)
+			Thread.sleep(50)
 			sema.release
 			""
 		]
@@ -716,7 +716,7 @@ class AsyncComputeTest {
 		]
 		fut.cancel(false)
 		sema.release
-		Thread.sleep(10)
+		Thread.sleep(50)
 		assertTrue("Cancellation should not be overwritten by successful asyncRun block",fut.cancelled)
 	}
 	
@@ -737,7 +737,7 @@ class AsyncComputeTest {
 			Thread.sleep(10)
 			throw new IllegalStateException
 		]
-		Thread.sleep(20)
+		Thread.sleep(50)
 		assertTrue("Timeout should not be overwritten by exceptional asyncRun block",fut.cancelled)
 	}
 	
@@ -793,7 +793,7 @@ class AsyncComputeTest {
 		val scheduler = Executors.newScheduledThreadPool(1)
 		val sema = new Semaphore(0)
 		val fut = scheduler.asyncSupply(1,TimeUnit.NANOSECONDS) [
-			Thread.sleep(10)
+			Thread.sleep(50)
 			sema.release
 			""
 		]
@@ -896,7 +896,7 @@ class AsyncComputeTest {
 			Thread.sleep(10)
 			throw new IllegalStateException
 		]
-		Thread.sleep(20)
+		Thread.sleep(50)
 		assertTrue("Timeout should not be overwritten by exceptional asyncSupply block",fut.cancelled)
 	}
 	

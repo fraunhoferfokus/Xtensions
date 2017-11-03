@@ -13,9 +13,9 @@
 			xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>de.fhg.fokus</groupId>
-	<artifactId>xtensions.bundles.master</artifactId>
+	<artifactId>xtensions.features.master</artifactId>
 	<version>1.0.0-SNAPSHOT</version>
-	<name>Xtensions Bundles Build Master</name>
+	<name>Xtensions Features Build Master</name>
 	<packaging>pom</packaging>
 	
 	<parent>
