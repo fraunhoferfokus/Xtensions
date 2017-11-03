@@ -18,4 +18,5 @@ Import-Package: de.fhg.fokus.xtensions.concurrent,
  de.fhg.fokus.xtensions.range,
  de.fhg.fokus.xtensions.stream,
  de.fhg.fokus.xtensions.string
+Bundle-Vendor: de.fhg.fokus
 

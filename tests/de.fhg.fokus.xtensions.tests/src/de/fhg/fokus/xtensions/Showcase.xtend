@@ -291,9 +291,12 @@ class Showcase {
 			new Developer("Max", #{"Java", "Xtend", "Rust", "C++"}), 
 			new Developer("Joe", #{"Xtend", "JavaScript", "Dart"}) 
 		);
-		val langPopularity = stream
+		
+		// Mapping language name to number of occurrences
+		val Map<String, Long> langPopularity = stream
 			.flatMap[languages]
 			.collect(groupingBy(Function.identity, counting))
+		
 		langPopularity.entrySet
 			.stream
 			.max(Map.Entry.comparingByValue)

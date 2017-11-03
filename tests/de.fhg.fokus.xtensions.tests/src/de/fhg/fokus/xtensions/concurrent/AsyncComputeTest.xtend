@@ -759,9 +759,9 @@ class AsyncComputeTest {
 	}
 	
 	
-	//////////////////////////////////
+	/////////////////////////////////////
 	// asyncSupply Timeout & Scheduler //
-	//////////////////////////////////
+	/////////////////////////////////////
 	
 	@Test(expected = NullPointerException) def void testAsyncsupplyTimeoutSchedulerNullAction() {
 		val scheduler = Executors.newScheduledThreadPool(1)
