@@ -127,7 +127,7 @@ class SchedulingUtilTest {
 			cancel(false)
 		]
 		Util.expectException(CancellationException) [
-			fut.get(15, TimeUnit.MILLISECONDS)
+			fut.get(50, TimeUnit.MILLISECONDS)
 		]
 		assertTrue(res.get)
 	}
@@ -418,7 +418,7 @@ class SchedulingUtilTest {
 	def void testWaitFor() {
 		val fut = waitFor(10, TimeUnit.MILLISECONDS)
 		assertFalse(fut.done)
-		Thread.sleep(15)
+		Thread.sleep(50)
 		assertTrue(fut.done)
 		assertNull(fut.get)
 	}
@@ -441,7 +441,7 @@ class SchedulingUtilTest {
 	def void testWaitForDuration() {
 		val fut = waitFor(Duration.ofMillis(10))
 		assertFalse(fut.done)
-		Thread.sleep(15)
+		Thread.sleep(50)
 		assertTrue(fut.done)
 		assertNull(fut.get)
 	}
@@ -483,7 +483,7 @@ class SchedulingUtilTest {
 			result.set(true)
 		]
 		assertFalse("Expected future to complete after 10 ms, not immediately", fut.done)
-		Thread.sleep(15)
+		Thread.sleep(50)
 		assertTrue("Expected future to complete after 10 ms", fut.done)
 		assertNull("Expected future to complete with null value", fut.get)
 		assertTrue("Expected callback to be executed",result.get)
@@ -527,7 +527,7 @@ class SchedulingUtilTest {
 			result.set(true)
 		]
 		assertFalse("Expected future to complete after 10 ms, not immediately", fut.done)
-		Thread.sleep(15)
+		Thread.sleep(50)
 		assertTrue("Expected future to complete after 10 ms", fut.done)
 		assertNull("Expected future to complete with null value", fut.get)
 		assertTrue("Expected callback to be executed",result.get)
@@ -587,7 +587,7 @@ class SchedulingUtilTest {
 			result.set(true)
 		]
 		assertFalse("Expected future to complete after 10 ms, not immediately", fut.done)
-		Thread.sleep(15)
+		Thread.sleep(50)
 		assertTrue("Expected future to complete after 10 ms", fut.done)
 		assertNull("Expected future to complete with null value", fut.get)
 		assertTrue("Expected callback to be executed",result.get)
@@ -651,7 +651,7 @@ class SchedulingUtilTest {
 			expected
 		]
 		assertFalse("Expected future to complete after 10 ms, not immediately", fut.done)
-		Thread.sleep(15)
+		Thread.sleep(50)
 		assertTrue("Expected future to complete after 10 ms", fut.done)
 		assertSame("Expected future to complete with null value", expected, fut.get)
 	}
@@ -665,7 +665,7 @@ class SchedulingUtilTest {
 			expected
 		]
 		assertFalse("Expected future to complete after 10 ms, not immediately", fut.done)
-		Thread.sleep(15)
+		Thread.sleep(50)
 		assertTrue("Expected future to complete after 10 ms", fut.done)
 		Util.expectException(CancellationException) [
 			fut.get
@@ -710,7 +710,7 @@ class SchedulingUtilTest {
 			expected
 		]
 		assertFalse("Expected future to complete after 10 ms, not immediately", fut.done)
-		Thread.sleep(15)
+		Thread.sleep(50)
 		assertTrue("Expected future to complete after 10 ms", fut.done)
 		assertSame("Expected future to complete with null value", expected, fut.get)
 	}
@@ -724,7 +724,7 @@ class SchedulingUtilTest {
 			expected
 		]
 		assertFalse("Expected future to complete after 10 ms, not immediately", fut.done)
-		Thread.sleep(15)
+		Thread.sleep(50)
 		assertTrue("Expected future to complete after 10 ms", fut.done)
 		Util.expectException(CancellationException) [
 			fut.get
@@ -788,7 +788,7 @@ class SchedulingUtilTest {
 			expected
 		]
 		assertFalse("Expected future to complete after 10 ms, not immediately", fut.done)
-		Thread.sleep(15)
+		Thread.sleep(50)
 		assertTrue("Expected future to complete after 10 ms", fut.done)
 		assertSame("Expected future to complete with null value", expected, fut.get)
 	}
@@ -803,7 +803,7 @@ class SchedulingUtilTest {
 			expected
 		]
 		assertFalse("Expected future to complete after 10 ms, not immediately", fut.done)
-		Thread.sleep(15)
+		Thread.sleep(50)
 		assertTrue("Expected future to complete after 10 ms", fut.done)
 		Util.expectException(CancellationException) [
 			fut.get
@@ -824,7 +824,7 @@ class SchedulingUtilTest {
 			res.set(threadRef.get === Thread.currentThread)
 			""
 		]
-		Thread.sleep(15)
+		Thread.sleep(50)
 		assertTrue(res.get)
 	}
 	
