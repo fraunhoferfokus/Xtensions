@@ -231,10 +231,10 @@ class SchedulingUtilTest {
 		Thread.sleep(100)
 		fut.cancel(false)
 		val resultCount = count.get
-		assertTrue(resultCount >= 5 && resultCount <= 6)
+		assertTrue(("Expected count between 5 and 6, but was: " + resultCount), resultCount >= 5 && resultCount <= 6)
 		// now let's test if cancellation worked
 		Thread.sleep(20) 
-		assertEquals(resultCount, count.get)
+		assertEquals("Expected result count not to change anymore", resultCount, count.get)
 	}
 	
 	

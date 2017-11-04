@@ -21,7 +21,7 @@ import de.fhg.fokus.xtensions.Util
 import java.util.NoSuchElementException
 import java.util.Iterator
 
-class RangeExtensionTests {
+class RangeExtensionTest {
 	
 	////////////////
 	// forEachInt //

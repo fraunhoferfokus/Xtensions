@@ -15,7 +15,7 @@ import static org.junit.Assert.*
 import static extension de.fhg.fokus.xtensions.pair.PairExtensions.*
 import java.util.concurrent.atomic.AtomicBoolean
 
-class PairExtensionTests {
+class PairExtensionTest {
 	
 	/////////////
 	// consume //

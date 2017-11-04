@@ -30,6 +30,7 @@
 		<module>tests/de.fhg.fokus.xtensions.tests</module>
 		<module>features/de.fhg.fokus.xtensions.feature</module>
 		<module>p2/de.fhg.fokus.xtensions.p2</module>
+		<module>releng/de.fhg.fokus.xtensions.report</module>
 	</modules>
 
 	<profiles>
