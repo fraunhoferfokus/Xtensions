@@ -15,8 +15,9 @@ Contributors:
 :toc-title: Contents of this document:
 
 
-image:https://img.shields.io/badge/License-EPL%202.0-blue.svg["License : EPL v2.0", link=https://www.eclipse.org/legal/epl-2.0/] image:https://travis-ci.org/fraunhoferfokus/Xtensions.svg?branch=master["Build Status", link="https://travis-ci.org/fraunhoferfokus/Xtensions"]
-
+image:https://img.shields.io/badge/License-EPL%202.0-blue.svg["License : EPL v2.0", link=https://www.eclipse.org/legal/epl-2.0/] 
+image:https://travis-ci.org/fraunhoferfokus/Xtensions.svg?branch=master["Build Status", link="https://travis-ci.org/fraunhoferfokus/Xtensions"] 
+image:https://codecov.io/gh/fraunhoferfokus/Xtensions/branch/master/graph/badge.svg["Code Coverage", link="https://codecov.io/gh/fraunhoferfokus/Xtensions"]
 
 
 This library is mainly a collection of https://www.eclipse.org/xtend/[Xtend] extension methods
