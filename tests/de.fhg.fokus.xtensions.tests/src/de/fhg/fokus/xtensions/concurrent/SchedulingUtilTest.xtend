@@ -72,7 +72,7 @@ class SchedulingUtilTest {
 			cancel(false)
 		]
 		Util.expectException(CancellationException) [
-			fut.get(10, TimeUnit.MILLISECONDS)
+			fut.get(50, TimeUnit.MILLISECONDS)
 		]
 		assertTrue(res.get)
 	}
@@ -249,7 +249,7 @@ class SchedulingUtilTest {
 			cancel(false)
 		]
 		Util.expectException(CancellationException) [
-			fut.get(10, TimeUnit.MILLISECONDS)
+			fut.get(50, TimeUnit.MILLISECONDS)
 		]
 		assertTrue(res.get)
 	}
@@ -320,7 +320,7 @@ class SchedulingUtilTest {
 			cancel(false)
 		]
 		Util.expectException(CancellationException) [
-			fut.get(10, TimeUnit.MILLISECONDS)
+			fut.get(50, TimeUnit.MILLISECONDS)
 		]
 		assertTrue(res.get)
 	}
@@ -375,7 +375,7 @@ class SchedulingUtilTest {
 			cancel(false)
 		]
 		Util.expectException(CancellationException) [
-			fut.get(10, TimeUnit.MILLISECONDS)
+			fut.get(50, TimeUnit.MILLISECONDS)
 		]
 		assertTrue(res.get)
 	}
