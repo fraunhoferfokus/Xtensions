@@ -2,6 +2,6 @@ language: java
 jdk:
 - oraclejdk8
 script:
-- ./mvnw clean verify coveralls:report
+- ./mvnw -X clean verify coveralls:report
 after_success:
 - bash <(curl -s https://codecov.io/bash)
