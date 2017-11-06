@@ -1549,9 +1549,9 @@ Please have a look at the link:CONTRIBUTING.adoc[contribution guide].
 
 The following tasks are the next goals for this project, roughly in this order:
 
-- [ ] Complete this README.adoc file
+- [x] Complete this README.adoc file
  * [x] Complete Functionality section
- * [ ] Complete IDE Setup section
+ * [x] Complete IDE Setup section
 - [x] Complete JavaDocs for all public methods
 - [x] Cover each public method with test cases
 - [x] Add Jacoco test coverage to maven build
@@ -1561,7 +1561,7 @@ The following tasks are the next goals for this project, roughly in this order:
 - [x] Create CI build on travis.io
  * [x] Add badge to this file when done
 - [x] Publish Jacoco results to coveralls.io
- * [ ] Add badge to this file when done
+ * [x] Add badge to this file when done
 - [ ] Publish p2 repo on bintray
  * [ ] Update this file when done
 - [ ] Figure out how to best publish to Maven Central
