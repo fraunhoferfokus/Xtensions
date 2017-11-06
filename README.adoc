@@ -1524,7 +1524,7 @@ On Linux and Mac you might need to call `chmod +x mvnw`.
 To build the libraries from source, simply drop into the root directory and call `mvnw clean package`.
 The main library will be located in `bundles/de.fhg.fokus.xtensions/target`
 
-// TODO describe where p2 is located
+The p2 update site containing the library is located in directory `p2/de.fhg.fokus.xtensions.p2/target/repository`.
 
 
 == Setting up the Development Environment
@@ -1532,6 +1532,12 @@ The main library will be located in `bundles/de.fhg.fokus.xtensions/target`
 The repository contains the Oomph setup file link:../../raw/master/releng/de.fhg.fokus.xtensions.releng/Xtensions.setup[Xtensions.setup] 
 for the Eclipse IDE.
 
+Start the Eclipse installer, then switch to advanced mode (hamburger menu in the top-right corner).
+Select the "Eclipse IDE for Java Development" and press "Next >". On the next page press the green
+plus button and select the catalog "Github Projects" and paste the URL of the setup file above 
+into the "Resource URIs" text field. Then select the checkbox next to the "Xtensions" entry and
+press "Next >". Enter the installation details as preferred and press "Finish". The Eclipse 
+IDE will be installed and configured. It may need to restart one ore more times.
 
 == External Contributions
 
