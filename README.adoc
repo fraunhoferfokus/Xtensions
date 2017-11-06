@@ -1536,8 +1536,8 @@ Start the Eclipse installer, then switch to advanced mode (hamburger menu in the
 Select the "Eclipse IDE for Java Development" and press "Next >". On the next page press the green
 plus button and select the catalog "Github Projects" and paste the URL of the setup file above 
 into the "Resource URIs" text field. Then select the checkbox next to the "Xtensions" entry and
-press "Next >". Enter the installation details as preferred and press "Finish". The Eclipse 
-IDE will be installed and configured. It may need to restart one ore more times.
+press "Next >". Enter the installation details as preferred, press "Next >", then press "Finish". 
+The Eclipse IDE will be installed and configured. It may need to restart one ore more times.
 
 == External Contributions
 

@@ -8,10 +8,9 @@
     xmlns:predicates="http://www.eclipse.org/oomph/predicates/1.0"
     xmlns:setup="http://www.eclipse.org/oomph/setup/1.0"
     xmlns:setup.p2="http://www.eclipse.org/oomph/setup/p2/1.0"
-	xmlns:pde="http://www.eclipse.org/oomph/setup/pde/1.0"
     xmlns:setup.targlets="http://www.eclipse.org/oomph/setup/targlets/1.0"
     xmlns:setup.workingsets="http://www.eclipse.org/oomph/setup/workingsets/1.0"
-    xsi:schemaLocation="http://www.eclipse.org/oomph/setup/git/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/Git.ecore http://www.eclipse.org/oomph/setup/jdt/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/JDT.ecore http://www.eclipse.org/oomph/predicates/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/Predicates.ecore http://www.eclipse.org/oomph/setup/targlets/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/SetupTarglets.ecore http://www.eclipse.org/oomph/setup/workingsets/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/SetupWorkingSets.ecore http://www.eclipse.org/oomph/setup/pde/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/PDE.ecore"
+    xsi:schemaLocation="http://www.eclipse.org/oomph/setup/git/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/Git.ecore http://www.eclipse.org/oomph/setup/jdt/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/JDT.ecore http://www.eclipse.org/oomph/predicates/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/Predicates.ecore http://www.eclipse.org/oomph/setup/targlets/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/SetupTarglets.ecore http://www.eclipse.org/oomph/setup/workingsets/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/SetupWorkingSets.ecore"
     name="xtensions"
     label="Xtensions">
   <setupTask
@@ -112,37 +111,13 @@
         name="org.eclipse.releng.tools.feature.group"
         versionRange="[3.9.0,4.0.0)"/>
     <requirement
-        name="org.eclipse.oomph.targlets.feature.group"/>
-    <requirement
-        name="org.eclipse.oomph.setup.targlets.feature.group"/>
-    <requirement
-        name="org.eclipse.oomph.setup.pde.feature.group"/>
-    <requirement
-        name="org.eclipse.oomph.setup.jdt.feature.group"/>
-    <requirement
-        name="org.eclipse.oomph.setup.git.feature.group"/>
-    <requirement
         name="org.eclipse.egit.feature.group"/>
-    <requirement
-        name="org.eclipse.oomph.setup.workingsets.feature.group"/>
     <repository
         url="http://download.eclipse.org/releases/oxygen"/>
     <repository
         url="http://download.eclipse.org/eclipse/updates/4.7"/>
     <repository
         url="http://download.eclipse.org/modeling/tmf/xtext/updates/composite/releases/"/>
-    <repository
-        url="${setup.targlets.p2}"/>
-    <repository
-        url="${setup.pde.p2}"/>
-    <repository
-        url="${setup.jdt.p2}"/>
-    <repository
-        url="${setup.git.p2}"/>
-    <repository
-        url="${setup.egit.p2}"/>
-    <repository
-        url="${setup.workingsets.p2}"/>
     <description>Install the tools needed in the IDE to work with the source code for ${scope.project.label}</description>
   </setupTask>
   <setupTask
