@@ -17,8 +17,8 @@ Contributors:
 
 image:https://img.shields.io/badge/License-EPL%202.0-blue.svg["License : EPL v2.0", link=https://www.eclipse.org/legal/epl-2.0/] 
 image:https://travis-ci.org/fraunhoferfokus/Xtensions.svg?branch=master["Build Status", link="https://travis-ci.org/fraunhoferfokus/Xtensions"] 
-//image:https://codecov.io/gh/fraunhoferfokus/Xtensions/branch/master/graph/badge.svg["Code Coverage", link="https://codecov.io/gh/fraunhoferfokus/Xtensions"]
-image:https://coveralls.io/repos/github/fraunhoferfokus/Xtensions/badge.svg?branch=master["Code Coverage", link="https://coveralls.io/github/fraunhoferfokus/Xtensions?branch=master"]
+image:https://codecov.io/gh/fraunhoferfokus/Xtensions/branch/master/graph/badge.svg["Code Coverage", link="https://codecov.io/gh/fraunhoferfokus/Xtensions"]
+//image:https://coveralls.io/repos/github/fraunhoferfokus/Xtensions/badge.svg?branch=master["Code Coverage", link="https://coveralls.io/github/fraunhoferfokus/Xtensions?branch=master"]
 
 
 
