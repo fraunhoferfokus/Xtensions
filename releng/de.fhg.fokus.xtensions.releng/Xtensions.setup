@@ -112,12 +112,17 @@
         versionRange="[3.9.0,4.0.0)"/>
     <requirement
         name="org.eclipse.egit.feature.group"/>
+    <requirement
+        name="org.sonatype.tycho.m2e.feature.feature.group"
+        versionRange="[0.9.0.201609252021,1.0.0)"/>
     <repository
         url="http://download.eclipse.org/releases/oxygen"/>
     <repository
         url="http://download.eclipse.org/eclipse/updates/4.7"/>
     <repository
         url="http://download.eclipse.org/modeling/tmf/xtext/updates/composite/releases/"/>
+    <repository
+        url="https://repo1.maven.org/maven2/.m2e/connectors/m2eclipse-tycho/0.9.0/N/LATEST/"/>
     <description>Install the tools needed in the IDE to work with the source code for ${scope.project.label}</description>
   </setupTask>
   <setupTask
@@ -255,6 +260,13 @@
         xsi:type="setup:EclipseIniTask"
         option="-Doomph.redirection.xtensions"
         value="=https://raw.githubusercontent.com/fraunhoferfokus/Xtensions/master/releng/de.fhg.fokus.xtensions.releng/Xtensions.setup->${git.clone.xtensions.location|uri}/releng/de.fhg.fokus.xtensions.releng/Xtensions.setup"
+        vm="true">
+      <description>Set an Oomph redirection system property to redirect the logical location of this setup to its physical location in the Git clone.</description>
+    </setupTask>
+    <setupTask
+        xsi:type="setup:EclipseIniTask"
+        option="-Doomph.redirection.xtensions2"
+        value="=https://github.com/fraunhoferfokus/Xtensions/raw/master/releng/de.fhg.fokus.xtensions.releng/Xtensions.setup->${git.clone.xtensions.location|uri}/releng/de.fhg.fokus.xtensions.releng/Xtensions.setup"
         vm="true">
       <description>Set an Oomph redirection system property to redirect the logical location of this setup to its physical location in the Git clone.</description>
     </setupTask>
