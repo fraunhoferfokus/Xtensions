@@ -17,7 +17,9 @@ Contributors:
 
 image:https://img.shields.io/badge/License-EPL%202.0-blue.svg["License : EPL v2.0", link=https://www.eclipse.org/legal/epl-2.0/] 
 image:https://travis-ci.org/fraunhoferfokus/Xtensions.svg?branch=master["Build Status", link="https://travis-ci.org/fraunhoferfokus/Xtensions"] 
-image:https://codecov.io/gh/fraunhoferfokus/Xtensions/branch/master/graph/badge.svg["Code Coverage", link="https://codecov.io/gh/fraunhoferfokus/Xtensions"]
+//image:https://codecov.io/gh/fraunhoferfokus/Xtensions/branch/master/graph/badge.svg["Code Coverage", link="https://codecov.io/gh/fraunhoferfokus/Xtensions"]
+image:https://coveralls.io/repos/github/fraunhoferfokus/Xtensions/badge.svg?branch=master["Code Coverage", link="https://coveralls.io/github/fraunhoferfokus/Xtensions?branch=master"]
+
 
 
 This library is mainly a collection of https://www.eclipse.org/xtend/[Xtend] extension methods
@@ -1552,13 +1554,13 @@ The following tasks are the next goals for this project, roughly in this order:
  * [ ] Complete IDE Setup section
 - [x] Complete JavaDocs for all public methods
 - [x] Cover each public method with test cases
-- [ ] Add Jacoco test coverage to maven build
+- [x] Add Jacoco test coverage to maven build
 - [ ] Add source bundle build to maven config
 - [ ] Add JavaDoc bundle build to maven config
 - [x] Move to a public GitHub repository
 - [x] Create CI build on travis.io
  * [x] Add badge to this file when done
-- [ ] Publish Jacoco results to coveralls.io
+- [x] Publish Jacoco results to coveralls.io
  * [ ] Add badge to this file when done
 - [ ] Publish p2 repo on bintray
  * [ ] Update this file when done

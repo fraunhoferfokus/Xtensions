@@ -41,6 +41,13 @@
 
 	<build>
 		<plugins>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-help-plugin</artifactId>
+				<version>2.1</version>
+			</plugin>
+
 			<plugin>
 				<groupId>org.eclipse.tycho</groupId>
 				<artifactId>tycho-maven-plugin</artifactId>
@@ -128,7 +135,9 @@
 					<execution>
 						<goals>
 							<goal>compile</goal>
+							<goal>xtend-install-debug-info</goal>
 							<goal>testCompile</goal>
+							<goal>xtend-test-install-debug-info</goal>
 						</goals>
 						<configuration>
 							<!-- Tried to make maven build output to ${project.basedir}/xtend-gen 
@@ -136,9 +145,27 @@
 								with the build-helper-maven-plugin configuration below. -->
 							<outputDirectory>${project.basedir}/xtend-gen</outputDirectory>
 							<testOutputDirectory>${project.basedir}/xtend-gen</testOutputDirectory>
+							<xtendAsPrimaryDebugSource>true</xtendAsPrimaryDebugSource>
 						</configuration>
 					</execution>
 				</executions>
+			</plugin>
+
+			<!-- Delete Java files generated from Xtend on clean -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-clean-plugin</artifactId>
+				<version>2.5</version>
+				<configuration>
+					<filesets>
+						<fileset>
+							<directory>${project.basedir}/xtend-gen</directory>
+							<includes>
+								<include>**/*</include>
+							</includes>
+						</fileset>
+					</filesets>
+				</configuration>
 			</plugin>
 
 			<plugin>
@@ -163,17 +190,6 @@
 						</goals>
 					</execution>
 				</executions>
-			</plugin>
-
-			<plugin>
-				<groupId>org.eluder.coveralls</groupId>
-				<artifactId>coveralls-maven-plugin</artifactId>
-				<configuration>
-					<jacocoReports>
-						<jacocoReport>${project.basedir}/../de.fhg.fokus.xtensions.report/target/site/jacoco-aggregate/jacoco.xml</jacocoReport>
-					</jacocoReports>
-				</configuration>
-				<inherited>false</inherited>
 			</plugin>
 
 			<!-- Let build know about generated Java sources -->

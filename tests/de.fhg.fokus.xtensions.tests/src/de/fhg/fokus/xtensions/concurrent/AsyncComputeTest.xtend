@@ -95,7 +95,7 @@ class AsyncComputeTest {
 		]
 		fut.cancel(false)
 		sema.release
-		Thread.sleep(10)
+		Thread.sleep(50)
 		assertTrue("Cancellation should not be overwritten by successful asyncRun block",fut.cancelled)
 	}
 	
@@ -107,7 +107,7 @@ class AsyncComputeTest {
 		]
 		fut.cancel(false)
 		sema.release
-		Thread.sleep(10)
+		Thread.sleep(50)
 		assertTrue("Cancellation should not be overwritten by exceptional asyncRun block",fut.cancelled)
 	}
 	
@@ -203,7 +203,7 @@ class AsyncComputeTest {
 		]
 		fut.cancel(false)
 		sema.release
-		Thread.sleep(10)
+		Thread.sleep(50)
 		assertTrue("Cancellation should not be overwritten by successful asyncRun block",fut.cancelled)
 	}
 	
@@ -216,7 +216,7 @@ class AsyncComputeTest {
 		]
 		fut.cancel(false)
 		sema.release
-		Thread.sleep(10)
+		Thread.sleep(50)
 		assertTrue("Cancellation should not be overwritten by exceptional asyncRun block",fut.cancelled)
 	}
 	
@@ -316,7 +316,7 @@ class AsyncComputeTest {
 		]
 		fut.cancel(false)
 		sema.release
-		Thread.sleep(10)
+		Thread.sleep(50)
 		assertTrue("Cancellation should not be overwritten by successful asyncRun block",fut.cancelled)
 	}
 	
@@ -328,7 +328,7 @@ class AsyncComputeTest {
 		]
 		fut.cancel(false)
 		sema.release
-		Thread.sleep(10)
+		Thread.sleep(50)
 		assertTrue("Cancellation should not be overwritten by exceptional asyncRun block",fut.cancelled)
 	}
 	
@@ -591,7 +591,7 @@ class AsyncComputeTest {
 		]
 		fut.cancel(false)
 		sema.release
-		Thread.sleep(10)
+		Thread.sleep(50)
 		assertTrue("Cancellation should not be overwritten by exceptional asyncRun block",fut.cancelled)
 	}
 	
@@ -728,13 +728,13 @@ class AsyncComputeTest {
 		]
 		fut.cancel(false)
 		sema.release
-		Thread.sleep(10)
+		Thread.sleep(50)
 		assertTrue("Cancellation should not be overwritten by exceptional asyncRun block",fut.cancelled)
 	}
 	
 	@Test def void testAsyncSupplyExceptionallyTimeout() {
 		val fut = asyncRun(1,TimeUnit.NANOSECONDS) [
-			Thread.sleep(10)
+			Thread.sleep(50)
 			throw new IllegalStateException
 		]
 		Thread.sleep(50)
@@ -873,7 +873,7 @@ class AsyncComputeTest {
 		]
 		fut.cancel(false)
 		sema.release
-		Thread.sleep(10)
+		Thread.sleep(50)
 		assertTrue("Cancellation should not be overwritten by successful asyncSupply block",fut.cancelled)
 	}
 	
@@ -886,7 +886,7 @@ class AsyncComputeTest {
 		]
 		fut.cancel(false)
 		sema.release
-		Thread.sleep(10)
+		Thread.sleep(50)
 		assertTrue("Cancellation should not be overwritten by exceptional asyncSupply block",fut.cancelled)
 	}
 	
