@@ -10,8 +10,6 @@
  *******************************************************************************/
 package de.fhg.fokus.xtensions.function;
 
-import java.util.function.Function;
-
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.xtext.xbase.lib.Functions.Function0;
 import org.eclipse.xtext.xbase.lib.Functions.Function1;
@@ -84,7 +82,7 @@ public final class FunctionExtensions {
 	}
 
 	/**
-	 * Shortcut operator for {@link FunctionExtensions#compose(Function1, Function)}
+	 * Shortcut operator for {@link org.eclipse.xtext.xbase.lib.FunctionExtensions#compose(Function1, Function1) FunctionExtensions#compose((T)=>R, (V)=>T)}
 	 * @param self
 	 * @param before
 	 * @return
@@ -97,7 +95,7 @@ public final class FunctionExtensions {
 	}
 	
 	/**
-	 * Shortcut operator for {@link FunctionExtensions#andThen(Function1, Function1)}.
+	 * Shortcut operator for {@link org.eclipse.xtext.xbase.lib.FunctionExtensions#andThen(Function1, Function1) FunctionExtensions#andThen((T)=>R, (R)=>V)}.
 	 * @param self the function to apply before the {@code after} function is applied
 	 * @param after  the function to apply after the {@code before} function is applied
 	 * @return  a composed function that first applies the {@code before} function and 
@@ -136,8 +134,6 @@ public final class FunctionExtensions {
 	 *         applies the {@code after} function
 	 * @throws NullPointerException
 	 *             if {@code before} or {@code after} is {@code null}
-	 *
-	 * @see #compose(Function1,Function1)
 	 */
 	@Pure
 //	@Inline(value ="() -> $2.apply($1.apply())")

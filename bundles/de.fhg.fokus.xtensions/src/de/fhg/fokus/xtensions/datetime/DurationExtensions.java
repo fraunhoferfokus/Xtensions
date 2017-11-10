@@ -103,7 +103,7 @@ public final class DurationExtensions {
 	
 	/**
 	 * Alias for {@code Duration.of(w, ChronoUnit.WEEKS)}.
-	 * @param d days
+	 * @param w weeks
 	 * @return result of {@code Duration.of(w, ChronoUnit.WEEKS)}
 	 */
 	@Inline(value = "Duration.of($1, ChronoUnit.WEEKS)", imported = {Duration.class, ChronoUnit.class})

@@ -195,7 +195,7 @@ class Showcase {
 		]
 	}
 	
-	@Test def optionalDemo() {
+	@Test def void optionalDemo() {
 		// Aliases for empty, filled, and possibly filled optionals
 		val no = <String>none
 		val yes = some("yesss!")
@@ -206,6 +206,22 @@ class Showcase {
 		val Optional<String> optStr = optObj.filter(String)
 		optStr.ifPresent [
 			println(it.toUpperCase)
+		]
+		
+		val noVal = Optional.empty
+		noVal.whenPresent [
+			val value = noVal.get
+			println("Here is your value: "+ value)
+		].elseDo [
+			println("Awww, no value")
+		]
+		
+		val captureMe = "no value"
+		noVal.whenPresent [
+			val value = noVal.get
+			println("Here is your value: "+ value)
+		].elseDo(captureMe) [
+			println("Awww, " + it)
 		]
 		
 		// view as iterable

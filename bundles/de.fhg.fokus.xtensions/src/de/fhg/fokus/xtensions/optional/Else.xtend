@@ -11,7 +11,7 @@
 package de.fhg.fokus.xtensions.optional
 
 /** 
- * Class with method {@link Else#elseDo(Runnable) elseDo(Runnable)}, which either
+ * Class with method {@link Else#elseDo(Procedure0) elseDo(()=>void)}, which either
  * executes the given runnable or not, depending on the sub-class.
  * @see OptionalExtensions#whenPresent(java.util.Optional, Consumer)
  * @see OptionalIntExtensions#whenPresent(java.util.OptionalInt, java.util.function.IntConsumer)

@@ -111,6 +111,67 @@ optStr.ifPresent [
 ]
 ----
 
+
+When testing an `Optional` for a value or otherwise perform a different operation
+the optional has to be used twice e.g.
+
+[source,xtend]
+----
+import java.util.Optional
+// ...
+val noVal = Optional.empty
+if(noVal.isPresent) {
+	val value = noVal.get
+	println("Here is your value: "+ value)
+} else {
+	println("Awww, no value")
+}
+----
+
+This can be error prone, since the optional (in the example `noVal`) has to be
+used twice and a different optional may be used accidently. To not run into this 
+issue this library provides the `whenPresent` method which allows defining an
+else branch on the returned object.
+
+Example:
+
+[source,xtend]
+----
+import java.util.Optional
+import static extension de.fhg.fokus.xtensions.optional.OptionalIntExtensions.*
+// ...
+val noVal = Optional.empty
+noVal.whenPresent [
+	val value = noVal.get
+	println("Here is your value: "+ value)
+].elseDo [
+	println("Awww, no value")
+]
+----
+
+To avoid allocating objects over and over for the lambda passed to the 
+`elseDo` method, there are overloaded versions of the method passing on
+additional parameters to the lambda. This can avoid "capturing" lambdas 
+which would create a new object on every `elseDo` call.
+
+Example:
+
+[source,xtend]
+----
+import java.util.Optional
+import static extension de.fhg.fokus.xtensions.optional.OptionalIntExtensions.*
+// ...
+val captureMe = "no value"
+val noVal = Optional.empty
+noVal.whenPresent [
+	val value = noVal.get
+	println("Here is your value: "+ value)
+].elseDo(captureMe) [
+	println("Awww, " + it)
+]
+----
+
+
 To bridge between APIs providing an `Optional` value and ones that expect
 multiple values, the extension methods `asIterable`, `toList` and `toSet`
 are provided to create immutable implementations of common JVM collection APIs.
@@ -1555,7 +1616,7 @@ The following tasks are the next goals for this project, roughly in this order:
 - [x] Complete JavaDocs for all public methods
 - [x] Cover each public method with test cases
 - [x] Add Jacoco test coverage to maven build
-- [ ] Add source bundle build to maven config
+- [x] Add source bundle build to maven config
 - [ ] Add JavaDoc bundle build to maven config
 - [x] Move to a public GitHub repository
 - [x] Create CI build on travis.io
