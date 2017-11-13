@@ -149,6 +149,9 @@ noVal.whenPresent [
 ]
 ----
 
+Alternatively, the `ifPresentOrElse` method can be used, but this does not
+have a clear visual separation which case is the if and which the else callback.
+
 To avoid allocating objects over and over for the lambda passed to the 
 `elseDo` method, there are overloaded versions of the method passing on
 additional parameters to the lambda. This can avoid "capturing" lambdas 
