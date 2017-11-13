@@ -149,7 +149,7 @@ noVal.whenPresent [
 ]
 ----
 
-Alternatively, the `ifPresentOrElse` method can be used, but this does not
+Alternatively, the `ifPresentOrElse` extension method can be used, but this does not
 have a clear visual separation which case is the if and which the else callback.
 
 To avoid allocating objects over and over for the lambda passed to the 
