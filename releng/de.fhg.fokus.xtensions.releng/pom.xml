@@ -72,6 +72,7 @@
 				<configuration>
 					<!-- set file encoding -->
 					<appArgLine>-Dfile.encoding=UTF-8</appArgLine>
+					<useUIThread>false</useUIThread>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -102,10 +103,62 @@
 				</executions>
 			</plugin>
 			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>2.10.4</version>
+				<executions>
+					<execution>
+						<id>javadoc-gen</id>
+						<!-- 
+							We have to bind javadoc generation to late phase, because otherwise
+							goals from tycho-p2-plugin will fail.
+						-->
+						<phase>verify</phase>
+						<goals>
+							<goal>javadoc</goal>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<links>
+						<link>https://docs.oracle.com/javase/8/docs/api/</link>
+					</links>
+					<additionalparam>-Xdoclint:none</additionalparam>
+				</configuration>
+			</plugin>
+			<!-- 
+			<plugin>
 				<groupId>org.eclipse.tycho.extras</groupId>
 				<artifactId>tycho-document-bundle-plugin</artifactId>
 				<version>${tycho-version}</version>
+				<executions>
+					<execution>
+						<id>eclipse-javadoc</id>
+						<phase>process-classes</phase>
+						<goals>
+							<goal>javadoc</goal>
+						</goals>
+						<configuration>
+							<skipTocGen>true</skipTocGen>
+							<scopes>provided</scopes>
+							<tocOptions>
+								<mainLabel>Xtensions API</mainLabel>
+							</tocOptions>
+							<javadocOptions>
+								<ignoreError>true</ignoreError>
+								<additionalArguments>
+									<additionalArgument>-link http://docs.oracle.com/javase/8/docs/api/</additionalArgument>
+									<additionalArgument>-link https://javadoc.io/page/org.eclipse.xtext/org.eclipse.xtext.xbase.lib/latest/</additionalArgument>
+									<additionalArgument>-public</additionalArgument>
+									<additionalArgument>-Xdoclint:none</additionalArgument>
+								</additionalArguments>
+							</javadocOptions>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
+			 -->
 			<plugin>
 				<groupId>org.eclipse.tycho</groupId>
 				<artifactId>tycho-p2-plugin</artifactId>
@@ -119,6 +172,10 @@
 						</goals>
 					</execution>
 				</executions>
+				<configuration>
+<!-- 					<defaultP2Metadata>false</defaultP2Metadata>
+					<attachP2Metadata>false</attachP2Metadata> -->
+				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>org.eclipse.tycho</groupId>
