@@ -22,6 +22,10 @@
           key="/instance/org.eclipse.core.resources/encoding">
         <value>record</value>
       </detail>
+      <detail
+          key="/instance/org.eclipse.pde.api.tools/missing_default_api_profile">
+        <value>record</value>
+      </detail>
     </annotation>
     <setupTask
         xsi:type="setup:CompoundTask"
@@ -30,6 +34,14 @@
           xsi:type="setup:PreferenceTask"
           key="/instance/org.eclipse.core.resources/encoding"
           value="UTF-8"/>
+    </setupTask>
+    <setupTask
+        xsi:type="setup:CompoundTask"
+        name="org.eclipse.pde.api.tools">
+      <setupTask
+          xsi:type="setup:PreferenceTask"
+          key="/instance/org.eclipse.pde.api.tools/missing_default_api_profile"
+          value="Ignore"/>
     </setupTask>
   </setupTask>
   <setupTask
@@ -151,10 +163,14 @@
       <repositoryList
           name="Oxygen">
         <repository
+            url="http://download.eclipse.org/modeling/tmf/xtext/updates/composite/releases/"/>
+        <repository
             url="http://download.eclipse.org/releases/oxygen"/>
       </repositoryList>
       <repositoryList
           name="Neon">
+        <repository
+            url="http://download.eclipse.org/modeling/tmf/xtext/updates/composite/releases/"/>
         <repository
             url="http://download.eclipse.org/releases/neon"/>
       </repositoryList>
