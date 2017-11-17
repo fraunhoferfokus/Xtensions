@@ -2,14 +2,14 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 			xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>de.fhg.fokus</groupId>
+	<groupId>com.github.fraunhoferfokus.xtensions</groupId>
 	<artifactId>de.fhg.fokus.xtensions.incubation.tests</artifactId>
 	<version>1.0.0-SNAPSHOT</version>
 	<name>de.fhg.fokus.xtensions.tests</name>
 	<packaging>eclipse-test-plugin</packaging>
 
 	<parent>
-		<groupId>de.fhg.fokus</groupId>
+		<groupId>com.github.fraunhoferfokus.xtensions</groupId>
 		<artifactId>xtensions.tests.incubation.master</artifactId>
 		<version>1.0.0-SNAPSHOT</version>
 		<relativePath>../pom.xml</relativePath>

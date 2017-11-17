@@ -3,7 +3,7 @@
       id="de.fhg.fokus.xtensions.feature"
       label="Xtensions Feature"
       version="1.0.0.qualifier"
-      provider-name="de.fhg.fokus">
+      provider-name="Fraunhofer FOKUS">
 
    <description url="https://github.com/fraunhoferfokus/Xtensions">
       This library provides utility extension methods, mostly for JDK 8 classes.
