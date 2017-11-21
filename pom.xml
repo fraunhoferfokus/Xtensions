@@ -21,15 +21,58 @@
 	<name>Xtensions Build Master</name>
 	<packaging>pom</packaging>
 
-	<parent>
-		<groupId>com.github.fraunhoferfokus.xtensions</groupId>
-		<artifactId>xtensions.releng</artifactId>
-		<version>1.0.0-SNAPSHOT</version>
-		<relativePath>releng/de.fhg.fokus.xtensions.releng/pom.xml</relativePath>
-	</parent>
+	<licenses>
+		<license>
+			<name>Eclipse Public License - v 2.0</name>
+			<url>https://www.eclipse.org/legal/epl-v20.html</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+
+	<scm>
+		<connection>scm:git:https://github.com/fraunhoferfokus/Xtensions.git</connection>
+		<developerConnection>scm:git:git@github.com:fraunhoferfokus/Xtensions.git</developerConnection>
+		<url>https://github.com/fraunhoferfokus/Xtensions</url>
+	</scm>
+
+	<issueManagement>
+		<system>GitHub Issues</system>
+		<url>https://github.com/fraunhoferfokus/Xtensions/issues</url>
+	</issueManagement>
+
+	<developers>
+		<developer>
+			<name>Max Bureck</name>
+			<organization>Fraunhofer FOKUS</organization>
+			<organizationUrl>https://www.fokus.fraunhofer.de/</organizationUrl>
+		</developer>
+	</developers>
+
+	<properties>
+		<tycho-version>1.0.0</tycho-version>
+		<xtend-version>2.13.0</xtend-version>
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>1.8</maven.compiler.target>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<jacoco-version>0.7.9</jacoco-version>
+	</properties>
+
+	<repositories>
+		<repository>
+			<id>jcenter-xtensions</id>
+			<url>http://oss.jfrog.org/oss-snapshot-local</url>
+		</repository>
+		<repository>
+			<id>oxygen</id>
+			<layout>p2</layout>
+			<url>http://download.eclipse.org/releases/oxygen</url>
+		</repository>
+	</repositories>
 
 	<modules>
 		<module>bundles/de.fhg.fokus.xtensions</module>
+		<!-- bundles need to be in build to be deployed as maven project, so POM hierarchy is in deployed repo --> 
+		<module>bundles</module>
 		<module>tests/de.fhg.fokus.xtensions.tests</module>
 		<module>features/de.fhg.fokus.xtensions.feature</module>
 		<module>p2/de.fhg.fokus.xtensions.p2</module>
@@ -48,5 +91,234 @@
 			</modules>
 		</profile>
 	</profiles>
+	
+	<dependencies>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.12</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+
+	<distributionManagement>
+		<repository>
+			<id>bintray-boereck-xtensions-maven</id>
+			<name>boereck-xtensions-maven</name>
+			<url>https://api.bintray.com/maven/boereck/xtensions-maven/Xtensions/;publish=1</url>
+		</repository>
+		<snapshotRepository>
+			<id>bintray-snapshots-xtensions-maven</id>
+	        <name>oss-jfrog-artifactory-snapshots</name>
+	        <url>http://oss.jfrog.org/artifactory/oss-snapshot-local</url>
+		</snapshotRepository>
+	</distributionManagement>
+
+	<build>
+		<plugins>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-help-plugin</artifactId>
+				<version>2.1</version>
+			</plugin>
+
+			<plugin>
+				<groupId>org.eclipse.tycho</groupId>
+				<artifactId>tycho-maven-plugin</artifactId>
+				<version>${tycho-version}</version>
+				<extensions>true</extensions>
+			</plugin>
+			<plugin>
+				<groupId>org.eclipse.tycho</groupId>
+				<artifactId>tycho-compiler-plugin</artifactId>
+				<version>${tycho-version}</version>
+				<configuration>
+					<encoding>${project.build.sourceEncoding}</encoding>
+					<excludeResources>
+						<exludeResource>**/*.xtend</exludeResource>
+					</excludeResources>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.eclipse.tycho</groupId>
+				<artifactId>tycho-surefire-plugin</artifactId>
+				<version>${tycho-version}</version>
+				<configuration>
+					<!-- set file encoding -->
+					<appArgLine>-Dfile.encoding=UTF-8</appArgLine>
+					<useUIThread>false</useUIThread>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.eclipse.tycho</groupId>
+				<artifactId>tycho-source-plugin</artifactId>
+				<version>${tycho-version}</version>
+				<executions>
+					<execution>
+						<id>attach-source</id>
+						<goals>
+							<goal>plugin-source</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.eclipse.tycho.extras</groupId>
+				<artifactId>tycho-source-feature-plugin</artifactId>
+				<version>${tycho-version}</version>
+				<executions>
+					<execution>
+						<id>source-feature</id>
+						<phase>package</phase>
+						<goals>
+							<goal>source-feature</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.eclipse.tycho</groupId>
+				<artifactId>tycho-p2-plugin</artifactId>
+				<version>${tycho-version}</version>
+				<executions>
+					<execution>
+						<id>attach-p2-metadata</id>
+						<phase>package</phase>
+						<goals>
+							<goal>p2-metadata</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.eclipse.tycho</groupId>
+				<artifactId>tycho-p2-repository-plugin</artifactId>
+				<version>${tycho-version}</version>
+				<configuration>
+					<finalName>${project.artifactId}-${qualifiedVersion}</finalName>
+				</configuration>
+			</plugin>
+			<!-- Generate Java from Xtend sources -->
+			<plugin>
+				<groupId>org.eclipse.xtend</groupId>
+				<artifactId>xtend-maven-plugin</artifactId>
+				<version>${xtend-version}</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>compile</goal>
+							<goal>xtend-install-debug-info</goal>
+							<goal>testCompile</goal>
+							<goal>xtend-test-install-debug-info</goal>
+						</goals>
+						<configuration>
+							<!-- Tried to make maven build output to ${project.basedir}/xtend-gen 
+								But the tycho-compiler-plugin somehow does not pick up the directory, even 
+								with the build-helper-maven-plugin configuration below. -->
+							<outputDirectory>${project.basedir}/xtend-gen</outputDirectory>
+							<testOutputDirectory>${project.basedir}/xtend-gen</testOutputDirectory>
+							<xtendAsPrimaryDebugSource>true</xtendAsPrimaryDebugSource>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<!-- Delete Java files generated from Xtend on clean -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-clean-plugin</artifactId>
+				<version>2.5</version>
+				<configuration>
+					<filesets>
+						<fileset>
+							<directory>${project.basedir}/xtend-gen</directory>
+							<includes>
+								<include>**/*</include>
+							</includes>
+						</fileset>
+					</filesets>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<configuration>
+					<includes>
+						<include>de/fhg/fokus/xtensions/**/*</include>
+					</includes>
+					<excludes>
+						<exclude>de/fhg/fokus/xtensions/Showcase*</exclude>
+						<exclude>de/fhg/fokus/xtensions/Util*</exclude>
+						<exclude>**/*Test*</exclude>
+					</excludes>
+					<append>true</append>
+				</configuration>
+				<executions>
+					<execution>
+						<id>prepare-agent</id>
+						<goals>
+							<goal>prepare-agent</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+			<!-- Let build know about generated Java sources -->
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<version>3.0.0</version>
+				<executions>
+					<execution>
+						<id>add-source</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>add-source</goal>
+						</goals>
+						<configuration>
+							<sources>
+								<source>${project.basedir}/xtend-gen</source>
+							</sources>
+						</configuration>
+					</execution>
+					<execution>
+						<id>add-test-source</id>
+						<phase>generate-test-sources</phase>
+						<goals>
+							<goal>add-test-source</goal>
+						</goals>
+						<configuration>
+							<sources>
+								<source>${project.basedir}/xtend-gen</source>
+							</sources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+
+		<!-- Set default versions for plugins used by sub-projects -->
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.jacoco</groupId>
+					<artifactId>jacoco-maven-plugin</artifactId>
+					<version>${jacoco-version}</version>
+				</plugin>
+				<plugin>
+					<groupId>org.eluder.coveralls</groupId>
+					<artifactId>coveralls-maven-plugin</artifactId>
+					<version>4.3.0</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-surefire-plugin</artifactId>
+					<version>2.20</version>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+	</build>
 
 </project>

@@ -43,8 +43,53 @@ WARNING: This library is pre 1.0.0, so public API may change or disappear if con
 
 == Usage
 
-Currently there is no p2 update site or maven repository available. To add this library to your project
-you have to compile the library yourself. Please have a look at the <<Build>> section.
+Currently only nightly builds are available via Maven. Please add the following repository to your maven pom:
+
+[source,xml]
+----
+<repositories>
+	<repository>
+		<id>jfrog-snapshots</id>
+		<url>http://oss.jfrog.org/oss-snapshot-local/</url>
+	</repository>
+</repositories>
+----
+
+Then add the following dependency:
+
+[source,xml]
+----
+<dependencies>
+	<dependency>
+		<groupId>com.github.fraunhoferfokus.xtensions</groupId>
+		<artifactId>de.fhg.fokus.xtensions</artifactId>
+		<version>1.0.0-SNAPSHOT</version>
+	</dependency>
+</dependencies> 
+---- 
+
+When using gradle, add the repository like this:
+
+[source,gradle]
+----
+  repositories {
+        mavenCentral()
+        maven {
+            url "http://oss.jfrog.org/oss-snapshot-local/"
+        }
+    }
+----
+
+And add the following dependency:
+
+[source,gradle]
+----
+compile 'com.github.fraunhoferfokus.xtensions:de.fhg.fokus.xtensions:1.0.0-SNAPSHOT'
+----
+
+
+Currently there is no p2 update site, we hope to provide this shortly. +
+Please have a look at the <<Build>> section if you want to build the library from source on your own.
 
 
 == Provided Functionality
