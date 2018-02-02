@@ -1671,9 +1671,9 @@ The following tasks are the next goals for this project, roughly in this order:
  * [x] Add badge to this file when done
 - [x] Publish Jacoco results to coveralls.io
  * [x] Add badge to this file when done
-- [ ] Publish p2 repo on bintray
- * [ ] Update this file when done
+- [ ] Make Travis build push build results
+ * [ ] Maven libs to JFrog snapshots
+ * [ ] p2 repository to Bintray
 - [ ] Figure out how to best publish to Maven Central
- * [ ] Update this file when done
-- [ ] Release first version
+- [ ] Release version 1.0.0 and update this file
 - [ ] Add javadoc.io badge to this file
