@@ -481,7 +481,7 @@ public final class OptionalIntExtensions {
 	 * Will call {@code action} with the value held by {@code self} if it is not
 	 * empty. Otherwise will call {@code emptyAction}.
 	 * 
-	 * @param opt
+	 * @param self
 	 *            optional to be checked for value.
 	 * @param action
 	 *            to be called with value of {@code opt} if it is not empty.
@@ -500,15 +500,15 @@ public final class OptionalIntExtensions {
 	
 	/**
 	 * Operator that will be de-sugared to call to
-	 * {@code OptionalIntExtensions.or(self,alternative)}.
+	 * {@code OptionalIntExtensions.or(self,alternativeSupplier)}.
 	 * 
 	 * @param self
 	 *            optional to be checked if empty. If not, this value will be
 	 *            returned from operator.
-	 * @param alternative
+	 * @param alternativeSupplier
 	 *            will be called to get return value if {@code self} is empty.
 	 * @return {@code self}, if it is not empty, otherwise returns value
-	 *         supplied by {@code alternative}.
+	 *         supplied by {@code alternativeSupplier}.
 	 */
 	@Inline(value = "OptionalIntExtensions.or($1,$2)", imported = OptionalIntExtensions.class)
 	public static @NonNull OptionalInt operator_or(@NonNull OptionalInt self,
@@ -518,15 +518,15 @@ public final class OptionalIntExtensions {
 	
 	/**
 	 * This method will either return {@code self} if it is not empty, or
-	 * otherwise the value supplied by {@code alternative}.
+	 * otherwise the value supplied by {@code alternativeSupplier}.
 	 * 
 	 * @param self
 	 *            optional to be checked if empty. If not, this value will be
 	 *            returned from operator.
-	 * @param alternative
+	 * @param alternativeSupplier
 	 *            will be called to get return value if {@code self} is empty.
 	 * @return {@code self}, if it is not empty, otherwise returns value
-	 *         supplied by {@code alternative}.
+	 *         supplied by {@code alternativeSupplier}.
 	 */
 	public static @NonNull OptionalInt or(@NonNull OptionalInt self,
 	@NonNull Supplier<@NonNull ? extends OptionalInt> alternativeSupplier) {

@@ -191,9 +191,9 @@ final class AsyncCompute {
 	}
 
 	/**
-	 * Calls {@link #asyncRun(Executor,Function1) asyncRun(Executor,(CompletableFuture<?>)=>void)} with
+	 * Calls {@link #asyncRun(Executor,org.eclipse.xtext.xbase.lib.Procedures.Procedure1) asyncRun(Executor,(CompletableFuture<?>)=>void)} with
 	 * the common {@code ForkJoinPool} as the executor.
-	 * @see AsyncCompute#asyncRun(Executor,Function1)
+	 * @see AsyncCompute#asyncRun(Executor,org.eclipse.xtext.xbase.lib.Procedures.Procedure1)
 	 */
 	public static def <R> CompletableFuture<?> asyncRun((CompletableFuture<?>)=>void runAsync) {
 		asyncRun(ForkJoinPool.commonPool, runAsync)
@@ -234,9 +234,9 @@ final class AsyncCompute {
 	}
 
 	/**
-	 * Calls {@link #asyncRun(Executor,long,TimeUnit,Function1) asyncRun(Executor,long,TimeUnit,(CompletableFuture<?>)=>void)} with
+	 * Calls {@link #asyncRun(Executor,long,TimeUnit,org.eclipse.xtext.xbase.lib.Procedures.Procedure1) asyncRun(Executor,long,TimeUnit,(CompletableFuture<?>)=>void)} with
 	 * the common {@code ForkJoinPool} as the executor.
-	 * @see AsyncCompute#asyncRun(Executor,long,TimeUnit,Function1)
+	 * @see AsyncCompute#asyncRun(Executor,long,TimeUnit,org.eclipse.xtext.xbase.lib.Procedures.Procedure1)
 	 */
 	public static def <R> CompletableFuture<?> asyncRun(long timeout, TimeUnit unit,
 		(CompletableFuture<?>)=>void runAsync) {

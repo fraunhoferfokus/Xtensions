@@ -11,9 +11,9 @@
 package de.fhg.fokus.xtensions.optional
 
 /** 
- * Class with method {@link Else#elseDo(Procedure0) elseDo(()=>void)}, which either
+ * Class with method {@link #elseDo(org.eclipse.xtext.xbase.lib.Procedures.Procedure0) elseDo(()=>void)}, which either
  * executes the given runnable or not, depending on the sub-class.
- * @see OptionalExtensions#whenPresent(java.util.Optional, Consumer)
+ * @see OptionalExtensions#whenPresent(java.util.Optional, org.eclipse.xtext.xbase.lib.Procedures.Procedure1)
  * @see OptionalIntExtensions#whenPresent(java.util.OptionalInt, java.util.function.IntConsumer)
  * @see OptionalLongExtensions#whenPresent(java.util.OptionalLong, java.util.function.LongConsumer)
  * @see OptionalDoubleExtensions#whenPresent(java.util.OptionalDouble, java.util.function.DoubleConsumer)

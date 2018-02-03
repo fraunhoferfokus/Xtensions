@@ -237,7 +237,7 @@ public final class OptionalDoubleExtensions {
 	 * Maps the value held by {@code self} to an object wrapped in {@code Optional} if present,
 	 * returns an empty {@code Optional} otherwise.
 	 * @param self the optional, that's value should be mapped if present
-	 * @param op mapping function mapping the value held by {@code self} to an object
+	 * @param mapFunc mapping function mapping the value held by {@code self} to an object
 	 * @return an empty {@code Optional}, if {@code self} is empty, otherwise an {@code Optional}
 	 *  holding the result of {@code op} applied to the value held by {@code self}.
 	 */
@@ -278,8 +278,8 @@ public final class OptionalDoubleExtensions {
 	 * @return optional holding the value of {@code self}, mapped to {@code long} using {@code mapFunc} if value present. Empty 
 	 *  optional otherwise.
 	 */
-	public static <T> @NonNull OptionalDouble mapDouble(@NonNull OptionalDouble self, @NonNull DoubleUnaryOperator op) {
-		return self.isPresent() ? OptionalDouble.of(op.applyAsDouble(self.getAsDouble())) : OptionalDouble.empty();
+	public static <T> @NonNull OptionalDouble mapDouble(@NonNull OptionalDouble self, @NonNull DoubleUnaryOperator mapFunc) {
+		return self.isPresent() ? OptionalDouble.of(mapFunc.applyAsDouble(self.getAsDouble())) : OptionalDouble.empty();
 	}
 	
 	/**
@@ -291,8 +291,8 @@ public final class OptionalDoubleExtensions {
 	 * @return optional either holding result of {@code mapFunc} applied to value of {@code self} if 
 	 *  value is present, otherwise returning empty optional.
 	 */
-	public static <T> @NonNull OptionalDouble flatMapDouble(@NonNull OptionalDouble self, @NonNull DoubleFunction<OptionalDouble> mapper) {
-		return self.isPresent() ? mapper.apply(self.getAsDouble()) : self;
+	public static <T> @NonNull OptionalDouble flatMapDouble(@NonNull OptionalDouble self, @NonNull DoubleFunction<OptionalDouble> mapFunc) {
+		return self.isPresent() ? mapFunc.apply(self.getAsDouble()) : self;
 	}
 
 	/**
@@ -416,7 +416,7 @@ public final class OptionalDoubleExtensions {
 	 * Will call {@code action} with the value held by {@code self} if it is not
 	 * empty. Otherwise will call {@code emptyAction}.
 	 * 
-	 * @param opt
+	 * @param self
 	 *            optional to be checked for value.
 	 * @param action
 	 *            to be called with value of {@code opt} if it is not empty.
@@ -440,10 +440,10 @@ public final class OptionalDoubleExtensions {
 	 * @param self
 	 *            optional to be checked if empty. If not, this value will be
 	 *            returned from operator.
-	 * @param alternative
+	 * @param alternativeSupplier
 	 *            will be called to get return value if {@code self} is empty.
 	 * @return {@code self}, if it is not empty, otherwise returns value
-	 *         supplied by {@code alternative}.
+	 *         supplied by {@code alternativeSupplier}.
 	 */
 	@Inline(value = "OptionalDoubleExtensions.or($1,$2)", imported = OptionalDoubleExtensions.class)
 	public static @NonNull OptionalDouble operator_or(@NonNull OptionalDouble self,
@@ -458,10 +458,10 @@ public final class OptionalDoubleExtensions {
 	 * @param self
 	 *            optional to be checked if empty. If not, this value will be
 	 *            returned from operator.
-	 * @param alternative
+	 * @param alternativeSupplier
 	 *            will be called to get return value if {@code self} is empty.
 	 * @return {@code self}, if it is not empty, otherwise returns value
-	 *         supplied by {@code alternative}.
+	 *         supplied by {@code alternativeSupplier}.
 	 */
 	public static @NonNull OptionalDouble or(@NonNull OptionalDouble self,
 	@NonNull Supplier<@NonNull ? extends OptionalDouble> alternativeSupplier) {

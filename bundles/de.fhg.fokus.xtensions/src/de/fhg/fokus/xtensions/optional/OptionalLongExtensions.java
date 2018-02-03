@@ -109,10 +109,10 @@ public final class OptionalLongExtensions {
 	 * This method returns an OptionalLong instance wrapping the given long {@code l}.
 	 * The returned value might be cached to achieve object re-use and therefore 
 	 * less garbage collection.<br>
-	 * This method might be deprecated in future if {@link OptionalInt#of(int)} or a
+	 * This method might be deprecated in future if {@link OptionalLong#of(long)} or a
 	 * new factory method adds caching of instances itself.
-	 * @param i integer to be wrapped in OptionalInt
-	 * @return instance of OptionalInt, wrapping the given integer {@code i}.
+	 * @param l long to be wrapped in OptionalLong
+	 * @return instance of OptionalLong, wrapping the given long {@code l}.
 	 */
 	public static OptionalLong someOf(long l) {
 		if(l < CACHE_LOW_BOUND || l > CACHE_UPPER_BOUND) {
@@ -223,7 +223,7 @@ public final class OptionalLongExtensions {
 	/**
 	 * This operator is an alias for:
 	 * <pre>
-	 * <code>o.{@link OptionalLong#orElse(int) orElse}(alternative)</code>
+	 * <code>o.{@link OptionalLong#orElse(long) orElse}(alternative)</code>
 	 * </pre>
 	 * @param o {@code OptionalLong} checked for a present value 
 	 * @param alternative value to be returned by this extension function, oif {@code o} is empty.
@@ -278,9 +278,9 @@ public final class OptionalLongExtensions {
 	 * Maps the value held by {@code self} to an object wrapped in {@code Optional} if present,
 	 * returns an empty {@code Optional} otherwise.
 	 * @param self the optional, that's value should be mapped if present
-	 * @param op mapping function mapping the value held by {@code self} to an object
+	 * @param mapFunc mapping function mapping the value held by {@code self} to an object
 	 * @return an empty {@code Optional}, if {@code self} is empty, otherwise an {@code Optional}
-	 *  holding the result of {@code op} applied to the value held by {@code self}.
+	 *  holding the result of {@code mapFunc} applied to the value held by {@code self}.
 	 */
 	public static <V> @NonNull Optional<V> map(@NonNull OptionalLong self, @NonNull LongFunction<V> mapFunc) {
 		return self.isPresent() ? Optional.ofNullable(mapFunc.apply(self.getAsLong())) : Optional.empty();
@@ -300,14 +300,14 @@ public final class OptionalLongExtensions {
 
 	/**
 	 * Maps the value of {@code self} to a {@code long} value wrapped into an {@code OptionalLong}, if {@code self} holds a value.
-	 * Returns an empty {@code OptionalInt} otherwise.
+	 * Returns an empty {@code OptionalLong} otherwise.
 	 * @param self optional, that's held value will be mapped with {@code mapFunc}, if present
 	 * @param mapFunc mapping function, to be applied to value of {@code self}, if present
 	 * @return optional holding the value of {@code self}, mapped to {@code long} using {@code mapFunc} if value present. Empty 
 	 *  optional otherwise.
 	 */
-	public static <T> @NonNull OptionalLong mapLong(@NonNull OptionalLong self, @NonNull LongUnaryOperator op) {
-		return self.isPresent() ? OptionalLong.of(op.applyAsLong(self.getAsLong())) : OptionalLong.empty();
+	public static <T> @NonNull OptionalLong mapLong(@NonNull OptionalLong self, @NonNull LongUnaryOperator mapFunc) {
+		return self.isPresent() ? OptionalLong.of(mapFunc.applyAsLong(self.getAsLong())) : OptionalLong.empty();
 	}
 	
 	/**
@@ -319,8 +319,8 @@ public final class OptionalLongExtensions {
 	 * @return optional either holding result of {@code mapFunc} applied to value of {@code self} if 
 	 *  value is present, otherwise returning empty optional.
 	 */
-	public static <T> @NonNull OptionalLong flatMapLong(@NonNull OptionalLong self, @NonNull LongFunction<OptionalLong> mapper) {
-		return self.isPresent() ? mapper.apply(self.getAsLong()) : self;
+	public static <T> @NonNull OptionalLong flatMapLong(@NonNull OptionalLong self, @NonNull LongFunction<OptionalLong> mapFunc) {
+		return self.isPresent() ? mapFunc.apply(self.getAsLong()) : self;
 	}
 
 	/**
@@ -458,7 +458,7 @@ public final class OptionalLongExtensions {
 	 * Will call {@code action} with the value held by {@code self} if it is not
 	 * empty. Otherwise will call {@code emptyAction}.
 	 * 
-	 * @param opt
+	 * @param self
 	 *            optional to be checked for value.
 	 * @param action
 	 *            to be called with value of {@code opt} if it is not empty.
@@ -482,10 +482,10 @@ public final class OptionalLongExtensions {
 	 * @param self
 	 *            optional to be checked if empty. If not, this value will be
 	 *            returned from operator.
-	 * @param alternative
+	 * @param alternativeSupplier
 	 *            will be called to get return value if {@code self} is empty.
 	 * @return {@code self}, if it is not empty, otherwise returns value
-	 *         supplied by {@code alternative}.
+	 *         supplied by {@code alternativeSupplier}.
 	 */
 	@Inline(value = "OptionalLongExtensions.or($1,$2)", imported = OptionalLongExtensions.class)
 	public static @NonNull OptionalLong operator_or(@NonNull OptionalLong self,
@@ -495,15 +495,15 @@ public final class OptionalLongExtensions {
 	
 	/**
 	 * This method will either return {@code self} if it is not empty, or
-	 * otherwise the value supplied by {@code alternative}.
+	 * otherwise the value supplied by {@code alternativeSupplier}.
 	 * 
 	 * @param self
 	 *            optional to be checked if empty. If not, this value will be
 	 *            returned from operator.
-	 * @param alternative
+	 * @param alternativeSupplier
 	 *            will be called to get return value if {@code self} is empty.
 	 * @return {@code self}, if it is not empty, otherwise returns value
-	 *         supplied by {@code alternative}.
+	 *         supplied by {@code alternativeSupplier}.
 	 */
 	public static @NonNull OptionalLong or(@NonNull OptionalLong self,
 	@NonNull Supplier<@NonNull ? extends OptionalLong> alternativeSupplier) {

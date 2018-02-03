@@ -244,17 +244,17 @@ public final class OptionalExtensions {
 
 	/**
 	 * This method will either return {@code self} if it is not empty, or
-	 * otherwise the value supplied by {@code alternative}. If {@code self} is
+	 * otherwise the value supplied by {@code alternativeSupplier}. If {@code self} is
 	 * returned, it is casted to {@code Optional<U>}, which is safe, since the
 	 * value can only be read from {@code self}.
 	 * 
 	 * @param self
 	 *            optional to be checked if empty. If not, this value will be
 	 *            returned from this method.
-	 * @param alternative
+	 * @param alternativeSupplier
 	 *            will be called to get return value if {@code self} is empty.
 	 * @return {@code self}, if it is not empty, otherwise returns value
-	 *         supplied by {@code alternative}.
+	 *         supplied by {@code alternativeSupplier}.
 	 */
 	@SuppressWarnings("unchecked") // we know cast is safe, because value
 									// can
@@ -753,15 +753,15 @@ public final class OptionalExtensions {
 
 	/**
 	 * Operator that will be de-sugared to call to
-	 * {@code OptionalExtensions.or(self,alternative)}.
+	 * {@code OptionalExtensions.or(self,alternativeSupplier)}.
 	 * 
 	 * @param self
 	 *            optional to be checked if empty. If not, this value will be
 	 *            returned from operator.
-	 * @param alternative
+	 * @param alternativeSupplier
 	 *            will be called to get return value if {@code self} is empty.
 	 * @return {@code self}, if it is not empty, otherwise returns value
-	 *         supplied by {@code alternative}.
+	 *         supplied by {@code alternativeSupplier}.
 	 */
 	@Inline(value = "OptionalExtensions.or($1,$2)", imported = OptionalExtensions.class)
 	public static <T> @NonNull Optional<T> operator_or(@NonNull Optional<T> self,
@@ -775,8 +775,8 @@ public final class OptionalExtensions {
 	 * never actually uses elements of the generic type and only returns or passes
 	 * through elements of the generic type, so that no {@code ClassCastException}
 	 * will ever be thrown due to this cast.
-	 * @param opt
-	 * @return
+	 * @param opt optional to be upcasted to to {@code Optional<U>}.
+	 * @return same {@code opt} passed in as type {@code Optional<U>}. 
 	 */
 	@SuppressWarnings("unchecked")
 	public static <U, T extends U> Optional<U> upcast(Optional<T> opt) {
@@ -789,15 +789,15 @@ public final class OptionalExtensions {
 
 	/**
 	 * This method will either return {@code self} if it is not empty, or
-	 * otherwise the value supplied by {@code alternative}.
+	 * otherwise the value supplied by {@code alternativeSupplier}.
 	 * 
 	 * @param self
 	 *            optional to be checked if empty. If not, this value will be
 	 *            returned from operator.
-	 * @param alternative
+	 * @param alternativeSupplier
 	 *            will be called to get return value if {@code self} is empty.
 	 * @return {@code self}, if it is not empty, otherwise returns value
-	 *         supplied by {@code alternative}.
+	 *         supplied by {@code alternativeSupplier}.
 	 */
 	@SuppressWarnings("unchecked")
 	public static <T> @NonNull Optional<T> or(@NonNull Optional<T> self,

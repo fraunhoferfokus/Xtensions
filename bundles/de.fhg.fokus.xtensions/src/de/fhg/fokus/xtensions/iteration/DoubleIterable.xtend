@@ -14,9 +14,10 @@ import java.util.PrimitiveIterator.OfDouble
 import java.util.function.DoubleConsumer
 import java.util.stream.DoubleStream
 import de.fhg.fokus.xtensions.iteration.PrimitiveIteratorExtensions
+import java.util.PrimitiveIterator
 
 /** 
- * This interface is a specialized version of an {@code Iterable<Double>}providing a {@link PrimitiveIterator.OfDouble} which allows iteration over
+ * This interface is a specialized version of an {@code Iterable<Double>}providing a {@link OfDouble PrimitiveIterator.OfDouble} which allows iteration over
  * a (possibly infinite) amount of unboxed primitive values.<br>
  * <br>
  * This abstraction can be used in situations where an {@link DoubleStream} would
@@ -38,7 +39,7 @@ interface DoubleIterable extends Iterable<Double> {
 	 * the elements of the iterable. Implementations are encouraged to overwrite
 	 * this method with a more efficient implementation.<br>
 	 * Be aware that on inifinite iterables this method only returns when the {@code consumer} throws an exception or terminates the runtime.
-	 * @param consumerthe action to be called for each element in the iterable.
+	 * @param consumer the action to be called for each element in the iterable.
 	 */
 	def void forEachDouble(DoubleConsumer consumer) {
 		val OfDouble iterator = iterator()
@@ -50,7 +51,7 @@ interface DoubleIterable extends Iterable<Double> {
 
 	/** 
 	 * Returns an {@link DoubleStream} based on the elements in the iterable. <br>
-	 * The default implementation returns a stream uses{@link PrimitiveIteratorExtensions#streamRemaining(OfDouble)} with the iterator from{@link #iterator()} to construct the resulting stream. It is highly
+	 * The default implementation returns a stream uses {@link PrimitiveIteratorExtensions#streamRemaining(PrimitiveIterator.OfDouble)} with the iterator from{@link #iterator()} to construct the resulting stream. It is highly
 	 * recommended for the implementations of this interface to provide an own
 	 * implementation of this method.
 	 * @return a DoubleStream to iterate over the elements of this iterable.

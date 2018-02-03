@@ -41,6 +41,8 @@ final class PrimitiveIteratorExtensions {
 	 * Convenience method to turn a primitive iterator into a stream. 
 	 * Best effort transformation from iterator to stream. Does not make any assumptions,
 	 * other than that the elements returned by the iterator are not null.
+	 * @param wrapped the iterator from which the returned stream is created from
+	 * @return stream providing the remaining elements from {@code wrapped}
 	 */
 	static def IntStream streamRemaining(PrimitiveIterator.OfInt wrapped) { 
 		val spliterator = wrapped.toSpliterator
@@ -51,6 +53,8 @@ final class PrimitiveIteratorExtensions {
 	 * Convenience method to turn a primitive iterator into a parallel stream. 
 	 * Best effort transformation from iterator to stream. Does not make any assumptions,
 	 * other than that the elements returned by the iterator are not null.
+	 * @param wrapped the iterator from which the returned stream is created from
+	 * @return stream providing the remaining elements from {@code wrapped}
 	 */
 	static def IntStream parallelStreamRemaining(PrimitiveIterator.OfInt wrapped) {  
 		val spliterator = wrapped.toSpliterator
@@ -71,6 +75,8 @@ final class PrimitiveIteratorExtensions {
 	 * Convenience method to turn a primitive iterator into a stream. 
 	 * Best effort transformation from iterator to stream. Does not make any assumptions,
 	 * other than that the elements returned by the iterator are not null.
+	 * @param wrapped the iterator from which the returned stream is created from
+	 * @return stream providing the remaining elements from {@code wrapped}
 	 */
 	static def LongStream streamRemaining(PrimitiveIterator.OfLong wrapped) { 
 		val spliterator = wrapped.toSpliterator
@@ -81,6 +87,8 @@ final class PrimitiveIteratorExtensions {
 	 * Convenience method to turn a primitive iterator into a parallel stream. 
 	 * Best effort transformation from iterator to stream. Does not make any assumptions,
 	 * other than that the elements returned by the iterator are not null.
+	 * @param wrapped the iterator from which the returned stream is created from
+	 * @return stream providing the remaining elements from {@code wrapped}
 	 */
 	static def LongStream parallelStreamRemaining(PrimitiveIterator.OfLong wrapped) {  
 		val spliterator = wrapped.toSpliterator
@@ -101,6 +109,8 @@ final class PrimitiveIteratorExtensions {
 	 * Convenience method to turn a primitive iterator into a stream. 
 	 * Best effort transformation from iterator to stream. Does not make any assumptions,
 	 * other than that the elements returned by the iterator are not null.
+	 * @param wrapped the iterator from which the returned stream is created from
+	 * @return stream providing the remaining elements from {@code wrapped}
 	 */
 	static def DoubleStream streamRemaining(PrimitiveIterator.OfDouble wrapped) { 
 		val spliterator = wrapped.toSpliterator
@@ -111,6 +121,8 @@ final class PrimitiveIteratorExtensions {
 	 * Convenience method to turn a primitive iterator into a parallel stream. 
 	 * Best effort transformation from iterator to stream. Does not make any assumptions,
 	 * other than that the elements returned by the iterator are not null.
+	 * @param wrapped the iterator from which the returned stream is created from
+	 * @return stream providing the remaining elements from {@code wrapped}
 	 */
 	static def DoubleStream parallelStreamRemaining(PrimitiveIterator.OfDouble wrapped) {  
 		val spliterator = wrapped.toSpliterator

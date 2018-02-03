@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v2.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v20.html
- *
+ * 
  * Contributors:
  *     Max Bureck (Fraunhofer FOKUS) - initial API and implementation
  *******************************************************************************/
@@ -22,7 +22,7 @@ import de.fhg.fokus.xtensions.iteration.PrimitiveIteratorExtensions
 import de.fhg.fokus.xtensions.iteration.SupplierIntIterable
 
 /** 
- * This interface is a specialized version of an {@code Iterable<Integer>}providing a {@link PrimitiveIterator::OfInt} which allows iteration over a
+ * This interface is a specialized version of an {@code Iterable<Integer>} providing a {@link OfInt} which allows iteration over a
  * (possibly infinite) amount of unboxed primitive values.<br>
  * <br>
  * This abstraction can be used in situations where an {@link IntStream} would
@@ -30,13 +30,13 @@ import de.fhg.fokus.xtensions.iteration.SupplierIntIterable
  * times. It can also be used as an immutable view on an {@code int[]}array.<br>
  * <br>
  * This interface is also useful to abstract over different datatypes providing
- * int values such as {@code int[]} array,{@link org.eclipse.xtext.xbase.lib.IntegerRange IntegerRange}, or one of the
- * generator functions {@link IntIterable#generate(Supplier) generate} and{@link IntIterable#iterate(int, IntUnaryOperator) iterate}.
+ * int values such as {@code int[]} array, {@link org.eclipse.xtext.xbase.lib.IntegerRange IntegerRange}, or one of the
+ * generator functions {@link IntIterable#generate(org.eclipse.xtext.xbase.lib.Functions.Function0) generate} and {@link IntIterable#iterate(int, IntUnaryOperator) iterate}.
  * @see PrimitiveArrayExtensions#asIntIterable(int[])
  * @see de.fhg.fokus.xtensions.range.RangeExtensions#asIntIterable(org.eclipse.xtext.xbase.lib.IntegerRange)
  */
 interface IntIterable extends Iterable<Integer> {
-	
+
 	/** 
 	 * Returns a primitive iterator over elements of type {@code int}. This
 	 * method specializes the super-interface method.
@@ -49,8 +49,8 @@ interface IntIterable extends Iterable<Integer> {
 	 * each element. The default implementation uses {@link #iterator()} to get
 	 * the elements of the iterable. Implementations are encouraged to overwrite
 	 * this method with a more efficient implementation.<br>
-	 * Be aware that on inifinite iterables this method only returns when the{@code consumer} throws an exception or terminates the runtime.
-	 * @param consumerthe action to be called for each element in the iterable.
+	 * Be aware that on inifinite iterables this method only returns when the {@code consumer} throws an exception or terminates the runtime.
+	 * @param consumer the action to be called for each element in the iterable.
 	 */
 	def void forEachInt(IntConsumer consumer) {
 		val OfInt iterator = iterator()
@@ -73,7 +73,8 @@ interface IntIterable extends Iterable<Integer> {
 	// }
 	/** 
 	 * Returns an {@link IntStream} based on the elements in the iterable. <br>
-	 * The default implementation returns a stream uses{@link PrimitiveIteratorExtensions#streamRemaining(OfInt)} with the iterator from{@link #iterator()} to construct the resulting stream. It is highly
+	 * The default implementation returns a stream uses {@link PrimitiveIteratorExtensions#streamRemaining(PrimitiveIterator.OfInt)} 
+	 * with the iterator from {@link #iterator()} to construct the resulting stream. It is highly
 	 * recommended for the implementations of this interface to provide an own
 	 * implementation of this method.
 	 * @return an IntStream to iterate over the elements of this iterable.
@@ -84,8 +85,8 @@ interface IntIterable extends Iterable<Integer> {
 	}
 
 	/** 
-	 * Creates a new IntIterable that will produce an infinite{@link PrimitiveIterator::OfInt} or {@link IntStream} based on the{@link IntSupplier} provided by supplier {@code s}.
-	 * @param ssupplier, that provides an {@link IntSupplier} for each
+	 * Creates a new IntIterable that will produce an infinite {@link OfInt} or {@link IntStream} based on the {@link IntSupplier} provided by supplier {@code s}.
+	 * @param s supplier, that provides an {@link IntSupplier} for each
 	 * iterator or stream created.
 	 * @return IntIterable based on the supplier {@code s}.
 	 */
@@ -98,8 +99,8 @@ interface IntIterable extends Iterable<Integer> {
 	 * numbers, starting with the given {@code seed} value and in every
 	 * subsequent step the result of the given {@code operator} applied on the
 	 * last step's value. So in the second step this would be{@code op.applyAsInt(seed)} and so on.
-	 * @param seedfirst value to be provided and used as seed fed to {@code op}in second step.
-	 * @param opthis operator must be side-effect free.
+	 * @param seed first value to be provided and used as seed fed to {@code op} in second step.
+	 * @param op this operator must be side-effect free.
 	 * @return and {@link IntIterable} providing infinite source of numbers
 	 * based on {@code seed} and {@code op}.
 	 */
@@ -109,7 +110,8 @@ interface IntIterable extends Iterable<Integer> {
 
 	/** 
 	 * Creates {@link IntIterable} an which works similar to a traditional for-loop.
-	 * The first value provided by an iterator provided by the created iterable will be {@code seed} value. The iterator's {@code OfInt#next()} method will return the
+	 * The first value provided by an iterator provided by the created iterable will be {@code seed} value. 
+	 * The iterator's {@code OfInt#next()} method will return the
 	 * boolean value provided by {@code IntPredicate} on the potentially next value.
 	 * This also means that if {@code IntPredicate} does not hold for the first value 
 	 * the iterator will not provide any value. The next value provided after the initial

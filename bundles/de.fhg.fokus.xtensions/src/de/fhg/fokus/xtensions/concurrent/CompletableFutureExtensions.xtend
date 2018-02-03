@@ -36,16 +36,15 @@ import java.util.function.Consumer
  * <p>
  * The extension methods for CompletableFuture make some common use cases easier. Some of these methods are:
  * <ul>
- * 	 <li>{@link #then(CompletableFuture, Function1)}</li>
- * 	 <li>{@link #then(CompletableFuture, Procedure1)}</li>
- * 	 <li>{@link #then(CompletableFuture, Procedure0)}</li>
- * 	 <li>{@link #whenSuccessfull(CompletableFuture, Procedure1)}</li>
- * 	 <li>{@link #whenCancelled(CompletableFuture, Procedure0)}</li>
- * 	 <li>{@link #whenException(CompletableFuture, Procedure1)}</li>
- * 	 <li>{@link #handleCancellation(CompletableFuture, Function0)}</li>
+ * 	 <li>{@link #then(CompletableFuture, Function)}</li>
+ * 	 <li>{@link #then(CompletableFuture, Consumer)}</li>
+ * 	 <li>{@link #then(CompletableFuture, Runnable)}</li>
+ * 	 <li>{@link #whenCancelled(CompletableFuture, org.eclipse.xtext.xbase.lib.Procedures.Procedure0) whenCancelled(CompletableFuture<R>, ()=>void)}</li>
+ * 	 <li>{@link #whenException(CompletableFuture, org.eclipse.xtext.xbase.lib.Procedures.Procedure1) whenException(CompletableFuture<R>, (Throwable)=>void)}</li>
+ * 	 <li>{@link #handleCancellation(CompletableFuture, org.eclipse.xtext.xbase.lib.Functions.Function0) handleCancellation(CompletableFuture<R>, ()=>R)}</li>
  * 	 <li>{@link #cancelOnTimeout(CompletableFuture, long, TimeUnit)}</li>
  * 	 <li>{@link #cancelOnTimeout(CompletableFuture, ScheduledExecutorService, long, TimeUnit)}</li>
- * 	 <li>{@link #forwardTo(CompletableFuture, CompletableFuture)}</li>
+ * 	 <li>{@link #forwardTo(CompletionStage, CompletableFuture)}</li>
  * 	 <li>{@link #forwardCancellation(CompletableFuture, CompletableFuture)}</li>
  * </ul>
  * <p>
@@ -243,12 +242,11 @@ final class CompletableFutureExtensions {
 	}
 
 	/**
-	 * This is the inverse operation of {@link CompletableFutureExtensions#forwardTo(CompletableFuture,
+	 * This is the inverse operation of {@link CompletableFutureExtensions#forwardTo(CompletionStage,
 	 * CompletableFuture) forwardTo}. This method will simply call forwardTo parameters in switched order.
 	 * @param toComplete the future that will be completed with the result of {@code with}.
 	 * @param with the future that provides the result that will be forwarded to {@code toComplete}.
-	 * @see CompletableFutureExtensions#forwardTo(CompletableFuture,
-	 * CompletableFuture)
+	 * @see #forwardTo(CompletionStage, CompletableFuture)
 	 * @return a CompletableFuture that will complete after the forwarding is complete.
 	 */
 	static def <R> CompletionStage<R> completeWith(CompletableFuture<? super R> toComplete, CompletionStage<R> with) {
@@ -265,7 +263,7 @@ final class CompletableFutureExtensions {
 	 * cancellation via interrupting the thread the blocking call is performed on. When a blocking call
 	 * is performed on a thread pool it is crucial that the interruption is visible to other tasks that
 	 * may be run on the thread. This function is a bridge between cancellation of CompletableFuture and
-	 * thread interruption for blocking APIs. The {@interruptableBlock} is called by this method and only
+	 * thread interruption for blocking APIs. The {@code interruptableBlock} is called by this method and only
 	 * while the block is executed cancellation of the future passed as parameter {@code fut} will lead
 	 * to interruption of the current thread executing this method and the {@code interruptableBlock}.
 	 * Thrown exceptions will be thrown to the caller of this method.<br>
@@ -431,7 +429,7 @@ final class CompletableFutureExtensions {
 	 * @return new future that will either complete with the result of {@code fut}, if it completes successfully,
 	 *  or with the result provided by {@code handler} if {@code fut} completes exceptionally.
 	 * @throws NullPointerException if {@code fut} or {@code handle} is {@code null}.
-	 * @see #exceptionallyAsync(CompletableFuture, Executor, Function1)
+	 * @see #exceptionallyAsync(CompletableFuture, Executor, org.eclipse.xtext.xbase.lib.Functions.Function1)
 	 */
 	static def <R> CompletableFuture<R> exceptionallyAsync(CompletableFuture<? extends R> fut, (Throwable)=>R handler) {
 		Objects.requireNonNull(fut)
@@ -455,7 +453,7 @@ final class CompletableFutureExtensions {
 	 * @return new future that will either complete with the result of {@code fut}, if it completes successfully,
 	 *  or with the result provided by {@code handler} if {@code fut} completes exceptionally.
 	 * @throws NullPointerException if {@code fut}, {@code executor}, or {@code handle} is {@code null}.
-	 * @see #exceptionallyAsync(CompletableFuture, Executor, Function1)
+	 * @see #exceptionallyAsync(CompletableFuture, org.eclipse.xtext.xbase.lib.Functions.Function1)
 	 */
 	static def <R> CompletableFuture<R> exceptionallyAsync(CompletableFuture<? extends R> fut, Executor executor,
 		(Throwable)=>R handler) {
@@ -469,7 +467,7 @@ final class CompletableFutureExtensions {
 	}
 
 	/**
-	 * Registers {@code handler} on the given future {@fut} to be called when the future is cancelled
+	 * Registers {@code handler} on the given future {@code fut} to be called when the future is cancelled
 	 * (meaning completed with an instance of {@link CancellationException}).
 	 * @param fut the future {@code handler} is registered on for notification about cancellation. 
 	 *   Must not be {@code null}.
@@ -490,7 +488,7 @@ final class CompletableFutureExtensions {
 	}
 
 	/**
-	 * Registers {@code handler} on the given future {@fut} to be called when the future is cancelled
+	 * Registers {@code handler} on the given future {@code fut} to be called when the future is cancelled
 	 * (meaning completed with an instance of {@link CancellationException}). The {@code handler}
 	 * will be invoked on the {@link ForkJoinPool#commonPool() common pool}, not on the thread completing {@code fut}.
 	 * @param fut the future {@code handler} is registered on for notification about cancellation. 
@@ -512,7 +510,7 @@ final class CompletableFutureExtensions {
 	}
 
 	/**
-	 * Registers {@code handler} on the given future {@fut} to be called when the future is cancelled
+	 * Registers {@code handler} on the given future {@code fut} to be called when the future is cancelled
 	 * (meaning completed with an instance of {@link CancellationException}). The {@code handler}
 	 * will be invoked on the {@code Executor e}, not on the thread completing {@code fut}.
 	 * @param fut the future {@code handler} is registered on for notification about cancellation. 
@@ -807,7 +805,8 @@ final class CompletableFutureExtensions {
 
 	/** 
 	 * An instance of this class will be passed to the configuration block 
-	 * passed to the {@link CompletableFutureExtensions#orTimeout(CompletableFuture, Procedure1) orTimeout(CompletableFuture<R>, (TimeoutConfig)=>void)}
+	 * passed to the {@link CompletableFutureExtensions#orTimeout(CompletableFuture, org.eclipse.xtext.xbase.lib.Procedures.Procedure1) 
+	 * orTimeout(CompletableFuture<R>, (TimeoutConfig)=>void)}
 	 * extension method.
 	 */
 	public static final class TimeoutConfig {
