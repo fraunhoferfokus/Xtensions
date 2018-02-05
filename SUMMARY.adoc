@@ -1,3 +1,7 @@
 = Summary
 
 . link:README.adoc[Overview]
+. link:./doc/provided_functionality.adoc[Provided Functionality]
+. link:./doc/development.adoc[Development on Xtensions]
+.. link:CODE_OF_CONDUCT.md[Code of Conduct]
+.. link:CONTRIBUTING.adoc[Contributing]
