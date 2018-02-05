@@ -1,0 +1,40 @@
+////
+Copyright (c) 2017 Max Bureck (Fraunhofer FOKUS) and others.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Eclipse Public License v2.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/epl-v20.html
+
+Contributors:
+    Max Bureck (Fraunhofer FOKUS) - initial text
+////
+= Development of the Xtensions Library
+
+This chapter gives an overview over how to get stated on development of the Xtensions library.
+
+== Build
+
+The build is based on maven tycho, the wrapper script `mvnw` takes care of the maven installation.
+On Linux and Mac you might need to call `chmod +x mvnw`.
+
+To build the libraries from source, simply drop into the root directory and call `mvnw clean package`.
+The main library will be located in `bundles/de.fhg.fokus.xtensions/target`
+
+The p2 update site containing the library is located in directory `p2/de.fhg.fokus.xtensions.p2/target/repository`.
+
+
+== Setting up the Development Environment
+
+The repository contains the Oomph setup file link:https://raw.githubusercontent.com/fraunhoferfokus/Xtensions/master/releng/de.fhg.fokus.xtensions.setup/Xtensions.setup[Xtensions.setup] 
+for the Eclipse IDE.
+
+Start the Eclipse installer, then switch to advanced mode (hamburger menu in the top-right corner).
+Select the "Eclipse IDE for Java Development" and press "Next >". On the next page press the green
+plus button and select the catalog "Github Projects" and paste the URL of the setup file above 
+into the "Resource URIs" text field. Then select the checkbox next to the "Xtensions" entry and
+press "Next >". Enter the installation details as preferred, press "Next >", then press "Finish". 
+The Eclipse IDE will be installed and configured. It may need to restart one ore more times.
+
+== External Contributions
+
+Please have a look at the link:../CONTRIBUTING.adoc[contribution guide].
