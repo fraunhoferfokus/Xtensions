@@ -99,6 +99,15 @@
 			<version>4.12</version>
 			<scope>test</scope>
 		</dependency>
+		<!-- 
+			Manually added dependency for xbase lib, so maven can resolve this, when not using 
+			p2 as source of the library
+		-->
+		<dependency>
+		    <groupId>org.eclipse.xtext</groupId>
+		    <artifactId>org.eclipse.xtext.xbase.lib</artifactId>
+		    <version>2.13.0</version>
+		</dependency>
 	</dependencies>
 
 	<distributionManagement>
