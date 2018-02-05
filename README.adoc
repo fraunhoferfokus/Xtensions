@@ -89,7 +89,7 @@ compile 'com.github.fraunhoferfokus.xtensions:de.fhg.fokus.xtensions:1.0.0-SNAPS
 
 
 Currently there is no p2 update site, we hope to provide this shortly. +
-Please have a look at the <<Build>> section if you want to build the library from source on your own.
+Please have a look at the link:./docs/development.adoc[Build] section if you want to build the library from source on your own.
 
 
 == Functionality and APIs
