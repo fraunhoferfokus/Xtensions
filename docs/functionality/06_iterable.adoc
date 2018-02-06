@@ -1,0 +1,60 @@
+
+== Extensions to Iterable
+
+The `de.fhg.fokus.xtensions.iteration.IterableExtensions` class provides extension methods to 
+`java.lang.Iterable`
+
+Unfortunately the `java.lang.Iterable` interface does not provide a (default)
+method for creating a `java.lang.Stream`. It does provide a method to obtain a 
+`Spliterator` which can be used to create a stream, but this is rather unpleasant to use. +
+The `IterableExtensions` class provides the `stream` extension method to easily create
+a stream from an iterable. This method will first check if the given iterable is instance of
+`java.util.Collection`, since this class does provide a default `stream` method,
+otherwise it will construct a stream from the spliterator provided by the iterable.
+
+Example:
+
+[source,xtend]
+----
+import static extension de.fhg.fokus.xtensions.iteration.IterableExtensions.*
+import java.util.OptionalDouble
+//...
+#["foo", null, "BAR", "bazzzz"]
+	.filterNull
+	.averageSize
+	.ifPresent [
+		println('''The average string lenght is «it»''')
+	]
+
+//...
+
+private def OptionalDouble averageSize(Iterable<String> strings) {
+	strings.stream.mapToInt[length].average // <1>
+}
+----
+<1> In this line the extension method `stream` is called on the iterable `strings`.
+
+Analogous to the `stream` method the `IterableExtensions` class also provides a `parallelStream` method.
+
+It is also possible to map an iterable to a primitive iterable 
+(see <<08_primitive_iterables#from-iterables,Primitve Iterables / From Iterables>>).
+
+
+The JDK since Java 8 provides the class `java.util.stream.Collector` which can be used with streams
+to perform a reduction operation over all elements in a stream. The class `java.util.stream.Collectors`
+already provides constructor methods for a bunch of useful collectors. The `IterableExtensions` class
+of this library provides a `collect` extension method directly for `Iterable` to easily reduce the elements
+of the iterable.
+
+Example:
+
+[source,xtend]
+----
+import static java.util.stream.Collectors.*
+import static extension de.fhg.fokus.xtensions.iteration.IterableExtensions.*
+// ...
+val Iterable<String> strings = #["fooooo", "baar", "baz"]
+val summary = strings.collect(summarizingInt[length])
+println("Average length: " + summary.average)
+println("Max length: " + summary.max)
+----

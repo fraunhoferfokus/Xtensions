@@ -1,0 +1,184 @@
+== Primitive Iterables
+
+The JDK provides a generic http://docs.oracle.com/javase/8/docs/api/java/util/Iterator.html[`java.util.Iterator<T>`] interface and 
+primitive versions of the Iterator in form of the sub-interfaces of 
+http://docs.oracle.com/javase/8/docs/api/java/util/PrimitiveIterator.html[`java.util.PrimitiveIterator<T,T_CONS>`]. However, 
+there are no primitive versions of the http://docs.oracle.com/javase/8/docs/api/java/lang/Iterable.html[`java.lang.Iterable<T>`] 
+interface, constructing primitive iterators.
+
+So the JDK is missing an interface to abstract over "a bunch" of primitive numbers to iterate over. A primitive iterator or primitive 
+stream can only traversed once, which is not very satisfying in many cases. Ideally there should be in interface allowing the 
+iteration over a (possibly infinite) sequence of primitive numbers. We want to be able to get a primitive iterator, a primitive 
+stream, or directly iterate over the elements with a `forEach` method. A set of these interfaces is provided in package 
+`de.fhg.fokus.xtensions.iteration`. +
+The primitive Iterable versions provided in the package all specialize `java.lang.Iterable` with the boxed
+number type, but also provide specialized functions for providing primitive iterators, primitive streams, and 
+forEach methods that do not rely on boxing the primitive values when passing them on to the consumer.
+
+In the following sections we will explore the ways to create those primitive Iterables.  
+Primitive Iterables can be created ...
+
+- <<From Iterables>>
+- <<From Arrays>>
+- <<From Computations>>
+- <<From Xtend Ranges>>
+- or <<From Primitive Optionals>>
+
+Examples for usage of primitive Iterables:
+
+[source,xtend]
+----
+import java.util.PrimitiveIterator
+import static extension de.fhg.fokus.xtensions.iteration.IntIterable.*
+// ...
+
+def printHex(IntIterable ints) {
+	ints.forEachInt [
+		val hex = Integer.toHexString(it)
+		println(hex)
+	]
+}
+
+def printHex(IntIterable ints, int limit) {
+	val PrimitiveIterator.OfInt iter = ints.iterator
+	for(var counter = 0; iter.hasNext && counter < limit; counter++) {
+		val i = iter.nextInt
+		val hex = Integer.toHexString(i)
+		println(hex)
+	}
+}
+
+def printHexOdd(IntIterable ints) {
+	val IntStream s = ints.stream.filter[it % 2 == 1]
+	s.forEach [
+		val hex = Long.toHexString(it)
+		println(hex)
+	]
+}
+----
+
+
+[[from-iterables]]
+=== From Iterables
+
+Iterables can be mapped to primitive iterables by the special map extension functions `mapInt`, `mapLong`
+and `mapDouble` defined in `de.fhg.fokus.xtensions.iteration.IterableExtensions`.
+
+Example:
+
+[source,xtend]
+----
+import static extension de.fhg.fokus.xtensions.iteration.IterableExtensions.*
+import de.fhg.fokus.xtensions.iteration.IntIterable
+// ...
+val IntIterable lengths = newArrayList("foo", "baaaar", "bz").mapInt[length]
+----
+
+
+=== From Arrays
+
+The `asIntIterable` extension method method creates a primitive iterable for primitive arrays.
+There are two versions: One version creates an iterable over the complete array, the other one produces
+an iterable over a section of the array. The section can be specified by defining the start index and
+an excluding end index. 
+
+Example:
+
+
+[source,xtend]
+----
+import static extension de.fhg.fokus.xtensions.iteration.PrimitiveArrayExtensions.*
+import de.fhg.fokus.xtensions.iteration.IntIterable
+// ...
+val int[] arr = #[0,2,4,19,-10,10_000,Integer.MAX_VALUE,Integer.MIN_VALUE]
+var IntIterable ints = arr.asIntIterable(1, arr.length - 1)  // omit first and last element
+----
+
+
+=== From Computations
+
+Currently only available on IntIterable
+
+To create an IntIterable representing an infinite number of int values the static `generate`
+factory method can be used. This method has to provided with a function which itself provides
+an `IntSupplier`. The function will be called each time a `PrimitiveIterator.OfInt`
+is needed or an `IntStream` is created from the `IntIterable`.
+
+Example:
+
+[source,xtend]
+----
+import de.fhg.fokus.xtensions.iteration.IntIterable
+// ...
+val IntIterable ints = IntIterable.generate [
+	val rand = new Random;
+	[rand.nextInt]
+]
+----
+
+
+For IntIterables of infinite int values that can be simply computed from a 
+seed value and a mapping function from the previous to the next value, the 
+`iterate` factory method can be used. The seed value provided will be returned
+as the first element of the iterable.
+
+Example:
+
+[source,xtend]
+----
+import de.fhg.fokus.xtensions.iteration.IntIterable
+// ...
+val IntIterable ints = IntIterable.iterate(1)[it * 2]
+----
+
+If a finite IntIterable is needed that can be constructed similar to the classical 
+for-loop, the `iterate` method with three parameters can be used. The first argument
+defines the first (seed) value , the second argument defines the termination condition.
+While this condition holds a next value is provided. If the condition does not hold 
+for the initial value, an empty IntIterable is created.
+The third argument defines the function calculating the next value from the previous one.
+
+Example:
+
+[source,xtend]
+----
+import de.fhg.fokus.xtensions.iteration.IntIterable
+// ...
+val IntIterable ints = IntIterable.iterate(0, [it<=10], [it+2])
+// will provide values 0, 2, 4, 6, 8, and 10
+----
+
+
+=== From Xtend Ranges
+
+Creating iterables from `org.eclipse.xtext.xbase.lib.IntegerRange` can be done via the extensions 
+class `de.fhg.fokus.xtensions.range.RangeExtensions`.
+
+Example:
+
+[source,xtend]
+----
+import static org.eclipse.xtext.xbase.lib.IntegerRange.*
+// ...
+val IntIterable iter = (0..50).withStep(2).asIntIterable
+----
+
+
+Creating an iterable from an `org.eclipse.xtext.xbase.lib.ExclusiveRange` is currently not supported
+due to the public API limitations on that class. 
+
+
+=== From Primitive Optionals
+
+The extension classes for primitive Optionals allow the creation of primitive iterables allowing 
+iteration over either one or no value, depending on the source Optional.
+
+Example:
+
+
+[source,xtend]
+----
+import static extension de.fhg.fokus.xtensions.optional.OptionalIntExtensions.*
+// ...
+val IntItreable ints = some(42).asIterable
+----

@@ -1,0 +1,43 @@
+
+== Extensions to IntegerRange
+
+IntegerRange is a handy type from the Xtend standard library which can
+be constructed using the `..` operator. But the only way to iterate 
+over the elements of the range is by boxing the integers while iterating.
+
+The extensions provided by this library allow iterating over the primitive
+values of the range.
+
+One way to iterate over the range is to use Java 8 streams, by using the 
+`stream` or `parallelStream` extension method from the class 
+`de.fhg.fokus.xtensions.range.RangeExtensions`.
+
+Exmaple: 
+
+
+[source,xtend]
+----
+import static extension de.fhg.fokus.xtensions.range.RangeExtensions.*
+// ...
+val range = (0..20).withStep(2)
+range.stream.filter[it % 5 == 0].sum
+----
+
+Another way to iterate over the elements of a range is to use the `forEachInt` method.
+
+Example:
+
+
+[source,xtend]
+----
+import static extension de.fhg.fokus.xtensions.range.RangeExtensions.*
+// ...
+val range = (0..20).withStep(2)
+range.forEachInt [
+	println(it)
+]
+----
+
+To interact with consumers expecting an `IntIterable` (see <<08_primitive_iterables.adoc#,Primitive Iterables>>), which is a generic interface 
+for iteration over primitive int values provided by this library, the extension method
+`asIntIterable` was provided.

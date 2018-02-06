@@ -1,0 +1,11 @@
+{
+    "plugins": [
+        "asciidoc-include@0.1.9"
+    ],
+    
+    "pluginsConfig": {
+    	"asciidoc-include": {
+            "syntax": "gitbook"
+        }
+    }
+}

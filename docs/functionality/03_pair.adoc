@@ -1,0 +1,39 @@
+
+== Extensions to Pair
+
+The class `de.fhg.fokus.xtensions.pair.PairExtensions` provides extension methods for the type 
+http://javadoc.io/page/org.eclipse.xtext/org.eclipse.xtext.xbase.lib/latest/org/eclipse/xtext/xbase/lib/Pair.html[`org.eclipse.xtext.xbase.lib.Pair`].
+
+The with-operator `=>` can be used to destructure a Pair into `key` and `value` and returns the input Pair.
+
+Example:
+
+
+[source,xtend]
+----
+import static extension de.fhg.fokus.xtensions.pair.PairExtensions.*
+// ...
+val pair = "Foo" -> 3
+pair => [k,v|
+	println(k + ' -> ' + v)
+]
+----
+
+
+The `combine` extension method takes a function to which key and value of a Pair is passed to,
+to merge both objects. The result returned by the function will be returned by the `combine` method.
+The difference to the `>>>` operator, provided by the <<11_functions.adoc#,Extensions to Functions>>
+is only that due to operator precedence calling further methods on the result needs further braces.
+
+Example:
+
+
+[source,xtend]
+----
+import static extension de.fhg.fokus.xtensions.pair.PairExtensions.*
+// ...
+val pair = "Foo" -> 3
+val s = pair.combine[k,v| k + ' = ' + v].toLowerCase
+println(s)
+----
+

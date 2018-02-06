@@ -1,17 +1,8 @@
-﻿////
-Copyright (c) 2017 Max Bureck (Fraunhofer FOKUS) and others.
-All rights reserved. This program and the accompanying materials
-are made available under the terms of the Eclipse Public License v2.0
-which accompanies this distribution, and is available at
-http://www.eclipse.org/legal/epl-v20.html
-
-Contributors:
-    Max Bureck (Fraunhofer FOKUS) - initial text
-////
-= Xtensions Contribution Guide
+﻿
+== Xtensions Contribution Guide
 
 External contributions in form of pull requests are welcome, if they include sufficient tests 
-and documentation (JavaDoc and, if valuable, description to the link:README.adoc[README]). 
+and documentation (JavaDoc and, if valuable, description to the link:README.adoc[README] or other AsciiDoc documentation). 
 Please note that contributions may be rejected if they do not seem beneficial to the project. Please get in touch
 beforehand (e.g. via issues) to get to know if a certain enhancement is regarded beneficial. +
 Currently there are no preferred labels for the issues, this guide will be updated as soon
@@ -19,17 +10,17 @@ as the preferred labels are decided on.
 
 Better code examples for the README are very welcome 😊.
 
-== Code of Conduct
+=== Code of Conduct
 
 Please be polite, this project uses the link:http://berlincodeofconduct.org[Berlin Code of Conduct]
 to define acceptable and unacceptable behavior when interacting among one another.
 
-== Response Times
+=== Response Times
 
 Please be aware that it may take a few days to react on issues and pull requests. This project is developed in spare time, 
 so response time may vary.
 
-== License and IP
+=== License and IP
 
 Contributions will be licensed under https://www.eclipse.org/legal/epl-2.0/[EPL 2.0].
 

@@ -1,0 +1,116 @@
+
+== Scheduling Util
+
+The class `de.fhg.fokus.xtensions.concurrent.SchedulingUtil` provides several static methods 
+and static extension methods to easily schedule action for deferred or repeated execution. +
+All operations have overloaded variants taking a `java.util.concurrent.ScheduledExecutorService`
+as the first parameter, so these methods can be used as extension methods.
+
+To repeat an action with a given period of time (starting immediately) you can use one of the overloaded 
+versions of the `repeatEvery` method.
+
+Example:
+
+[source,xtend]
+----
+import static extension de.fhg.fokus.xtensions.concurrent.SchedulingUtil.*
+import static extension de.fhg.fokus.xtensions.datetime.DurationExtensions.*
+// ...
+val hundredMs = 100.milliseconds
+repeatEvery(hundredMs) [
+	println(currentTimeMillis)
+]
+----
+
+To repeat an action with a given period, starting with a delay instead of immediately, an overloaded
+version of the `repeatEvery` method can be used:
+
+Example:
+
+[source,xtend]
+----
+import static extension de.fhg.fokus.xtensions.concurrent.SchedulingUtil.*
+import java.util.concurrent.TimeUnit
+// ...
+repeatEvery(100, TimeUnit.MILLISECONDS).withInitialDelay(200) [
+	println("Delayed start, repeated every 100 milis period")
+]
+----
+
+Note that the action will stop being repeatedly called if the action throws an exception or the future
+returned by the `repeatEvery` method will be completed (e.g. by canceling it). This can either either 
+be done by the action itself (the future will be passed to the action as parameter), or from the outside. +
+Since the future is both passed to the action and returned, this also allows the action to check e.g. for
+cancellation from the outside and aborting the action early.
+
+
+[source,xtend]
+----
+import static extension de.fhg.fokus.xtensions.concurrent.SchedulingUtil.*
+import static extension de.fhg.fokus.xtensions.datetime.DurationExtensions.*
+// ...
+val hundredMs = 100.milliseconds
+val fut = repeatEvery(hundredMs) [
+	for(i : 0..Integer.MAX_VALUE) {
+		if(cancelled) {
+			println("I've been cancelled at iteration " + i)
+			return
+		}
+	}
+]
+fut.cancel(false)
+----
+
+
+The method `delay` will defer the one-time execution of a given action by the given duration.
+The delayed execution can be aborted before being started by completing the future returned by 
+the `delay` method. +
+The future returned by the `delay` method is also passed as a parameter to the deferred action.
+If the future is completed before the delay is expired, the action will not be executed. If the 
+action is performed, it can check during execution if the future is completed, e.g. to return 
+prematurely (abort the action early).
+
+[source,xtend]
+----
+import static extension de.fhg.fokus.xtensions.concurrent.SchedulingUtil.*
+import static extension de.fhg.fokus.xtensions.concurrent.CompletableFutureExtensions.*
+// ...
+
+val result = new CompletableFuture<String>
+result.thenAccept [
+	println(it)
+]
+
+Executors.newCachedThreadPool.submit [
+	Thread.sleep(100)
+	result.complete("late response")
+]
+
+delay(50.milliseconds) [
+	"default value"
+].forwardTo(result) <1>
+----
+<1> This extension method is explained in <<12_completable_future.adoc#,Extensions to CompletableFuture>>
+
+
+The method `waitFor` will create a `CompletableFuture` that will be completed successfully
+with a `null` value when the given duration expires. An overloaded version of the `waitFor`
+method allows a deferred execution of a given callback, similar to the `delay` method, but 
+the callback does not provide a return value. The returned future will be completed with a 
+`null` value after successful execution.
+
+[source,xtend]
+----
+import static extension de.fhg.fokus.xtensions.concurrent.SchedulingUtil.*
+//...
+
+val repeatingFut = repeatEvery(100, TimeUnit.MILLISECONDS).withInitialDelay(50) [
+	println("Delayed start, repeated every 100 milis period")
+]
+
+waitFor(50.milliseconds) [
+	repeatingFut.cancel(false)
+]
+----
+The same effect as shown here can be achieved with the `cancelOnTimeout` extension method on CompletableFuture, 
+described in <<12_completable_future.adoc#,Extensions to CompletableFuture>>.

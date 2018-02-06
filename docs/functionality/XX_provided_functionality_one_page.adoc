@@ -1,0 +1,42 @@
+////
+Copyright (c) 2017 Max Bureck (Fraunhofer FOKUS) and others.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Eclipse Public License v2.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/epl-v20.html
+
+Contributors:
+    Max Bureck (Fraunhofer FOKUS) - initial text
+////
+
+{% include "../provided_functionality.adoc" %}
+
+toc::[]
+
+{% include "./01_optionals.adoc" %}
+
+{% include "./02_ranges.adoc" %}
+
+{% include "./03_pair.adoc" %}
+
+{% include "./04_primitive_arrays.adoc" %}
+
+{% include "./05_streams.adoc" %}
+
+{% include "./06_iterable.adoc" %}
+
+{% include "./07_primitive_iterators.adoc" %}
+
+{% include "./08_primitive_iterables.adoc" %}
+
+{% include "./09_strings.adoc" %}
+
+{% include "./10_duration.adoc" %}
+
+{% include "./11_functions.adoc" %}
+
+{% include "./12_completable_future.adoc" %}
+
+{% include "./13_async_computations.adoc" %}
+
+{% include "./14_scheduling_util.adoc" %}

@@ -1,0 +1,121 @@
+
+== Extensions to Functions
+
+Xtend provides own functional interfaces in the 
+http://javadoc.io/page/org.eclipse.xtext/org.eclipse.xtext.xbase.lib/latest/org/eclipse/xtext/xbase/lib/Functions.html[`org.eclipse.xtext.xbase.lib.Functions`]
+Interface. These are used all over the Xtend standard library and they allow a compact declaration syntax, e.g. the type 
+`Function1<? super String,? extends String>` can be written as `(String)=>String`.
+Extensions to Xtends functional interfaces are provided in `de.fhg.fokus.xtensions.function.FunctionExtensions`.
+
+This library's `FunctionExtensions` provides another overload of the method `andThen` which allows composition of a 
+`()=>T` function with a `(T)=>U` function, resulting in a composed `()=>U` function. 
+
+Example:
+
+[source,xtend]
+----
+import static extension de.fhg.fokus.xtensions.function.FunctionExtensions.*
+import java.time.LocalDate
+// ...
+val ()=>LocalDate inOneYear = [LocalDate.now.plusYears(1)]
+val (LocalDate)=>String yearString = [it.year.toString]
+val ()=>String nextYear = inOneYear.andThen(yearString)
+println(nextYear.apply)
+----
+
+Inspired by the `|>` operator of F# and Elixir, this library introduces the `>>>` operator,
+which can be seen as a "pipe through" operator. It takes the value of the left hand side and 
+calls the function on the right hand side with the value. This means that  
+
+[source,xtend]
+----
+val (X)=>Y f = ...
+val X x = ...
+x >>> f
+// equal to 
+f.apply(x)
+----
+
+This is especially handy when having to call several functions in a row, 
+so `a.apply(b.apply(x))` can be written as `x >>> b >>> a`.
+It can also be useful to transforming transform the value returned by a method call
+before assigning it to a final variable without having to define a separate method. 
+It can also be used like the `=>` operator (to have a value as a context value `it`) 
+just with a different return value.
+
+
+Example:
+
+[source,xtend]
+----
+import static extension de.fhg.fokus.xtensions.function.FunctionExtensions.*
+import java.nio.file.Paths
+// ...
+val path = System.getProperty("user.home") >>> [Paths.get(it)]
+println(path.parent)
+----
+
+The `>>>` operator is overloaded to also destructure a `Pair` value into `key` and `value` on call.
+This means that the left hand side of the operator must be evaluated to a value of type Pair and the 
+right hand side of the operator must be a function with two parameters of the types of key and value of 
+the Pair `(K,V)=>Y`.
+
+Example:
+
+[source,xtend]
+----
+import static extension de.fhg.fokus.xtensions.function.FunctionExtensions.*
+// ...
+val list = #["foo", "bar", "foo", "baz", "foo", "bar"]
+list.splitHead 
+	>>> [head,tail| head -> tail.toSet.size]
+	>>> [head,remaining| '''Head: "«head»", remaining: «remaining» unique elements''']
+	>>> [println(it)]
+
+// ...
+
+def <T> Pair<T,Iterable<T>> splitHead(Iterable<T> elements) {
+	elements.head -> elements.tail
+}
+----
+
+
+To compose functions, the shortcut operators `>>` for `andThen` and `<<` for `compose` 
+were introduced.
+
+Example:
+
+[source,xtend]
+----
+import static extension de.fhg.fokus.xtensions.function.FunctionExtensions.*
+import java.time.LocalDate
+// ...
+val (LocalDate)=>LocalDate oneYearLater = [it.plusYears(1)]
+val (LocalDate)=>String yearString = [it.year.toString]
+
+val (LocalDate)=>String yearAfter = oneYearLater >> yearString
+
+LocalDate.now >>> yearAfter >>> [println(it)]
+----
+
+
+When working with the Xtend extension methods on `Iterator` and `Iterable` sometimes 
+`(X)=>Boolean` types are needed, e.g. for the `exists` and `filter` combinator.
+Unfortunately the Xtend boolean functions do not have the combosition functions as the 
+Java 8 `java.util.function.Predicate` interface. This library's `FunctionExtensions`
+class does provides the equivilant methods `and`, `or`, and `negate`.
+
+[source,xtend]
+----
+import static extension de.fhg.fokus.xtensions.function.FunctionExtensions.*
+// ...
+val (String)=>boolean notThere = [it.nullOrEmpty]
+val (String)=>boolean tooShort = [it.length < 3]
+val (String)=>boolean valid = notThere.or(tooShort).negate
+#["ay", "caramba", null, "we", "fools"]
+	.filter(valid)
+	.forEach[
+		println(it)
+	]
+----
+

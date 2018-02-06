@@ -1,0 +1,240 @@
+
+== Extensions to Streams
+
+The class `de.fhg.fokus.xtensions.stream.StreamExtensions` provides extension
+methods to the `java.util.stream.Stream` interface.
+
+Java 8 streams are missing a few methods known from the Xtend iterable extension methods.
+The one method that is probably most often used is the method to filter by type. This can easily
+be retrofitted on the Streams API by an extension method. This extension method is provided
+in the `StreamExtensions` class.
+
+Example: 
+
+
+[source,xtend]
+----
+import java.util.stream.Stream
+import static extension de.fhg.fokus.xtensions.stream.StreamExtensions.*
+// ...
+val s = Stream.of(42, "Hello", Double.NaN, "World")
+	.filter(String)
+	.collect(Collectors.joining(" "))
+----
+
+TIP: Since joining Strings is a common operation, the `StringStreamExtensions` allow to call `join`
+directly on the Stream. Have a look at [Extensions to Streams of Strings].
+
+Some other collectors, especially the ones bridging to the collections API are also used very often,
+but using the collect method with the methods from the `Collectors` class is a bit verbose. +
+As a shortcut the `StreamExtensions` class provides `toList`, `toSet`, and `toCollection` 
+extension methods to the `Stream` class.
+
+Example:
+
+
+[source,xtend]
+----
+import java.util.stream.Stream
+import static extension de.fhg.fokus.xtensions.stream.StreamExtensions.*
+// ...
+val list = Stream.of("Foo", "Hello" , "Boo", "World")
+	.filter[!contains("oo")]
+	.map[toUpperCase]
+	.toList
+----
+
+A useful extension method from Xtend on `java.lang.Iterable` is the `filterNull` method, which
+produces a view for an iterable excluding the `null` elements. An equivalent is not provided on the 
+`Stream` interface. This library provides such an extension method on stream.
+
+Example:
+
+[source,xtend]
+----
+import java.util.stream.Stream
+import static extension de.fhg.fokus.xtensions.stream.StreamExtensions.*
+// ...
+Stream.of(42.0, null, "foo", 100_000_000_000bi)
+	.filterNull
+	.forEach [
+		// it is guaranteed to be != null 
+		println(it.toString.toUpperCase)
+	]
+----
+
+
+As a shortcut for the 
+http://docs.oracle.com/javase/8/docs/api/java/util/stream/Stream.html#concat-java.util.stream.Stream-java.util.stream.Stream-[concat]
+method the `StreamExtensions` class provides a `+` operator.
+
+
+The `flatMap` method on `Stream` expects a function mapping to another stream. Oftentimes data structures
+do not provide streams, but `Collection` or `Iterable` types, so the user has to create a stream based on
+them. This usually leads to some visual noise. This library provides a `flatMap` extension method which allows to 
+be called with a function providing an iterable, since it is known how to construct a stream from an iterable.
+
+Example:
+
+[source,xtend]
+----
+import org.eclipse.xtend.lib.annotations.Accessors
+import org.eclipse.xtend.lib.annotations.FinalFieldsConstructor
+import java.util.stream.Stream
+import java.util.function.Function
+import static java.util.stream.Collectors.*
+import static extension de.fhg.fokus.xtensions.stream.StreamExtensions.*
+// ...
+val stream = Stream.of(
+	new Developer("Max", #{"Java", "Xtend", "Rust", "C++"}), 
+	new Developer("Joe", #{"Xtend", "JavaScript", "Dart"}) 
+);
+
+// Mapping language name to number of occurrences
+val Map<String, Long> langPopularity = stream
+	.flatMap[languages] // <1>
+	.collect(groupingBy(Function.identity, counting))
+
+langPopularity.entrySet
+	.stream
+	.max(Map.Entry.comparingByValue)
+	.ifPresent [
+		println('''Most pobular language: «it.key», count: «it.value»''')
+	]
+
+// ...
+
+@FinalFieldsConstructor
+@Accessors
+static class Developer {
+	val String name
+	val Set<String> languages;
+}
+----
+<1> Here `languages` can be returned directly instead of `languages.stream`
+
+Sometimes it is interesting to produce the cartesian product of two containers of elements. To produce 
+all combinations of the elements of a stream with the elements of an `Iterable` (or a different source 
+of a stream) this library provides the `combinations` extension methods. If no merging function is 
+provided, the `combinations` extension methods will create a `org.eclipse.xtext.xbase.lib.Pair` 
+object for each combination. If a merging function is provided, the resulting stream will hold the result 
+of the merge of each combination.
+
+Example:
+
+[source,xtend]
+----
+import java.util.stream.Stream
+import static extension de.fhg.fokus.xtensions.stream.StreamExtensions.*
+// ...
+Stream.of("foo", "bar")
+	.combinations(#["fun", "boo", "faz"])[a,b|a+b]
+	.forEach[
+		println(it)
+	]
+----
+
+
+Java 9 provides a static factory methods for an infinite stream 
+http://docs.oracle.com/javase/9/docs/api/java/util/stream/Stream.html#iterate-T-java.util.function.UnaryOperator-[Stream.iterate(T,UnaryOperator<T>)]. A function with the same functionality is provided via `StreamExtensions`. 
+There is even an overloaded version of the static method that can be written as if the method would exist in the Stream class:
+
+
+[source,xtend]
+----
+// This is using Java 8
+import java.util.stream.Stream
+import static extension de.fhg.fokus.xtensions.stream.StreamExtensions.*
+// ...
+Stream.iterate("na ")[it + it]
+	.filter[length > 15]
+	.findFirst
+	.ifPresent [
+		println(it + "Batman!")
+	]
+----
+
+This method can be handy traversing a nested data structure of same-type elements (e.g. moving up a containment hierarchy).
+
+
+== Extensions to Streams of Strings
+
+Since Xtend can provide extension methods specifically for specializations of generic types,
+it is possible to provide methods only available for `java.util.stream.Stream<String>`.
+The class `de.fhg.fokus.xtensions.stream.StringStreamExtensions` provides such extension methods.
+
+The most used collectors on streams of strings are the joining collectors from `java.util.stream.Collectors`.
+To make these easy to use `join` methods have been introduced as extension methods to `Stream<String>`.
+
+Example:
+
+[source,xtend]
+----
+import java.util.stream.Stream
+import static extension de.fhg.fokus.xtensions.stream.StringStreamExtensions.*
+// ...
+val joined = Stream.of("Hello", "Xtend", "aficionados").join(" ")
+println(joined)
+----
+
+
+Another operation often performed on streams of strings is filtering it based on a regular expression.
+This is provided via the extension method `matching`. The pattern can either be passed in as string
+or as a pre-compiled `java.util.regex.Pattern`
+
+Example:
+
+
+[source,xtend]
+----
+import java.util.stream.Stream
+import static extension de.fhg.fokus.xtensions.stream.StringStreamExtensions.*
+// ...
+Stream.of("foo", "bar", "kazoo", "baz", "oomph", "shoot")
+	.matching(".+oo.*")
+	.forEach [
+		println(it)
+	]
+----
+
+
+When splitting strings provided as a stream it is handy to get an operation providing a single
+stream of the result of splitting all elements, which also works as lazy as possible. A use case
+would be to to use http://docs.oracle.com/javase/8/docs/api/java/nio/file/Files.html#lines-java.nio.file.Path-[Files.lines(Path)]
+and then split the resulting lines of this operation.
+
+Example:
+
+[source,xtend]
+----
+import java.util.stream.Stream
+import static extension de.fhg.fokus.xtensions.stream.StringStreamExtensions.*
+// ...
+Stream.of("Hello users", "welcome to this demo", "hope it helps")
+	.flatSplit("\\s+")
+	.forEach [
+		println(it)
+	]
+----
+
+Sometimes it is also wanted to find all matches of a regular expressions in a stream of strings and
+produce a single stream of all the matches in all strings. This can be done using the `flatMatches`
+extension method. The pattern of the regular expression can either be provided as a string or as a 
+pre-compiled `java.util.regex.Pattern` object.
+
+Example:
+
+
+[source,xtend]
+----
+import java.util.regex.Pattern
+import java.util.stream.Stream
+import static extension de.fhg.fokus.xtensions.stream.StringStreamExtensions.*
+// ...
+val Pattern pattern = Pattern.compile("(\\woo)")		
+Stream.of("Welcome to the zoo", "Where cows do moo", "And all animals poo")
+	.flatMatches(pattern)
+	.forEach [
+		println(it)
+	]
+----

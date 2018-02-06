@@ -1,7 +1,26 @@
 = Summary
 
-. link:README.adoc[Overview]
+. link:SUMMARY.adoc[Content]
+. link:README.adoc[Introduction]
 . link:./docs/provided_functionality.adoc[Provided Functionality]
+.. link:./docs/functionality/01_optionals.adoc[Extensions to Optionals]
+.. link:./docs/functionality/02_ranges.adoc[Extensions to Ranges]
+.. link:./docs/functionality/03_pair.adoc[Extensions to Pair]
+.. link:./docs/functionality/04_primitive_arrays.adoc[Extensions to Primitive Arrays]
+.. link:./docs/functionality/05_streams.adoc[Extensions to Streams]
+.. link:./docs/functionality/06_iterable.adoc[Extensions to Iterable]
+.. link:./docs/functionality/07_primitive_iterators.adoc[Extensions to PrimitiveIterators]
+.. link:./docs/functionality/08_primitive_iterables.adoc[Primitive Iterables]
+.. link:./docs/functionality/09_strings.adoc[Extensions to Strings]
+.. link:./docs/functionality/10_duration.adoc[Extensions to Duration]
+.. link:./docs/functionality/11_functions.adoc[Extensions to Functions]
+.. link:./docs/functionality/12_completable_future.adoc[Extensions to CompletableFuture]
+.. link:./docs/functionality/13_async_computations.adoc[Async Computations]
+.. link:./docs/functionality/14_scheduling_util.adoc[Scheduling Util]
 . link:./docs/development.adoc[Development on Xtensions]
-.. link:CODE_OF_CONDUCT.md[Code of Conduct]
 .. link:CONTRIBUTING.adoc[Contributing]
+.. link:CODE_OF_CONDUCT.md[Code of Conduct]
+
+== Appendix
+
+. link:./docs/functionality/XX_provided_functionality_one_page.adoc[Provided Functionality (as Single Page)]

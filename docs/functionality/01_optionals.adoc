@@ -1,0 +1,180 @@
+== Extensions to Optional
+
+The static factory Methods for creating `Optional` instances are not really meant to be used as 
+statically imported methods. They have no meaningful names to be used this way. They also differ from
+the commonly used names `some`, `none` and `maybe` which are used in many other languages. +
+The class `OptionalIntExtensions` provides static factory methods with these common names
+which are implemented to be inlined to the factory methods used by the JDK.
+
+Examples:
+
+[source,xtend]
+----
+import java.util.Optional
+import static extension de.fhg.fokus.xtensions.optional.OptionalIntExtensions.*
+// ...
+val Optional<String> no = none
+val Optional<String> yes = some("yesss!")
+val Optional<String> dunno = maybe(possiblyNull())
+// ...
+private def String possiblyNull() {
+	if(System.currentTimeMillis % 2 == 0) {
+		"I'm in ur optional"
+	} else {
+		null
+	}
+}
+----
+
+The optional class does not provide a `filter` method, that filters the optional based on the class
+the wrapped object is instance of, as known e.g. from Xtend's filter methods on `Iterable`. 
+The `OptionalIntExtensions` adds such a method, providing an instance check of the wrapped value.
+
+Example:
+
+[source,xtend]
+----
+import java.util.Optional
+import static extension de.fhg.fokus.xtensions.optional.OptionalIntExtensions.*
+// ...
+val Optional<Object> optObj = some("Hi there!")
+val Optional<String> optStr = optObj.filter(String)
+optStr.ifPresent [
+	println(it.toUpperCase)
+]
+----
+
+
+When testing an `Optional` for a value or otherwise perform a different operation
+the optional has to be used twice e.g.
+
+[source,xtend]
+----
+import java.util.Optional
+// ...
+val noVal = Optional.empty
+if(noVal.isPresent) {
+	val value = noVal.get
+	println("Here is your value: "+ value)
+} else {
+	println("Awww, no value")
+}
+----
+
+This can be error prone, since the optional (in the example `noVal`) has to be
+used twice and a different optional may be used accidently. To not run into this 
+issue this library provides the `whenPresent` method which allows defining an
+else branch on the returned object.
+
+Example:
+
+[source,xtend]
+----
+import java.util.Optional
+import static extension de.fhg.fokus.xtensions.optional.OptionalIntExtensions.*
+// ...
+val noVal = Optional.empty
+noVal.whenPresent [
+	val value = noVal.get
+	println("Here is your value: "+ value)
+].elseDo [
+	println("Awww, no value")
+]
+----
+
+Alternatively, the `ifPresentOrElse` extension method can be used, but this does not
+have a clear visual separation which case is the if and which the else callback.
+
+To avoid allocating objects over and over for the lambda passed to the 
+`elseDo` method, there are overloaded versions of the method passing on
+additional parameters to the lambda. This can avoid "capturing" lambdas 
+which would create a new object on every `elseDo` call.
+
+Example:
+
+[source,xtend]
+----
+import java.util.Optional
+import static extension de.fhg.fokus.xtensions.optional.OptionalIntExtensions.*
+// ...
+val captureMe = "no value"
+val noVal = Optional.empty
+noVal.whenPresent [
+	val value = noVal.get
+	println("Here is your value: "+ value)
+].elseDo(captureMe) [
+	println("Awww, " + it)
+]
+----
+
+
+To bridge between APIs providing an `Optional` value and ones that expect
+multiple values, the extension methods `asIterable`, `toList` and `toSet`
+are provided to create immutable implementations of common JVM collection APIs.
+
+ 
+The `Optional` class has a `map` method that can map the value present in the optional
+to a value of another type. Unfortunately there is no method to map to a primitive type
+returning a primitive optional, such as `OptionalInt`. The extension methods `mapInt`,
+`mapLong`, and `mapDouble` allow mapping to primitive options without having to
+box the resulting value.
+
+Example:
+
+[source,xtend]
+----
+import java.util.Optional
+import static extension de.fhg.fokus.xtensions.optional.OptionalIntExtensions.*
+// ...
+val Optional<String> yes = some("yesss!")
+val OptionalInt lenOpt = yes.mapInt[length]
+val len = lenOpt.orElse(0)
+println("Length is " + len)
+----
+
+
+Some methods on Optional introduced in Java 9 are available as retrofitted extension methods.
+When compiling a class using the extension method targeting Java 9, the native Optional method has precedence and will be used.
+No changes in the source code has to be done to switch to the native Java 9 implementation.
+The following instance methods of Optional are backported for Java 8:
+
+* http://docs.oracle.com/javase/9/docs/api/java/util/Optional.html#or-java.util.function.Supplier-[Optional<T> or​(Supplier<? extends Optional<? extends T>> supplier)]
+* http://docs.oracle.com/javase/9/docs/api/java/util/Optional.html#ifPresentOrElse-java.util.function.Consumer-java.lang.Runnable-[void ifPresentOrElse​(Consumer<? super T> action, Runnable emptyAction)]
+* http://docs.oracle.com/javase/9/docs/api/java/util/Optional.html#stream--[Stream<T> stream​()]
+​
+
+As a shortcut for the `or` extension method, the `||` operator is provided. The `?:` operator is a shortcut for the `orElse` method on Optional.
+
+
+== Extensions to Primitive Optionals
+
+Extensions to the primitive versions of Optional are provided by the following classes:
+
+	de.fhg.fokus.xtensions.optional.OptionalIntExtensions
+	de.fhg.fokus.xtensions.optional.OptionalLongExtensions
+	de.fhg.fokus.xtensions.optional.OptionalDoubleExtensions
+
+Same as for Optional, there is a `some` alias for the `OptionalInt.of`, `OptionalLong.of`, and `OptionalDouble.of`
+methods (see <<Extensions to Optional>>). +
+The methods `noInt`, `noLong`, and `noDouble` provide empty primitive Optionals.
+
+The Open JDK / Oracle JDK currently does not cache OptionalInt and OptionalLong instances in the static factory method 
+`OptionalInt.of(int)` and `OptionalLong.of(long)` as it is currently done for Integer creation in 
+`Integer.valueOf(int)`. To provide such a caching static factory methods, the 
+`OptionalIntExtensions.someOf(int)` and `OptionalLongExtensions.someOf(long)` method were 
+introduced.
+
+Example:
+
+
+[source,xtend]
+----
+import static de.fhg.fokus.xtensions.optional.OptionalIntExtensions.*
+// ...
+if(someOf(42) === someOf(42)) {
+	println("someOf caches instances")
+}
+----
+
+Stunningly, the primitive versions of Optional do not provide `map` and `filter` methods. These 
+are provided as extension methods by this library.

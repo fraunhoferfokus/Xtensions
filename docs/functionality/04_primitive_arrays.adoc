@@ -1,0 +1,23 @@
+
+== Extensions to Primitive Arrays
+
+The class `de.fhg.fokus.xtensions.iteration.PrimitiveArrayExtensions` contains extension methods for 
+arrays of primitive values (int, long, double) to iterate with a forEach method consuming primitive values.
+
+Example:
+
+
+[source,xtend]
+----
+import static extension de.fhg.fokus.xtensions.iteration.PrimitiveArrayExtensions.*
+// ...
+val int[] arr = #[3,4,6]
+arr.forEachInt [
+	println(it)
+]
+----
+
+Additionally the class allows to create primitive iterable wrapper objects (see <<08_primitive_iterables.adoc#,Primitive Iterables>>).
+
+TIP: The JDK class http://docs.oracle.com/javase/8/docs/api/java/util/Arrays.html[`java.util.Arrays`] already contains 
+static `stream` methods that can be used as extension methods to create Java 8 streams from primitive arrays.

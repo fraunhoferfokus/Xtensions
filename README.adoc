@@ -94,7 +94,11 @@ Please have a look at the link:./docs/development.adoc[Build] section if you wan
 
 == Functionality and APIs
 
-Most of the functionality provided by the library is decribed in the chapter link:./docs/provided_functionality.adoc[Provided Functionality].
+Most of the functionality provided by the library is described in a GitBook, based on the documentation files in this repository.
+The book is made available link:https://boereck.gitbooks.io/xtensions[here].
+
+An overview over the documentation files can be viewed directly on GitHub link:https://github.com/fraunhoferfokus/Xtensions/blob/master/SUMMARY.adoc[here]. 
+GitHub has better code highlighting for Xtend snippets, so you might prefer this.
 
 JavaDocs are currently not provided, but once released, a link to the respective javadoc.io site will be added.
 

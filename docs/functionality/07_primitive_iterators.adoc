@@ -1,0 +1,8 @@
+== Extensions to PrimitiveIterators
+
+The primitive iterators defined in the JDK as sub-interfaces of `java.util.PrimitiveIterator` 
+do not provide combinators like the ones provided by Xtend. These combinators, however, do take some 
+efforts to implement. Instread, this library provides the class 
+`de.fhg.fokus.xtensions.iteration.PrimitiveIteratorExtensions` provides methods to 
+create primitive streams (from `java.util.stream`) for the remaining elements of a given iterator via the 
+extension methods `streamRemaining` or `parallelStreamRemaining`.

@@ -1,0 +1,93 @@
+
+== Extensions to String 
+
+The class `de.fhg.fokus.xtensions.string.StringSplitExtensions` provides extension methods
+for `java.lang.String` allowing to lazily split a string value.
+
+
+The extension method `splitIt` returns an `Iterator` which lazily performs string split 
+operations based on a regular expression (same `String#split(String)`) would do, but 
+lazily. This allows the use of Iterator extension methods provided by Xtend and to stop splitting
+a string when a condition is met without splitting the complete input string beforehand.
+
+Example: 
+
+[source,xtend]
+----
+import static extension de.fhg.fokus.xtensions.string.StringSplitExtensions.*
+// ...
+val Iterator<String> i = "foozoobaar".splitIt("(?<=oo)")
+i.takeWhile[!startsWith("b")].forEach[
+	println(it)
+]
+----
+
+[TIP]
+====
+If a split pattern is known in advance the following is possible with the JDK types to obtain a Stream of split elements:
+
+[source,xtend]
+----
+import java.util.regex.Pattern
+// ...
+extension val pattern = Pattern.compile("mypattern")
+// ...
+"tosplit".splitAsStream  // actually calls pattern.splitAsStream("tosplit")
+----
+
+====
+	
+If a pattern String has to be produced dynamically, the extension method `splitAsStream` is provided
+as a shortcut for the sequence of calls from above:
+
+[source,xtend]
+----
+import static extension de.fhg.fokus.xtensions.string.StringSplitExtensions.*
+// ...
+val String patternStr = ... // dynamically created pattern
+"tosplit".splitAsStream(patternStr)
+----
+
+
+The class `de.fhg.fokus.xtensions.string.SptringMatchExtensions` provides extension methods to
+`java.lang.String`, allowing to match regular expressions lazily via iterators.
+
+To manually get matches for a pattern from an input string with JDK classes the following sequence has to be used:
+
+[source,xtend]
+----
+import java.util.regex.Pattern
+// ...
+val String input = "foo bar boo"
+val Pattern pattern = Pattern.compile("(\\woo)")
+val matcher = pattern.matcher(input)
+while(matcher.find) {
+	val match = input.subSequence(matcher.start, matcher.end)
+	// Do something with match
+	println(match)
+}
+----
+
+The extension method `matchIt` elegantly wraps this usage pattern into an Iterator, so the Xtend combinators
+can be used on them.
+
+[source,xtend]
+----
+import static extension de.fhg.fokus.xtensions.string.StringMatchExtensions.*
+import java.util.regex.Pattern
+// ...
+val String input = "foo bar boo"
+val Pattern pattern = Pattern.compile("(\\woo)")
+input.matchIt(pattern).forEach [
+	println(it)
+]
+----
+
+The method `matchIt` is overloaded to also take a string of the pattern, which internally compiles 
+it to a pattern.
+
+
+Having a stream of http://docs.oracle.com/javase/9/docs/api/java/util/regex/MatchResult.html[`MatchResult`]s
+for a pattern applied to a given input string can be achieved  with the `matchResultIt` extension method.
+This can be useful, if other group captures have to be accessed when handling matches.
+
