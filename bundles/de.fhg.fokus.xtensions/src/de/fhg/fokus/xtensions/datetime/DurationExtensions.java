@@ -112,7 +112,7 @@ public final class DurationExtensions {
 	}
 
 	/**
-	 * Operator shortcut for {@code a.plus(b)}.
+	 * Operator shortcut for {@link Duration#plus(Duration) a.plus(b)}.
 	 * @param a left hand side of operator
 	 * @param b right hand side of operator
 	 * @return result of {@code a.plus(b)}
@@ -122,46 +122,104 @@ public final class DurationExtensions {
 		return a.plus(b);
 	}
 
+	/**
+	 * Operator shortcut for {@link Duration#minus(Duration) a.minus(b)}
+	 * @param a left hand side of operator
+	 * @param b right hand side of operator
+	 * @return result of {@code a.minus(b)}
+	 */
 	@Inline(value = "$1.minus($2)", imported = Duration.class)
 	public static Duration operator_minus(Duration a, Duration b) {
 		return a.minus(b);
 	}
 
+	/**
+	 * Operator shortcut for {@link Duration#dividedBy(long) a.dividedBy(b)}
+	 * @param a left hand side of operator
+	 * @param b right hand side of operator
+	 * @return result of {@code a.dividedBy(b)}
+	 */
 	@Inline(value = "$1.dividedBy($2)", imported = Duration.class)
 	public static Duration operator_divide(Duration a, long b) {
 		return a.dividedBy(b);
 	}
 
+	/**
+	 * Operator shortcut for {@link Duration#multipliedBy(long) a.multipliedBy(b)}
+	 * @param a left hand side of operator
+	 * @param b right hand side of operator
+	 * @return result of {@code a.multipliedBy(b)}
+	 */
 	@Inline(value = "$1.multipliedBy($2)", imported = Duration.class)
 	public static Duration operator_multiply(Duration a, long b) {
 		return a.multipliedBy(b);
 	}
 
+	/**
+	 * Operator shortcut for {@link Duration#negated() a.negated()}
+	 * @param a value to negate
+	 * @return result of {@code a.negated()}
+	 */
 	@Inline(value = "$1.negated()", imported = Duration.class)
 	public static Duration operator_minus(Duration a) {
 		return a.negated();
 	}
 
+	/**
+	 * Operator shortcut for {@link Duration#compareTo(Duration) a.compareTo(b)}.
+	 * 
+	 * @param a left hand side of operator
+	 * @param b right hand side of operator
+	 * @return result of {@code a.compareTo(b)}
+	 */
 	@Inline(value = "$1.compareTo($2)", imported = Duration.class)
 	public static int operator_spaceship(Duration a, Duration b) {
 		return a.compareTo(b);
 	}
 
+	/**
+	 * Operator shortcut for {@link Duration#compareTo(Duration) a.compareTo(b) < 0}.
+	 * 
+	 * @param a left hand side of operator
+	 * @param b right hand side of operator
+	 * @return result of {@code a.compareTo(b) < 0}
+	 */
 	@Inline(value = "$1.compareTo($2) < 0")
 	public static boolean operator_lessThan(Duration a, Duration b) {
 		return a.compareTo(b) < 0;
 	}
 
+	/**
+	 * Operator shortcut for {@link Duration#compareTo(Duration) a.compareTo(b) > 0}.
+	 * 
+	 * @param a left hand side of operator
+	 * @param b right hand side of operator
+	 * @return result of {@code a.compareTo(b) > 0}
+	 */
 	@Inline(value = "$1.compareTo($2) > 0")
 	public static boolean operator_greaterThan(Duration a, Duration b) {
 		return a.compareTo(b) > 0;
 	}
 	
+	/**
+	 * Operator shortcut for {@link Duration#compareTo(Duration) a.compareTo(b) <= 0}.
+	 * 
+	 * @param a left hand side of operator
+	 * @param b right hand side of operator
+	 * @return result of {@code a.compareTo(b) <= 0}
+	 */
 	@Inline(value = "$1.compareTo($2) <= 0")
 	public static boolean operator_lessEqualsThan(Duration a, Duration b) {
 		return a.compareTo(b) <= 0;
 	}
 	
+	/**
+	 * Operator shortcut for {@link Duration#compareTo(Duration) a.compareTo(b) >= 0}.
+	 * 
+	 * @param a left hand side of operator
+	 * @param b right hand side of operator
+	 * @return result of {@code a.compareTo(b) >= 0}
+	 */
 	@Inline(value = "$1.compareTo($2) >= 0")
 	public static boolean operator_greaterEqualsThan(Duration a, Duration b) {
 		return a.compareTo(b) >= 0;

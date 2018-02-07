@@ -8,7 +8,7 @@ beforehand (e.g. via issues) to get to know if a certain enhancement is regarded
 Currently there are no preferred labels for the issues, this guide will be updated as soon
 as the preferred labels are decided on.
 
-Better code examples for the README are very welcome 😊.
+Better code examples for the documentation are very welcome 😊.
 
 === Code of Conduct
 

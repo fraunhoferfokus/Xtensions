@@ -14,7 +14,7 @@ This chapter gives an overview over how to get stated on development of the Xten
 
 == Build
 
-The build is based on maven tycho, the wrapper script `mvnw` takes care of the maven installation.
+The build is based on maven tycho, the wrapper script `mvnw` in the root directory of the repository takes care of the maven installation.
 On Linux and Mac you might need to call `chmod +x mvnw`.
 
 To build the libraries from source, simply drop into the root directory and call `mvnw clean package`.
