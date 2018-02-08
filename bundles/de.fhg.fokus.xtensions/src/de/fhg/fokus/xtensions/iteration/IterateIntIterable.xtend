@@ -129,8 +129,9 @@ package class IterateOfIntLimited implements OfInt {
 	val IntPredicate hasNext
 	
 	/**
-	 * @param i initial value to be returned by iterator
-	 * @param operator operation mapping the current iterator value to the next
+	 * @param seed initial value to be returned by iterator
+	 * @param hasNext predicate checking if a next value should be computed.
+	 * @param next operation mapping the current iterator value to the next
 	 */
 	new(int seed, IntPredicate hasNext, IntUnaryOperator next) {
 		this.next = seed

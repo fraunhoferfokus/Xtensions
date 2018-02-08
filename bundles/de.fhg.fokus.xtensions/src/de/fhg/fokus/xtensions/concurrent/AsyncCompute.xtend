@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v2.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v20.html
- *
+ * 
  * Contributors:
  *     Max Bureck (Fraunhofer FOKUS) - initial API and implementation
  *******************************************************************************/
@@ -23,9 +23,10 @@ import java.util.Objects
  * and {@code asyncRun} methods.
  */
 final class AsyncCompute {
-	
-	private new(){}
-	
+
+	private new() {
+	}
+
 	// TODO public static def <R> CompletableFuture<R> execute(Executor executor, (CompletableFuture<T>)=>void toExecute)
 	// TODO async(ExecutorService, ... ,RetryStrategy) <- when ExecutorService rejects task, retry instead 
 	// RetryStrategy{ scheduleNextRetry(Runnable) }
@@ -33,8 +34,6 @@ final class AsyncCompute {
 	// RetryStrategy.fixed(ScheduledThreadPoolExecutor,int,TimeUnit)
 	// TODO asyncRun variants taking AtomicBoolean for checking cancellation?
 	// TODO allow java.time.Duration for specifying timeouts
-
-
 	/**
 	 * This method will call the given {@code runAsync} function using the {@link ForkJoinPool#commonPool() common ForkJoinPool} passing 
 	 * in a new {@code CompletableFuture} which is also being returned from this method. This future is supposed to be used to checked by 
@@ -184,8 +183,8 @@ final class AsyncCompute {
 	 * @return future that will used to provide result from concurrently executed {@code runAsync}. This future
 	 *  may be cancelled by the user, the {@code runAsync} function is advised to check the future for cancellation.
 	 */
-	public static def <R> CompletableFuture<R> asyncSupply(Executor executor, ScheduledExecutorService scheduler, long timeout,
-		TimeUnit unit, (CompletableFuture<?>)=>R runAsync) {
+	public static def <R> CompletableFuture<R> asyncSupply(Executor executor, ScheduledExecutorService scheduler,
+		long timeout, TimeUnit unit, (CompletableFuture<?>)=>R runAsync) {
 		val CompletableFuture<R> fut = asyncSupply(executor, runAsync)
 		fut.cancelOnTimeout(scheduler, timeout, unit)
 	}
@@ -193,6 +192,9 @@ final class AsyncCompute {
 	/**
 	 * Calls {@link #asyncRun(Executor,org.eclipse.xtext.xbase.lib.Procedures.Procedure1) asyncRun(Executor,(CompletableFuture<?>)=>void)} with
 	 * the common {@code ForkJoinPool} as the executor.
+	 * @param runAsync the action to execute on the common {@code ForkJoinPool}, to which the returned future is passed.
+	 * @return a {@code CompletableFuture} which will be completed, after successful execution of {@code runAsync}, or completed
+	 *   exceptionally if {@code runAsync} throws an exception.
 	 * @see AsyncCompute#asyncRun(Executor,org.eclipse.xtext.xbase.lib.Procedures.Procedure1)
 	 */
 	public static def <R> CompletableFuture<?> asyncRun((CompletableFuture<?>)=>void runAsync) {
@@ -236,6 +238,10 @@ final class AsyncCompute {
 	/**
 	 * Calls {@link #asyncRun(Executor,long,TimeUnit,org.eclipse.xtext.xbase.lib.Procedures.Procedure1) asyncRun(Executor,long,TimeUnit,(CompletableFuture<?>)=>void)} with
 	 * the common {@code ForkJoinPool} as the executor.
+	 * @param timeout the time in {@code unit} after which the returned future will be cancelled.
+	 * @param unit the time unit for {@code timeout}.
+	 * @param runAsync the action to be called on the common {@code ForkJoinPool}. The returned future will be passed to this function on invocation.
+	 * @return the future which will be completed with a {@code null} value after successful execution of {@code runAsync} or exceptionally if {@code runAsync} throws an exception.
 	 * @see AsyncCompute#asyncRun(Executor,long,TimeUnit,org.eclipse.xtext.xbase.lib.Procedures.Procedure1)
 	 */
 	public static def <R> CompletableFuture<?> asyncRun(long timeout, TimeUnit unit,
@@ -256,11 +262,13 @@ final class AsyncCompute {
 	 * If the future was completed in {@code runAsync} this result will stay in the future. 
 	 * However, it is advised to use the future in {@code runAsync} only to check for cancellation from the outside.
 	 * @param executor will be used to execute {@code runAsync}
+	 * @param timeout the time in {@code unit} after which the returned future will be cancelled.
+	 * @param unit the time unit for {@code timeout}.
 	 * @param runAsync procedure to execute using {@code executor}. The future returned from this method
 	 *  will be passed to this procedure to allow checking for cancellation from the outside.
 	 * @return future that will be created in this method and passed to {@code runAsync}.
 	 */
-	public static def <R> CompletableFuture<?> asyncRun(Executor executor, long timeout, TimeUnit unit, 
+	public static def <R> CompletableFuture<?> asyncRun(Executor executor, long timeout, TimeUnit unit,
 		(CompletableFuture<?>)=>void runAsync) {
 		val fut = asyncRun(executor, runAsync)
 		fut.cancelOnTimeout(timeout, unit)
@@ -282,12 +290,15 @@ final class AsyncCompute {
 	 * @param executor will be used to execute {@code runAsync}.
 	 * @param scheduler is the executor service used to schedule the cancellation after timeout specified via 
 	 *  {@code timeout} and {@code unit}.
+	 * @param timeout the time in {@code unit} after which the returned future will be cancelled.
+	 * @param unit the time unit for {@code timeout}.
+	 * @param runAsync the action to be called on the common {@code ForkJoinPool}. The returned future will be passed to this function on invocation.
 	 * @param runAsync procedure to execute using {@code executor}. The future returned from this method
 	 *  will be passed to this procedure to allow checking for cancellation from the outside.
 	 * @return future that will be created in this method and passed to {@code runAsync}.
 	 */
-	public static def <R> CompletableFuture<?> asyncRun(Executor executor, ScheduledExecutorService scheduler, long timeout, TimeUnit unit,
-		(CompletableFuture<?>)=>void runAsync) {
+	public static def <R> CompletableFuture<?> asyncRun(Executor executor, ScheduledExecutorService scheduler,
+		long timeout, TimeUnit unit, (CompletableFuture<?>)=>void runAsync) {
 		val fut = asyncRun(executor, runAsync)
 		fut.cancelOnTimeout(scheduler, timeout, unit)
 	}

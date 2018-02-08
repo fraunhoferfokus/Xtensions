@@ -30,6 +30,8 @@ class DurationToTimeConversion {
 
 	/**
 	 * Possibly lossy conversion
+	 * @param duration the duration to be represented as {@link Time}.
+	 * @return Time representation of given {@code duration}
 	 */
 	public static def Time toTime(Duration duration) {
 		// should we go for seconds or for nanos?

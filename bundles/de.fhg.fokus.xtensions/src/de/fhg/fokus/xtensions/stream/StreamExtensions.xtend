@@ -200,6 +200,8 @@ final class StreamExtensions {
 	 * This function is a simple shortcut for {@code stream.collect(Collectors.toCollection(collectionFactory))}.
 	 * Means that all elements of {@code stream} are added to the collection supplied by {@code collectionFactory}.
 	 * @param stream the stream to be collected into a new {@code Set}.
+	 * @param collectionFactory a {@code Supplier} which returns a new, empty
+     * {@code Collection} (of an arbitrary sub-type) supporting mutation.
 	 * @return Set containing all values from {@code stream}
 	 */
 //	@Inline(value="$1.collect(Collectors.toCollection($2))", imported=Collectors)
@@ -335,6 +337,11 @@ final class StreamExtensions {
 	 * This method redirects to {@link #iterate​(Object, Predicate, UnaryOperator) <T>iterate​(T, Predicate<? super T>, UnaryOperator<T>)}.<br>
 	 * This allows e.g. writing {@code Stream.iterate(0,[it<100],[it+1])} in Xtend, which does not require code changes when
 	 * switching to Java 9 to take advantage of the native implementation of this method.
+	 * @param clazz will be ignored
+	 * @param seed first element returned by the stream and seed for following elements by using {@code next}.
+	 * @param hasNext before each element is provided (except for the first one)
+	 * @param next operation providing the next element
+	 * @return Stream providing elements computing by {@code seed}, {@code hasNext}, and {@code next}.
 	 * @see #iterate​(Object, Predicate, UnaryOperator)
 	 */
 	static def <T> Stream<T> iterate​(Class<Stream> clazz, T seed, Predicate<? super T> hasNext, UnaryOperator<T> next) {

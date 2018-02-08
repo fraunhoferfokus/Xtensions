@@ -61,6 +61,9 @@ final class IterableExtensions {
 	 * The returned {@code IntIterable} is lazy, only performing
 	 * the {@code mapper} function when iterating over the original {@code iterable}
 	 * object. If the returned iterable will be traversed multiple times 
+	 * @param iterable the {@code Iterable} of which each element should be mapped to {@code int} values.
+	 * @param mapper the mapping function, mapping each element of {@code iterable} to an {@code int} value.
+	 * @return an iterable over primitive {@code int} values mapped from the elements of the input {@code iterable}.
 	 */
 	static def <T> IntIterable mapInt(Iterable<T> iterable, ToIntFunction<T> mapper){
 		iterable.requireNonNull
@@ -104,6 +107,9 @@ final class IterableExtensions {
 	 * The returned {@code LongIterable} is lazy, only performing
 	 * the {@code mapper} function when iterating over the original {@code iterable}
 	 * object. If the returned iterable will be traversed multiple times 
+	 * @param iterable the {@code Iterable} of which each element should be mapped to {@code long} values.
+	 * @param mapper the mapping function, mapping each element of {@code iterable} to an {@code long} value.
+	 * @return an iterable over primitive {@code long} values mapped from the elements of the input {@code iterable}.
 	 */
 	static def <T> LongIterable mapLong(Iterable<T> iterable, ToLongFunction<T> mapper){
 		iterable.requireNonNull
@@ -147,6 +153,9 @@ final class IterableExtensions {
 	 * The returned {@code DoubleIterable} is lazy, only performing
 	 * the {@code mapper} function when iterating over the original {@code iterable}
 	 * object. If the returned iterable will be traversed multiple times 
+	 * @param iterable the {@code Iterable} of which each element should be mapped to {@code double} values.
+	 * @param mapper the mapping function, mapping each element of {@code iterable} to an {@code double} value.
+	 * @return an iterable over primitive {@code double} values mapped from the elements of the input {@code iterable}.
 	 */
 	static def <T> DoubleIterable mapDouble(Iterable<T> iterable, ToDoubleFunction<T> mapper){
 		iterable.requireNonNull
@@ -229,6 +238,8 @@ final class IterableExtensions {
 	 * using a {@link Collector}.
 	 * @param data the iterable elements should be collected.
 	 * @param collector the collector reducing multiple values into a single result value
+	 * @return the result value computed via the given {@code collector} over each element 
+	 *  in the given {@code data} input.
 	 */
 	static def <T, A, R> R collect(Iterable<T> data, Collector<? super T, A, R> collector) {
 		val supplier = Objects.requireNonNull(collector.supplier)

@@ -18,6 +18,8 @@ interface IntIntConsumer {
 	
 	/**
 	 * Method consuming the given two {@code int} values {@code a} and {@code b}.
+	 * @param a first value to be consumed
+	 * @param b second value to be consumed
 	 */
 	def void accept(int a, int b)
 	

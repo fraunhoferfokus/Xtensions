@@ -40,6 +40,8 @@ final class SchedulingUtil {
 	 * so it can be used in a non-blocking fashion, but still be asked for the delay for
 	 * the next execution of a scheduled task.<br>
 	 * This class is not intended to be sub-classed outside of the SchedulingUtil.
+	 * 
+	 * @param <T> The type of the result value the future is wrapping
 	 */
 	public abstract static class ScheduledCompletableFuture<T> extends CompletableFuture<T> implements ScheduledFuture<T> {
 
@@ -70,11 +72,15 @@ final class SchedulingUtil {
 		 * method used to construct this {@code DelaySpecifier}. The given {@code initalDelay} specifies
 		 * the initial time (in the time unit specified in the {@code repeatEvery} method) before the 
 		 * {@code action} is invoked the first time.
+		 * @param initialDelay time (in the unit defined in {@code repeatEvery} method) after which the 
+		 *   first repeated execution of the given action will start
+		 * @param action the action to be called repeatedly with the returned future (which can be used to check for cancellation). 
+		 * @return the future which can be used to track repeated computation of {@code action}.
 		 * @throws IllegalArgumentException if {@code initialDelay <= 0}
 		 * @throws NullPointerException if {@code action === null}
 		 */
 		abstract def ScheduledCompletableFuture<?> withInitialDelay(long initialDelay,
-			(CompletableFuture<?>)=>void action);
+			(ScheduledCompletableFuture<?>)=>void action);
 	}
 
 	/**
@@ -170,6 +176,8 @@ final class SchedulingUtil {
 	 *  returned {@code ScheduledCompletableFuture} which can be used to check for cancellation or complete to stop further executions
 	 *  of the action. If the action throws and exception the future will be completed exceptionally with the thrown exception and the 
 	 *  action will not be un-scheduled and not called again.
+	 * @return the future that can be used to check for delay till next periodic execution of {@code action} or cancellation
+	 *  of further executions of {@code action}.
 	 * @throws NullPointerException if {@code action} or {@code unit} is {@code null}.
 	 * @throws IllegalArgumentException if {@code period} is {@code <= 0}
 	 */
@@ -192,12 +200,14 @@ final class SchedulingUtil {
 	 * (no matter how), the {@code action} will be un-scheduled and not be called again.<br><br>
 	 * The {@code action} will be scheduled and executed on the given {@code scheduler}.
 	 * 
+	 * @param scheduler will be used to schedule repeated execution of {@code action}
 	 * @param period duration in {@code unit} at which the given {@code action} should be called.
 	 * @param unit time unit of {@code period} for scheduling {@code action}.
 	 * @param action action to be scheduled to be repeatedly called at the given {@code period}. The action will be called with the 
 	 *  returned {@code ScheduledCompletableFuture} which can be used to check for cancellation or complete to stop further executions
 	 *  of the action. If the action throws and exception the future will be completed exceptionally with the thrown exception and the 
 	 *  action will not be un-scheduled and not called again.
+	 * @return the future that can be used to check for delay till next periodic execution of {@code action} or cancellation
 	 * @throws NullPointerException if {@code action} or {@code unit} is {@code null}.
 	 * @throws IllegalArgumentException if {@code period} is {@code <= 0}
 	 */
@@ -237,7 +247,7 @@ final class SchedulingUtil {
 		}
 		new DelaySpecifier {
 
-			override withInitialDelay(long initialDelay, (CompletableFuture<?>)=>void action) {
+			override withInitialDelay(long initialDelay, (ScheduledCompletableFuture<?>)=>void action) {
 				if (initialDelay <= 0) {
 					throw new IllegalArgumentException("period must be > 0")
 				}
@@ -256,6 +266,7 @@ final class SchedulingUtil {
 	 * to be scheduled.<br>
 	 * The action is scheduled using the given {@code scheduler}.
 	 * 
+	 * @param scheduler the executor service used for scheduling the {@code action} provided to the returned {@code DelaySpecifier}.
 	 * @param period duration in {@code unit} at which action, specified on the returned {@code DelaySpecifier}, should be called.
 	 * @param unit time unit of {@code period} for scheduling action specified on the returned {@code DelaySpecifier}.
 	 * @return object to specify initial delay (of time unit {@code unit}) and the action to be scheduled.
@@ -274,7 +285,7 @@ final class SchedulingUtil {
 		}
 		new DelaySpecifier {
 
-			override withInitialDelay(long initialDelay, (CompletableFuture<?>)=>void action) {
+			override withInitialDelay(long initialDelay, (ScheduledCompletableFuture<?>)=>void action) {
 				if (initialDelay <= 0) {
 					throw new IllegalArgumentException("period must be > 0")
 				}
@@ -386,6 +397,7 @@ final class SchedulingUtil {
 	 * @param time in {@code unit} after which the returned future will be completed with {@code null} value.
 	 *        The value of this parameter must be {> 0}.
 	 * @param unit is the time unit of {@code time}
+	 * @return the future that can be used to check for delay till completion of the future or to cancel the completion
 	 * @throws NullPointerException if {@code unit} is {@code null}
 	 * @throws IllegalArgumentException if {@code time <= 0}
 	 */
@@ -410,6 +422,9 @@ final class SchedulingUtil {
 	 * Note: The use of {@code Duration} may cause a loss in time precision, if the overall duration exceeds Long.MAX_VALUE nanoseconds, 
 	 * which is roughly a duration of 292.5 years. At most at most 999,999,999 nanoseconds (less than one 
 	 * second) may be stripped.
+	 * @param duration is the time after which the returned future will be completed with {@code null} value.
+	 *        The value of this parameter must be {> 0}.
+	 * @return the future that can be used to check for delay till completion of the future or to cancel the completion
 	 * @throws NullPointerException if {@code duration} is {@code null}
 	 * @throws IllegalArgumentException if {@code duration} value is {@code <= 0}
 	 */

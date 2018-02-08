@@ -86,6 +86,7 @@ final class RangeExtensions {
 	/**
 	 * Returns an {@link IntStream} providing all {@code int} values
 	 * provided by the given {@code IntegerRange r}.
+	 * @param r the range for which the returning stream will be created.
 	 * @return stream of integer values provided by the given range {@code r}.
 	 */
 	def static IntStream stream(IntegerRange r) {
@@ -102,6 +103,7 @@ final class RangeExtensions {
 	/**
 	 * Returns a parallel {@link IntStream} providing all {@code int} values
 	 * provided by the given {@code IntegerRange r}.
+	 * @param r the range for which a parallel stream will be created
 	 * @return parallel stream of integer values provided by the given range {@code r}.
 	 */
 	def static IntStream parallelStream(IntegerRange r) {

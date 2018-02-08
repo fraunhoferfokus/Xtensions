@@ -81,6 +81,8 @@ final class CompletableFutureExtensions {
 	 * Since the boolean parameter {@code mayInterruptIfRunning} has no influence 
 	 * on CompletableFuture instances anyway,  this method provides a cancel method 
 	 * without the parameter.
+	 * @param future the future to be cancelled
+	 * @return {@code true} if the future is actually cancelled
 	 * @see CompletableFuture#cancel(boolean)
 	 */
 //	 @Inline("$1.cancel(false)")
@@ -391,6 +393,7 @@ final class CompletableFutureExtensions {
 	 * The {@code handler} will be invoked using the {@code Executor e}, not on the thread 
 	 * completing {@code fut}.
 	 * @param fut future {@code handler} is registered on. Must not be {@code null}.
+	 * @param executor the executor used to execute the given {@code handler} callback.
 	 * @param handler the callback to be invoked when {@code fut} is completed with cancellation.
 	 *  Must not be {@code null}. Will be invoked via the {@code Executor e}, not on the thread 
 	 *  completing {@code fut}.
@@ -399,9 +402,9 @@ final class CompletableFutureExtensions {
 	 *   used to complete the returned future.
 	 * @throws NullPointerException is thrown when {@code fut} or {@code handler} is {@code null}.
 	 */
-	static def <R> CompletableFuture<R> handleCancellationAsync(CompletableFuture<R> fut, Executor e, ()=>R handler) {
+	static def <R> CompletableFuture<R> handleCancellationAsync(CompletableFuture<R> fut, Executor executor, ()=>R handler) {
 		Objects.requireNonNull(fut)
-		Objects.requireNonNull(e)
+		Objects.requireNonNull(executor)
 		Objects.requireNonNull(handler)
 		fut.handleAsync([ o, t |
 			if (t !== null) {
@@ -411,7 +414,7 @@ final class CompletableFutureExtensions {
 					throw t
 			} else
 				o
-		], e)
+		], executor)
 	}
 
 	/**
@@ -515,6 +518,7 @@ final class CompletableFutureExtensions {
 	 * will be invoked on the {@code Executor e}, not on the thread completing {@code fut}.
 	 * @param fut the future {@code handler} is registered on for notification about cancellation. 
 	 *   Must not be {@code null}.
+	 * @param executor the executor used to execute the given {@code handler} callback.
 	 * @param handler callback to be registered on {@code fut}, being called when the future gets cancelled.
 	 *   Must not be {@code null}. Will be called on the {@code Executor e}.
 	 * @return a CompletableFuture that will complete after the handler completes or if {@code fut} completes
@@ -525,11 +529,11 @@ final class CompletableFutureExtensions {
 	 *  wrapping the original exception. This includes {@code CancellationException}s.
 	 * @throws NullPointerException if {@code fut} or {@code handler} is {@code null}.
 	 */
-	static def <R> CompletableFuture<R> whenCancelledAsync(CompletableFuture<R> fut, Executor e, ()=>void handler) {
+	static def <R> CompletableFuture<R> whenCancelledAsync(CompletableFuture<R> fut, Executor executor, ()=>void handler) {
 		Objects.requireNonNull(fut)
-		Objects.requireNonNull(e)
+		Objects.requireNonNull(executor)
 		Objects.requireNonNull(handler)
-		fut.whenCompleteAsync(whenCancelledHandler(handler), e)
+		fut.whenCompleteAsync(whenCancelledHandler(handler), executor)
 	}
 
 	private static def <R> BiConsumer<R, Throwable> whenExcpetionHandler((Throwable)=>void handler) {
@@ -780,6 +784,7 @@ final class CompletableFutureExtensions {
 	 * returned future. The {@code recovery} function will be executed on executed on {@code Executor e}.
 	 * @param fut the future that may fail (complete exceptionally). If it completes successfully, the result
 	 *  value will be used to complete the returned future
+	 * @param executor the executor used to execute the given {@code recovery} callback.
 	 * @param recovery provides a CompletionStage in case {@code fut} completes exceptionally. In this case the result
 	 *  (either value or exception) will be used to complete the future returned from the function. If this 
 	 *  supplier provides a {@code null} reference, the returned future will be completed with a {@link NullPointerException}.
@@ -791,7 +796,7 @@ final class CompletableFutureExtensions {
 	 */
 	static def <R> CompletableFuture<R> recoverWithAsync(
 		CompletableFuture<R> fut,
-		Executor e,
+		Executor executor,
 		(Throwable)=>CompletionStage<? extends R> recovery
 	) {
 		Objects.requireNonNull(fut)
@@ -799,7 +804,7 @@ final class CompletableFutureExtensions {
 		val result = new CompletableFuture<R>
 		fut.whenCompleteAsync([ r, ex |
 			recover(r, ex, result, recovery)
-		], e)
+		], executor)
 		result
 	}
 

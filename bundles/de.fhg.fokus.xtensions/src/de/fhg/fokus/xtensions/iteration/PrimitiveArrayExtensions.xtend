@@ -50,7 +50,9 @@ final class PrimitiveArrayExtensions {
 	 * @param endExcluding the index of the last element to be iterated over in the array +1. E.g. if the
 	 *  last element of the array should be the last element to be iterated over, this parameter must be 
 	 *  {@code arr.length}. The value must be {@code >= 0} and {@code <= arr.length}. If value is {@code 0}
-	 *  then {@code startIncluding} must be {@code 0} as well; in this case an empty {@code IntIterable} is returned
+	 *  then {@code startIncluding} must be {@code 0} as well; in this case an empty {@code IntIterable} is returned.
+	 * @return primitive iterable over the range of {@code int} values of input array {@code arr} specified via 
+	 *  {@code startIncluding} and {@code endExcluding}
 	 * @throws IllegalArgumentException if {@code startIncluding > endExcluding}.
 	 * @throws IndexOutOfBoundsException if either {@code startIncluding} or {@code endExcluding}
 	 *  refer to an index out of the range of array {@code arr}.
@@ -87,6 +89,8 @@ final class PrimitiveArrayExtensions {
 	 *  last element of the array should be the last element to be iterated over, this parameter must be 
 	 *  {@code arr.length}. The value must be {@code >= 0} and {@code <= arr.length}. If value is {@code 0}
 	 *  then {@code startIncluding} must be {@code 0} as well; in this case an empty {@code LongIterable} is returned.
+	 * @return primitive iterable over the range of {@code long} values of input array {@code arr} specified via 
+	 *  {@code startIncluding} and {@code endExcluding}
 	 * @throws IllegalArgumentException if {@code startIncluding > endExcluding}.
 	 * @throws IndexOutOfBoundsException if either {@code startIncluding} or {@code endExcluding}
 	 *  refer to an index out of the range of array {@code arr}.
@@ -123,6 +127,8 @@ final class PrimitiveArrayExtensions {
 	 *  last element of the array should be the last element to be iterated over, this parameter must be 
 	 *  {@code arr.length}. The value must be {@code >= 0} and {@code <= arr.length}. If value is {@code 0}
 	 *  then {@code startIncluding} must be {@code 0} as well; in this case an empty {@code DoubleIterable} is returned.
+	 * @return primitive iterable over the range of {@code double} values of input array {@code arr} specified via 
+	 *  {@code startIncluding} and {@code endExcluding}
 	 * @throws IllegalArgumentException if {@code startIncluding > endExcluding}.
 	 * @throws IndexOutOfBoundsException if either {@code startIncluding} or {@code endExcluding}
 	 *  refer to an index out of the range of array {@code arr}.

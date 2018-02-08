@@ -14,7 +14,6 @@ import java.util.PrimitiveIterator.OfDouble
 import java.util.function.DoubleConsumer
 import java.util.stream.DoubleStream
 import de.fhg.fokus.xtensions.iteration.PrimitiveIteratorExtensions
-import java.util.PrimitiveIterator
 
 /** 
  * This interface is a specialized version of an {@code Iterable<Double>} providing a {@link OfDouble PrimitiveIterator.OfDouble} 

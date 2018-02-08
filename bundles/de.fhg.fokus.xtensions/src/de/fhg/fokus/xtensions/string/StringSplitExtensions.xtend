@@ -36,11 +36,15 @@ class StringSplitExtensions {
 	 * so it is is suited well for finding tokens in a string and stop splitting
 	 * as soon as a particular element is found. This also reduces memory copying
 	 * to unused strings.
-	 * @see String#split(String,int)
+	 * @param toSplit input string to split on {@code pattern}. Must not be null
+	 * @param pattern the pattern defining where to split the input string {@code toSplit}.
+	 * @param limit maximum amount of elements provided by the returned iterator.
+	 * @return iterator providing the split results
 	 * @throws NullPointerException if toSplit or pattern is null
 	 * @throws PatternSyntaxException if the {@code pattern}'s syntax is invalid
+	 * @see String#split(String,int)
 	 */
-	public static def splitIt(String toSplit, String pattern, int limit) {
+	public static def Iterator<String> splitIt(String toSplit, String pattern, int limit) {
 		toSplit.splitIt(Pattern.compile(pattern), limit)
 	}
 	
@@ -53,8 +57,12 @@ class StringSplitExtensions {
 	 * so it is is suited well for finding tokens in a string and stop splitting
 	 * as soon as a particular element is found. This also reduces memory copying
 	 * to unused strings.
-	 * @see Pattern#split(CharSequence,int)
+	 * @param toSplit input string to split on {@code pattern}. Must not be null
+	 * @param pattern the pattern defining where to split the input string {@code toSplit}.
+	 * @param limit maximum amount of elements provided by the returned iterator.
+	 * @return iterator providing the split results
 	 * @throws NullPointerException if toSplit or pattern is null
+	 * @see Pattern#split(CharSequence,int)
 	 */
 	public static def Iterator<String> splitIt(CharSequence toSplit, Pattern pattern, int limit) throws NullPointerException {
 		if (toSplit.length == 0) {
@@ -78,9 +86,11 @@ class StringSplitExtensions {
 	 * so it is is suited well for finding tokens in a string and stop splitting
 	 * as soon as a particular element is found. This also reduces memory copying
 	 * to unused strings.
-	 * @see Pattern#split(CharSequence)
 	 * @param toSplit is the string to be split by the given pattern. Must not be null
+	 * @param pattern the pattern defining where to split the input string {@code toSplit}.
+	 * @return iterator providing the split results
 	 * @throws NullPointerException if toSplit or pattern is null
+	 * @see Pattern#split(CharSequence)
 	 */
 	public static def Iterator<String> splitIt(CharSequence toSplit, Pattern pattern) throws NullPointerException {
 		Objects.requireNonNull(toSplit)
@@ -99,9 +109,12 @@ class StringSplitExtensions {
 	 * so it is is suited well for finding tokens in a string and stop splitting
 	 * as soon as a particular element is found. This also reduces memory copying
 	 * to unused strings.
-	 * @see String#split(String)
+	 * @param toSplit is the string to be split by the given pattern. Must not be null
+	 * @param pattern the pattern defining where to split the input string {@code toSplit}.
+	 * @return iterator providing the split results
 	 * @throws NullPointerException if toSplit or pattern is null
 	 * @throws PatternSyntaxException if the {@code pattern}'s syntax is invalid
+	 * @see String#split(String)
 	 */
 	public static def Iterator<String> splitIt(CharSequence toSplit, String pattern) throws NullPointerException {
 		toSplit.splitIt(Pattern.compile(pattern))
@@ -112,6 +125,7 @@ class StringSplitExtensions {
 	 * {@code java.util.regex.Pattern.compile(pattern).splitAsStream(toSplit)}.
 	 * @param toSplit the string to split according to the given {@code pattern}
 	 * @param pattern the pattern used to split the parameter {@code toSplit}
+	 * @return stream over all split results of splitting {@code toSplit} at points defined by {@code pattern}.
 	 */
 	 @Pure
 //	 @Inline(value = "Pattern.compile($2).splitAsStream($1)", imported = Pattern)

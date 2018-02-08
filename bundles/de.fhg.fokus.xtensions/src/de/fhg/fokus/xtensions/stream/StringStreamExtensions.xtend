@@ -48,7 +48,9 @@ final class StringStreamExtensions {
 	/**
 	 * Shortcut for {@code stream.collect(Collectors.joining(delimiter))}.
 	 * @param stream the stream of character sequences to concatenate.
+	 * @param delimiter will be used in between each element in {@code stream}
 	 * @return concatenated string of all character sequences in {@code stream}
+	 *  with {@code delimiter} as separator between elements.
 	 * @see Collectors#joining(CharSequence)
 	 */
 //	@Inline(value = "$1.collect(Collectors.joining($2))", imported = Collectors)
@@ -60,6 +62,9 @@ final class StringStreamExtensions {
 	/**
 	 * Shortcut for {@code stream.collect(Collectors.joining(delimiter,prefix))}.
 	 * @param stream the stream of character sequences to concatenate.
+	 * @param delimiter will be used in between each element in {@code stream}
+	 * @param prefix will be prepended to the concatenated elements of {@code stream}.
+	 * @param suffix fill be postpended after the concatenated elements of {@code stream}.
 	 * @return concatenated string of all character sequences in {@code stream}
 	 * @see Collectors#joining(CharSequence,CharSequence,CharSequence)
 	 */

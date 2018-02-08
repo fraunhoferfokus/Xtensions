@@ -100,6 +100,9 @@ final class StringMatchExtensions {
 	 * This way of iterating over matches does not provide access to matching groups,
 	 * see {@link StringMatchExtensions#matchResultIt(CharSequence, Pattern) matchResultIt}
 	 * for full match access, including groups.
+	 * @param toMatch the source for matches to be found with {@code pattern}.
+	 * @param pattern the pattern to be used to find matches in {@code toMatch}.
+	 * @return iterator over all matches of {@code pattern} in {@code toMatch}.
 	 * @see StringMatchExtensions#matchResultIt(CharSequence, Pattern)
 	 */
 	public static def Iterator<String> matchIt(CharSequence toMatch, Pattern pattern) {
@@ -114,6 +117,9 @@ final class StringMatchExtensions {
 	 * This way of iterating over matches does not provide access to matching groups,
 	 * see {@link StringMatchExtensions#matchResultIt(CharSequence, String) matchResultIt}
 	 * for full match access, including groups.
+	 * @param toMatch the source for matches to be found with {@code pattern}.
+	 * @param pattern the pattern to be used to find matches in {@code toMatch}.
+	 * @return iterator over all matches of {@code pattern} in {@code toMatch}.
 	 * @see StringMatchExtensions#matchResultIt(CharSequence, String)
 	 */
 	public static def Iterator<String> matchIt(CharSequence toMatch, String pattern) {
@@ -127,6 +133,9 @@ final class StringMatchExtensions {
 	 * to the given {@code pattern} regular expression sequentially in the input CharSequence.
 	 * The returned MatchResults will not change their state when another result is pulled 
 	 * from the iterator.
+	 * @param toMatch the source for matches to be found with {@code pattern}.
+	 * @param pattern the pattern to be used to find matches in {@code toMatch}.
+	 * @return iterator over all {@code MatchResult}s for {@code pattern} in {@code toMatch}.
 	 */
 	public static def Iterator<MatchResult> matchResultIt(CharSequence toMatch, Pattern pattern) {
 		new MatchResultIterator(toMatch, pattern)
@@ -137,6 +146,9 @@ final class StringMatchExtensions {
 	 * to the given {@code pattern} regular expression sequentially in the input CharSequence.
 	 * The returned MatchResults will not change their state when another result is pulled 
 	 * from the iterator.
+	 * @param toMatch the source for matches to be found with {@code pattern}.
+	 * @param pattern the pattern to be used to find matches in {@code toMatch}.
+	 * @return iterator over all {@code MatchResult}s for {@code pattern} in {@code toMatch}.
 	 */
 	public static def Iterator<MatchResult> matchResultIt(CharSequence toMatch, String pattern) {
 		toMatch.matchResultIt(Pattern.compile(pattern))
