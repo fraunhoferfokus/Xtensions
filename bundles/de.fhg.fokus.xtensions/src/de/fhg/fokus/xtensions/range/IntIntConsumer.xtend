@@ -16,6 +16,9 @@ package de.fhg.fokus.xtensions.range
 @FunctionalInterface
 interface IntIntConsumer {
 	
+	/**
+	 * Method consuming the given two {@code int} values {@code a} and {@code b}.
+	 */
 	def void accept(int a, int b)
 	
 }

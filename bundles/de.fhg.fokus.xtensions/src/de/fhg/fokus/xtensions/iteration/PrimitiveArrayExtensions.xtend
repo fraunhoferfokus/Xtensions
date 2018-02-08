@@ -31,8 +31,8 @@ final class PrimitiveArrayExtensions {
 	/**
 	 * This method creates an {@link IntIterable} for the given array {@code arr},
 	 * allowing iteration over all elements in the array via a primitive iterator or a stream.
-	 * @parameter arr array to create an iterable for.
-	 * @return primitive iterable
+	 * @param arr array to create an iterable for.
+	 * @return primitive iterable over all {@code int} values of the given array {@code arr}.
 	 */
 	static def IntIterable asIntIterable(int[] arr) {
 		asIntIterable(arr, 0, arr.length)
@@ -67,7 +67,8 @@ final class PrimitiveArrayExtensions {
 	/**
 	 * This method creates an {@link IntIterable} for the given array {@code arr},
 	 * allowing iteration over the complete array via a primitive iterator or a stream.
-	 * @parameter arr array to create an iterable for.
+	 * @param arr array to create an iterable for.
+	 * @return LongIterable, providing all long values of the given array {@code arr}.
 	 */
 	static def LongIterable asLongIterable(long[] arr) {
 		asLongIterable(arr, 0, arr.length)
@@ -102,7 +103,8 @@ final class PrimitiveArrayExtensions {
 	/**
 	 * This method creates an {@link IntIterable} for the given array {@code arr},
 	 * allowing iteration over the complete array via a primitive iterator or a stream.
-	 * @parameter arr array to create an iterable for.
+	 * @param arr array to create an iterable for.
+	 * @return DoubleIterable, providing all double values of the given array {@code arr}.
 	 */
 	static def DoubleIterable asDoubleIterable(double[] arr) {
 		asDoubleIterable(arr, 0, arr.length)

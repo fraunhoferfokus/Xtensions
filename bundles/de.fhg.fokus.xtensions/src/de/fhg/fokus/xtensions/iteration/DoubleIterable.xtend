@@ -17,8 +17,8 @@ import de.fhg.fokus.xtensions.iteration.PrimitiveIteratorExtensions
 import java.util.PrimitiveIterator
 
 /** 
- * This interface is a specialized version of an {@code Iterable<Double>}providing a {@link OfDouble PrimitiveIterator.OfDouble} which allows iteration over
- * a (possibly infinite) amount of unboxed primitive values.<br>
+ * This interface is a specialized version of an {@code Iterable<Double>} providing a {@link OfDouble PrimitiveIterator.OfDouble} 
+ * which allows iteration over a (possibly infinite) amount of unboxed primitive values.<br>
  * <br>
  * This abstraction can be used in situations where an {@link DoubleStream} would
  * be appropriate, but the user has to be able to create the stream multiple

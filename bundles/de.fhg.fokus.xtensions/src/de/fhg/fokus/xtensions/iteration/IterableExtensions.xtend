@@ -36,13 +36,17 @@ final class IterableExtensions {
 // static def <X,Y> Iterable<Pair<X,Y>> combinations(Iterable<X>,Iterable<Y>)
 // static def <X,Y> Iterable<Pair<X,Y>> combinations(Iterable<X>,Iterable<Y>, BiPredicate<X,Y>)
 // static def <T> List<T> toImmutableList(Iterable<T>)
-// static def <T> Map<Boolean,Set<T>> partitionBy(Iterable<T>, Predicate<T>) // Own impl of Map extending AbstractMap, maybe provide as Collector
+// static def <T> Map<Boolean,List<T>> partitionBy(Iterable<T>, Predicate<T>) // Own impl of Map extending AbstractMap
+// static def <T, A, C> Map<Boolean,C> partitionBy(Iterable<T>, Collector<? super T,A,C>, Predicate<T>) // Own impl of Map extending AbstractMap, maybe provide as Collector
+// Maybe interface Partitions<T,C> extends Map<Boolean,C> { def C getTrue(); def C getFalse(); } // avoids boxing integers
+
 // static def <T> ClassGrouping groupBy(Iterable<T>, Class<?>... classes) // extend HashMap, maybe provide as Collector
 // interface ClassGrouping { 
-// 	Set<T> get(Class<T> clazz); 
-//	Map<Class<?>,Set<?>> asMap(); // will be immutable
+//  List<Class<?>> getGroupingClasses();
+// 	<T> List<T> get(Class<T> clazz) throws NoSuchElementException;
+//	Map<Class<?>,List<?>> asMap(); // will be immutable view
 // }
-// static def <T,A,D> Map<Boolean,D> partitionBy(Iterable<T>, Collector<? super T, A, D>, Predicate<T>)
+
 // static def <T,Y> Pair<Set<Y>,Set<T>> partitionBy(Iterable<T>,  Class<Y>)
 // static def <T,Y,AT,AY,DT,DY> Pair<DY,DT> partitionBy(Iterable<T>, Class<Y>, Collector<? super T, AT, DT>, Collector<? super Y, AY, DY>)
 // static def <T> Iterable<T> without(Iterable<T>, Collection<?> other) // Note most performant using Set as other
@@ -187,7 +191,7 @@ final class IterableExtensions {
 	 * {@link Collection#stream() stream} method of the Collection interface will
 	 * be called. Otherwise uses {@link StreamSupport} to create a Stream with the
 	 * Spliterator created using {@link Iterable#spliterator()}.
-	 * @param Iterable from which the returned Stream is created
+	 * @param it from which the returned Stream is created
 	 * @return Stream to process all elements of the given Iterator {@code it}.
 	 */
 	static def <T> Stream<T> stream(Iterable<T> it) {
@@ -207,7 +211,7 @@ final class IterableExtensions {
 	 * {@link Collection#parallelStream() parallelStream} method of the Collection interface will
 	 * be called. Otherwise uses {@link StreamSupport} to create the parallel Stream with the
 	 * Spliterator created using {@link Iterable#spliterator()}.
-	 * @param Iterable from which the returned Stream is created
+	 * @param it from which the returned Stream is created
 	 * @return parallel Stream to process all elements of the given Iterator {@code it}.
 	 */
 	static def <T> Stream<T> parallelStream(Iterable<T> it) {

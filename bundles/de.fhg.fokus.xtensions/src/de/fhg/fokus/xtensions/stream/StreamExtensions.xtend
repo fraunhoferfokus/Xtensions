@@ -55,7 +55,7 @@ final class StreamExtensions {
 	}
 	
 	/**
-	 * This method provides a convenient way to {@link Stream#flatMap(Stream) flatMap} on a {@code Stream} by providing an 
+	 * This method provides a convenient way to {@link Stream#flatMap(Function) flatMap} on a {@code Stream} by providing an 
 	 * {@code Iterable} instead of a {@code Stream}. If a given {@code Iterable} is instance of 
 	 * {@link Collection}, the {@code stream()} method of the interface will be called.
 	 * 
@@ -178,7 +178,7 @@ final class StreamExtensions {
 	// ///////////////////////////////////
 	/**
 	 * This function is a simple shortcut for {@code stream.collect(Collectors.toList())}.
-	 * @param stram the stream to be collected into a new {@code List}.
+	 * @param stream the stream to be collected into a new {@code List}.
 	 * @return List containing all values from {@code stream}
 	 */
 //	@Inline(value="$1.collect(Collectors.toList())", imported=Collectors)
@@ -188,7 +188,7 @@ final class StreamExtensions {
 
 	/**
 	 * This function is a simple shortcut for {@code stream.collect(Collectors.toSet())}.
-	 * @param stram the stream to be collected into a new {@code Set}.
+	 * @param stream the stream to be collected into a new {@code Set}.
 	 * @return Set containing all values from {@code stream}
 	 */
 //	@Inline(value="$1.collect(Collectors.toSet())", imported=Collectors)
@@ -199,7 +199,7 @@ final class StreamExtensions {
 	/**
 	 * This function is a simple shortcut for {@code stream.collect(Collectors.toCollection(collectionFactory))}.
 	 * Means that all elements of {@code stream} are added to the collection supplied by {@code collectionFactory}.
-	 * @param stram the stream to be collected into a new {@code Set}.
+	 * @param stream the stream to be collected into a new {@code Set}.
 	 * @return Set containing all values from {@code stream}
 	 */
 //	@Inline(value="$1.collect(Collectors.toCollection($2))", imported=Collectors)
@@ -228,7 +228,7 @@ final class StreamExtensions {
 	 * This function returns a stream of the Cartesian product of {@code stream} and the elements of the stream
 	 * provided by {@code streamSupplier}.
 	 * Note that this function will call {@code streamSupplier} for each element in {@code stream}, so it is expected
-	 * that on every call the given {@code streamSupplier) returns a stream of the same elements. The 
+	 * that on every call the given {@code streamSupplier} returns a stream of the same elements. The 
 	 * combination of elements of the {@code stream} and the stream provided by {@code streamSupplier} are represented 
 	 * as {@link Pair}s of the values from both sources.
 	 * @param stream the stream that's elements are combined with every elements from {@code combineWith}
@@ -261,7 +261,7 @@ final class StreamExtensions {
 	 * This function returns a stream of the Cartesian product of {@code stream} and the elements of the stream
 	 * provided by {@code streamSupplier}.
 	 * Note that this function will call {@code streamSupplier} for each element in {@code stream}, so it is expected
-	 * that on every call the given {@code streamSupplier) returns a stream of the same elements. Every 
+	 * that on every call the given {@code streamSupplier} returns a stream of the same elements. Every 
 	 * combination of elements of the {@code stream} and elements of stream provided by {@code streamSupplier} will be 
 	 * passed to the {@code combiner} to create a resulting combined element.
 	 * @param stream the stream that's elements are combined with every elements from {@code combineWith}
@@ -332,10 +332,10 @@ final class StreamExtensions {
 	}
 	
 	/**
-	 * This method redirects to {@link StreamExtensions#iterate​(Object, Predicate, UnaryOperator) iterate​(Object, Predicate, UnaryOperator)}.<br>
+	 * This method redirects to {@link #iterate​(Object, Predicate, UnaryOperator) <T>iterate​(T, Predicate<? super T>, UnaryOperator<T>)}.<br>
 	 * This allows e.g. writing {@code Stream.iterate(0,[it<100],[it+1])} in Xtend, which does not require code changes when
 	 * switching to Java 9 to take advantage of the native implementation of this method.
-	 * @see StreamExtensions#iterate​(Object, Predicate, UnaryOperator)
+	 * @see #iterate​(Object, Predicate, UnaryOperator)
 	 */
 	static def <T> Stream<T> iterate​(Class<Stream> clazz, T seed, Predicate<? super T> hasNext, UnaryOperator<T> next) {
 		iterate​(seed,hasNext, next)

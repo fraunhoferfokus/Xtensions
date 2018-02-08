@@ -40,7 +40,7 @@ final class RangeExtensions {
 	 * because it uses {@link IntConsumer} as the receiver of elements in the range, which prevents boxing of the integer values.
 	 * @param r the range to iterate over. Must not be {@code null}
 	 * @param consumer the function that is called for each element in the range {@code r}.
-	 * @thorws NullPointerException if {@code r} or {@code consumer} is {@code null}
+	 * @throws NullPointerException if {@code r} or {@code consumer} is {@code null}
 	 */
 	def static void forEachInt(IntegerRange r, IntConsumer consumer) {
 		val int start = r.start
@@ -65,7 +65,7 @@ final class RangeExtensions {
 	 * because it uses {@link IntIntConsumer} as the receiver of elements in the range, which prevents boxing of the integer values.
 	 * @param r the range to iterate over. Must not be {@code null}
 	 * @param consumer the function that is called for each element in the range {@code r} and the index in the range (starting with 0).
-	 * @thorws NullPointerException if {@code r} or {@code consumer} is {@code null}
+	 * @throws NullPointerException if {@code r} or {@code consumer} is {@code null}
 	 */
 	def static void forEachInt(IntegerRange r, IntIntConsumer consumer) {
 		val int start = r.start
@@ -83,6 +83,11 @@ final class RangeExtensions {
 		}
 	}
 
+	/**
+	 * Returns an {@link IntStream} providing all {@code int} values
+	 * provided by the given {@code IntegerRange r}.
+	 * @return stream of integer values provided by the given range {@code r}.
+	 */
 	def static IntStream stream(IntegerRange r) {
 		if(r.step == 1) {
 			// we assume that for the simple case the stream
@@ -94,6 +99,11 @@ final class RangeExtensions {
 		}
 	}
 
+	/**
+	 * Returns a parallel {@link IntStream} providing all {@code int} values
+	 * provided by the given {@code IntegerRange r}.
+	 * @return parallel stream of integer values provided by the given range {@code r}.
+	 */
 	def static IntStream parallelStream(IntegerRange r) {
 		// TODO use IntStream.range() if r.step == 1
 		val spliterator = new IntegerRangeSpliterator(r)
