@@ -17,6 +17,7 @@ import java.util.concurrent.Executor
 import java.util.concurrent.ScheduledExecutorService
 import static extension de.fhg.fokus.xtensions.concurrent.CompletableFutureExtensions.*
 import java.util.Objects
+import java.util.concurrent.TimeoutException
 
 /**
  * The static methods of this class start asynchronous computation, such as the {@code asyncSupply},
@@ -34,10 +35,15 @@ final class AsyncCompute {
 	// RetryStrategy.fixed(ScheduledThreadPoolExecutor,int,TimeUnit)
 	// TODO asyncRun variants taking AtomicBoolean for checking cancellation?
 	// TODO allow java.time.Duration for specifying timeouts
+	// TODO CompletableFuture<R> asyncSupply(long, TimeUnit, =>Throwable, (CompletableFuture<?>)=>R)
+	// TODO CompletableFuture<R> asyncSupply(ScheduledExecutorService, long, TimeUnit, =>Throwable, (CompletableFuture<?>)=>R)
+	// TODO CompletableFuture<?> asyncRun(long, TimeUnit, =>Throwable, (CompletableFuture<?>)=>void)
+	// TODO CompletableFuture<?> asyncRun(Executor, long, TimeUnit, =>Throwable, (CompletableFuture<?>)=>void)
+	// TODO CompletableFuture<?> asyncRun(Executor, ScheduledExecutorService, long, TimeUnit, =>Throwable, (CompletableFuture<?>)=>void)
 	/**
 	 * This method will call the given {@code runAsync} function using the {@link ForkJoinPool#commonPool() common ForkJoinPool} passing 
 	 * in a new {@code CompletableFuture} which is also being returned from this method. This future is supposed to be used to checked by 
-	 * the {@code runAsync} function for cancellation from the outside. The value returned by the {@code runAsync} function will be used 
+	 * the {@code runAsync} function for completion from the outside. The value returned by the {@code runAsync} function will be used 
 	 * to try to complete the returned future with. If {@code runAsync} throws a {@code Throwable}, it will be used to complete the 
 	 * future exceptionally with the thrown object. The result or exception from the {@code runAsync} method will not be obtruded to
 	 * the future; if the future is completed from the outside before completion of {@code runAsync}, its result will be ignored.
@@ -45,7 +51,7 @@ final class AsyncCompute {
 	 * @param runAsync function to be executed on the {@link ForkJoinPool#commonPool() common ForkJoinPoo}. The 
 	 *  result of this function will be used to complete the CompletableFuture returned by this method.
 	 * @return future that will used to provide result from concurrently executed {@code runAsync}. This future
-	 *  may be cancelled by the user, the {@code runAsync} function is advised to check the future for cancellation.
+	 *  may be cancelled by the user, the {@code runAsync} function is advised to check the future for completion.
 	 * @throws NullPointerException if {@code runAsync} is {@code null}
 	 */
 	public static def <R> CompletableFuture<R> asyncSupply((CompletableFuture<?>)=>R runAsync) {
@@ -55,7 +61,7 @@ final class AsyncCompute {
 	/**
 	 * This method will call the given {@code runAsync} function using the provided {@code executor}. A new {@code CompletableFuture}
 	 * will be passed to {@code runAsync} and returned by this method. This parameter is supposed to be used by the {@code runAsync} function
-	 * to check for cancellation from the outside. The value returned by the {@code runAsync} function will be used to try to 
+	 * to check for completion from the outside. The value returned by the {@code runAsync} function will be used to try to 
 	 * complete the returned future with. If {@code runAsync} throws a {@code Throwable}, it will be used to try to complete the 
 	 * future exceptionally with the thrown object. The result or exception from the {@code runAsync} method will not be obtruded to
 	 * the future; if the future is completed from the outside before completion of {@code runAsync}, its result will be ignored.
@@ -63,7 +69,7 @@ final class AsyncCompute {
 	 * @param executor the executor used to execute {@code runAsync} concurrently.
 	 * @param runAsync function to be executed using the provided {@code executor}.
 	 * @return future that will used to provide result from concurrently executed {@code runAsync}. This future
-	 *  may be cancelled by the user, the {@code runAsync} function is advised to check the future for cancellation.
+	 *  may be cancelled by the user, the {@code runAsync} function is advised to check the future for completion.
 	 * @throws NullPointerException if {@code runAsync} is {@code null}
 	 */
 	public static def <R> CompletableFuture<R> asyncSupply(Executor executor, (CompletableFuture<?>)=>R runAsync) {
@@ -83,110 +89,112 @@ final class AsyncCompute {
 	/**
 	 * This method will call the given {@code runAsync} function using the {@link ForkJoinPool#commonPool() common ForkJoinPool} with the {@code CompletableFuture}
 	 * being returned. This parameter is supposed to be used to checked by the {@code runAsync} function
-	 * for cancellation from the outside. The value returned by the {@code runAsync} function will be used to try to 
+	 * for cancellation/completion from the outside. The value returned by the {@code runAsync} function will be used to try to 
 	 * complete the returned future. If {@code runAsync} throws a {@code Throwable}, it will be used to complete the 
 	 * future exceptionally with the thrown object. If the {@code runAsync} function does not provide a result value 
 	 * after the timeout specified via the parameters {@code timeout} and {@code unit}, the returned future will be 
-	 * canceled. Therefore the {@code runAsync} function is advised to check for cancellation of the future provided
-	 * to it as parameter. If {@code runAsync} returns a value after the CompletableFuture was cancelled, the result
+	 * completed exceptionally with a {@code TimoutException}. Therefore the {@code runAsync} function is advised to check for completion of the future provided
+	 * to it as parameter. If {@code runAsync} returns a value after the CompletableFuture was completed, the result
 	 * will not appear in the CompletableFuture.
 	 * 
-	 * @param timeout Amount of time after which the returned {@code CompletableFuture} is cancelled, if it was not 
+	 * @param timeout Amount of time after which the returned {@code CompletableFuture} is completed exceptionally, if it was not 
 	 *  completed until then. The unit of the amount of time is specified via parameter {@code unit}.
 	 * @param unit the time unit of the {@code timeout} parameter.
 	 * @param runAsync function to be executed on the {@link ForkJoinPool#commonPool() common ForkJoinPoo}. The 
 	 *  result of this function will be used to complete the CompletableFuture returned by this method.
 	 * @return future that will used to provide result from concurrently executed {@code runAsync}. This future
-	 *  may be cancelled by the user, the {@code runAsync} function is advised to check the future for cancellation.
+	 *  may be cancelled by the user, the {@code runAsync} function is advised to check the future for completion.
 	 * @throws NullPointerException if {@code runAsync} is {@code null}
 	 */
 	public static def <R> CompletableFuture<R> asyncSupply(long timeout, TimeUnit unit,
 		(CompletableFuture<?>)=>R runAsync) {
 		val CompletableFuture<R> fut = asyncSupply(runAsync)
-		fut.cancelOnTimeout(timeout, unit)
+		fut.failOnTimeout(timeout, unit)
 	}
 
 	/**
 	 * This method will call the given {@code runAsync} function using the {@link ForkJoinPool#commonPool() common ForkJoinPool} with the {@code CompletableFuture}
 	 * being returned. This parameter is supposed to be used to checked by the {@code runAsync} function
-	 * for cancellation from the outside. The value returned by the {@code runAsync} function will be used to try to 
+	 * for completion/cancellation from the outside. The value returned by the {@code runAsync} function will be used to try to 
 	 * complete the returned future. If {@code runAsync} throws a {@code Throwable}, it will be used to complete the 
 	 * future exceptionally with the thrown object. If the {@code runAsync} function does not provide a result value 
 	 * after the timeout specified via the parameters {@code timeout} and {@code unit}, the returned future will be 
-	 * canceled. For the scheduling of the timeout the given {@code scheduler} will be used. The scheduler will <b>not</b> be 
-	 * shut down after timeout. The {@code runAsync} function is advised to check for cancellation of the future provided
+	 * completed exceptionally with a new TimeoutException. For the scheduling of the timeout the given {@code scheduler} will be used. The scheduler will <b>not</b> be 
+	 * shut down after timeout. The {@code runAsync} function is advised to check for completion of the future provided
 	 * to it as parameter. If {@code runAsync} returns a value after the CompletableFuture was cancelled or completed from
 	 * the outside, the result will not appear in the CompletableFuture; the result will not be obtruted to the future.
 	 * 
-	 * @param scheduler is the executor service used to schedule the cancellation after timeout specified via 
+	 * @param scheduler is the executor service used to schedule the exceptional completion after timeout specified via 
 	 *  {@code timeout} and {@code unit}.
-	 * @param timeout Amount of time after which the returned {@code CompletableFuture} is cancelled, if it was not 
+	 * @param timeout Amount of time after which the returned {@code CompletableFuture} is completed exceptionally, if it was not 
 	 *  completed until then. The unit of the amount of time is specified via parameter {@code unit}.
 	 * @param unit the time unit of the {@code timeout} parameter.
 	 * @param runAsync function to be executed on the {@link ForkJoinPool#commonPool() common ForkJoinPoo}. The 
 	 *  result of this function will be used to complete the CompletableFuture returned by this method.
 	 * @return future that will used to provide result from concurrently executed {@code runAsync}. This future
-	 *  may be cancelled by the user, the {@code runAsync} function is advised to check the future for cancellation.
+	 *  may be cancelled by the user, the {@code runAsync} function is advised to check the future for cancellation/completion.
 	 */
 	public static def <R> CompletableFuture<R> asyncSupply(ScheduledExecutorService scheduler, long timeout,
 		TimeUnit unit, (CompletableFuture<?>)=>R runAsync) {
 		val CompletableFuture<R> fut = asyncSupply(runAsync)
-		fut.cancelOnTimeout(scheduler, timeout, unit)
+		fut.failOnTimeout(scheduler, timeout, unit)[new TimeoutException]
 	}
 
 	/**
 	 * This method will call the given {@code runAsync} function using the given {@code executor}.
 	 * being returned. This parameter is supposed to be used to checked by the {@code runAsync} function
-	 * for cancellation from the outside. The value returned by the {@code runAsync} function will be used to try to 
+	 * for completion from the outside. The value returned by the {@code runAsync} function will be used to try to 
 	 * complete the returned future. If {@code runAsync} throws a {@code Throwable}, it will be used to complete the 
 	 * future exceptionally with the thrown object. If the {@code runAsync} function does not provide a result value 
 	 * after the timeout specified via the parameters {@code timeout} and {@code unit}, the returned future will be 
-	 * canceled. For the scheduling of the timeout the given {@code scheduler} will be used. The scheduler will <b>not</b> be 
-	 * shut down after timeout. The {@code runAsync} function is advised to check for cancellation of the future provided
+	 * completed exceptionally with a new {@code TimeoutException}. For the scheduling of the timeout the given 
+	 * {@code scheduler} will be used. The scheduler will <b>not</b> be shut down after timeout. 
+	 * The {@code runAsync} function is advised to check for completion of the future provided
 	 * to it as parameter. If {@code runAsync} returns a value after the CompletableFuture was cancelled or completed from
 	 * the outside, the result will not appear in the CompletableFuture; the result will not be obtruted to the future.
 	 * 
 	 * @param executor is the executor used to run {@code runAsync} asynchronously.
-	 * @param timeout Amount of time after which the returned {@code CompletableFuture} is cancelled, if it was not 
+	 * @param timeout Amount of time after which the returned {@code CompletableFuture} is completed exceptionally, if it was not 
 	 *  completed until then. The unit of the amount of time is specified via parameter {@code unit}.
 	 * @param unit the time unit of the {@code timeout} parameter.
 	 * @param runAsync function to be executed on the {@link ForkJoinPool#commonPool() common ForkJoinPoo}. The 
 	 *  result of this function will be used to complete the CompletableFuture returned by this method.
 	 * @return future that will used to provide result from concurrently executed {@code runAsync}. This future
-	 *  may be cancelled by the user, the {@code runAsync} function is advised to check the future for cancellation.
+	 *  may be cancelled by the user, the {@code runAsync} function is advised to check the future for completion.
 	 */
 	public static def <R> CompletableFuture<R> asyncSupply(Executor executor, long timeout, TimeUnit unit,
 		(CompletableFuture<?>)=>R runAsync) {
 		val CompletableFuture<R> fut = asyncSupply(executor, runAsync)
-		fut.cancelOnTimeout(timeout, unit)
+		fut.failOnTimeout(timeout, unit)
 	}
 
 	/**
 	 * This method will call the given {@code runAsync} function using the given {@code executor}.
 	 * being returned. This parameter is supposed to be used to checked by the {@code runAsync} function
-	 * for cancellation from the outside. The value returned by the {@code runAsync} function will be used to try to 
+	 * for completion from the outside. The value returned by the {@code runAsync} function will be used to try to 
 	 * complete the returned future. If {@code runAsync} throws a {@code Throwable}, it will be used to complete the 
 	 * future exceptionally with the thrown object. If the {@code runAsync} function does not provide a result value 
 	 * after the timeout specified via the parameters {@code timeout} and {@code unit}, the returned future will be 
-	 * canceled. Therefore the {@code runAsync} function is advised to check for cancellation of the future provided
-	 * to it as parameter. If {@code runAsync} returns a value after the CompletableFuture was cancelled, the result
+	 * completed exceptionally with a {@code TimeoutException}. Therefore the {@code runAsync} function is advised 
+	 * to check for completion of the future provided to it as parameter. 
+	 * If {@code runAsync} returns a value after the CompletableFuture was completed, the result
 	 * will not appear in the CompletableFuture.
 	 * 
 	 * @param executor is the executor used to run {@code runAsync} asynchronously.
-	 * @param scheduler is the executor service used to schedule the cancellation after timeout specified via 
+	 * @param scheduler is the executor service used to schedule the exceptional completion after timeout specified via 
 	 *  {@code timeout} and {@code unit}.
-	 * @param timeout Amount of time after which the returned {@code CompletableFuture} is cancelled, if it was not 
+	 * @param timeout Amount of time after which the returned {@code CompletableFuture} is completed exceptionally, if it was not 
 	 *  completed until then. The unit of the amount of time is specified via parameter {@code unit}.
 	 * @param unit the time unit of the {@code timeout} parameter.
 	 * @param runAsync function to be executed on the {@link ForkJoinPool#commonPool() common ForkJoinPoo}. The 
 	 *  result of this function will be used to complete the CompletableFuture returned by this method.
 	 * @return future that will used to provide result from concurrently executed {@code runAsync}. This future
-	 *  may be cancelled by the user, the {@code runAsync} function is advised to check the future for cancellation.
+	 *  may be cancelled by the user, the {@code runAsync} function is advised to check the future for completion.
 	 */
 	public static def <R> CompletableFuture<R> asyncSupply(Executor executor, ScheduledExecutorService scheduler,
 		long timeout, TimeUnit unit, (CompletableFuture<?>)=>R runAsync) {
 		val CompletableFuture<R> fut = asyncSupply(executor, runAsync)
-		fut.cancelOnTimeout(scheduler, timeout, unit)
+		fut.failOnTimeout(scheduler, timeout, unit)[new TimeoutException]
 	}
 
 	/**
@@ -209,11 +217,11 @@ final class AsyncCompute {
 	 * If {@code runAsync} throws an exception, the future will be completed exceptionally with the thrown 
 	 * exception. Neither the successful, nor the exceptional execution of {@code runAsync} will obtrude the
 	 * result value into the future. If the future was completed in {@code runAsync} this result will stay
-	 * in the future. However, it is advised to use the future in {@code runAsync} only to check for cancellation
+	 * in the future. However, it is advised to use the future in {@code runAsync} only to check for completion
 	 * from the outside.
 	 * @param executor will be used to execute {@code runAsync}
 	 * @param runAsync procedure to execute using {@code executor}. The future returned from this method
-	 *  will be passed to this procedure to allow checking for cancellation from the outside.
+	 *  will be passed to this procedure to allow checking for completion from the outside.
 	 * @return future that will be created in this method and passed to {@code runAsync}.
 	 */
 	public static def <R> CompletableFuture<?> asyncRun(Executor executor, (CompletableFuture<?>)=>void runAsync) {
@@ -238,7 +246,7 @@ final class AsyncCompute {
 	/**
 	 * Calls {@link #asyncRun(Executor,long,TimeUnit,org.eclipse.xtext.xbase.lib.Procedures.Procedure1) asyncRun(Executor,long,TimeUnit,(CompletableFuture<?>)=>void)} with
 	 * the common {@code ForkJoinPool} as the executor.
-	 * @param timeout the time in {@code unit} after which the returned future will be cancelled.
+	 * @param timeout the time in {@code unit} after which the returned future will be completed exceptionally.
 	 * @param unit the time unit for {@code timeout}.
 	 * @param runAsync the action to be called on the common {@code ForkJoinPool}. The returned future will be passed to this function on invocation.
 	 * @return the future which will be completed with a {@code null} value after successful execution of {@code runAsync} or exceptionally if {@code runAsync} throws an exception.
@@ -256,22 +264,22 @@ final class AsyncCompute {
 	 * When the {@code runAsync} procedure completes, the future will be completed with a {@code null} value.
 	 * If {@code runAsync} throws an exception, the future will be completed exceptionally with the thrown 
 	 * exception. If the {@code runAsync} procedure does not finish executing after a timeout defined via
-	 * {@code timeout} and {@code unit}, the future will be cancelled.<br>
+	 * {@code timeout} and {@code unit}, the future will be completed exceptionally with a new {@link TimeoutException}.<br>
 	 * Neither the successful, nor the exceptional execution of {@code runAsync} will obtrude the
-	 * result value into the future. This includes completion via cancellation by timeout. 
+	 * result value into the future. This includes completion via timeout. 
 	 * If the future was completed in {@code runAsync} this result will stay in the future. 
-	 * However, it is advised to use the future in {@code runAsync} only to check for cancellation from the outside.
+	 * However, it is advised to use the future in {@code runAsync} only to check for completion from the outside.
 	 * @param executor will be used to execute {@code runAsync}
-	 * @param timeout the time in {@code unit} after which the returned future will be cancelled.
+	 * @param timeout the time in {@code unit} after which the returned future will be completed exceptionally.
 	 * @param unit the time unit for {@code timeout}.
 	 * @param runAsync procedure to execute using {@code executor}. The future returned from this method
-	 *  will be passed to this procedure to allow checking for cancellation from the outside.
+	 *  will be passed to this procedure to allow checking for completion from the outside.
 	 * @return future that will be created in this method and passed to {@code runAsync}.
 	 */
 	public static def <R> CompletableFuture<?> asyncRun(Executor executor, long timeout, TimeUnit unit,
 		(CompletableFuture<?>)=>void runAsync) {
 		val fut = asyncRun(executor, runAsync)
-		fut.cancelOnTimeout(timeout, unit)
+		fut.failOnTimeout(timeout, unit)
 	}
 
 	/**
@@ -281,25 +289,25 @@ final class AsyncCompute {
 	 * When the {@code runAsync} procedure completes, the future will be completed with a {@code null} value.
 	 * If {@code runAsync} throws an exception, the future will be completed exceptionally with the thrown 
 	 * exception. If the {@code runAsync} procedure does not finish executing after a timeout defined via
-	 * {@code timeout} and {@code unit}, the future will be cancelled. The timeout will be scheduled using 
-	 * the given {@code scheduler}.<br>
+	 * {@code timeout} and {@code unit}, the future will be completed exceptionally with a new {@code TimeoutException}. 
+	 * The timeout will be scheduled using the given {@code scheduler}.<br>
 	 * Neither the successful, nor the exceptional execution of {@code runAsync} will obtrude the
-	 * result value into the future. This includes completion via cancellation by timeout. 
+	 * result value into the future. This includes completion via by timeout. 
 	 * If the future was completed in {@code runAsync} this result will stay in the future. 
-	 * However, it is advised to use the future in {@code runAsync} only to check for cancellation from the outside.
+	 * However, it is advised to use the future in {@code runAsync} only to check for completion from the outside.
 	 * @param executor will be used to execute {@code runAsync}.
-	 * @param scheduler is the executor service used to schedule the cancellation after timeout specified via 
+	 * @param scheduler is the executor service used to schedule the exceptional completion after timeout specified via 
 	 *  {@code timeout} and {@code unit}.
-	 * @param timeout the time in {@code unit} after which the returned future will be cancelled.
+	 * @param timeout the time in {@code unit} after which the returned future will be completed exceptionally.
 	 * @param unit the time unit for {@code timeout}.
 	 * @param runAsync the action to be called on the common {@code ForkJoinPool}. The returned future will be passed to this function on invocation.
 	 * @param runAsync procedure to execute using {@code executor}. The future returned from this method
-	 *  will be passed to this procedure to allow checking for cancellation from the outside.
+	 *  will be passed to this procedure to allow checking for completion from the outside.
 	 * @return future that will be created in this method and passed to {@code runAsync}.
 	 */
 	public static def <R> CompletableFuture<?> asyncRun(Executor executor, ScheduledExecutorService scheduler,
 		long timeout, TimeUnit unit, (CompletableFuture<?>)=>void runAsync) {
 		val fut = asyncRun(executor, runAsync)
-		fut.cancelOnTimeout(scheduler, timeout, unit)
+		fut.failOnTimeout(scheduler, timeout, unit)[new TimeoutException]
 	}
 }

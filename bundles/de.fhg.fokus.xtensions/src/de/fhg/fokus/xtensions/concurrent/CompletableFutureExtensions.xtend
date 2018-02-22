@@ -62,15 +62,18 @@ final class CompletableFutureExtensions {
 // ///////////////
 // Other Ideas //
 // ///////////////
+// TODO test failOnTimeout directly and make public
 // TODO handleComposeAsync variants
 // TODO thenAsync? all variants, with Executor as first parameter
 // TODO static def <T> CompletableFuture<T> void filter(Predicate<T>) // returns future holding NoSuchElementException if not present (may be cached). Not filtering to null, there are too many methods on CF that can fail on null
 // TODO static def <T> CompletableFuture<U> void filter(Class<U>) // returns future holding NoSuchElementException if not present (may be cached). Not filtering to null, there are too many methods on CF that can fail on null
 // TODO static def <T> CompletableFuture<T> void filter(Predicate<T>, ()=>Throwable) // returns future holding provided Throwable if not present. Not filtering to null, there are too many methods on CF that can fail on null
 // TODO static def <R> CompletableFuture<R> handleNull(CompletableFuture<R> fut, ()=>R handler)
+// TODO static def <R> CompletableFuture<R> handleTimeout(CompletableFuture<R> fut, (TimeoutException)=>R handler)
 // TODO static def <R,T> CompletableFuture<T> thenNoNull(CompletableFuture<R> fut, (R)=>T handler)
 // TODO static def <R> CompletableFuture<T> whenNotNull(CompletableFuture<R> fut, (R)=>void handler)
-// TODO static def <R> CompletableFuture<T> failOnTimeout(CompletableFuture<R> fut, long time, TimeUnit unit, (R)=>Throwable exceptionProvider)
+// TODO static def <R> CompletableFuture<T> whenTimeout(CompletableFuture<R> fut, (TimeoutException)=>void handler)
+// TODO static def boolean isTimedOut(CompletableFuture<?>)
 // TODO maybe thenFlat or flatMap as alias to thenCompose
 // TODO operation to compose CompletableFuture chain, where default handling on finished future will be performed on the given executor:
 // static def <T,R> CompletableFuture<R> composeAsync(CompletableFuture<T> fut, Executor executor, (CompletableFuture<T>)=>CompletableFuture<R> composition) which will result in:
@@ -113,7 +116,7 @@ final class CompletableFutureExtensions {
 	}
 
 	/**
-	 * Defines a time out for the given future {@code fut}. When the time out is reached 
+	 * Defines a timeout for the given future {@code fut}. When the timeout is reached 
 	 * {@code fut} will be cancelled, if the future was not completed already. To determine the time
 	 * to wait until performing the cancellation the time is specified by parameter {@code timeout} and 
 	 * the unit of time is specified by parameter {@code unit}. This method
@@ -128,6 +131,44 @@ final class CompletableFutureExtensions {
 	 * @throws NullPointerException throws if {@code fut} or {@code unit} is {@code null}
 	 */
 	static def <R> CompletableFuture<R> cancelOnTimeout(CompletableFuture<R> fut, long timeout, TimeUnit unit) {
+		fut.failOnTimeout(timeout, unit)[new CancellationException]
+	}
+	
+	/**
+	 * Defines a timeout for the given future {@code fut}. When the timeout is reached 
+	 * {@code fut} will be completed exceptionally with the a {@link TimeoutException}, 
+	 * if the future was not completed already. To determine the time
+	 * to wait until performing the exceptional completion the time is specified by parameter {@code timeout} and 
+	 * the unit of time is specified by parameter {@code unit}. This method
+	 * will create and use a scheduler internally to schedule the completion.
+	 * @param fut the future to be completed exceptionally after {@code timeout} of time unit {@code unit}, provided the future
+	 *   is not completed before cancellation.
+	 * @param timeout specifies time to wait, before canceling {@code fut}. Must be &gt;=0
+	 * @param unit specifies the time unit of {@code timeout}
+	 * @return returns parameter {@code fut}
+	 * @throws NullPointerException throws if {@code fut} or {@code unit} is {@code null}
+	 */
+	static package def <R> CompletableFuture<R> failOnTimeout(CompletableFuture<R> fut, long timeout, TimeUnit unit) {
+		fut.failOnTimeout(timeout, unit)[new TimeoutException]
+	}
+	
+	/**
+	 * Defines a timeout for the given future {@code fut}. When the timeout is reached 
+	 * {@code fut} will be completed exceptionally with the exception provided by {@code timeoutProvider}, 
+	 * if the future was not completed already. To determine the time
+	 * to wait until performing the exceptional completion the time is specified by parameter {@code timeout} and 
+	 * the unit of time is specified by parameter {@code unit}. This method
+	 * will create and use a scheduler internally to schedule the completion.
+	 * @param fut the future to be completed exceptionally after {@code timeout} of time unit {@code unit}, provided the future
+	 *   is not completed before cancellation.
+	 * @param timeout specifies time to wait, before canceling {@code fut}. Must be &gt;=0
+	 * @param unit specifies the time unit of {@code timeout}
+	 * @return returns parameter {@code fut}
+	 * @param timeoutProvider the provider for the exception {@code fut} will be completed with
+	 *  exceptionally when the timeout expires.
+	 * @throws NullPointerException throws if {@code fut} or {@code unit} is {@code null}
+	 */
+	static package def <R> CompletableFuture<R> failOnTimeout(CompletableFuture<R> fut, long timeout, TimeUnit unit, =>Throwable timeoutProvider) {
 		Objects.requireNonNull(fut)
 		Objects.requireNonNull(unit)
 		if(timeout <= 0) {
@@ -143,7 +184,12 @@ final class CompletableFutureExtensions {
 		val scheduler = createDefaultScheduler
 		val task = scheduler.schedule([|
 			try {
-				fut.cancel
+				try {
+					val ex = timeoutProvider.apply
+					fut.completeExceptionally(ex)
+				} catch(Throwable t) {
+					fut.completeExceptionally(t)
+				}
 			} finally {
 				scheduler.shutdown()
 			}
@@ -161,7 +207,7 @@ final class CompletableFutureExtensions {
 		], scheduler)
 		fut
 	}
-
+	
 	/**
 	 * ScheduledThreadPoolExecutor using daemon threads and allow task
 	 * removal on cancellation of task.
@@ -173,7 +219,7 @@ final class CompletableFutureExtensions {
 	}
 
 	/**
-	 * Defines a time out for the given future {@code fut}. When the time out is reached 
+	 * Defines a timeout for the given future {@code fut}. When the timeout is reached 
 	 * {@code fut} will be cancelled, if the future was not completed already. To determine the time
 	 * to wait until performing the cancellation the time is specified by parameter {@code timeout} and 
 	 * the unit of time is specified by parameter {@code unit}. This method
@@ -190,6 +236,27 @@ final class CompletableFutureExtensions {
 	 */
 	static def <R> CompletableFuture<R> cancelOnTimeout(CompletableFuture<R> fut, ScheduledExecutorService scheduler,
 		long time, TimeUnit unit) {
+		failOnTimeout(fut,scheduler,time,unit)[new CancellationException]
+	}
+	
+	/**
+	 * Defines a timeout for the given future {@code fut}. When the timeout is reached 
+	 * {@code fut} will be cancelled, if the future was not completed already. To determine the time
+	 * to wait until performing the cancellation the time is specified by parameter {@code timeout} and 
+	 * the unit of time is specified by parameter {@code unit}. This method
+	 * will the given {@code scheduler} to schedule the cancellation. If the scheduler should be provided for
+	 * the caller, use method {@link #cancelOnTimeout(CompletableFuture, long, TimeUnit)}.
+	 * This method is not responsible for shutting down the given {@code scheduler}
+	 * @param fut future to be cancelled after timeout of {@code time} of time unit {@code unit}. 
+	 * @param scheduler the timeout will be scheduled and the cancellation executed on this 
+	 *   scheduling pool.
+	 * @param time timeout time in time unit {@code unit} after which {@code fut} will be cancelled.
+	 * @param unit time unit of timeout {@code time}.
+	 * @return same reference as parameter {@code fut}.
+	 * @see #cancelOnTimeout(CompletableFuture, long, TimeUnit)
+	 */
+	package static def <R> CompletableFuture<R> failOnTimeout(CompletableFuture<R> fut, ScheduledExecutorService scheduler,
+		long time, TimeUnit unit, =>Throwable failureProvider) {
 		Objects.requireNonNull(fut)
 		Objects.requireNonNull(scheduler)
 		Objects.requireNonNull(unit)
@@ -199,7 +266,14 @@ final class CompletableFutureExtensions {
 			return fut
 		}
 
-		val task = scheduler.schedule([fut.cancel], time, unit)
+		val task = scheduler.schedule([
+			try {
+				val ex = failureProvider.apply
+				fut.completeExceptionally(ex)
+			} catch(Throwable t) {
+				fut.completeExceptionally(t)
+			}
+		], time, unit)
 		// if the future is completed earlier
 		// than cancellation, we can cancel the 
 		// scheduled task
@@ -259,7 +333,7 @@ final class CompletableFutureExtensions {
 
 	private static enum InterruptionState { START, INTERRUPTING, INTERRUPTED, FINISHED }
 
-	// TODO static def <R,T> T supplyCancelOnInterrupt(CompletableFuture<R> fut, ()=>T interruptableBlock) 
+	// TODO static def <R,T> T supplyCancelOnInterrupt(CompletableFuture<R> fut, =>T interruptableBlock) 
 	/**
 	 * This function helps integration of CompletableFuture and blocking APIs. Blocking APIs may allow 
 	 * cancellation via interrupting the thread the blocking call is performed on. When a blocking call
@@ -355,7 +429,7 @@ final class CompletableFutureExtensions {
 	 *   used to complete the returned future.
 	 * @throws NullPointerException is thrown when {@code fut} or {@code handler} is {@code null}.
 	 */
-	static def <R> CompletableFuture<R> handleCancellation(CompletableFuture<R> fut, ()=>R handler) {
+	static def <R> CompletableFuture<R> handleCancellation(CompletableFuture<R> fut, =>R handler) {
 		Objects.requireNonNull(fut)
 		Objects.requireNonNull(handler)
 		fut.exceptionally[ex|if(ex instanceof CancellationException) handler.apply else throw ex]
@@ -378,7 +452,7 @@ final class CompletableFutureExtensions {
 	 *   used to complete the returned future.
 	 * @throws NullPointerException is thrown when {@code fut} or {@code handler} is {@code null}.
 	 */
-	static def <R> CompletableFuture<R> handleCancellationAsync(CompletableFuture<R> fut, ()=>R handler) {
+	static def <R> CompletableFuture<R> handleCancellationAsync(CompletableFuture<R> fut, =>R handler) {
 		Objects.requireNonNull(fut)
 		Objects.requireNonNull(handler)
 		fut.handleCancellationAsync(ForkJoinPool.commonPool, handler)
@@ -402,7 +476,7 @@ final class CompletableFutureExtensions {
 	 *   used to complete the returned future.
 	 * @throws NullPointerException is thrown when {@code fut} or {@code handler} is {@code null}.
 	 */
-	static def <R> CompletableFuture<R> handleCancellationAsync(CompletableFuture<R> fut, Executor executor, ()=>R handler) {
+	static def <R> CompletableFuture<R> handleCancellationAsync(CompletableFuture<R> fut, Executor executor, =>R handler) {
 		Objects.requireNonNull(fut)
 		Objects.requireNonNull(executor)
 		Objects.requireNonNull(handler)
@@ -860,7 +934,7 @@ final class CompletableFutureExtensions {
 
 		/**
 		 * Defines if the scheduler for cancellation operation should be shut down after 
-		 * the original future completes or a timeout occures. Only relevant if 
+		 * the original future completes or a timeout occurs. Only relevant if 
 		 * {@link #setScheduler(ScheduledExecutorService) setScheduler} is used
 		 * to set custom scheduler.<br>
 		 * Default value is {@code false}.

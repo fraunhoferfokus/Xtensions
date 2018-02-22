@@ -1,9 +1,8 @@
 package de.fhg.fokus.xtensions.incubation.optional
-import static extension java.util.Objects.*
-import java.util.Optional
+
 import java.math.BigInteger
+import java.util.Optional
 import java.util.function.Predicate
-import de.fhg.fokus.xtensions.incubation.exceptions.Try
 
 public abstract class Either<L, R> {
 	private new (){}

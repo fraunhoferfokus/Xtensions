@@ -20,6 +20,7 @@ class IteratorExtensions {
 	// TODO public static def <T> Optional<Pair<T,T>> minMax(Iterator<T>, Comparator<? super T> comparator)
 	// TODO filter2(Predicate<T>), exists2(Predicate<T>), dropWhile2(Predicate<T>), takeWhile2(Predicate<T>), Optional<T> findLast2(Predicate<T>), forall2(Predicate<T>)
 	// TODO all of the above for Iterable
+	// TODO mapInt, mapLong, mapDouble
 	
 	/**
 	 * Creates a Java 8 stream of all remaining elements provided by the {@code iterator}.

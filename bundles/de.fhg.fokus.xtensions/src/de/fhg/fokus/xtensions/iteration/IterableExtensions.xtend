@@ -47,7 +47,7 @@ final class IterableExtensions {
 //	Map<Class<?>,List<?>> asMap(); // will be immutable view
 // }
 
-// static def <T,Y> Pair<Set<Y>,Set<T>> partitionBy(Iterable<T>,  Class<Y>)
+// static def <T,Y> Pair<List<Y>,List<T>> partitionBy(Iterable<T>, Class<Y>)
 // static def <T,Y,AT,AY,DT,DY> Pair<DY,DT> partitionBy(Iterable<T>, Class<Y>, Collector<? super T, AT, DT>, Collector<? super Y, AY, DY>)
 // static def <T> Iterable<T> without(Iterable<T>, Collection<?> other) // Note most performant using Set as other
 	

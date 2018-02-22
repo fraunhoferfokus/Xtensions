@@ -50,13 +50,13 @@ class SchedulingUtilTest {
 	@Test(timeout = 1000)
 	def void testRepeatEvery() {
 		val count = new AtomicInteger(0)
-		val fut = repeatEvery(20, TimeUnit.MILLISECONDS) [
+		val fut = repeatEvery(50, TimeUnit.MILLISECONDS) [
 			count.incrementAndGet
 		]
-		Thread.sleep(100)
+		Thread.sleep(250)
 		fut.cancel(false)
 		val resultCount = count.get
-		assertTrue(resultCount >= 5 && resultCount <= 6)
+		resultCount.assertRange(4,6)
 		// now let's test if cancellation worked
 		Thread.sleep(20) 
 		assertEquals(resultCount, count.get)
@@ -105,10 +105,10 @@ class SchedulingUtilTest {
 	@Test(timeout = 1000)
 	def void testRepeatEveryWithInitialDelay() {
 		val count = new AtomicInteger(0)
-		val fut = repeatEvery(20, TimeUnit.MILLISECONDS).withInitialDelay(10) [
+		val fut = repeatEvery(50, TimeUnit.MILLISECONDS).withInitialDelay(10) [
 			count.incrementAndGet
 		]
-		Thread.sleep(100)
+		Thread.sleep(250)
 		fut.cancel(false)
 		val resultCount = count.get
 		assertTrue(resultCount >= 4 && resultCount <= 5)
@@ -298,13 +298,13 @@ class SchedulingUtilTest {
 	@Test(timeout = 1000)
 	def void testRepeatEveryDuration() {
 		val count = new AtomicInteger(0)
-		val fut = repeatEvery(Duration.ofMillis(20)) [
+		val fut = repeatEvery(Duration.ofMillis(50)) [
 			count.incrementAndGet
 		]
-		Thread.sleep(100)
+		Thread.sleep(250)
 		fut.cancel(false)
 		val resultCount = count.get
-		assertTrue(resultCount >= 5 && resultCount <= 6)
+		resultCount.assertRange(4,6)
 		// now let's test if cancellation worked
 		Thread.sleep(20) 
 		assertEquals(resultCount, count.get)
@@ -352,16 +352,20 @@ class SchedulingUtilTest {
 	def void testRepeatEverySchedulerDuration() {
 		val count = new AtomicInteger(0)
 		val scheduler = new ScheduledThreadPoolExecutor(1)
-		val fut = scheduler.repeatEvery(Duration.ofMillis(20)) [
+		val fut = scheduler.repeatEvery(Duration.ofMillis(50)) [
 			count.incrementAndGet
 		]
-		Thread.sleep(100)
+		Thread.sleep(250)
 		fut.cancel(false)
 		val resultCount = count.get
-		assertTrue(resultCount >= 5 && resultCount <= 6)
+		resultCount.assertRange(4,6)
 		// now let's test if cancellation worked
 		Thread.sleep(20) 
 		assertEquals(resultCount, count.get)
+	}
+	
+	def assertRange(int actual, int lower, int upper) {
+		assertTrue('''Expected value between «lower» and «upper», but was «actual»''',  actual >= lower && actual <= upper)
 	}
 	
 	

@@ -25,6 +25,9 @@ import java.util.concurrent.atomic.AtomicReference
 import java.util.concurrent.TimeUnit
 import de.fhg.fokus.xtensions.Util
 import java.util.concurrent.CancellationException
+import org.hamcrest.core.Is
+import java.util.concurrent.TimeoutException
+import java.util.concurrent.CompletableFuture
 
 class AsyncComputeTest {
 	
@@ -248,10 +251,7 @@ class AsyncComputeTest {
 			Thread.sleep(50)
 			sema.release
 		]
-		Util.expectException(CancellationException) [
-			fut.join
-		]
-		assertTrue("When future completes after timeout, the future must be cancelled", fut.cancelled)
+		fut.assertTimedOut
 		// must succeed and not time out
 		sema.acquire
 	}
@@ -272,12 +272,10 @@ class AsyncComputeTest {
 			throw new NullPointerException
 		]
 		
-		Util.expectException(CancellationException) [
-			fut.join
-		]
+		fut.assertTimedOut
 		Thread.sleep(100)
-		val msg = "After cancellation, exceptional completion of action should not overwrite future result"
-		assertTrue(msg, fut.cancelled)
+		// Must still be timed out after NPE thrown
+		fut.assertTimedOutNow
 	}
 	
 	@Test def void testAsyncRunCancellationNoTimeout() {
@@ -337,8 +335,9 @@ class AsyncComputeTest {
 			Thread.sleep(50)
 			throw new IllegalStateException
 		]
-		Thread.sleep(50)
-		assertTrue("Timeout should not be overwritten by exceptional asyncRun block",fut.cancelled)
+		Thread.sleep(100)
+		// Timeout should not be overwritten by exceptional asyncRun block
+		fut.assertTimedOutNow
 	}
 	
 	@Test def void testAsyncRunOnDiffernetThreadNoTimeout() {
@@ -394,10 +393,7 @@ class AsyncComputeTest {
 			Thread.sleep(50)
 			sema.release
 		]
-		Util.expectException(CancellationException) [
-			fut.join
-		]
-		assertTrue("When future completes after timeout, the future must be cancelled", fut.cancelled)
+		fut.assertTimedOut
 		// must succeed and not time out
 		sema.acquire
 	}
@@ -419,13 +415,10 @@ class AsyncComputeTest {
 			Thread.sleep(50)
 			throw new NullPointerException
 		]
-		
-		Util.expectException(CancellationException) [
-			fut.join
-		]
+		fut.assertTimedOut
 		Thread.sleep(100)
-		val msg = "After cancellation, exceptional completion of action should not overwrite future result"
-		assertTrue(msg, fut.cancelled)
+		//After cancellation, exceptional completion of action should not overwrite future result"
+		fut.assertTimedOutNow
 	}
 	
 	@Test def void testAsyncRunCancellationNoTimeoutScheduler() {
@@ -491,7 +484,7 @@ class AsyncComputeTest {
 			throw new IllegalStateException
 		]
 		Thread.sleep(50)
-		assertTrue("Timeout should not be overwritten by exceptional asyncRun block",fut.cancelled)
+		fut.assertTimedOutNow
 	}
 	
 	@Test def void testAsyncRunOnDiffernetThreadNoTimeoutScheduler() {
@@ -645,12 +638,11 @@ class AsyncComputeTest {
 			sema.release
 			""
 		]
-		Util.expectException(CancellationException) [
-			fut.join
-		]
-		assertTrue("When future completes after timeout, the future must be cancelled", fut.cancelled)
+		fut.assertTimedOut
 		// must succeed and not time out
 		sema.acquire
+		Thread.sleep(50)
+		fut.assertTimedOutNow
 	}
 	
 	@Test def void testAsynSupplyExceptionallyNoTimeout() {
@@ -669,12 +661,27 @@ class AsyncComputeTest {
 			throw new NullPointerException
 		]
 		
-		Util.expectException(CancellationException) [
+		fut.assertTimedOut
+		Thread.sleep(100)
+		val msg = "After exceptional completion, result of action should not overwrite future result"
+		val ex2 = Util.expectException(CompletionException) [
 			fut.join
 		]
-		Thread.sleep(100)
-		val msg = "After cancellation, exceptional completion of action should not overwrite future result"
-		assertTrue(msg, fut.cancelled)
+		assertThat(msg, ex2.cause, instanceOf(TimeoutException))
+	}
+	
+	def assertTimedOut(CompletableFuture<?> fut) {
+		val ex = Util.expectException(CompletionException) [
+			fut.join
+		]
+		assertThat(ex.cause, instanceOf(TimeoutException))
+	}
+	
+	def assertTimedOutNow(CompletableFuture<?> fut) {
+		val ex = Util.expectException(CompletionException) [
+			fut.getNow(null)
+		]
+		assertThat(ex.cause, instanceOf(TimeoutException))
 	}
 	
 	@Test def void testAsyncSupplyCancellationNoTimeout() {
@@ -737,8 +744,10 @@ class AsyncComputeTest {
 			Thread.sleep(50)
 			throw new IllegalStateException
 		]
-		Thread.sleep(50)
-		assertTrue("Timeout should not be overwritten by exceptional asyncRun block",fut.cancelled)
+		fut.assertTimedOut
+		Thread.sleep(100)
+		//Timeout should not be overwritten by exceptional asyncRun block
+		fut.assertTimedOutNow
 	}
 	
 	@Test def void testAsyncSupplyOnDiffernetThreadNoTimeout() {
@@ -797,12 +806,12 @@ class AsyncComputeTest {
 			sema.release
 			""
 		]
-		Util.expectException(CancellationException) [
-			fut.join
-		]
-		assertTrue("When future completes after timeout, the future must be cancelled", fut.cancelled)
+		fut.assertTimedOut
 		// must succeed and not time out
 		sema.acquire
+		Thread.sleep(60)
+		// after return of string must still be timed out
+		fut.assertTimedOutNow
 	}
 	
 	@Test def void testAsyncSupplyExceptionallyNoTimeoutScheduler() {
@@ -822,13 +831,9 @@ class AsyncComputeTest {
 			Thread.sleep(50)
 			throw new NullPointerException
 		]
-		
-		Util.expectException(CancellationException) [
-			fut.join
-		]
+		fut.assertTimedOut
 		Thread.sleep(100)
-		val msg = "After cancellation, exceptional completion of action should not overwrite future result"
-		assertTrue(msg, fut.cancelled)
+		fut.assertTimedOutNow
 	}
 	
 	@Test def void testAsyncSupplyCancellationNoTimeoutScheduler() {
@@ -897,7 +902,7 @@ class AsyncComputeTest {
 			throw new IllegalStateException
 		]
 		Thread.sleep(50)
-		assertTrue("Timeout should not be overwritten by exceptional asyncSupply block",fut.cancelled)
+		fut.assertTimedOut
 	}
 	
 	@Test def void testAsyncSupplyOnDiffernetThreadNoTimeoutScheduler() {
