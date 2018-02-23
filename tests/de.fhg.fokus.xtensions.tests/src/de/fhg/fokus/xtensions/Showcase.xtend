@@ -66,7 +66,7 @@ import java.util.concurrent.ScheduledThreadPoolExecutor
 import java.util.concurrent.CompletionException
 import org.junit.Ignore
 
-@Ignore
+//@Ignore
 class Showcase {
 	
 	@Test def rangeDemo() {
@@ -504,6 +504,30 @@ class Showcase {
 		ex.awaitTermination(500, TimeUnit.MILLISECONDS)
 		pool.shutdown()
 		pool.awaitTermination(500, TimeUnit.MILLISECONDS)
+		
+		asyncSupply(10, TimeUnit.MILLISECONDS) [
+			// some poor integration approximation
+			val fx = [double x| x*x + 10 - (2*x)]
+			var sum = 0.0d;
+			for(i : 0..100_000) {
+				
+				// every now and then, check if we timed out
+				if(i % 100 == 0) {
+					if(done) {
+						return 0.0d;
+					}
+				}
+				// also using poor double accumulation
+				sum += fx.apply(i as double)
+			}
+			sum
+		].whenComplete[result, error | 
+			if(error !== null) {
+				println("Whoops, timeout")
+			} else {
+				println("result = " + result)
+			}
+		].join
 	}
 	
 	@Test def void functionDemo() {
