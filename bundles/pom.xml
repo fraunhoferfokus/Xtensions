@@ -9,7 +9,6 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.github.fraunhoferfokus.xtensions</groupId>
 	<artifactId>xtensions.bundles.master</artifactId>
-	<version>1.0.0-SNAPSHOT</version>
 	<name>Xtensions Bundles Build Master</name>
 	<packaging>pom</packaging>
 

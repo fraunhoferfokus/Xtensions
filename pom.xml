@@ -306,6 +306,14 @@
 					</execution>
 				</executions>
 			</plugin>
+			
+			<!-- Needed for release on travis-ci -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-release-plugin</artifactId>
+				<version>2.5.3</version>
+			</plugin>
+		
 		</plugins>
 
 		<!-- Set default versions for plugins used by sub-projects -->
