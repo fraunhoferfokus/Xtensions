@@ -14,12 +14,15 @@ jobs:
   include:
   - stage: build
     script: "./mvnw clean verify -P coverage-report"
+    install: true
     after_success:
     - bash <(curl -s https://codecov.io/bash)
-  - stage snapshot: 
+  - stage: snapshot
     script: "./mvnw clean deploy --settings .travis/settings.xml"
+    install: true
   - stage: release
     script: "./mvnw release:clean release:prepare release:perform --settings .travis/settings.xml"
+    install: true
 
 deploy:
   provider: bintray
