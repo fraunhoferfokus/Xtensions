@@ -49,7 +49,7 @@
 	</developers>
 
 	<properties>
-		<tycho-version>1.0.0</tycho-version>
+		<tycho-version>1.1.0</tycho-version>
 		<xtend-version>2.13.0</xtend-version>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
@@ -58,10 +58,6 @@
 	</properties>
 
 	<repositories>
-		<repository>
-			<id>jcenter-xtensions</id>
-			<url>http://oss.jfrog.org/oss-snapshot-local</url>
-		</repository>
 		<repository>
 			<id>oxygen</id>
 			<layout>p2</layout>
@@ -77,6 +73,9 @@
 		<module>features/de.fhg.fokus.xtensions.feature</module>
 		<module>p2/de.fhg.fokus.xtensions.p2</module>
 		<module>releng/de.fhg.fokus.xtensions.report</module>
+		<!-- The following modules are only listed to allow easy version adjustment from this master -->
+		<module>features</module>
+		<module>tests</module>
 	</modules>
 
 	<profiles>
@@ -89,6 +88,38 @@
 				<module>bundles-incubation/de.fhg.fokus.xtensions.circuitbreaker</module>
 				<module>tests-incubation/de.fhg.fokus.xtensions.circuitbreaker.tests</module>
 			</modules>
+		</profile>
+		
+		<profile>
+			<id>coverage-report</id>
+			
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.jacoco</groupId>
+						<artifactId>jacoco-maven-plugin</artifactId>
+						<configuration>
+							<includes>
+								<include>de/fhg/fokus/xtensions/**/*</include>
+							</includes>
+							<excludes>
+								<exclude>de/fhg/fokus/xtensions/Showcase*</exclude>
+								<exclude>de/fhg/fokus/xtensions/Util*</exclude>
+								<exclude>**/*Test*</exclude>
+							</excludes>
+							<append>true</append>
+						</configuration>
+						<executions>
+							<execution>
+								<id>prepare-agent</id>
+								<goals>
+									<goal>prepare-agent</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
 		</profile>
 	</profiles>
 	
@@ -250,30 +281,6 @@
 				</configuration>
 			</plugin>
 
-			<plugin>
-				<groupId>org.jacoco</groupId>
-				<artifactId>jacoco-maven-plugin</artifactId>
-				<configuration>
-					<includes>
-						<include>de/fhg/fokus/xtensions/**/*</include>
-					</includes>
-					<excludes>
-						<exclude>de/fhg/fokus/xtensions/Showcase*</exclude>
-						<exclude>de/fhg/fokus/xtensions/Util*</exclude>
-						<exclude>**/*Test*</exclude>
-					</excludes>
-					<append>true</append>
-				</configuration>
-				<executions>
-					<execution>
-						<id>prepare-agent</id>
-						<goals>
-							<goal>prepare-agent</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-
 			<!-- Let build know about generated Java sources -->
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
@@ -312,6 +319,11 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-release-plugin</artifactId>
 				<version>2.5.3</version>
+				<configuration>
+					<pushChanges>false</pushChanges>
+					<preparationGoals>org.eclipse.tycho:tycho-versions-plugin:${tycho-version}:update-eclipse-metadata org.apache.maven.plugins:maven-scm-plugin:1.9.5:add org.apache.maven.plugins:maven-scm-plugin:1.9.5:checkin</preparationGoals>
+					<completionGoals>org.eclipse.tycho:tycho-versions-plugin:${tycho-version}:update-eclipse-metadata org.apache.maven.plugins:maven-scm-plugin:1.9.5:add org.apache.maven.plugins:maven-scm-plugin:1.9.5:checkin</completionGoals>
+				</configuration>
 			</plugin>
 		
 		</plugins>
@@ -334,6 +346,18 @@
 					<artifactId>maven-surefire-plugin</artifactId>
 					<version>2.20</version>
 				</plugin>
+		        <plugin>
+		          <groupId>com.itemis.maven.plugins</groupId>
+		          <artifactId>unleash-maven-plugin</artifactId>
+		          <version>2.7.0</version>
+		          <dependencies>
+		            <dependency>
+		              <groupId>com.itemis.maven.plugins</groupId>
+		              <artifactId>unleash-scm-provider-git</artifactId>
+		              <version>2.1.0</version>
+		            </dependency>
+		          </dependencies>
+		        </plugin>
 			</plugins>
 		</pluginManagement>
 	</build>

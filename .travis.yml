@@ -18,10 +18,12 @@ jobs:
     after_success:
     - bash <(curl -s https://codecov.io/bash)
   - stage: snapshot
-    script: "./mvnw clean deploy --settings .travis/settings.xml"
+    script: "./mvnw clean deploy -DskipTests --settings .travis/settings.xml"
     install: true
   - stage: release
-    script: "./mvnw release:clean release:prepare release:perform --settings .travis/settings.xml"
+    script: 
+    - "./mvnw versions:set -DremoveSnapshot"
+    - "./mvnw clean deploy -DskipTests --settings .travis/settings.xml"
     install: true
 
 deploy:
