@@ -6,9 +6,9 @@ stages:
 - name: build
   if: "NOT tag IS present"
 - name: snapshot
-  if: "(branch = master) AND (NOT tag IS present) AND (type IS push)"
+  if: "(NOT tag IS present) AND branch = master AND type = push"
 - name: release
-  if: "(tag IS present) AND (type IS push)"
+  if: "tag IS present AND type = push"
 
 jobs:
   include:
