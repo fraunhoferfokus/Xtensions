@@ -1,28 +1,39 @@
 language: java
 jdk:
-  - oraclejdk8
+- oraclejdk8
 
 stages:
-  - name: build
-    if: NOT tag IS present
-  - name: release
-    if: tag IS present
+- name: build
+  if: "NOT tag IS present"
+- name: snapshot
+  if: "(branch = master) AND (NOT tag IS present) AND (type IS push)"
+- name: release
+  if: "(tag IS present) AND (type IS push)"
 
 jobs:
   include:
-    - stage: build
-      script: "./mvnw clean verify -P coverage-report"
-      after_success:
-        - bash <(curl -s https://codecov.io/bash)
-    - stage: release
-      script: "./mvnw release:clean release:prepare release:perform --settings .travis/settings.xml"
+  - stage: build
+    script: "./mvnw clean verify -P coverage-report"
+    after_success:
+    - bash <(curl -s https://codecov.io/bash)
+  - stage snapshot: 
+    script: "./mvnw clean deploy --settings .travis/settings.xml"
+  - stage: release
+    script: "./mvnw release:clean release:prepare release:perform --settings .travis/settings.xml"
 
 deploy:
   provider: bintray
   on:
     tags: true
-  file: .travis/bintray-deploy.json
+  file: ".travis/bintray-deploy.json"
   user: boereck
   dry-run: true
   key:
     secure: HWs98/0DRpmQxq1S0Zp37K3EFttg63ty6HqCn+iDOF0epIcFGZzuUBA2Web3/QpRd1r41zAz5CaiHmyAPPLBF3KgivvhOWRjEZKlIkwg2osNWETTA9kbADH0TaVB9pJA26yn0ILV3vLT/sRt3fx/Vs44NcInV88ChrjiujYw0ivUKVaE+YZqUQqfEFjVBNWtpJdgiwAdSY+ZYQg/O3XRRnhgo/QTHuk/yQ3scJykpIJ300K5ifidXT6mzPGjybp7Ixx6y+wkOisXMVY8ICVi4w0ZMnNih4TuM4pnZnWU9a1Oyt1gnltmG026ItP9fBOs+UDdiADZt2LSQ8KfPigyFl2K0YNJXvirMOiC3yR8/utcPx97JU7u7MJ6mCyooBheBw0xfmSVduKLlvLToC/PW83K4k2TeS4tn50Iluj/7wBBVo0Ad+lKdcMrPuECE50txa7KM73YvjyFgAWqvdGkl91XcBSOAFld7tsY+TYkqHTqx+ya6uUzDLVK2Zfpefm02xkCZycSyQUUIR0Io5Qv9SKXw9sTUmSulgGUAhvsg0Omfpvp1WxEkhK7nLuE2FX584B/3A+vL5cQ3yVyb5q+LHN5JVECVvlo4UIPeZnAe2anrJtV6Gu1+dHxqiGvcmikRkqIFu/0kbWQ9YIlk/oCJPtd/M6Xw5DMoncdgiHyoXY=
+
+# Environment variables "BINTRAY_USERNAME", "BINTRAY_API_KEY", "BINTRAY_PASSWORD" for .travis/settings.xml
+env:
+  global:
+  - secure: Cfu0k3jW/RE6T/9EWkWfMevbppp4ZXVodI90MUMY4UzKu6PXfwkScFKvPgpH1WgW3y9lMYW18IPCwfrkut6qbzsO0S8VYaTO7ssNBT+K1KIbLc4u7zSx0wxtmonfHWI0ttC68o6Il1ekP56Ai4xt7bakAhSrIiUmjg+8sngy8tO5/4DSnZIoQBQvq5i09m/+6mob1FT1MKtU3EJiRErMV19Mm20+JR+/8GquFLx9KcLLThjoRC5MsAav7Ph9aiD+M61T+md9WTOkeXAmQXxaUNALXMDo1Xa8PETF9gQZ3xUCSAbxV06bSJSiAwiJw4I4AEP+gUZdv9W9kCGKCe3yKv7EsrR52I1sFsAhj853OTJKkZGqpIGPm0pIKzevxr1T7gBeCaKBg+bzFydSSGVS4jxW75YOisxKeUuVNTZsZmsoZElOgNPMSVWxzZ09IZ8YViwPw4U8OCEiidY/3c/yEaF5CoYR3wEJ4kVs6U1iqDooSp1Sqk/OM67C7ENkutN9selfwDqITBs6Dm5okp5hef0xGc1BmMMH3UGQL5VCtZJL2DUfvpBfkc+HdQIntgfFBJf7gnkChDy/Mx2FsobnHYfklRMEzFf4xfgXu9vBh3uQ7PU+E5HhuWzIke6ENsskayeWCAsnhf6Md6Lp1LdyxlWbEg47BjiwYe4sgoh3mxM=
+  - secure: m2H1eaKgZuYxPhcqX/1XQCL8vbz+yj3ZSJ851P7bzheMB8GNmnqZ0i9rNXAvch6XiTtEwxwlrsKQLmwYrDLyPu+G+X3n0gQ9z/ud5lePG/ScYovrZxlHohuGZ0GCGi0TO2Yq4bgcH4pOmNbFlImdOJ0LYESruEHdxmycBDOafztZP3L5WtlWTHVc8QM/pyAcL3Vq9QWtJIxKFP5I2+nLyX5dJJi1d2VJ1ateZwCLGQj1bT4PXTYjAfO3qMYH2QIhUMGpVF9QtQKq3G3ClCyanTVoF3LNxskXkWS9AVR+I+vaLKnysSmtAKmBkPi5UWtNmAPm6U67vfOEOyjDHvimwxJpOGCczkf4NaMdO+lBXAJ55KUpFs9ni58SW3J1VAs0nlDDDPZxIew2bFbT+da/lkZbikScSezOldb9NrIKsaBsHpa9BVUGTWa6JLeSf40XHIoeJamesAFbIt95eI22J6vBa4/EdsYWCVX9fW14+Ne783+Sdi5gTBPQu+fcyEe+7FG/KUCnB/dK2fMU0XpCMBZKroFsa09ba9OZiw8omq3MuXfOJ+9HAsmebFOv4/rCAeYWvvv8Vd2lDH3HA/apR6y8VYnqKeVDP80SU1pqCRn1vSPjdAvZdyLYa9lXSIyoq90rN9EjiagViGPm0F+vScF7BRUZpI2mwGWA5nse/EA=
+  - secure: JWI1ZdV3HpfJ6sISuYUJ/nxdlv370APGaQgrXc23EQKtWXD9kDEV1HCig0fP5DnXdJJ5Wu46jZDg5tggaKEbQke9QD5m/QvrpyGpvyRqThXd+oPtCdEevBpspXeVKB1NpGlGfx5Kzp9DcyuTKz7jjGoUFZVM/MfM+1iHIRX/L/zozeT2nuBlyGtUg9Bmkn9dIoMZcpP0nGUKc1ZI/0Chil2LSJb/GpLx2FQTgCo37QXKjevs1CFRRDRfT/KC67M364r+C5gCHgP+fu9dxaq3Ptm21DcUB1Xw4kdFkgrblHQYUQXz5W9l9O30OdMgImnU6aXedJtZMzGS0Any3doTrAlxT9Wihzyi+YTf/1VTwQNeRhtYdBMJNK5XDxg0XOAhOJq1LQ0RxxUHLKSCSFB7MgpwqND/VA104vGwxuTdIGqPLZdc+lkKGFoC8VKgpcdmRxjTFUMsiBmKQeha3rhwuLL6rvGQC0ATKPCZ6M13ye2BcPVak/Xz6SnsBUHN2Rh1csq5+aUh9pW6HtjhkK+jEXhyNbnQXqZxFFT/MQ2fTpFxjtIAx6WAB1RFtaCHtiuPFZlsCoi1SEuUHcZ3senychavP1sNeOiiUaCmAkRlH0q2JbpsdM7LQD+iOxhz4BXm7Vt19PYeJFBOSNqBBN9pRQWcs4E/8DQfz/1stdBSCcg=
