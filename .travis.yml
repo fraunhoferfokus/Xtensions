@@ -23,18 +23,18 @@ jobs:
   - stage: release
     script: 
     - "./mvnw versions:set -DremoveSnapshot"
+    - "./mvnw --projects "bundles/de.fhg.fokus.xtensions" org.eclipse.tycho:tycho-versions-plugin:set-version -DnewVersion=$TRAVIS_TAG"
     - "./mvnw clean deploy -DskipTests --settings .travis/settings.xml"
     install: true
-
-deploy:
-  provider: bintray
-  on:
-    tags: true
-  file: ".travis/bintray-deploy.json"
-  user: boereck
-  dry-run: true
-  key:
-    secure: HWs98/0DRpmQxq1S0Zp37K3EFttg63ty6HqCn+iDOF0epIcFGZzuUBA2Web3/QpRd1r41zAz5CaiHmyAPPLBF3KgivvhOWRjEZKlIkwg2osNWETTA9kbADH0TaVB9pJA26yn0ILV3vLT/sRt3fx/Vs44NcInV88ChrjiujYw0ivUKVaE+YZqUQqfEFjVBNWtpJdgiwAdSY+ZYQg/O3XRRnhgo/QTHuk/yQ3scJykpIJ300K5ifidXT6mzPGjybp7Ixx6y+wkOisXMVY8ICVi4w0ZMnNih4TuM4pnZnWU9a1Oyt1gnltmG026ItP9fBOs+UDdiADZt2LSQ8KfPigyFl2K0YNJXvirMOiC3yR8/utcPx97JU7u7MJ6mCyooBheBw0xfmSVduKLlvLToC/PW83K4k2TeS4tn50Iluj/7wBBVo0Ad+lKdcMrPuECE50txa7KM73YvjyFgAWqvdGkl91XcBSOAFld7tsY+TYkqHTqx+ya6uUzDLVK2Zfpefm02xkCZycSyQUUIR0Io5Qv9SKXw9sTUmSulgGUAhvsg0Omfpvp1WxEkhK7nLuE2FX584B/3A+vL5cQ3yVyb5q+LHN5JVECVvlo4UIPeZnAe2anrJtV6Gu1+dHxqiGvcmikRkqIFu/0kbWQ9YIlk/oCJPtd/M6Xw5DMoncdgiHyoXY=
+    deploy:
+      provider: bintray
+      on:
+        tags: true
+      file: ".travis/bintray-deploy.json"
+      user: boereck
+      dry-run: true
+      key:
+        secure: HWs98/0DRpmQxq1S0Zp37K3EFttg63ty6HqCn+iDOF0epIcFGZzuUBA2Web3/QpRd1r41zAz5CaiHmyAPPLBF3KgivvhOWRjEZKlIkwg2osNWETTA9kbADH0TaVB9pJA26yn0ILV3vLT/sRt3fx/Vs44NcInV88ChrjiujYw0ivUKVaE+YZqUQqfEFjVBNWtpJdgiwAdSY+ZYQg/O3XRRnhgo/QTHuk/yQ3scJykpIJ300K5ifidXT6mzPGjybp7Ixx6y+wkOisXMVY8ICVi4w0ZMnNih4TuM4pnZnWU9a1Oyt1gnltmG026ItP9fBOs+UDdiADZt2LSQ8KfPigyFl2K0YNJXvirMOiC3yR8/utcPx97JU7u7MJ6mCyooBheBw0xfmSVduKLlvLToC/PW83K4k2TeS4tn50Iluj/7wBBVo0Ad+lKdcMrPuECE50txa7KM73YvjyFgAWqvdGkl91XcBSOAFld7tsY+TYkqHTqx+ya6uUzDLVK2Zfpefm02xkCZycSyQUUIR0Io5Qv9SKXw9sTUmSulgGUAhvsg0Omfpvp1WxEkhK7nLuE2FX584B/3A+vL5cQ3yVyb5q+LHN5JVECVvlo4UIPeZnAe2anrJtV6Gu1+dHxqiGvcmikRkqIFu/0kbWQ9YIlk/oCJPtd/M6Xw5DMoncdgiHyoXY=
 
 # Environment variables "BINTRAY_USERNAME", "BINTRAY_API_KEY", "BINTRAY_PASSWORD" for .travis/settings.xml
 env:
