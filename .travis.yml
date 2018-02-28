@@ -20,10 +20,10 @@ jobs:
   - stage: snapshot
     script: "./mvnw clean deploy -DskipTests --settings .travis/settings.xml"
     install: true
-  - stage: release
+  - stage: deploy
     script: 
     - "./mvnw versions:set -DremoveSnapshot"
-    - "./mvnw --projects "bundles/de.fhg.fokus.xtensions" org.eclipse.tycho:tycho-versions-plugin:set-version -DnewVersion=$TRAVIS_TAG"
+    - "./mvnw --projects bundles/de.fhg.fokus.xtensions org.eclipse.tycho:tycho-versions-plugin:set-version -DnewVersion=$TRAVIS_TAG"
     - "./mvnw clean deploy -DskipTests --settings .travis/settings.xml"
     install: true
     deploy:
