@@ -47,10 +47,10 @@ valid sem-ver version number `major.minor.patch`.
 
 Here is a checklist of steps to perform (in this order):
 
-- [ ] Update the version of root `pom.xml` (keep the `-SNAPSHOT` suffix, it will be removed during the build)
-- [ ] Update the version of every bundle and feature project (see folders `bundles`, `features`, `tests`, `bundles-incubation`, and `tests-incubation`)
-- [ ] Adjust the `.travis/bintray-deploy.json` file declaring the new version
-- [ ] Update the `README.adoc` file
-- [ ] Create/push the tag of the new version number
-- [ ] Check if p2 deployment to bintray worked
-- [ ] Log into bintray to promote the release to maven central
+[ ] Update the version of root `pom.xml` (keep the `-SNAPSHOT` suffix, it will be removed during the build)
+[ ] Update the version of every bundle and feature project (see folders `bundles`, `features`, `tests`, `bundles-incubation`, and `tests-incubation`)
+[ ] Adjust the `.travis/bintray-deploy.json` file declaring the new version
+[ ] Update the `README.adoc` file
+[ ] Create/push the tag of the new version number
+[ ] Check if p2 deployment to bintray worked
+[ ] Log into bintray to promote the release to maven central

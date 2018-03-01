@@ -38,12 +38,13 @@ Note that the policy of using functional interfaces is the following:
 * When primitive values are involved, the specialized interfaces from `java.util.function` are preferred.
 * When a shim over JDK 8 APIs is provided and Xtend interfaces would introduce unnecessary object allocations
   the JDK interfaces are preferred.
-  
-WARNING: This library is pre 1.0.0, so public API may change or disappear if considered unnecessary cruft.
 
 == Usage
 
-Currently only nightly builds are available via Maven. Please add the following repository to your maven pom:
+Currently only nightly builds are available via Maven. The release of version `1.0.0`
+is about to be released, but for now only snapshots are available.
+
+Please add the following repository to your maven pom:
 
 [source,xml]
 ----
@@ -132,3 +133,5 @@ The following tasks are the next goals for this project, roughly in this order:
 - [ ] Figure out how to best publish to Maven Central
 - [ ] Release version 1.0.0 and update this file
 - [ ] Add javadoc.io badge to this file
+- [ ] Build GitBook in release build and push it to GitHub Pages
+- [ ] Create a CHANGES.adoc file
