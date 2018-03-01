@@ -14,11 +14,11 @@
     },
 
     "version": {
-        "name": "0.9",
-        "desc": "Pre-release",
-        "released": "2018-02-27",
-        "vcs_tag": "0.9",
-        "gpgSign": false
+        "name": "1.0.0",
+        "desc": "1.0 Release",
+        "released": "2018-03-01",
+        "vcs_tag": "1.0.0",
+        "gpgSign": true
     },
 
     "files":
