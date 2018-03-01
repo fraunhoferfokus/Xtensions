@@ -29,7 +29,6 @@
 	</parent>
 
 	<artifactId>de.fhg.fokus.xtensions.bench</artifactId>
-	<version>1.0</version>
 	<packaging>jar</packaging>
 
 	<name>JMH benchmark sample: Java</name>

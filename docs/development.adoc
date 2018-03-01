@@ -38,3 +38,19 @@ The Eclipse IDE will be installed and configured. It may need to restart one ore
 == External Contributions
 
 Please have a look at the link:../CONTRIBUTING.adoc[contribution guide].
+
+== Performing a Release
+
+Releasing a new version of the Xtensions library is mostly automated. To trigger a 
+release, a new tag has to be created in the GitHub project. This tag *must* be a 
+valid sem-ver version number `major.minor.patch`.
+
+Here is a checklist of steps to perform (in this order):
+
+- [ ] Update the version of root `pom.xml` (keep the `-SNAPSHOT` suffix, it will be removed during the build)
+- [ ] Update the version of every bundle and feature project (see folders `bundles`, `features`, `tests`, `bundles-incubation`, and `tests-incubation`)
+- [ ] Adjust the `.travis/bintray-deploy.json` file declaring the new version
+- [ ] Update the `README.adoc` file
+- [ ] Create/push the tag of the new version number
+- [ ] Check if p2 deployment to bintray worked
+- [ ] Log into bintray to promote the release to maven central

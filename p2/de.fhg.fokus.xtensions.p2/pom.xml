@@ -14,7 +14,6 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.github.fraunhoferfokus.xtensions</groupId>
 	<artifactId>de.fhg.fokus.xtensions.p2</artifactId>
-	<version>1.0.0-SNAPSHOT</version>
 	<name>de.fhg.fokus.xtensions.p2</name>
 	<packaging>eclipse-repository</packaging>
 

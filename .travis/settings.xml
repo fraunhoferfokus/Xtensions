@@ -6,7 +6,7 @@
     <server>
       <id>bintray-boereck-xtensions-maven</id>
       <username>${env.BINTRAY_USERNAME}</username>
-      <password>${env.BINTRAY_PASSWORD}</password>
+      <password>${env.BINTRAY_API_KEY}</password>
     </server>
     <server>
       <id>bintray-snapshots-xtensions-maven</id>
