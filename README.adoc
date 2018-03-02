@@ -41,8 +41,47 @@ Note that the policy of using functional interfaces is the following:
 
 == Usage
 
-Currently only nightly builds are available via Maven. The release of version `1.0.0`
-is about to be released, but for now only snapshots are available.
+In the following, we will show how to add the Xtensions library to your build.
+
+=== Current Release
+
+If you are using Eclipse or a Maven Tycho build, you can use the p2 repository 
+`https://dl.bintray.com/boereck/xtensions-p2/Xtensions/1.0.0/`. 
+Here is the repository info you can add to your maven `pom.xml` file:
+
+[source,xml]
+----
+<repositories>
+	<repository>
+		<id>xtensions-p2</id>
+		<layout>p2</layout>
+		<url>https://dl.bintray.com/boereck/xtensions-p2/Xtensions/1.0.0/</url>
+	</repository>
+</repositories>
+----
+
+If you use a regular Maven build, simply add the following dependency. The library was added
+to maven central.
+
+[source,xml]
+----
+<dependencies>
+	<dependency>
+		<groupId>com.github.fraunhoferfokus.xtensions</groupId>
+		<artifactId>de.fhg.fokus.xtensions</artifactId>
+		<version>1.0.0</version>
+	</dependency>
+</dependencies>
+----
+
+If you are using gradle, add the following dependency:
+
+[source,gradle]
+----
+compile 'com.github.fraunhoferfokus.xtensions:de.fhg.fokus.xtensions:1.0.0'
+----
+
+=== Using Snapshot Releases
 
 Please add the following repository to your maven pom:
 
@@ -64,7 +103,7 @@ Then add the following dependency:
 	<dependency>
 		<groupId>com.github.fraunhoferfokus.xtensions</groupId>
 		<artifactId>de.fhg.fokus.xtensions</artifactId>
-		<version>1.0.0-SNAPSHOT</version>
+		<version>1.1.0-SNAPSHOT</version>
 	</dependency>
 </dependencies> 
 ---- 
@@ -89,7 +128,7 @@ compile 'com.github.fraunhoferfokus.xtensions:de.fhg.fokus.xtensions:1.0.0-SNAPS
 ----
 
 
-Currently there is no p2 update site, we hope to provide this shortly. +
+Currently there is no snapshot p2 update site, we hope to provide this shortly. +
 Please have a look at the link:./docs/development.adoc[Build] section if you want to build the library from source on your own.
 
 
@@ -133,5 +172,6 @@ The following tasks are the next goals for this project, roughly in this order:
 - [ ] Figure out how to best publish to Maven Central
 - [ ] Release version 1.0.0 and update this file
 - [ ] Add javadoc.io badge to this file
+- [ ] Provide snapshot p2 repository
 - [ ] Build GitBook in release build and push it to GitHub Pages
-- [ ] Create a CHANGES.adoc file
+- [ ] Create a CHANGELOG.adoc file

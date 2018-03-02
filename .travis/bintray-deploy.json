@@ -14,10 +14,10 @@
     },
 
     "version": {
-        "name": "1.0.0",
-        "desc": "1.0 Release",
+        "name": "1.1.0",
+        "desc": "1.1 Release",
         "released": "2018-03-01",
-        "vcs_tag": "1.0.0",
+        "vcs_tag": "1.1.0",
         "gpgSign": true
     },
 
@@ -26,10 +26,10 @@
          {"includePattern": "p2/de.fhg.fokus.xtensions.p2/target/repository/(.*)", "uploadPattern": "$1",
           "matrixParams": { "override": 1 }
          },
-         {"includePattern": "p2/de.fhg.fokus.xtensions.p2/target/repository/features/(.*)", "uploadPattern": "Xtensions/1.0.0/features/$1",
+         {"includePattern": "p2/de.fhg.fokus.xtensions.p2/target/repository/features/(.*)", "uploadPattern": "Xtensions/1.1.0/features/$1",
           "matrixParams": { "override": 1 }
          },
-         {"includePattern": "p2/de.fhg.fokus.xtensions.p2/target/repository/plugins/(.*)", "uploadPattern": "Xtensions/1.0.0/plugins/$1",
+         {"includePattern": "p2/de.fhg.fokus.xtensions.p2/target/repository/plugins/(.*)", "uploadPattern": "Xtensions/1.1.0/plugins/$1",
           "matrixParams": { "override": 1 }
          }
         ],

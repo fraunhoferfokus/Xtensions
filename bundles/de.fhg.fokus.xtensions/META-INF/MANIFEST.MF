@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Xtenders
 Bundle-SymbolicName: de.fhg.fokus.xtensions
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 1.1.0.qualifier
 Export-Package: de.fhg.fokus.xtensions.concurrent,
  de.fhg.fokus.xtensions.datetime,
  de.fhg.fokus.xtensions.function,

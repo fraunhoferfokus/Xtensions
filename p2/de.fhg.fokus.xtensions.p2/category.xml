@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site>
-   <feature url="features/de.fhg.fokus.xtensions.feature_1.0.0.qualifier.jar" id="de.fhg.fokus.xtensions.feature" version="1.0.0.qualifier">
+   <feature url="features/de.fhg.fokus.xtensions.feature_1.1.0.qualifier.jar" id="de.fhg.fokus.xtensions.feature" version="1.1.0.qualifier">
       <category name="de.fhg.fokus.xtensions.category"/>
    </feature>
-   <feature url="features/de.fhg.fokus.xtensions.feature.source_1.0.0.qualifier.jar" id="de.fhg.fokus.xtensions.feature.source" version="1.0.0.qualifier">
+   <feature url="features/de.fhg.fokus.xtensions.feature.source_1.1.0.qualifier.jar" id="de.fhg.fokus.xtensions.feature.source" version="1.1.0.qualifier">
       <category name="de.fhg.fokus.xtensions.source.category"/>
    </feature>
    <category-def name="de.fhg.fokus.xtensions.category" label="Xtensions"/>

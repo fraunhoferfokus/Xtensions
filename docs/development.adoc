@@ -17,7 +17,7 @@ This chapter gives an overview over how to get stated on development of the Xten
 The build is based on maven tycho, the wrapper script `mvnw` in the root directory of the repository takes care of the maven installation.
 On Linux and Mac you might need to call `chmod +x mvnw`.
 
-To build the libraries from source, simply drop into the root directory and call `mvnw clean package`.
+To build the libraries from source, simply drop into the root directory and call `./mvnw clean package`.
 The main library will be located in `bundles/de.fhg.fokus.xtensions/target`
 
 The p2 update site containing the library is located in directory `p2/de.fhg.fokus.xtensions.p2/target/repository`.
@@ -47,10 +47,10 @@ valid sem-ver version number `major.minor.patch`.
 
 Here is a checklist of steps to perform (in this order):
 
-[ ] Update the version of root `pom.xml` (keep the `-SNAPSHOT` suffix, it will be removed during the build)
-[ ] Update the version of every bundle and feature project (see folders `bundles`, `features`, `tests`, `bundles-incubation`, and `tests-incubation`)
-[ ] Adjust the `.travis/bintray-deploy.json` file declaring the new version
-[ ] Update the `README.adoc` file
-[ ] Create/push the tag of the new version number
-[ ] Check if p2 deployment to bintray worked
-[ ] Log into bintray to promote the release to maven central
+- [ ] Update the version of root `pom.xml` (keep the `-SNAPSHOT` suffix, it will be removed during the build)
+- [ ] Update the version of every bundle and feature project (see folders `bundles`, `features`, `tests`, `bundles-incubation`, and `tests-incubation`)
+- [ ] Adjust the `.travis/bintray-deploy.json` file declaring the new version
+- [ ] Update the `README.adoc` file
+- [ ] Create/push the tag of the new version number
+- [ ] Check if p2 deployment to bintray worked
+- [ ] Log into bintray to promote the release to maven central
