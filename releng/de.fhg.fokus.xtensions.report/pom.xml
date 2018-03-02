@@ -4,6 +4,7 @@
 	<parent>
 		<groupId>com.github.fraunhoferfokus.xtensions</groupId>
 		<artifactId>xtensions.master</artifactId>
+		<version>1.0.0-SNAPSHOT</version>
 		<relativePath>../../pom.xml</relativePath>
 	</parent>
 	<artifactId>de.fhg.fokus.xtensions.report</artifactId>
