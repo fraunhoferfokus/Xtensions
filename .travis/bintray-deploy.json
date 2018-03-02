@@ -23,7 +23,7 @@
 
     "files":
         [
-         {"includePattern": "p2/de.fhg.fokus.xtensions.p2/target/repository/(.*)", "uploadPattern": "/$1"}
+         {"includePattern": "p2/de.fhg.fokus.xtensions.p2/target/repository/(.*)", "uploadPattern": "/1.0.0/$1"}
         ],
     "publish": true
 }
