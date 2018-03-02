@@ -19,6 +19,7 @@ image:https://img.shields.io/badge/License-EPL%202.0-blue.svg["License : EPL v2.
 image:https://travis-ci.org/fraunhoferfokus/Xtensions.svg?branch=master["Build Status", link="https://travis-ci.org/fraunhoferfokus/Xtensions"] 
 image:https://codecov.io/gh/fraunhoferfokus/Xtensions/branch/master/graph/badge.svg["Code Coverage", link="https://codecov.io/gh/fraunhoferfokus/Xtensions"]
 //image:https://coveralls.io/repos/github/fraunhoferfokus/Xtensions/badge.svg?branch=master["Code Coverage", link="https://coveralls.io/github/fraunhoferfokus/Xtensions?branch=master"]
+image:https://javadoc.io/badge/com.github.fraunhoferfokus.xtensions/de.fhg.fokus.xtensions.svg["Javadocs", link="https://javadoc.io/doc/com.github.fraunhoferfokus.xtensions/de.fhg.fokus.xtensions"]
 
 
 
@@ -171,7 +172,7 @@ The following tasks are the next goals for this project, roughly in this order:
  * [x] p2 repository to Bintray
 - [x] Figure out how to best publish to Maven Central
 - [x] Release version 1.0.0 and update this file
-- [ ] Add javadoc.io badge to this file
+- [x] Add javadoc.io badge to this file
 - [ ] Provide snapshot p2 repository
 - [ ] Build GitBook in release build and push it to GitHub Pages
 - [ ] Create a CHANGELOG.adoc file
