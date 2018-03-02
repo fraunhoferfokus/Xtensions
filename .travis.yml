@@ -22,9 +22,9 @@ jobs:
     install: true
   - stage: release
     script: 
-    - ./mvnw versions:set -DremoveSnapshot
-    - ./mvnw --projects bundles/de.fhg.fokus.xtensions org.eclipse.tycho:tycho-versions-plugin:set-version -DnewVersion=$TRAVIS_TAG
-    - ./mvnw clean deploy -DskipTests --settings .travis/settings.xml
+    - ./mvnw versions:set -DremoveSnapshot -Drelease
+    - ./mvnw --projects bundles/de.fhg.fokus.xtensions org.eclipse.tycho:tycho-versions-plugin:set-version -DnewVersion=$TRAVIS_TAG -Drelease
+    - ./mvnw clean deploy -DskipTests -Drelease --settings .travis/settings.xml
     install: true
     deploy:
       provider: bintray
