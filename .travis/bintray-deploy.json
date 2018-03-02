@@ -23,7 +23,13 @@
 
     "files":
         [
-         {"includePattern": "p2/de.fhg.fokus.xtensions.p2/target/repository/(.*)", "uploadPattern": "Xtensions/1.0.0/$1",
+         {"includePattern": "p2/de.fhg.fokus.xtensions.p2/target/(.*)", "uploadPattern": "$1",
+          "matrixParams": { "override": 1 }
+         },
+         {"includePattern": "p2/de.fhg.fokus.xtensions.p2/target/features/(.*)", "uploadPattern": "features/$1",
+          "matrixParams": { "override": 1 }
+         },
+         {"includePattern": "p2/de.fhg.fokus.xtensions.p2/target/plugins/(.*)", "uploadPattern": "plugins/$1",
           "matrixParams": { "override": 1 }
          }
         ],
