@@ -23,7 +23,9 @@
 
     "files":
         [
-         {"includePattern": "p2/de.fhg.fokus.xtensions.p2/target/repository/(.*)", "uploadPattern": "Xtensions/1.0.0/$1"}
+         {"includePattern": "p2/de.fhg.fokus.xtensions.p2/target/repository/(.*)", "uploadPattern": "Xtensions/1.0.0/$1",
+          "matrixParams": { "override": 1 }
+         }
         ],
     "publish": true
 }
