@@ -81,7 +81,11 @@
 		<profile>
 			<!-- This profile is always active, and only de-activated if property "release" is set -->
 			<id>nonRelease</id>
-			<activation>!release</activation>
+			<activation>
+				<property>
+					<name>!release</name>
+				</property>
+			</activation>
 			<modules>
 				<module>tests</module>
 				<module>tests/de.fhg.fokus.xtensions.tests</module>
