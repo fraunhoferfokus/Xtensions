@@ -10,8 +10,9 @@
 	    Max Bureck (Fraunhofer FOKUS) - initial config
 	    
 	    
-	Enable profile "coverage-report" to push Jacoco coverage report to coveralls.io
-	On release pass property "release", e.g. passing parameter "-Drelease"
+	* Enable profile "coverage-report" to push Jacoco coverage report to coveralls.io
+	* To build incubation bundles, enable profile "incubation"
+	* On release pass property "release", e.g. passing parameter "-Drelease"
  -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
@@ -70,7 +71,6 @@
 		<module>bundles/de.fhg.fokus.xtensions</module>
 		<module>features/de.fhg.fokus.xtensions.feature</module>
 		<module>p2/de.fhg.fokus.xtensions.p2</module>
-		<module>releng/de.fhg.fokus.xtensions.report</module>
 		<!-- bundles need to be in build to be deployed as maven project, so POM hierarchy is in deployed repo --> 
 		<module>bundles</module>
 		<!-- The following modules are only listed to allow easy version adjustment from this master -->
@@ -105,6 +105,10 @@
 		
 		<profile>
 			<id>coverage-report</id>
+			
+			<modules>
+				<module>releng/de.fhg.fokus.xtensions.report</module>
+			</modules>
 			
 			<build>
 				<plugins>
