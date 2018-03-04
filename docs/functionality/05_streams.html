@@ -1,0 +1,781 @@
+
+<!DOCTYPE HTML>
+<html lang="" >
+    <head>
+        <meta charset="UTF-8">
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <title>Extensions to Streams · GitBook</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="description" content="">
+        <meta name="generator" content="GitBook 3.2.3">
+        
+        
+        
+    
+    <link rel="stylesheet" href="../../gitbook/style.css">
+
+    
+            
+                
+                <link rel="stylesheet" href="../../gitbook/gitbook-plugin-highlight/website.css">
+                
+            
+                
+                <link rel="stylesheet" href="../../gitbook/gitbook-plugin-search/search.css">
+                
+            
+                
+                <link rel="stylesheet" href="../../gitbook/gitbook-plugin-fontsettings/website.css">
+                
+            
+        
+
+    
+
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+
+        
+    
+    
+    <meta name="HandheldFriendly" content="true"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link rel="apple-touch-icon-precomposed" sizes="152x152" href="../../gitbook/images/apple-touch-icon-precomposed-152.png">
+    <link rel="shortcut icon" href="../../gitbook/images/favicon.ico" type="image/x-icon">
+
+    
+    <link rel="next" href="06_iterable.html" />
+    
+    
+    <link rel="prev" href="04_primitive_arrays.html" />
+    
+
+    </head>
+    <body>
+        
+<div class="book">
+    <div class="book-summary">
+        
+            
+<div id="book-search-input" role="search">
+    <input type="text" placeholder="Type to search" />
+</div>
+
+            
+                <nav role="navigation">
+                
+
+
+<ul class="summary">
+    
+    
+
+    
+
+    
+        
+        
+    
+        <li class="chapter " data-level="1.1" data-path="../../SUMMARY.html">
+            
+                <a href="../../SUMMARY.html">
+            
+                    
+                    Content
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2" data-path="../../">
+            
+                <a href="../../">
+            
+                    
+                    Introduction
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3" data-path="../provided_functionality.html">
+            
+                <a href="../provided_functionality.html">
+            
+                    
+                    Provided Functionality
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.3.1" data-path="01_optionals.html">
+            
+                <a href="01_optionals.html">
+            
+                    
+                    Extensions to Optionals
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.2" data-path="02_ranges.html">
+            
+                <a href="02_ranges.html">
+            
+                    
+                    Extensions to Ranges
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.3" data-path="03_pair.html">
+            
+                <a href="03_pair.html">
+            
+                    
+                    Extensions to Pair
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.4" data-path="04_primitive_arrays.html">
+            
+                <a href="04_primitive_arrays.html">
+            
+                    
+                    Extensions to Primitive Arrays
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter active" data-level="1.3.5" data-path="05_streams.html">
+            
+                <a href="05_streams.html">
+            
+                    
+                    Extensions to Streams
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.6" data-path="06_iterable.html">
+            
+                <a href="06_iterable.html">
+            
+                    
+                    Extensions to Iterable
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.7" data-path="07_primitive_iterators.html">
+            
+                <a href="07_primitive_iterators.html">
+            
+                    
+                    Extensions to PrimitiveIterators
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.8" data-path="08_primitive_iterables.html">
+            
+                <a href="08_primitive_iterables.html">
+            
+                    
+                    Primitive Iterables
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.9" data-path="09_strings.html">
+            
+                <a href="09_strings.html">
+            
+                    
+                    Extensions to Strings
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.10" data-path="10_duration.html">
+            
+                <a href="10_duration.html">
+            
+                    
+                    Extensions to Duration
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.11" data-path="11_functions.html">
+            
+                <a href="11_functions.html">
+            
+                    
+                    Extensions to Functions
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.12" data-path="12_completable_future.html">
+            
+                <a href="12_completable_future.html">
+            
+                    
+                    Extensions to CompletableFuture
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.13" data-path="13_async_computations.html">
+            
+                <a href="13_async_computations.html">
+            
+                    
+                    Async Computations
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.14" data-path="14_scheduling_util.html">
+            
+                <a href="14_scheduling_util.html">
+            
+                    
+                    Scheduling Util
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4" data-path="../development.html">
+            
+                <a href="../development.html">
+            
+                    
+                    Development on Xtensions
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.4.1" data-path="../../CONTRIBUTING.html">
+            
+                <a href="../../CONTRIBUTING.html">
+            
+                    
+                    Contributing
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.2" data-path="../../CODE_OF_CONDUCT.html">
+            
+                <a href="../../CODE_OF_CONDUCT.html">
+            
+                    
+                    Code of Conduct
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+    
+        
+        <li class="header">Appendix</li>
+        
+        
+    
+        <li class="chapter " data-level="2.1" data-path="XX_provided_functionality_one_page.html">
+            
+                <a href="XX_provided_functionality_one_page.html">
+            
+                    
+                    Provided Functionality (as Single Page)
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+
+    <li class="divider"></li>
+
+    <li>
+        <a href="https://www.gitbook.com" target="blank" class="gitbook-link">
+            Published with GitBook
+        </a>
+    </li>
+</ul>
+
+
+                </nav>
+            
+        
+    </div>
+
+    <div class="book-body">
+        
+            <div class="body-inner">
+                
+                    
+
+<div class="book-header" role="navigation">
+    
+
+    <!-- Title -->
+    <h1>
+        <i class="fa fa-circle-o-notch fa-spin"></i>
+        <a href="../.." >Extensions to Streams</a>
+    </h1>
+</div>
+
+
+
+
+                    <div class="page-wrapper" tabindex="-1" role="main">
+                        <div class="page-inner">
+                            
+<div id="book-search-results">
+    <div class="search-noresults">
+    
+                                <section class="normal markdown-section">
+                                
+                                <div class="sect1">
+<h2 id="_extensions_to_streams">Extensions to Streams</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The class <code>de.fhg.fokus.xtensions.stream.StreamExtensions</code> provides extension
+methods to the <code>java.util.stream.Stream</code> interface.</p>
+</div>
+<div class="paragraph">
+<p>Java 8 streams are missing a few methods known from the Xtend iterable extension methods.
+The one method that is probably most often used is the method to filter by type. This can easily
+be retrofitted on the Streams API by an extension method. This extension method is provided
+in the <code>StreamExtensions</code> class.</p>
+</div>
+<div class="paragraph">
+<p>Example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-xtend" data-lang="xtend">import java.util.stream.Stream
+import static extension de.fhg.fokus.xtensions.stream.StreamExtensions.*
+// ...
+val s = Stream.of(42, &quot;Hello&quot;, Double.NaN, &quot;World&quot;)
+	.filter(String)
+	.collect(Collectors.joining(&quot; &quot;))</code></pre>
+</div>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Tip</div>
+</td>
+<td class="content">
+Since joining Strings is a common operation, the <code>StringStreamExtensions</code> allow to call <code>join</code>
+directly on the Stream. Have a look at [Extensions to Streams of Strings].
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Some other collectors, especially the ones bridging to the collections API are also used very often,
+but using the collect method with the methods from the <code>Collectors</code> class is a bit verbose.<br>
+As a shortcut the <code>StreamExtensions</code> class provides <code>toList</code>, <code>toSet</code>, and <code>toCollection</code>
+extension methods to the <code>Stream</code> class.</p>
+</div>
+<div class="paragraph">
+<p>Example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-xtend" data-lang="xtend">import java.util.stream.Stream
+import static extension de.fhg.fokus.xtensions.stream.StreamExtensions.*
+// ...
+val list = Stream.of(&quot;Foo&quot;, &quot;Hello&quot; , &quot;Boo&quot;, &quot;World&quot;)
+	.filter[!contains(&quot;oo&quot;)]
+	.map[toUpperCase]
+	.toList</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>A useful extension method from Xtend on <code>java.lang.Iterable</code> is the <code>filterNull</code> method, which
+produces a view for an iterable excluding the <code>null</code> elements. An equivalent is not provided on the
+<code>Stream</code> interface. This library provides such an extension method on stream.</p>
+</div>
+<div class="paragraph">
+<p>Example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-xtend" data-lang="xtend">import java.util.stream.Stream
+import static extension de.fhg.fokus.xtensions.stream.StreamExtensions.*
+// ...
+Stream.of(42.0, null, &quot;foo&quot;, 100_000_000_000bi)
+	.filterNull
+	.forEach [
+		// it is guaranteed to be != null
+		println(it.toString.toUpperCase)
+	]</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>As a shortcut for the
+<a href="http://docs.oracle.com/javase/8/docs/api/java/util/stream/Stream.html#concat-java.util.stream.Stream-java.util.stream.Stream-" target="_blank">concat</a>
+method the <code>StreamExtensions</code> class provides a <code>+</code> operator.</p>
+</div>
+<div class="paragraph">
+<p>The <code>flatMap</code> method on <code>Stream</code> expects a function mapping to another stream. Oftentimes data structures
+do not provide streams, but <code>Collection</code> or <code>Iterable</code> types, so the user has to create a stream based on
+them. This usually leads to some visual noise. This library provides a <code>flatMap</code> extension method which allows to
+be called with a function providing an iterable, since it is known how to construct a stream from an iterable.</p>
+</div>
+<div class="paragraph">
+<p>Example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-xtend" data-lang="xtend">import org.eclipse.xtend.lib.annotations.Accessors
+import org.eclipse.xtend.lib.annotations.FinalFieldsConstructor
+import java.util.stream.Stream
+import java.util.function.Function
+import static java.util.stream.Collectors.*
+import static extension de.fhg.fokus.xtensions.stream.StreamExtensions.*
+// ...
+val stream = Stream.of(
+	new Developer(&quot;Max&quot;, #{&quot;Java&quot;, &quot;Xtend&quot;, &quot;Rust&quot;, &quot;C++&quot;}),
+	new Developer(&quot;Joe&quot;, #{&quot;Xtend&quot;, &quot;JavaScript&quot;, &quot;Dart&quot;})
+);
+
+// Mapping language name to number of occurrences
+val Map&lt;String, Long&gt; langPopularity = stream
+	.flatMap[languages] (1)
+	.collect(groupingBy(Function.identity, counting))
+
+langPopularity.entrySet
+	.stream
+	.max(Map.Entry.comparingByValue)
+	.ifPresent [
+		println(&apos;&apos;&apos;Most pobular language: &#xAB;it.key&#xBB;, count: &#xAB;it.value&#xBB;&apos;&apos;&apos;)
+	]
+
+// ...
+
+@FinalFieldsConstructor
+@Accessors
+static class Developer {
+	val String name
+	val Set&lt;String&gt; languages;
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<ol>
+<li>
+<p>Here <code>languages</code> can be returned directly instead of <code>languages.stream</code></p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>Sometimes it is interesting to produce the cartesian product of two containers of elements. To produce
+all combinations of the elements of a stream with the elements of an <code>Iterable</code> (or a different source
+of a stream) this library provides the <code>combinations</code> extension methods. If no merging function is
+provided, the <code>combinations</code> extension methods will create a <code>org.eclipse.xtext.xbase.lib.Pair</code>
+object for each combination. If a merging function is provided, the resulting stream will hold the result
+of the merge of each combination.</p>
+</div>
+<div class="paragraph">
+<p>Example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-xtend" data-lang="xtend">import java.util.stream.Stream
+import static extension de.fhg.fokus.xtensions.stream.StreamExtensions.*
+// ...
+Stream.of(&quot;foo&quot;, &quot;bar&quot;)
+	.combinations(#[&quot;fun&quot;, &quot;boo&quot;, &quot;faz&quot;])[a,b|a+b]
+	.forEach[
+		println(it)
+	]</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Java 9 provides a static factory methods for an infinite stream
+<a href="http://docs.oracle.com/javase/9/docs/api/java/util/stream/Stream.html#iterate-T-java.util.function.UnaryOperator-" target="_blank">Stream.iterate(T,UnaryOperator&lt;T&gt;)</a>. A function with the same functionality is provided via <code>StreamExtensions</code>.
+There is even an overloaded version of the static method that can be written as if the method would exist in the Stream class:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-xtend" data-lang="xtend">// This is using Java 8
+import java.util.stream.Stream
+import static extension de.fhg.fokus.xtensions.stream.StreamExtensions.*
+// ...
+Stream.iterate(&quot;na &quot;)[it + it]
+	.filter[length &gt; 15]
+	.findFirst
+	.ifPresent [
+		println(it + &quot;Batman!&quot;)
+	]</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This method can be handy traversing a nested data structure of same-type elements (e.g. moving up a containment hierarchy).</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_extensions_to_streams_of_strings">Extensions to Streams of Strings</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Since Xtend can provide extension methods specifically for specializations of generic types,
+it is possible to provide methods only available for <code>java.util.stream.Stream&lt;String&gt;</code>.
+The class <code>de.fhg.fokus.xtensions.stream.StringStreamExtensions</code> provides such extension methods.</p>
+</div>
+<div class="paragraph">
+<p>The most used collectors on streams of strings are the joining collectors from <code>java.util.stream.Collectors</code>.
+To make these easy to use <code>join</code> methods have been introduced as extension methods to <code>Stream&lt;String&gt;</code>.</p>
+</div>
+<div class="paragraph">
+<p>Example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-xtend" data-lang="xtend">import java.util.stream.Stream
+import static extension de.fhg.fokus.xtensions.stream.StringStreamExtensions.*
+// ...
+val joined = Stream.of(&quot;Hello&quot;, &quot;Xtend&quot;, &quot;aficionados&quot;).join(&quot; &quot;)
+println(joined)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Another operation often performed on streams of strings is filtering it based on a regular expression.
+This is provided via the extension method <code>matching</code>. The pattern can either be passed in as string
+or as a pre-compiled <code>java.util.regex.Pattern</code></p>
+</div>
+<div class="paragraph">
+<p>Example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-xtend" data-lang="xtend">import java.util.stream.Stream
+import static extension de.fhg.fokus.xtensions.stream.StringStreamExtensions.*
+// ...
+Stream.of(&quot;foo&quot;, &quot;bar&quot;, &quot;kazoo&quot;, &quot;baz&quot;, &quot;oomph&quot;, &quot;shoot&quot;)
+	.matching(&quot;.+oo.*&quot;)
+	.forEach [
+		println(it)
+	]</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>When splitting strings provided as a stream it is handy to get an operation providing a single
+stream of the result of splitting all elements, which also works as lazy as possible. A use case
+would be to to use <a href="http://docs.oracle.com/javase/8/docs/api/java/nio/file/Files.html#lines-java.nio.file.Path-" target="_blank">Files.lines(Path)</a>
+and then split the resulting lines of this operation.</p>
+</div>
+<div class="paragraph">
+<p>Example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-xtend" data-lang="xtend">import java.util.stream.Stream
+import static extension de.fhg.fokus.xtensions.stream.StringStreamExtensions.*
+// ...
+Stream.of(&quot;Hello users&quot;, &quot;welcome to this demo&quot;, &quot;hope it helps&quot;)
+	.flatSplit(&quot;\\s+&quot;)
+	.forEach [
+		println(it)
+	]</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Sometimes it is also wanted to find all matches of a regular expressions in a stream of strings and
+produce a single stream of all the matches in all strings. This can be done using the <code>flatMatches</code>
+extension method. The pattern of the regular expression can either be provided as a string or as a
+pre-compiled <code>java.util.regex.Pattern</code> object.</p>
+</div>
+<div class="paragraph">
+<p>Example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-xtend" data-lang="xtend">import java.util.regex.Pattern
+import java.util.stream.Stream
+import static extension de.fhg.fokus.xtensions.stream.StringStreamExtensions.*
+// ...
+val Pattern pattern = Pattern.compile(&quot;(\\woo)&quot;)
+Stream.of(&quot;Welcome to the zoo&quot;, &quot;Where cows do moo&quot;, &quot;And all animals poo&quot;)
+	.flatMatches(pattern)
+	.forEach [
+		println(it)
+	]</code></pre>
+</div>
+</div>
+</div>
+</div>
+                                
+                                </section>
+                            
+    </div>
+    <div class="search-results">
+        <div class="has-results">
+            
+            <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+            <ul class="search-results-list"></ul>
+            
+        </div>
+        <div class="no-results">
+            
+            <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+            
+        </div>
+    </div>
+</div>
+
+                        </div>
+                    </div>
+                
+            </div>
+
+            
+                
+                <a href="04_primitive_arrays.html" class="navigation navigation-prev " aria-label="Previous page: Extensions to Primitive Arrays">
+                    <i class="fa fa-angle-left"></i>
+                </a>
+                
+                
+                <a href="06_iterable.html" class="navigation navigation-next " aria-label="Next page: Extensions to Iterable">
+                    <i class="fa fa-angle-right"></i>
+                </a>
+                
+            
+        
+    </div>
+
+    <script>
+        var gitbook = gitbook || [];
+        gitbook.push(function() {
+            gitbook.page.hasChanged({"page":{"title":"Extensions to Streams","level":"1.3.5","depth":2,"next":{"title":"Extensions to Iterable","level":"1.3.6","depth":2,"path":"docs/functionality/06_iterable.adoc","ref":"./docs/functionality/06_iterable.adoc","articles":[]},"previous":{"title":"Extensions to Primitive Arrays","level":"1.3.4","depth":2,"path":"docs/functionality/04_primitive_arrays.adoc","ref":"./docs/functionality/04_primitive_arrays.adoc","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["asciidoc-include@0.1.9"],"pluginsConfig":{"asciidoc-include":{"syntax":"gitbook"},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"docs/functionality/05_streams.adoc","mtime":"2018-03-04T20:32:53.584Z","type":"asciidoc"},"gitbook":{"version":"3.2.3","time":"2018-03-04T20:34:33.136Z"},"basePath":"../..","book":{"language":""}});
+        });
+    </script>
+</div>
+
+        
+    <script src="../../gitbook/gitbook.js"></script>
+    <script src="../../gitbook/theme.js"></script>
+    
+        
+        <script src="../../gitbook/gitbook-plugin-search/search-engine.js"></script>
+        
+    
+        
+        <script src="../../gitbook/gitbook-plugin-search/search.js"></script>
+        
+    
+        
+        <script src="../../gitbook/gitbook-plugin-lunr/lunr.min.js"></script>
+        
+    
+        
+        <script src="../../gitbook/gitbook-plugin-lunr/search-lunr.js"></script>
+        
+    
+        
+        <script src="../../gitbook/gitbook-plugin-sharing/buttons.js"></script>
+        
+    
+        
+        <script src="../../gitbook/gitbook-plugin-fontsettings/fontsettings.js"></script>
+        
+    
+
+    </body>
+</html>
+

@@ -1,0 +1,720 @@
+
+<!DOCTYPE HTML>
+<html lang="" >
+    <head>
+        <meta charset="UTF-8">
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <title>Extensions to Optionals · GitBook</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="description" content="">
+        <meta name="generator" content="GitBook 3.2.3">
+        
+        
+        
+    
+    <link rel="stylesheet" href="../../gitbook/style.css">
+
+    
+            
+                
+                <link rel="stylesheet" href="../../gitbook/gitbook-plugin-highlight/website.css">
+                
+            
+                
+                <link rel="stylesheet" href="../../gitbook/gitbook-plugin-search/search.css">
+                
+            
+                
+                <link rel="stylesheet" href="../../gitbook/gitbook-plugin-fontsettings/website.css">
+                
+            
+        
+
+    
+
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+
+        
+    
+    
+    <meta name="HandheldFriendly" content="true"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link rel="apple-touch-icon-precomposed" sizes="152x152" href="../../gitbook/images/apple-touch-icon-precomposed-152.png">
+    <link rel="shortcut icon" href="../../gitbook/images/favicon.ico" type="image/x-icon">
+
+    
+    <link rel="next" href="02_ranges.html" />
+    
+    
+    <link rel="prev" href="../provided_functionality.html" />
+    
+
+    </head>
+    <body>
+        
+<div class="book">
+    <div class="book-summary">
+        
+            
+<div id="book-search-input" role="search">
+    <input type="text" placeholder="Type to search" />
+</div>
+
+            
+                <nav role="navigation">
+                
+
+
+<ul class="summary">
+    
+    
+
+    
+
+    
+        
+        
+    
+        <li class="chapter " data-level="1.1" data-path="../../SUMMARY.html">
+            
+                <a href="../../SUMMARY.html">
+            
+                    
+                    Content
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2" data-path="../../">
+            
+                <a href="../../">
+            
+                    
+                    Introduction
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3" data-path="../provided_functionality.html">
+            
+                <a href="../provided_functionality.html">
+            
+                    
+                    Provided Functionality
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter active" data-level="1.3.1" data-path="01_optionals.html">
+            
+                <a href="01_optionals.html">
+            
+                    
+                    Extensions to Optionals
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.2" data-path="02_ranges.html">
+            
+                <a href="02_ranges.html">
+            
+                    
+                    Extensions to Ranges
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.3" data-path="03_pair.html">
+            
+                <a href="03_pair.html">
+            
+                    
+                    Extensions to Pair
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.4" data-path="04_primitive_arrays.html">
+            
+                <a href="04_primitive_arrays.html">
+            
+                    
+                    Extensions to Primitive Arrays
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.5" data-path="05_streams.html">
+            
+                <a href="05_streams.html">
+            
+                    
+                    Extensions to Streams
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.6" data-path="06_iterable.html">
+            
+                <a href="06_iterable.html">
+            
+                    
+                    Extensions to Iterable
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.7" data-path="07_primitive_iterators.html">
+            
+                <a href="07_primitive_iterators.html">
+            
+                    
+                    Extensions to PrimitiveIterators
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.8" data-path="08_primitive_iterables.html">
+            
+                <a href="08_primitive_iterables.html">
+            
+                    
+                    Primitive Iterables
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.9" data-path="09_strings.html">
+            
+                <a href="09_strings.html">
+            
+                    
+                    Extensions to Strings
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.10" data-path="10_duration.html">
+            
+                <a href="10_duration.html">
+            
+                    
+                    Extensions to Duration
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.11" data-path="11_functions.html">
+            
+                <a href="11_functions.html">
+            
+                    
+                    Extensions to Functions
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.12" data-path="12_completable_future.html">
+            
+                <a href="12_completable_future.html">
+            
+                    
+                    Extensions to CompletableFuture
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.13" data-path="13_async_computations.html">
+            
+                <a href="13_async_computations.html">
+            
+                    
+                    Async Computations
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.14" data-path="14_scheduling_util.html">
+            
+                <a href="14_scheduling_util.html">
+            
+                    
+                    Scheduling Util
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4" data-path="../development.html">
+            
+                <a href="../development.html">
+            
+                    
+                    Development on Xtensions
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.4.1" data-path="../../CONTRIBUTING.html">
+            
+                <a href="../../CONTRIBUTING.html">
+            
+                    
+                    Contributing
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.2" data-path="../../CODE_OF_CONDUCT.html">
+            
+                <a href="../../CODE_OF_CONDUCT.html">
+            
+                    
+                    Code of Conduct
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+    
+        
+        <li class="header">Appendix</li>
+        
+        
+    
+        <li class="chapter " data-level="2.1" data-path="XX_provided_functionality_one_page.html">
+            
+                <a href="XX_provided_functionality_one_page.html">
+            
+                    
+                    Provided Functionality (as Single Page)
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+
+    <li class="divider"></li>
+
+    <li>
+        <a href="https://www.gitbook.com" target="blank" class="gitbook-link">
+            Published with GitBook
+        </a>
+    </li>
+</ul>
+
+
+                </nav>
+            
+        
+    </div>
+
+    <div class="book-body">
+        
+            <div class="body-inner">
+                
+                    
+
+<div class="book-header" role="navigation">
+    
+
+    <!-- Title -->
+    <h1>
+        <i class="fa fa-circle-o-notch fa-spin"></i>
+        <a href="../.." >Extensions to Optionals</a>
+    </h1>
+</div>
+
+
+
+
+                    <div class="page-wrapper" tabindex="-1" role="main">
+                        <div class="page-inner">
+                            
+<div id="book-search-results">
+    <div class="search-noresults">
+    
+                                <section class="normal markdown-section">
+                                
+                                <div class="sect1">
+<h2 id="_extensions_to_optional">Extensions to Optional</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The static factory Methods for creating <code>Optional</code> instances are not really meant to be used as
+statically imported methods. They have no meaningful names to be used this way. They also differ from
+the commonly used names <code>some</code>, <code>none</code> and <code>maybe</code> which are used in many other languages.<br>
+The class <code>OptionalIntExtensions</code> provides static factory methods with these common names
+which are implemented to be inlined to the factory methods used by the JDK.</p>
+</div>
+<div class="paragraph">
+<p>Examples:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-xtend" data-lang="xtend">import java.util.Optional
+import static extension de.fhg.fokus.xtensions.optional.OptionalIntExtensions.*
+// ...
+val Optional&lt;String&gt; no = none
+val Optional&lt;String&gt; yes = some(&quot;yesss!&quot;)
+val Optional&lt;String&gt; dunno = maybe(possiblyNull())
+// ...
+private def String possiblyNull() {
+	if(System.currentTimeMillis % 2 == 0) {
+		&quot;I&apos;m in ur optional&quot;
+	} else {
+		null
+	}
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The optional class does not provide a <code>filter</code> method, that filters the optional based on the class
+the wrapped object is instance of, as known e.g. from Xtend&#x2019;s filter methods on <code>Iterable</code>.
+The <code>OptionalIntExtensions</code> adds such a method, providing an instance check of the wrapped value.</p>
+</div>
+<div class="paragraph">
+<p>Example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-xtend" data-lang="xtend">import java.util.Optional
+import static extension de.fhg.fokus.xtensions.optional.OptionalIntExtensions.*
+// ...
+val Optional&lt;Object&gt; optObj = some(&quot;Hi there!&quot;)
+val Optional&lt;String&gt; optStr = optObj.filter(String)
+optStr.ifPresent [
+	println(it.toUpperCase)
+]</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>When testing an <code>Optional</code> for a value or otherwise perform a different operation
+the optional has to be used twice e.g.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-xtend" data-lang="xtend">import java.util.Optional
+// ...
+val noVal = Optional.empty
+if(noVal.isPresent) {
+	val value = noVal.get
+	println(&quot;Here is your value: &quot;+ value)
+} else {
+	println(&quot;Awww, no value&quot;)
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This can be error prone, since the optional (in the example <code>noVal</code>) has to be
+used twice and a different optional may be used accidently. To not run into this
+issue this library provides the <code>whenPresent</code> method which allows defining an
+else branch on the returned object.</p>
+</div>
+<div class="paragraph">
+<p>Example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-xtend" data-lang="xtend">import java.util.Optional
+import static extension de.fhg.fokus.xtensions.optional.OptionalIntExtensions.*
+// ...
+val noVal = Optional.empty
+noVal.whenPresent [
+	val value = noVal.get
+	println(&quot;Here is your value: &quot;+ value)
+].elseDo [
+	println(&quot;Awww, no value&quot;)
+]</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Alternatively, the <code>ifPresentOrElse</code> extension method can be used, but this does not
+have a clear visual separation which case is the if and which the else callback.</p>
+</div>
+<div class="paragraph">
+<p>To avoid allocating objects over and over for the lambda passed to the
+<code>elseDo</code> method, there are overloaded versions of the method passing on
+additional parameters to the lambda. This can avoid &quot;capturing&quot; lambdas
+which would create a new object on every <code>elseDo</code> call.</p>
+</div>
+<div class="paragraph">
+<p>Example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-xtend" data-lang="xtend">import java.util.Optional
+import static extension de.fhg.fokus.xtensions.optional.OptionalIntExtensions.*
+// ...
+val captureMe = &quot;no value&quot;
+val noVal = Optional.empty
+noVal.whenPresent [
+	val value = noVal.get
+	println(&quot;Here is your value: &quot;+ value)
+].elseDo(captureMe) [
+	println(&quot;Awww, &quot; + it)
+]</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>To bridge between APIs providing an <code>Optional</code> value and ones that expect
+multiple values, the extension methods <code>asIterable</code>, <code>toList</code> and <code>toSet</code>
+are provided to create immutable implementations of common JVM collection APIs.</p>
+</div>
+<div class="paragraph">
+<p>The <code>Optional</code> class has a <code>map</code> method that can map the value present in the optional
+to a value of another type. Unfortunately there is no method to map to a primitive type
+returning a primitive optional, such as <code>OptionalInt</code>. The extension methods <code>mapInt</code>,
+<code>mapLong</code>, and <code>mapDouble</code> allow mapping to primitive options without having to
+box the resulting value.</p>
+</div>
+<div class="paragraph">
+<p>Example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-xtend" data-lang="xtend">import java.util.Optional
+import static extension de.fhg.fokus.xtensions.optional.OptionalIntExtensions.*
+// ...
+val Optional&lt;String&gt; yes = some(&quot;yesss!&quot;)
+val OptionalInt lenOpt = yes.mapInt[length]
+val len = lenOpt.orElse(0)
+println(&quot;Length is &quot; + len)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Some methods on Optional introduced in Java 9 are available as retrofitted extension methods.
+When compiling a class using the extension method targeting Java 9, the native Optional method has precedence and will be used.
+No changes in the source code has to be done to switch to the native Java 9 implementation.
+The following instance methods of Optional are backported for Java 8:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="http://docs.oracle.com/javase/9/docs/api/java/util/Optional.html#or-java.util.function.Supplier-" target="_blank">Optional&lt;T&gt; or&#x200B;(Supplier&lt;? extends Optional&lt;? extends T&gt;&gt; supplier)</a></p>
+</li>
+<li>
+<p><a href="http://docs.oracle.com/javase/9/docs/api/java/util/Optional.html#ifPresentOrElse-java.util.function.Consumer-java.lang.Runnable-" target="_blank">void ifPresentOrElse&#x200B;(Consumer&lt;? super T&gt; action, Runnable emptyAction)</a></p>
+</li>
+<li>
+<p><a href="http://docs.oracle.com/javase/9/docs/api/java/util/Optional.html#stream--" target="_blank">Stream&lt;T&gt; stream&#x200B;()</a>
+&#x200B;</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>As a shortcut for the <code>or</code> extension method, the <code>||</code> operator is provided. The <code>?:</code> operator is a shortcut for the <code>orElse</code> method on Optional.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_extensions_to_primitive_optionals">Extensions to Primitive Optionals</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Extensions to the primitive versions of Optional are provided by the following classes:</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>de.fhg.fokus.xtensions.optional.OptionalIntExtensions
+de.fhg.fokus.xtensions.optional.OptionalLongExtensions
+de.fhg.fokus.xtensions.optional.OptionalDoubleExtensions</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Same as for Optional, there is a <code>some</code> alias for the <code>OptionalInt.of</code>, <code>OptionalLong.of</code>, and <code>OptionalDouble.of</code>
+methods (see <a href="#_extensions_to_optional">Extensions to Optional</a>).<br>
+The methods <code>noInt</code>, <code>noLong</code>, and <code>noDouble</code> provide empty primitive Optionals.</p>
+</div>
+<div class="paragraph">
+<p>The Open JDK / Oracle JDK currently does not cache OptionalInt and OptionalLong instances in the static factory method
+<code>OptionalInt.of(int)</code> and <code>OptionalLong.of(long)</code> as it is currently done for Integer creation in
+<code>Integer.valueOf(int)</code>. To provide such a caching static factory methods, the
+<code>OptionalIntExtensions.someOf(int)</code> and <code>OptionalLongExtensions.someOf(long)</code> method were
+introduced.</p>
+</div>
+<div class="paragraph">
+<p>Example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-xtend" data-lang="xtend">import static de.fhg.fokus.xtensions.optional.OptionalIntExtensions.*
+// ...
+if(someOf(42) === someOf(42)) {
+	println(&quot;someOf caches instances&quot;)
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Stunningly, the primitive versions of Optional do not provide <code>map</code> and <code>filter</code> methods. These
+are provided as extension methods by this library.</p>
+</div>
+</div>
+</div>
+                                
+                                </section>
+                            
+    </div>
+    <div class="search-results">
+        <div class="has-results">
+            
+            <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+            <ul class="search-results-list"></ul>
+            
+        </div>
+        <div class="no-results">
+            
+            <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+            
+        </div>
+    </div>
+</div>
+
+                        </div>
+                    </div>
+                
+            </div>
+
+            
+                
+                <a href="../provided_functionality.html" class="navigation navigation-prev " aria-label="Previous page: Provided Functionality">
+                    <i class="fa fa-angle-left"></i>
+                </a>
+                
+                
+                <a href="02_ranges.html" class="navigation navigation-next " aria-label="Next page: Extensions to Ranges">
+                    <i class="fa fa-angle-right"></i>
+                </a>
+                
+            
+        
+    </div>
+
+    <script>
+        var gitbook = gitbook || [];
+        gitbook.push(function() {
+            gitbook.page.hasChanged({"page":{"title":"Extensions to Optionals","level":"1.3.1","depth":2,"next":{"title":"Extensions to Ranges","level":"1.3.2","depth":2,"path":"docs/functionality/02_ranges.adoc","ref":"./docs/functionality/02_ranges.adoc","articles":[]},"previous":{"title":"Provided Functionality","level":"1.3","depth":1,"path":"docs/provided_functionality.adoc","ref":"./docs/provided_functionality.adoc","articles":[{"title":"Extensions to Optionals","level":"1.3.1","depth":2,"path":"docs/functionality/01_optionals.adoc","ref":"./docs/functionality/01_optionals.adoc","articles":[]},{"title":"Extensions to Ranges","level":"1.3.2","depth":2,"path":"docs/functionality/02_ranges.adoc","ref":"./docs/functionality/02_ranges.adoc","articles":[]},{"title":"Extensions to Pair","level":"1.3.3","depth":2,"path":"docs/functionality/03_pair.adoc","ref":"./docs/functionality/03_pair.adoc","articles":[]},{"title":"Extensions to Primitive Arrays","level":"1.3.4","depth":2,"path":"docs/functionality/04_primitive_arrays.adoc","ref":"./docs/functionality/04_primitive_arrays.adoc","articles":[]},{"title":"Extensions to Streams","level":"1.3.5","depth":2,"path":"docs/functionality/05_streams.adoc","ref":"./docs/functionality/05_streams.adoc","articles":[]},{"title":"Extensions to Iterable","level":"1.3.6","depth":2,"path":"docs/functionality/06_iterable.adoc","ref":"./docs/functionality/06_iterable.adoc","articles":[]},{"title":"Extensions to PrimitiveIterators","level":"1.3.7","depth":2,"path":"docs/functionality/07_primitive_iterators.adoc","ref":"./docs/functionality/07_primitive_iterators.adoc","articles":[]},{"title":"Primitive Iterables","level":"1.3.8","depth":2,"path":"docs/functionality/08_primitive_iterables.adoc","ref":"./docs/functionality/08_primitive_iterables.adoc","articles":[]},{"title":"Extensions to Strings","level":"1.3.9","depth":2,"path":"docs/functionality/09_strings.adoc","ref":"./docs/functionality/09_strings.adoc","articles":[]},{"title":"Extensions to Duration","level":"1.3.10","depth":2,"path":"docs/functionality/10_duration.adoc","ref":"./docs/functionality/10_duration.adoc","articles":[]},{"title":"Extensions to Functions","level":"1.3.11","depth":2,"path":"docs/functionality/11_functions.adoc","ref":"./docs/functionality/11_functions.adoc","articles":[]},{"title":"Extensions to CompletableFuture","level":"1.3.12","depth":2,"path":"docs/functionality/12_completable_future.adoc","ref":"./docs/functionality/12_completable_future.adoc","articles":[]},{"title":"Async Computations","level":"1.3.13","depth":2,"path":"docs/functionality/13_async_computations.adoc","ref":"./docs/functionality/13_async_computations.adoc","articles":[]},{"title":"Scheduling Util","level":"1.3.14","depth":2,"path":"docs/functionality/14_scheduling_util.adoc","ref":"./docs/functionality/14_scheduling_util.adoc","articles":[]}]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["asciidoc-include@0.1.9"],"pluginsConfig":{"asciidoc-include":{"syntax":"gitbook"},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"docs/functionality/01_optionals.adoc","mtime":"2018-03-04T20:32:53.584Z","type":"asciidoc"},"gitbook":{"version":"3.2.3","time":"2018-03-04T20:34:33.136Z"},"basePath":"../..","book":{"language":""}});
+        });
+    </script>
+</div>
+
+        
+    <script src="../../gitbook/gitbook.js"></script>
+    <script src="../../gitbook/theme.js"></script>
+    
+        
+        <script src="../../gitbook/gitbook-plugin-search/search-engine.js"></script>
+        
+    
+        
+        <script src="../../gitbook/gitbook-plugin-search/search.js"></script>
+        
+    
+        
+        <script src="../../gitbook/gitbook-plugin-lunr/lunr.min.js"></script>
+        
+    
+        
+        <script src="../../gitbook/gitbook-plugin-lunr/search-lunr.js"></script>
+        
+    
+        
+        <script src="../../gitbook/gitbook-plugin-sharing/buttons.js"></script>
+        
+    
+        
+        <script src="../../gitbook/gitbook-plugin-fontsettings/fontsettings.js"></script>
+        
+    
+
+    </body>
+</html>
+

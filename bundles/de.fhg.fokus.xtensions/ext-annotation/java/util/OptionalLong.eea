@@ -1,0 +1,7 @@
+class java/util/OptionalLong
+empty
+ ()Ljava/util/OptionalLong;
+ ()L1java/util/OptionalLong;
+of
+ (J)Ljava/util/OptionalLong;
+ (J)L1java/util/OptionalLong;

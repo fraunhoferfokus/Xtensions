@@ -1,0 +1,37 @@
+{
+    "package": {
+        "name": "Xtensions",
+        "repo": "xtensions-p2",
+        "subject": "boereck",
+        "desc": "The Xtensions library provides utilities for Java 8 classes and more.",
+        "website_url": "https://github.com/fraunhoferfokus/Xtensions ",
+        "issue_tracker_url": "https://github.com/fraunhoferfokus/Xtensions/issues",
+        "vcs_url": "https://github.com/fraunhoferfokus/Xtensions.git",
+        "licenses": ["EPL-2.0"],
+        "labels": ["Xtend"],
+        "public_download_numbers": false,
+        "public_stats": false
+    },
+
+    "version": {
+        "name": "1.1.0",
+        "desc": "1.1 Release",
+        "released": "2018-03-01",
+        "vcs_tag": "1.1.0",
+        "gpgSign": true
+    },
+
+    "files":
+        [
+         {"includePattern": "p2/de.fhg.fokus.xtensions.p2/target/repository/(.*)", "uploadPattern": "$1",
+          "matrixParams": { "override": 1 }
+         },
+         {"includePattern": "p2/de.fhg.fokus.xtensions.p2/target/repository/features/(.*)", "uploadPattern": "Xtensions/1.1.0/features/$1",
+          "matrixParams": { "override": 1 }
+         },
+         {"includePattern": "p2/de.fhg.fokus.xtensions.p2/target/repository/plugins/(.*)", "uploadPattern": "Xtensions/1.1.0/plugins/$1",
+          "matrixParams": { "override": 1 }
+         }
+        ],
+    "publish": true
+}

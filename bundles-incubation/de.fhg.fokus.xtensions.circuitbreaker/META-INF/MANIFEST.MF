@@ -1,0 +1,12 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Xtensions Circuit Breaker
+Bundle-SymbolicName: de.fhg.fokus.xtensions.circuitbreaker
+Bundle-Version: 1.1.0.qualifier
+Bundle-Vendor: Fraunhofer FOKUS
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Require-Bundle: org.eclipse.xtext.xbase.lib,
+ org.eclipse.jdt.annotation;bundle-version="2.1.0";resolution:=optional,
+ org.eclipse.xtend.lib;bundle-version="2.10.0"
+Import-Package: de.fhg.fokus.xtensions.concurrent
+Export-Package: de.fhg.fokus.xtensions.concurrent.circuitbreaker
