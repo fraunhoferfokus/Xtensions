@@ -135,8 +135,8 @@ Please have a look at the link:./docs/development.adoc[Build] section if you wan
 
 == Functionality and APIs
 
-Most of the functionality provided by the library is described in a GitBook, based on the documentation files in this repository.
-The book is made available link:https://boereck.gitbooks.io/xtensions[here].
+Most of the functionality provided by the library is described in a GitBook, based on the documentation files in this repository. +
+The latest release of the book can be found link:https://fraunhoferfokus.github.io/Xtensions[here]. The current development version is available link:https://boereck.gitbooks.io/xtensions[here].
 
 An overview over the documentation files can be viewed directly on GitHub link:https://github.com/fraunhoferfokus/Xtensions/blob/master/SUMMARY.adoc[here]. 
 GitHub has better code highlighting for Xtend snippets, so you might prefer this.
@@ -174,5 +174,5 @@ The following tasks are the next goals for this project, roughly in this order:
 - [x] Release version 1.0.0 and update this file
 - [x] Add javadoc.io badge to this file
 - [ ] Provide snapshot p2 repository
-- [ ] Build GitBook in release build and push it to GitHub Pages
+- [x] Build GitBook in release build and push it to GitHub Pages
 - [ ] Create a CHANGELOG.adoc file
