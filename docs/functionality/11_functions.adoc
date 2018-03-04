@@ -101,9 +101,9 @@ LocalDate.now >>> yearAfter >>> [println(it)]
 
 When working with the Xtend extension methods on `Iterator` and `Iterable` sometimes 
 `(X)=>Boolean` types are needed, e.g. for the `exists` and `filter` combinator.
-Unfortunately the Xtend boolean functions do not have the combosition functions as the 
+Unfortunately the Xtend boolean functions do not have the composition functions as the 
 Java 8 `java.util.function.Predicate` interface. This library's `FunctionExtensions`
-class does provides the equivilant methods `and`, `or`, and `negate`.
+class does provides the equivalent methods `and`, `or`, and `negate`.
 
 [source,xtend]
 ----
