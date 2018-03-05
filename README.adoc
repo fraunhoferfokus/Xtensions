@@ -61,7 +61,7 @@ Here is the repository info you can add to your maven `pom.xml` file:
 </repositories>
 ----
 
-The zipped update site / p2 repository, can be downloaded link:https://dl.bintray.com/boereck/xtensions-p2/:de.fhg.fokus.xtensions.p2-1.0.0.201803050941.zip[here].
+The zipped update site / p2 repository, can be downloaded link:https://dl.bintray.com/boereck/xtensions-p2/de.fhg.fokus.xtensions.p2-1.0.0.201803050941.zip[here].
 
 If you use a regular Maven build, simply add the following dependency. The library was added
 to maven central.
