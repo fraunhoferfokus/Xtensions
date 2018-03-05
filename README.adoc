@@ -140,10 +140,10 @@ Please have a look at the link:./docs/development.adoc[Build] section if you wan
 Most of the functionality provided by the library is described in a GitBook, based on the documentation files in this repository. +
 The latest release of the book can be found link:https://fraunhoferfokus.github.io/Xtensions[here]. The current development version is available link:https://boereck.gitbooks.io/xtensions[here].
 
-An overview over the documentation files can be viewed directly on GitHub link:https://github.com/fraunhoferfokus/Xtensions/blob/master/SUMMARY.adoc[here]. 
+An overview over the documentation files of the current release can be viewed directly on GitHub link:https://github.com/fraunhoferfokus/Xtensions/blob/1.0.0/SUMMARY.adoc[here]. 
 GitHub has better code highlighting for Xtend snippets, so you might prefer this.
 
-JavaDocs are currently not provided, but once released, a link to the respective javadoc.io site will be added.
+JavaDocs for the current release can be found on javadocs.io link:https://javadoc.io/doc/com.github.fraunhoferfokus.xtensions/de.fhg.fokus.xtensions[here].
 
 
 == Development on the Library
