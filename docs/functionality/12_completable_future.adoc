@@ -318,3 +318,11 @@ val withTimeout = slowFut.orTimeout [
 	tryShutdownScheduler = true // if true tries to shutdown the given scheduler when slowFut completes
 ]
 ----
+
+
+[TIP]
+====
+Related JavaDocs:
+
+* https://javadoc.io/page/com.github.fraunhoferfokus.xtensions/de.fhg.fokus.xtensions/latest/de/fhg/fokus/xtensions/concurrent/CompletableFutureExtensions.html[CompletableFutureExtensions]
+====

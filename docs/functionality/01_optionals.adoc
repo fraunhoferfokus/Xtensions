@@ -145,6 +145,12 @@ The following instance methods of Optional are backported for Java 8:
 
 As a shortcut for the `or` extension method, the `||` operator is provided. The `?:` operator is a shortcut for the `orElse` method on Optional.
 
+[TIP]
+====
+Related JavaDocs:
+
+* link:https://javadoc.io/page/com.github.fraunhoferfokus.xtensions/de.fhg.fokus.xtensions/latest/de/fhg/fokus/xtensions/optional/OptionalExtensions.html[OptionalExtensions]
+====
 
 == Extensions to Primitive Optionals
 
@@ -178,3 +184,11 @@ if(someOf(42) === someOf(42)) {
 
 Stunningly, the primitive versions of Optional do not provide `map` and `filter` methods. These 
 are provided as extension methods by this library.
+
+[TIP]
+====
+Related JavaDocs:
+
+* https://javadoc.io/page/com.github.fraunhoferfokus.xtensions/de.fhg.fokus.xtensions/latest/de/fhg/fokus/xtensions/optional/OptionalDoubleExtensions.html[OptionalDoubleExtensions]
+* https://javadoc.io/page/com.github.fraunhoferfokus.xtensions/de.fhg.fokus.xtensions/latest/de/fhg/fokus/xtensions/optional/OptionalIntExtensions.html[OptionalIntExtensions]
+====

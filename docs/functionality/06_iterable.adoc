@@ -58,3 +58,10 @@ val summary = strings.collect(summarizingInt[length])
 println("Average length: " + summary.average)
 println("Max length: " + summary.max)
 ----
+
+[TIP]
+====
+Related JavaDocs:
+
+* https://javadoc.io/page/com.github.fraunhoferfokus.xtensions/de.fhg.fokus.xtensions/latest/de/fhg/fokus/xtensions/iteration/IterableExtensions.html[IterableExtensions]
+====

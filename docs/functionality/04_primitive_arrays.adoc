@@ -21,3 +21,10 @@ Additionally the class allows to create primitive iterable wrapper objects (see 
 
 TIP: The JDK class http://docs.oracle.com/javase/8/docs/api/java/util/Arrays.html[`java.util.Arrays`] already contains 
 static `stream` methods that can be used as extension methods to create Java 8 streams from primitive arrays.
+
+[TIP]
+====
+Related JavaDocs:
+
+* https://javadoc.io/page/com.github.fraunhoferfokus.xtensions/de.fhg.fokus.xtensions/latest/de/fhg/fokus/xtensions/iteration/PrimitiveArrayExtensions.html[PairExtensions]
+====

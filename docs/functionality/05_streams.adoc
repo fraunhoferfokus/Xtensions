@@ -156,6 +156,13 @@ Stream.iterate("na ")[it + it]
 
 This method can be handy traversing a nested data structure of same-type elements (e.g. moving up a containment hierarchy).
 
+[TIP]
+====
+Related JavaDocs:
+
+* https://javadoc.io/page/com.github.fraunhoferfokus.xtensions/de.fhg.fokus.xtensions/latest/de/fhg/fokus/xtensions/stream/StreamExtensions.html[StreamExtensions]
+====
+
 
 == Extensions to Streams of Strings
 
@@ -238,3 +245,10 @@ Stream.of("Welcome to the zoo", "Where cows do moo", "And all animals poo")
 		println(it)
 	]
 ----
+
+[TIP]
+====
+Related JavaDocs:
+
+* https://javadoc.io/page/com.github.fraunhoferfokus.xtensions/de.fhg.fokus.xtensions/latest/de/fhg/fokus/xtensions/stream/StringStreamExtensions.html[StringStreamExtensions]
+====

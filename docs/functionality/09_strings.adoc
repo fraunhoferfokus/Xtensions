@@ -91,3 +91,11 @@ Having a stream of http://docs.oracle.com/javase/9/docs/api/java/util/regex/Matc
 for a pattern applied to a given input string can be achieved  with the `matchResultIt` extension method.
 This can be useful, if other group captures have to be accessed when handling matches.
 
+
+[TIP]
+====
+Related JavaDocs:
+
+* https://javadoc.io/page/com.github.fraunhoferfokus.xtensions/de.fhg.fokus.xtensions/latest/de/fhg/fokus/xtensions/string/StringSplitExtensions.html[StringSplitExtensions]
+* https://javadoc.io/page/com.github.fraunhoferfokus.xtensions/de.fhg.fokus.xtensions/latest/de/fhg/fokus/xtensions/string/StringMatchExtensions.html[StringMatchExtensions]
+====

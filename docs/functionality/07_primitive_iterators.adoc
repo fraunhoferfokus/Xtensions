@@ -6,3 +6,11 @@ efforts to implement. Instread, this library provides the class
 `de.fhg.fokus.xtensions.iteration.PrimitiveIteratorExtensions` provides methods to 
 create primitive streams (from `java.util.stream`) for the remaining elements of a given iterator via the 
 extension methods `streamRemaining` or `parallelStreamRemaining`.
+
+
+[TIP]
+====
+Related JavaDocs:
+
+* https://javadoc.io/page/com.github.fraunhoferfokus.xtensions/de.fhg.fokus.xtensions/latest/de/fhg/fokus/xtensions/iteration/PrimitiveIteratorExtensions.html[PrimitiveIteratorExtensions]
+====

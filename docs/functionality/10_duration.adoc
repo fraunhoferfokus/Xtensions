@@ -25,3 +25,11 @@ import java.time.Duration
 // ...
 val Duration twoPointFiveSeconds = 2.seconds + 500.milliseconds
 ----
+
+
+[TIP]
+====
+Related JavaDocs:
+
+* https://javadoc.io/page/com.github.fraunhoferfokus.xtensions/de.fhg.fokus.xtensions/latest/de/fhg/fokus/xtensions/datetime/DurationExtensions.html[DurationExtensions]
+====

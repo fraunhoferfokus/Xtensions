@@ -37,3 +37,10 @@ val s = pair.combine[k,v| k + ' = ' + v].toLowerCase
 println(s)
 ----
 
+
+[TIP]
+====
+Related JavaDocs:
+
+* https://javadoc.io/page/com.github.fraunhoferfokus.xtensions/de.fhg.fokus.xtensions/latest/de/fhg/fokus/xtensions/pair/PairExtensions.html[PairExtensions]
+====

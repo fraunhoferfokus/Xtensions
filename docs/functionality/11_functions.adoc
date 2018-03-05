@@ -119,3 +119,10 @@ val (String)=>boolean valid = notThere.or(tooShort).negate
 	]
 ----
 
+
+[TIP]
+====
+Related JavaDocs:
+
+* https://javadoc.io/page/com.github.fraunhoferfokus.xtensions/de.fhg.fokus.xtensions/latest/de/fhg/fokus/xtensions/function/FunctionExtensions.html[FunctionExtensions]
+====

@@ -114,3 +114,11 @@ waitFor(50.milliseconds) [
 ----
 The same effect as shown here can be achieved with the `cancelOnTimeout` extension method on CompletableFuture, 
 described in <<12_completable_future.adoc#,Extensions to CompletableFuture>>.
+
+
+[TIP]
+====
+Related JavaDocs:
+
+* https://javadoc.io/page/com.github.fraunhoferfokus.xtensions/de.fhg.fokus.xtensions/latest/de/fhg/fokus/xtensions/concurrent/SchedulingUtil.html[SchedulingUtil]
+====
