@@ -1,0 +1,22 @@
+= Changes to Xtensions
+
+== Verions 1.1.0
+
+Nothing done yet.
+
+== Verions 1.0.0
+
+Everything new 😊
+
+- Extension methods for `Optional`s
+- Extension methods for Xtend Ranges
+- Extension methods for primitive arrays
+- Extension methods for Java `Stream`s
+- Extension methods for `Iterable`s
+- Extension methods for Java `String`s
+- Extension methods for Java `Duration`s
+- Extension methods for Xtend functions
+- Extension methods for Java `CompletableFuture`s
+- Scheduling utilities
+- Asynchronous execution utilities
+- Primitive `Iterable`s
