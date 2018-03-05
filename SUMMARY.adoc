@@ -23,4 +23,5 @@
 
 == Appendix
 
+. link:CHANGES.adoc[Changelog]
 . link:./docs/functionality/XX_provided_functionality_one_page.adoc[Provided Functionality (as Single Page)]
