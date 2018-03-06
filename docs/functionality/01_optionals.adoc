@@ -75,8 +75,7 @@ import static extension de.fhg.fokus.xtensions.optional.OptionalIntExtensions.*
 // ...
 val noVal = Optional.empty
 noVal.whenPresent [
-	val value = noVal.get
-	println("Here is your value: "+ value)
+	println("Here is your value: "+ it)
 ].elseDo [
 	println("Awww, no value")
 ]

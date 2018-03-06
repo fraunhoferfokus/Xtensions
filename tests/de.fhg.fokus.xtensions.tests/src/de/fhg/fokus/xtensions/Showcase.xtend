@@ -66,7 +66,7 @@ import java.util.concurrent.ScheduledThreadPoolExecutor
 import java.util.concurrent.CompletionException
 import org.junit.Ignore
 
-//@Ignore
+@Ignore
 class Showcase {
 	
 	@Test def rangeDemo() {
@@ -218,8 +218,7 @@ class Showcase {
 		
 		val captureMe = "no value"
 		noVal.whenPresent [
-			val value = noVal.get
-			println("Here is your value: "+ value)
+			println("Here is your value: "+ it)
 		].elseDo(captureMe) [
 			println("Awww, " + it)
 		]

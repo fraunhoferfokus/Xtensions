@@ -10,7 +10,6 @@ stages:
 - name: release
   if: "tag IS present AND type = push"
 - name: documentation
-  if: "tag IS present AND type = push"
 
 jobs:
   include:
