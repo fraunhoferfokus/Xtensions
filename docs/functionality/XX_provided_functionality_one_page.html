@@ -58,7 +58,7 @@
 
     
     
-    <link rel="prev" href="../../CODE_OF_CONDUCT.html" />
+    <link rel="prev" href="../../CHANGES.html" />
     
 
     </head>
@@ -366,7 +366,20 @@
         
         
     
-        <li class="chapter active" data-level="2.1" data-path="XX_provided_functionality_one_page.html">
+        <li class="chapter " data-level="2.1" data-path="../../CHANGES.html">
+            
+                <a href="../../CHANGES.html">
+            
+                    
+                    Changelog
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter active" data-level="2.2" data-path="XX_provided_functionality_one_page.html">
             
                 <a href="XX_provided_functionality_one_page.html">
             
@@ -565,8 +578,7 @@ import static extension de.fhg.fokus.xtensions.optional.OptionalIntExtensions.*
 // ...
 val noVal = Optional.empty
 noVal.whenPresent [
-	val value = noVal.get
-	println(&quot;Here is your value: &quot;+ value)
+	println(&quot;Here is your value: &quot;+ it)
 ].elseDo [
 	println(&quot;Awww, no value&quot;)
 ]</code></pre>
@@ -649,6 +661,27 @@ The following instance methods of Optional are backported for Java 8:</p>
 <div class="paragraph">
 <p>As a shortcut for the <code>or</code> extension method, the <code>||</code> operator is provided. The <code>?:</code> operator is a shortcut for the <code>orElse</code> method on Optional.</p>
 </div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Tip</div>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Related JavaDocs:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://javadoc.io/page/com.github.fraunhoferfokus.xtensions/de.fhg.fokus.xtensions/latest/de/fhg/fokus/xtensions/optional/OptionalExtensions.html" target="_blank">OptionalExtensions</a></p>
+</li>
+</ul>
+</div>
+</td>
+</tr>
+</table>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -691,6 +724,33 @@ if(someOf(42) === someOf(42)) {
 <div class="paragraph">
 <p>Stunningly, the primitive versions of Optional do not provide <code>map</code> and <code>filter</code> methods. These
 are provided as extension methods by this library.</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Tip</div>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Related JavaDocs:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://javadoc.io/page/com.github.fraunhoferfokus.xtensions/de.fhg.fokus.xtensions/latest/de/fhg/fokus/xtensions/optional/OptionalIntExtensions.html" target="_blank">OptionalIntExtensions</a></p>
+</li>
+<li>
+<p><a href="https://javadoc.io/page/com.github.fraunhoferfokus.xtensions/de.fhg.fokus.xtensions/latest/de/fhg/fokus/xtensions/optional/OptionalLongExtensions.html" target="_blank">OptionalLongExtensions</a></p>
+</li>
+<li>
+<p><a href="https://javadoc.io/page/com.github.fraunhoferfokus.xtensions/de.fhg.fokus.xtensions/latest/de/fhg/fokus/xtensions/optional/OptionalDoubleExtensions.html" target="_blank">OptionalDoubleExtensions</a></p>
+</li>
+</ul>
+</div>
+</td>
+</tr>
+</table>
 </div>
 </div>
 </div>
@@ -743,6 +803,27 @@ range.forEachInt [
 for iteration over primitive int values provided by this library, the extension method
 <code>asIntIterable</code> was provided.</p>
 </div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Tip</div>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Related JavaDocs:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://javadoc.io/page/com.github.fraunhoferfokus.xtensions/de.fhg.fokus.xtensions/latest/de/fhg/fokus/xtensions/range/RangeExtensions.html" target="_blank">RangeExtensions</a></p>
+</li>
+</ul>
+</div>
+</td>
+</tr>
+</table>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -786,6 +867,27 @@ val s = pair.combine[k,v| k + &apos; = &apos; + v].toLowerCase
 println(s)</code></pre>
 </div>
 </div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Tip</div>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Related JavaDocs:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://javadoc.io/page/com.github.fraunhoferfokus.xtensions/de.fhg.fokus.xtensions/latest/de/fhg/fokus/xtensions/pair/PairExtensions.html" target="_blank">PairExtensions</a></p>
+</li>
+</ul>
+</div>
+</td>
+</tr>
+</table>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -820,6 +922,27 @@ arr.forEachInt [
 <td class="content">
 The JDK class <a href="http://docs.oracle.com/javase/8/docs/api/java/util/Arrays.html" target="_blank"><code>java.util.Arrays</code></a> already contains
 static <code>stream</code> methods that can be used as extension methods to create Java 8 streams from primitive arrays.
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Tip</div>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Related JavaDocs:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://javadoc.io/page/com.github.fraunhoferfokus.xtensions/de.fhg.fokus.xtensions/latest/de/fhg/fokus/xtensions/iteration/PrimitiveArrayExtensions.html" target="_blank">PairExtensions</a></p>
+</li>
+</ul>
+</div>
 </td>
 </tr>
 </table>
@@ -1008,6 +1131,27 @@ Stream.iterate(&quot;na &quot;)[it + it]
 <div class="paragraph">
 <p>This method can be handy traversing a nested data structure of same-type elements (e.g. moving up a containment hierarchy).</p>
 </div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Tip</div>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Related JavaDocs:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://javadoc.io/page/com.github.fraunhoferfokus.xtensions/de.fhg.fokus.xtensions/latest/de/fhg/fokus/xtensions/stream/StreamExtensions.html" target="_blank">StreamExtensions</a></p>
+</li>
+</ul>
+</div>
+</td>
+</tr>
+</table>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -1098,6 +1242,27 @@ Stream.of(&quot;Welcome to the zoo&quot;, &quot;Where cows do moo&quot;, &quot;A
 	]</code></pre>
 </div>
 </div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Tip</div>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Related JavaDocs:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://javadoc.io/page/com.github.fraunhoferfokus.xtensions/de.fhg.fokus.xtensions/latest/de/fhg/fokus/xtensions/stream/StringStreamExtensions.html" target="_blank">StringStreamExtensions</a></p>
+</li>
+</ul>
+</div>
+</td>
+</tr>
+</table>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -1173,6 +1338,27 @@ println(&quot;Average length: &quot; + summary.average)
 println(&quot;Max length: &quot; + summary.max)</code></pre>
 </div>
 </div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Tip</div>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Related JavaDocs:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://javadoc.io/page/com.github.fraunhoferfokus.xtensions/de.fhg.fokus.xtensions/latest/de/fhg/fokus/xtensions/iteration/IterableExtensions.html" target="_blank">IterableExtensions</a></p>
+</li>
+</ul>
+</div>
+</td>
+</tr>
+</table>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -1185,6 +1371,27 @@ efforts to implement. Instread, this library provides the class
 <code>de.fhg.fokus.xtensions.iteration.PrimitiveIteratorExtensions</code> provides methods to
 create primitive streams (from <code>java.util.stream</code>) for the remaining elements of a given iterator via the
 extension methods <code>streamRemaining</code> or <code>parallelStreamRemaining</code>.</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Tip</div>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Related JavaDocs:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://javadoc.io/page/com.github.fraunhoferfokus.xtensions/de.fhg.fokus.xtensions/latest/de/fhg/fokus/xtensions/iteration/PrimitiveIteratorExtensions.html" target="_blank">PrimitiveIteratorExtensions</a></p>
+</li>
+</ul>
+</div>
+</td>
+</tr>
+</table>
 </div>
 </div>
 </div>
@@ -1363,6 +1570,33 @@ val IntIterable ints = IntIterable.iterate(0, [it&lt;=10], [it+2])
 // will provide values 0, 2, 4, 6, 8, and 10</code></pre>
 </div>
 </div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Tip</div>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Related JavaDocs:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://javadoc.io/page/com.github.fraunhoferfokus.xtensions/de.fhg.fokus.xtensions/latest/de/fhg/fokus/xtensions/iteration/DoubleIterable.html" target="_blank">DoubleIterable</a></p>
+</li>
+<li>
+<p><a href="https://javadoc.io/page/com.github.fraunhoferfokus.xtensions/de.fhg.fokus.xtensions/latest/de/fhg/fokus/xtensions/iteration/IntIterable.html" target="_blank">IntIterable</a></p>
+</li>
+<li>
+<p><a href="https://javadoc.io/page/com.github.fraunhoferfokus.xtensions/de.fhg.fokus.xtensions/latest/de/fhg/fokus/xtensions/iteration/LongIterable.html" target="_blank">LongIterable</a></p>
+</li>
+</ul>
+</div>
+</td>
+</tr>
+</table>
+</div>
 </div>
 <div class="sect2">
 <h3 id="_from_xtend_ranges">From Xtend Ranges</h3>
@@ -1511,6 +1745,30 @@ it to a pattern.</p>
 for a pattern applied to a given input string can be achieved  with the <code>matchResultIt</code> extension method.
 This can be useful, if other group captures have to be accessed when handling matches.</p>
 </div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Tip</div>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Related JavaDocs:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://javadoc.io/page/com.github.fraunhoferfokus.xtensions/de.fhg.fokus.xtensions/latest/de/fhg/fokus/xtensions/string/StringSplitExtensions.html" target="_blank">StringSplitExtensions</a></p>
+</li>
+<li>
+<p><a href="https://javadoc.io/page/com.github.fraunhoferfokus.xtensions/de.fhg.fokus.xtensions/latest/de/fhg/fokus/xtensions/string/StringMatchExtensions.html" target="_blank">StringMatchExtensions</a></p>
+</li>
+</ul>
+</div>
+</td>
+</tr>
+</table>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -1542,6 +1800,27 @@ import java.time.Duration
 // ...
 val Duration twoPointFiveSeconds = 2.seconds + 500.milliseconds</code></pre>
 </div>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Tip</div>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Related JavaDocs:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://javadoc.io/page/com.github.fraunhoferfokus.xtensions/de.fhg.fokus.xtensions/latest/de/fhg/fokus/xtensions/datetime/DurationExtensions.html" target="_blank">DurationExtensions</a></p>
+</li>
+</ul>
+</div>
+</td>
+</tr>
+</table>
 </div>
 </div>
 </div>
@@ -1673,6 +1952,27 @@ val (String)=&gt;boolean valid = notThere.or(tooShort).negate
 		println(it)
 	]</code></pre>
 </div>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Tip</div>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Related JavaDocs:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://javadoc.io/page/com.github.fraunhoferfokus.xtensions/de.fhg.fokus.xtensions/latest/de/fhg/fokus/xtensions/function/FunctionExtensions.html" target="_blank">FunctionExtensions</a></p>
+</li>
+</ul>
+</div>
+</td>
+</tr>
+</table>
 </div>
 </div>
 </div>
@@ -2046,6 +2346,27 @@ val withTimeout = slowFut.orTimeout [
 ]</code></pre>
 </div>
 </div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Tip</div>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Related JavaDocs:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://javadoc.io/page/com.github.fraunhoferfokus.xtensions/de.fhg.fokus.xtensions/latest/de/fhg/fokus/xtensions/concurrent/CompletableFutureExtensions.html" target="_blank">CompletableFutureExtensions</a></p>
+</li>
+</ul>
+</div>
+</td>
+</tr>
+</table>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -2146,6 +2467,27 @@ The action should then check for completion of the future passed into it, instea
 	}
 ]</code></pre>
 </div>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Tip</div>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Related JavaDocs:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://javadoc.io/page/com.github.fraunhoferfokus.xtensions/de.fhg.fokus.xtensions/latest/de/fhg/fokus/xtensions/concurrent/AsyncCompute.html" target="_blank">AsyncCompute</a></p>
+</li>
+</ul>
+</div>
+</td>
+</tr>
+</table>
 </div>
 </div>
 </div>
@@ -2279,6 +2621,27 @@ waitFor(50.milliseconds) [
 <p>The same effect as shown here can be achieved with the <code>cancelOnTimeout</code> extension method on CompletableFuture,
 described in <a href="12_completable_future.html">Extensions to CompletableFuture</a>.</p>
 </div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Tip</div>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Related JavaDocs:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://javadoc.io/page/com.github.fraunhoferfokus.xtensions/de.fhg.fokus.xtensions/latest/de/fhg/fokus/xtensions/concurrent/SchedulingUtil.html" target="_blank">SchedulingUtil</a></p>
+</li>
+</ul>
+</div>
+</td>
+</tr>
+</table>
+</div>
 </div>
 </div>
                                 
@@ -2307,7 +2670,7 @@ described in <a href="12_completable_future.html">Extensions to CompletableFutur
 
             
                 
-                <a href="../../CODE_OF_CONDUCT.html" class="navigation navigation-prev navigation-unique" aria-label="Previous page: Code of Conduct">
+                <a href="../../CHANGES.html" class="navigation navigation-prev navigation-unique" aria-label="Previous page: Changelog">
                     <i class="fa fa-angle-left"></i>
                 </a>
                 
@@ -2319,7 +2682,7 @@ described in <a href="12_completable_future.html">Extensions to CompletableFutur
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"Provided Functionality (as Single Page)","level":"2.1","depth":1,"previous":{"title":"Code of Conduct","level":"1.4.2","depth":2,"path":"CODE_OF_CONDUCT.md","ref":"CODE_OF_CONDUCT.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["asciidoc-include@0.1.9"],"pluginsConfig":{"asciidoc-include":{"syntax":"gitbook"},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"docs/functionality/XX_provided_functionality_one_page.adoc","mtime":"2018-03-04T20:32:53.588Z","type":"asciidoc"},"gitbook":{"version":"3.2.3","time":"2018-03-04T20:34:33.136Z"},"basePath":"../..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"Provided Functionality (as Single Page)","level":"2.2","depth":1,"previous":{"title":"Changelog","level":"2.1","depth":1,"path":"CHANGES.adoc","ref":"CHANGES.adoc","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["asciidoc-include@0.1.9"],"pluginsConfig":{"asciidoc-include":{"syntax":"gitbook"},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"docs/functionality/XX_provided_functionality_one_page.adoc","mtime":"2018-03-06T14:33:59.588Z","type":"asciidoc"},"gitbook":{"version":"3.2.3","time":"2018-03-06T14:35:05.108Z"},"basePath":"../..","book":{"language":""}});
         });
     </script>
 </div>

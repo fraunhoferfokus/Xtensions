@@ -171,11 +171,11 @@ class SchedulingUtilTest {
 	def void testRepeatEveryWithInitialDelayScheduler() {
 		val count = new AtomicInteger(0)
 		val scheduler = new ScheduledThreadPoolExecutor(1)
-		Thread.sleep(20) // make scheduler thread start first
-		val fut = scheduler.repeatEvery(20, TimeUnit.MILLISECONDS).withInitialDelay(10) [
+		Thread.sleep(50) // make scheduler thread start first
+		val fut = scheduler.repeatEvery(40, TimeUnit.MILLISECONDS).withInitialDelay(10) [
 			count.incrementAndGet
 		]
-		Thread.sleep(100)
+		Thread.sleep(200)
 		fut.cancel(false)
 		val resultCount = count.get
 		assertTrue("Expected count between 4 and 6, but was: "+resultCount, resultCount >= 4 && resultCount <= 6)
