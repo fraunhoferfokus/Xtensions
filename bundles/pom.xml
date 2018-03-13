@@ -44,6 +44,7 @@
 					</links>
 					<additionalJOption>-J-Dhttp.agent=maven-javadoc-plugin-${pom‌​.name}</additionalJOption>
 					<additionalparam>-Xdoclint:none</additionalparam>
+					<failOnError>false</failOnError>
 				</configuration>
 			</plugin>
 		</plugins>
