@@ -334,7 +334,7 @@ final class StreamExtensions {
 	}
 	
 	/**
-	 * This method redirects to {@link #iterate​(Object, Predicate, UnaryOperator) <T>iterate​(T, Predicate<? super T>, UnaryOperator<T>)}.<br>
+	 * This method redirects to {@link #iterate​(Object, Predicate, UnaryOperator) &lt;T&gt;iterate​(T, Predicate&lt;? super T&gt;, UnaryOperator&lt;T&gt;)}.<br>
 	 * This allows e.g. writing {@code Stream.iterate(0,[it<100],[it+1])} in Xtend, which does not require code changes when
 	 * switching to Java 9 to take advantage of the native implementation of this method.
 	 * @param clazz will be ignored

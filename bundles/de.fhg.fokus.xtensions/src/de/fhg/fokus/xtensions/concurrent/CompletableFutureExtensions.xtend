@@ -39,15 +39,15 @@ import java.util.function.Consumer
  * 	 <li>{@link #then(CompletableFuture, Function)}</li>
  * 	 <li>{@link #then(CompletableFuture, Consumer)}</li>
  * 	 <li>{@link #then(CompletableFuture, Runnable)}</li>
- * 	 <li>{@link #whenCancelled(CompletableFuture, org.eclipse.xtext.xbase.lib.Procedures.Procedure0) whenCancelled(CompletableFuture<R>, ()=>void)}</li>
- * 	 <li>{@link #whenException(CompletableFuture, org.eclipse.xtext.xbase.lib.Procedures.Procedure1) whenException(CompletableFuture<R>, (Throwable)=>void)}</li>
- * 	 <li>{@link #handleCancellation(CompletableFuture, org.eclipse.xtext.xbase.lib.Functions.Function0) handleCancellation(CompletableFuture<R>, ()=>R)}</li>
+ * 	 <li>{@link #whenCancelled(CompletableFuture, org.eclipse.xtext.xbase.lib.Procedures.Procedure0) whenCancelled(CompletableFuture&lt;R&gt;, ()=>void)}</li>
+ * 	 <li>{@link #whenException(CompletableFuture, org.eclipse.xtext.xbase.lib.Procedures.Procedure1) whenException(CompletableFuture&lt;R&gt;, (Throwable)=>void)}</li>
+ * 	 <li>{@link #handleCancellation(CompletableFuture, org.eclipse.xtext.xbase.lib.Functions.Function0) handleCancellation(CompletableFuture&lt;R&gt;, ()=>R)}</li>
  * 	 <li>{@link #cancelOnTimeout(CompletableFuture, long, TimeUnit)}</li>
  * 	 <li>{@link #cancelOnTimeout(CompletableFuture, ScheduledExecutorService, long, TimeUnit)}</li>
  * 	 <li>{@link #forwardTo(CompletionStage, CompletableFuture)}</li>
  * 	 <li>{@link #forwardCancellation(CompletableFuture, CompletableFuture)}</li>
  * </ul>
- * <p>
+ * </p>
  */
 final class CompletableFutureExtensions {
 
@@ -89,7 +89,7 @@ final class CompletableFutureExtensions {
 	 * @see CompletableFuture#cancel(boolean)
 	 */
 //	 @Inline("$1.cancel(false)")
-	static def <R> boolean cancel(CompletableFuture<R> future) {
+	static def boolean cancel(CompletableFuture<?> future) {
 		Objects.requireNonNull(future)
 		future.cancel(false)
 	}
@@ -104,6 +104,7 @@ final class CompletableFutureExtensions {
 	 * @param fut the future to be cancelled after {@code timeout}, provided the future
 	 *   is not completed before cancellation.
 	 * @param timeout specifies time to wait, before canceling {@code fut}. Must not be {@code null}.
+	 * @param <R> generic type of given {@code fut}
 	 * @return result of call to {@link #cancelOnTimeout(CompletableFuture, long, TimeUnit)}
 	 * @see #cancelOnTimeout(CompletableFuture, long, TimeUnit)
 	 * @throws NullPointerException throws if {@code fut} or {@code timeout} is {@code null}
@@ -126,6 +127,7 @@ final class CompletableFutureExtensions {
 	 *   is not completed before cancellation.
 	 * @param timeout specifies time to wait, before canceling {@code fut}. Must be &gt;=0
 	 * @param unit specifies the time unit of {@code timeout}
+	 * @param <R> generic type of given {@code fut}
 	 * @return returns parameter {@code fut}
 	 * @see #cancelOnTimeout(CompletableFuture, ScheduledExecutorService, long, TimeUnit)
 	 * @throws NullPointerException throws if {@code fut} or {@code unit} is {@code null}
@@ -145,6 +147,7 @@ final class CompletableFutureExtensions {
 	 *   is not completed before cancellation.
 	 * @param timeout specifies time to wait, before canceling {@code fut}. Must be &gt;=0
 	 * @param unit specifies the time unit of {@code timeout}
+	 * @param <R> generic type of given {@code fut}
 	 * @return returns parameter {@code fut}
 	 * @throws NullPointerException throws if {@code fut} or {@code unit} is {@code null}
 	 */
@@ -163,6 +166,7 @@ final class CompletableFutureExtensions {
 	 *   is not completed before cancellation.
 	 * @param timeout specifies time to wait, before canceling {@code fut}. Must be &gt;=0
 	 * @param unit specifies the time unit of {@code timeout}
+	 * @param <R> generic type of given {@code fut}
 	 * @return returns parameter {@code fut}
 	 * @param timeoutProvider the provider for the exception {@code fut} will be completed with
 	 *  exceptionally when the timeout expires.
@@ -231,6 +235,7 @@ final class CompletableFutureExtensions {
 	 *   scheduling pool.
 	 * @param time timeout time in time unit {@code unit} after which {@code fut} will be cancelled.
 	 * @param unit time unit of timeout {@code time}.
+	 * @param <R> generic type of given {@code fut}
 	 * @return same reference as parameter {@code fut}.
 	 * @see #cancelOnTimeout(CompletableFuture, long, TimeUnit)
 	 */
@@ -252,6 +257,7 @@ final class CompletableFutureExtensions {
 	 *   scheduling pool.
 	 * @param time timeout time in time unit {@code unit} after which {@code fut} will be cancelled.
 	 * @param unit time unit of timeout {@code time}.
+	 * @param <R> generic type of given {@code fut}
 	 * @return same reference as parameter {@code fut}.
 	 * @see #cancelOnTimeout(CompletableFuture, long, TimeUnit)
 	 */
@@ -301,6 +307,7 @@ final class CompletableFutureExtensions {
 	 * {@code to} was completed with the same result as the original, which includes cancellation
 	 * @param from the result of this future will be forwarded to future {@code to}
 	 * @param to the result of {@code from} will be forwarded to this future.
+	 * @param <R> generic type of given {@code from} must be accepted by {@code to} as type to complete with.
 	 * @return a CompletableFuture that will complete after the forwarding is complete.
 	 * @throws NullPointerException if {@code from} or {@code to} is {@code null}
 	 */
@@ -322,6 +329,7 @@ final class CompletableFutureExtensions {
 	 * CompletableFuture) forwardTo}. This method will simply call forwardTo parameters in switched order.
 	 * @param toComplete the future that will be completed with the result of {@code with}.
 	 * @param with the future that provides the result that will be forwarded to {@code toComplete}.
+	 * @param <R> generic type of given {@code with}, must be accepted by {@code toComplete} as type to compete with.
 	 * @see #forwardTo(CompletionStage, CompletableFuture)
 	 * @return a CompletableFuture that will complete after the forwarding is complete.
 	 */
@@ -347,7 +355,8 @@ final class CompletableFutureExtensions {
 	 * This way the thread calling this can safely be a pooled thread and may not interrupt some other task 
 	 * submitted to the thread pool managing the thread. <br>
 	 * This is an example of how this message could be used:
-	 * <code><pre>
+	 * <pre>
+	 * <code>
 	 * import static extension de.fhg.fokus.xtensions.concurrent.AsyncCompute.*
 	 * import static extension de.fhg.fokus.xtensions.concurrent.CompletableFutureExtensions.*
 	 * // ...
@@ -363,7 +372,8 @@ final class CompletableFutureExtensions {
 	 *   ]
 	 * ]
 	 * sleepy.cancel // may interrupt Thread.sleep
-	 * </pre></code>
+	 * </code>
+	 * </pre>
 	 * 
 	 * @param fut future that if cancelled will interrupt the thread calling {@code interruptableBlock}.
 	 *  But only as long as the thread is in the {@code interruptableBlock}.
@@ -373,7 +383,7 @@ final class CompletableFutureExtensions {
 	 *   This is also guaranteed if the block of code throws an exception.
 	 * @throws NullPointerException will be thrown if {@code fut} or {@code interruptableBlock} is {@code null}.
 	 */
-	static def <R> void whenCancelledInterrupt(CompletableFuture<R> fut, ()=>void interruptableBlock) {
+	static def void whenCancelledInterrupt(CompletableFuture<?> fut, ()=>void interruptableBlock) {
 		Objects.requireNonNull(fut)
 		Objects.requireNonNull(interruptableBlock) 
 		val interruptState = new AtomicReference(InterruptionState.START)
@@ -424,6 +434,7 @@ final class CompletableFutureExtensions {
 	 * @param fut future {@code handler} is registered on. Must not be {@code null}.
 	 * @param handler the callback to be invoked when {@code fut} is completed with cancellation.
 	 *   Must not be {@code null}.
+	 * @param <R> generic type of given {@code fut} and returned future
 	 * @return new CompletableFuture that either is completed with the result of {@code fut}, if 
 	 *   {@code fut} completes successful. Otherwise the result provided from {@code handler} is 
 	 *   used to complete the returned future.
@@ -447,6 +458,7 @@ final class CompletableFutureExtensions {
 	 * @param handler the callback to be invoked when {@code fut} is completed with cancellation.
 	 *  Must not be {@code null}. Will be invoked on the {@link ForkJoinPool#commonPool() common pool}, not on the thread 
 	 *  completing {@code fut}.
+	 * @param <R> generic type of given {@code fut} and type of value the {@code handler} to recover cancellation.
 	 * @return new CompletableFuture that either is completed with the result of {@code fut}, if 
 	 *   {@code fut} completes successful. Otherwise the result provided from {@code handler} is 
 	 *   used to complete the returned future.
@@ -471,6 +483,7 @@ final class CompletableFutureExtensions {
 	 * @param handler the callback to be invoked when {@code fut} is completed with cancellation.
 	 *  Must not be {@code null}. Will be invoked via the {@code Executor e}, not on the thread 
 	 *  completing {@code fut}.
+	 * @param <R> generic type of given {@code fut} and type of value the {@code handler} to recover cancellation.
 	 * @return new CompletableFuture that either is completed with the result of {@code fut}, if 
 	 *   {@code fut} completes successful. Otherwise the result provided from {@code handler} is 
 	 *   used to complete the returned future.
@@ -503,6 +516,7 @@ final class CompletableFutureExtensions {
 	 * @param handler If {@code fut} completes exceptionally, this handler will be called to determine the result
 	 *   that will be set on the future returned by this method. If handler throws an exception, the returned 
 	 *   future completes exceptionally with the exception thrown by {@code handler}. The handler not be {@code null}.
+	 * @param <R> generic type of given {@code fut} and type of value the {@code handler} to recover from exception.
 	 * @return new future that will either complete with the result of {@code fut}, if it completes successfully,
 	 *  or with the result provided by {@code handler} if {@code fut} completes exceptionally.
 	 * @throws NullPointerException if {@code fut} or {@code handle} is {@code null}.
@@ -527,6 +541,7 @@ final class CompletableFutureExtensions {
 	 * @param handler If {@code fut} completes exceptionally, this handler will be called to determine the result
 	 *   that will be set on the future returned by this method. If handler throws an exception, the returned 
 	 *   future completes exceptionally with the exception thrown by {@code handler}. The handler not be {@code null}.
+	 * @param <R> generic type of given {@code fut} and type of value the {@code handler} to recover from exception.
 	 * @return new future that will either complete with the result of {@code fut}, if it completes successfully,
 	 *  or with the result provided by {@code handler} if {@code fut} completes exceptionally.
 	 * @throws NullPointerException if {@code fut}, {@code executor}, or {@code handle} is {@code null}.
@@ -550,6 +565,7 @@ final class CompletableFutureExtensions {
 	 *   Must not be {@code null}.
 	 * @param handler callback to be registered on {@code fut}, being called when the future gets cancelled.
 	 *   Must not be {@code null}.
+	 * @param <R> generic type of given {@code fut} and returned future.
 	 * @return a CompletableFuture that will complete after the handler completes or if {@code fut} completes
 	 *  without being cancelled. If {@code fut} is cancelled the returned future will be completed exceptionally
 	 *  with a {@link java.util.concurrent.CancellationException CancellationException}, but will not itself count 
@@ -572,6 +588,7 @@ final class CompletableFutureExtensions {
 	 *   Must not be {@code null}.
 	 * @param handler callback to be registered on {@code fut}, being called when the future gets cancelled.
 	 *   Must not be {@code null}. Will be called on the {@link ForkJoinPool#commonPool() common pool}.
+	 * @param <R> generic type of given {@code fut} and returned future.
 	 * @return a CompletableFuture that will complete after the handler completes or if {@code fut} completes
 	 *  without being cancelled. If {@code fut} is cancelled the returned future will be completed exceptionally
 	 *  with a {@link java.util.concurrent.CancellationException CancellationException}, but will not itself count 
@@ -595,6 +612,7 @@ final class CompletableFutureExtensions {
 	 * @param executor the executor used to execute the given {@code handler} callback.
 	 * @param handler callback to be registered on {@code fut}, being called when the future gets cancelled.
 	 *   Must not be {@code null}. Will be called on the {@code Executor e}.
+	 * @param <R> generic type of given {@code fut} and returned future.
 	 * @return a CompletableFuture that will complete after the handler completes or if {@code fut} completes
 	 *  without being cancelled. If {@code fut} is cancelled the returned future will be completed exceptionally
 	 *  with a {@link java.util.concurrent.CancellationException CancellationException}, but will not itself count 
@@ -622,6 +640,7 @@ final class CompletableFutureExtensions {
 	 * @param handler callback to be registered on {@code fut}, being called when the future completes with an exception.
 	 *   If the handler throws an exception, the returned future will be completed with the original exception.
 	 *   The handler must not be {@code null}.
+	 * @param <R> generic type of given {@code fut} and returned future.
 	 * @return a CompletableFuture that will complete after the handler completes or if {@code fut} completes
 	 *  successfully. If {@code fut} completes exceptionally the returned future will be completed exceptionally
 	 *  with the same exception.
@@ -642,6 +661,7 @@ final class CompletableFutureExtensions {
 	 * @param handler callback to be registered on {@code fut}, being called when the future completes with an exception.
 	 *   If the handler throws an exception, the returned future will be completed with the original exception.
 	 *   The handler must not be {@code null}. The handler will be executed on the {@link ForkJoinPool#commonPool() common pool}.
+	 * @param <R> generic type of given {@code fut} and returned future.
 	 * @return a CompletableFuture that will complete after the handler completes or if {@code fut} completes
 	 *  successfully. If {@code fut} completes exceptionally the returned future will be completed exceptionally
 	 *  with the same exception.
@@ -662,6 +682,7 @@ final class CompletableFutureExtensions {
 	 * @param handler callback to be registered on {@code fut}, being called when the future completes with an exception.
 	 *   If the handler throws an exception, the returned future will be completed with the original exception.
 	 *   The handler must not be {@code null}. The handler will be executed on the {@code Executor e}.
+	 * @param <R> generic type of given {@code fut} and returned future.
 	 * @return a CompletableFuture that will complete after the handler completes or if {@code fut} completes
 	 *  successfully. If {@code fut} completes exceptionally the returned future will be completed exceptionally
 	 *  with the same exception.
@@ -725,6 +746,7 @@ final class CompletableFutureExtensions {
 	 *   Must not be {@code null}.
 	 * @param handler the function that will be called as the consumer to {@code thenAccept}
 	 *   Must not be {@code null}.
+	 * @param <R> generic type of given {@code fut} and type that must be accepted by {@code handler} for consumption.
 	 * @return resulting CompletableFuture of {@code thenAccept} call
 	 * @see #then(CompletableFuture, Function)
 	 * @see #then(CompletableFuture, Runnable)
@@ -743,6 +765,8 @@ final class CompletableFutureExtensions {
 	 *   Must not be {@code null}.
 	 * @param handler the function that will be called as the consumer to {@code thenApply}
 	 *   Must not be {@code null}.
+	 * @param <R> generic type of given {@code fut} and input type for {@code handler}.
+	 * @param <U> output type of {@code handler} and generic type of returned future.
 	 * @return resulting CompletableFuture of {@code thenApply} call
 	 * @throws NullPointerException if either {@code fut} or {@code handler} is {@code null}
 	 * @see #then(CompletableFuture, Runnable)
@@ -764,7 +788,7 @@ final class CompletableFutureExtensions {
 	 * @see #then(CompletableFuture, Consumer)
 	 * @see #then(CompletableFuture, Function)
 	 */
-	static def <R> CompletableFuture<Void> then(CompletableFuture<R> fut, Runnable handler) {
+	static def CompletableFuture<Void> then(CompletableFuture<?> fut, Runnable handler) {
 		// TODO inline if annotation works in Xtend
 		Objects.requireNonNull(handler)
 		fut.thenRun(handler)
@@ -809,6 +833,7 @@ final class CompletableFutureExtensions {
 	 *  (either value or exception) will be used to complete the future returned from the function. If this 
 	 *  supplier provides a {@code null} reference, the returned future will be completed with a {@link NullPointerException}.
 	 *  If the supplier throws an exception, the returned future will be completed with this exception.
+	 * @param <R> generic type of given {@code fut} and type that must be provided by future provided by {@code recovery}.
 	 * @return future that will either complete successfully, if {@code fut} completes successfully. If {@code fut}
 	 *   completes exceptionally, otherwise {@code recovery} will be called and the result of the provided CompletionStage
 	 *   will be forwarded to the returned future.
@@ -839,6 +864,7 @@ final class CompletableFutureExtensions {
 	 *  supplier provides a {@code null} reference, the returned future will be completed with a {@link NullPointerException}.
 	 *  If the supplier throws an exception, the returned future will be completed with this exception. The provider will be 
 	 *  executed on the {@link ForkJoinPool#commonPool() common pool}.
+	 * @param <R> generic type of given {@code fut} and type that must be provided by future provided by {@code recovery}.
 	 * @return future that will either complete successfully, if {@code fut} completes successfully. If {@code fut}
 	 *   completes exceptionally, otherwise {@code recovery} will be called and the result of the provided CompletionStage
 	 *   will be forwarded to the returned future.
@@ -864,6 +890,7 @@ final class CompletableFutureExtensions {
 	 *  supplier provides a {@code null} reference, the returned future will be completed with a {@link NullPointerException}.
 	 *  If the supplier throws an exception, the returned future will be completed with this exception. The provider will be 
 	 *  executed on {@code Executor e}.
+	 * @param <R> generic type of given {@code fut} and type that must be provided by future provided by {@code recovery}.
 	 * @return future that will either complete successfully, if {@code fut} completes successfully. If {@code fut}
 	 *   completes exceptionally, otherwise {@code recovery} will be called and the result of the provided CompletionStage
 	 *   will be forwarded to the returned future.
@@ -885,7 +912,7 @@ final class CompletableFutureExtensions {
 	/** 
 	 * An instance of this class will be passed to the configuration block 
 	 * passed to the {@link CompletableFutureExtensions#orTimeout(CompletableFuture, org.eclipse.xtext.xbase.lib.Procedures.Procedure1) 
-	 * orTimeout(CompletableFuture<R>, (TimeoutConfig)=>void)}
+	 * orTimeout(CompletableFuture&lt;R&gt;, (TimeoutConfig)=&gt;void)}
 	 * extension method.
 	 */
 	public static final class TimeoutConfig {
@@ -938,7 +965,8 @@ final class CompletableFutureExtensions {
 		 * {@link #setScheduler(ScheduledExecutorService) setScheduler} is used
 		 * to set custom scheduler.<br>
 		 * Default value is {@code false}.
-		 * @param doShutdown 
+		 * @param doShutdown if {@code true} the given {@link #setScheduler(ScheduledExecutorService) scheduler} 
+		 *  should be shut down after the original future completes or a timeout occurs.
 		 */
 		def void setTryShutdownScheduler(boolean doShutdown) {
 			this.tryShutdown = doShutdown
@@ -1002,6 +1030,7 @@ final class CompletableFutureExtensions {
 	 * </pre>
 	 * @param fut source future for which timeout operation is specified
 	 * @param config operation for configuration of the timeout operation
+	 * @param <R> generic type of given {@code fut} and of the returned future
 	 * @return future that will be cancelled if {@code fut} is not completed before the
 	 *   timeout configured by {@code config} exceeded.
 	 */
@@ -1111,6 +1140,7 @@ final class CompletableFutureExtensions {
 	 * @param timeoutTime time (of {@code unit}) after which the resulting {@code CompletableFuture} will be 
 	 *  completed exceptionally with a {@code TimeoutException} if it was not completed yet.
 	 * @param unit the TimeUnit for {@code timeoutTime}.
+	 * @param <R> generic type of given {@code fut} and of the returned future
 	 * @return CompletableFuture that will either be completed with the result of {@code fut} it was completed
 	 *  before the timeout. If the returned future is not completed before the timeout it will be completed 
 	 *  with a {@code TimoutException}.
@@ -1132,6 +1162,7 @@ final class CompletableFutureExtensions {
 	 * {@code fut.thenApply[it]}. This can be handy if a {@code CompletableFuture} is needed that should provide a 
 	 * result, but must not be completed by the user.
 	 * @param fut the {@code CompletableFuture} to be copied
+	 * @param <R> generic type of given {@code fut} and of the returned copied future
 	 * @return A copy of {@code fut}, meaning that the result of {@code fut} will be forwarded to 
 	 *   the returned {@code CompletableFuture}.
 	 */

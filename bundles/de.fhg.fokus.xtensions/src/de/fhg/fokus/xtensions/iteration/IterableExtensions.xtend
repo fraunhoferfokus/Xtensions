@@ -36,6 +36,7 @@ final class IterableExtensions {
 // static def <X,Y> Iterable<Pair<X,Y>> combinations(Iterable<X>,Iterable<Y>)
 // static def <X,Y> Iterable<Pair<X,Y>> combinations(Iterable<X>,Iterable<Y>, BiPredicate<X,Y>)
 // static def <T> List<T> toImmutableList(Iterable<T>)
+// static def <T> Iterable<T> peek(Iterable<T>,(T)=>void action)
 // static def <T> Map<Boolean,List<T>> partitionBy(Iterable<T>, Predicate<T>) // Own impl of Map extending AbstractMap
 // static def <T, A, C> Map<Boolean,C> partitionBy(Iterable<T>, Collector<? super T,A,C>, Predicate<T>) // Own impl of Map extending AbstractMap, maybe provide as Collector
 // Maybe interface Partitions<T,C> extends Map<Boolean,C> { def C getTrue(); def C getFalse(); } // avoids boxing integers
@@ -195,7 +196,7 @@ final class IterableExtensions {
 
 	/**
 	 * Creates a {@link Stream} instance for processing the elements 
-	 * of the Iterable {@code it}.<br/>
+	 * of the Iterable {@code it}.<br>
 	 * If the given {@link Iterable} is instance of {@link Collection}, the 
 	 * {@link Collection#stream() stream} method of the Collection interface will
 	 * be called. Otherwise uses {@link StreamSupport} to create a Stream with the
@@ -215,7 +216,7 @@ final class IterableExtensions {
 
 	/**
 	 * Creates a parallel {@link Stream} instance for processing the elements 
-	 * of the Iterable {@code it}.<br/>
+	 * of the Iterable {@code it}.<br>
 	 * If the given {@link Iterable} is instance of {@link Collection}, the 
 	 * {@link Collection#parallelStream() parallelStream} method of the Collection interface will
 	 * be called. Otherwise uses {@link StreamSupport} to create the parallel Stream with the

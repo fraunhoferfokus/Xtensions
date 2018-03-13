@@ -8,24 +8,19 @@ http://www.eclipse.org/legal/epl-v20.html
 Contributors:
     Max Bureck (Fraunhofer FOKUS) - initial text
 ////
+
 = Development of the Xtensions Library
+:toc: macro
+
+toc::[]
+
 
 This chapter gives an overview over how to get stated on development of the Xtensions library.
 
-== Build
 
-The build is based on maven tycho, the wrapper script `mvnw` in the root directory of the repository takes care of the maven installation.
-On Linux and Mac you might need to call `chmod +x mvnw`.
+== Setting up the IDE
 
-To build the libraries from source, simply drop into the root directory and call `./mvnw clean package`.
-The main library will be located in `bundles/de.fhg.fokus.xtensions/target`
-
-The p2 update site containing the library is located in directory `p2/de.fhg.fokus.xtensions.p2/target/repository`.
-
-
-== Setting up the Development Environment
-
-The repository contains the Oomph setup file link:https://raw.githubusercontent.com/fraunhoferfokus/Xtensions/master/releng/de.fhg.fokus.xtensions.setup/Xtensions.setup[Xtensions.setup] 
+The repository contains the Eclipse Oomph setup file link:https://raw.githubusercontent.com/fraunhoferfokus/Xtensions/master/releng/de.fhg.fokus.xtensions.setup/Xtensions.setup[Xtensions.setup] 
 for the Eclipse IDE.
 
 Start the Eclipse installer, then switch to advanced mode (hamburger menu in the top-right corner).
@@ -35,19 +30,108 @@ into the "Resource URIs" text field. Then select the checkbox next to the "Xtens
 press "Next >". Enter the installation details as preferred, press "Next >", then press "Finish". 
 The Eclipse IDE will be installed and configured. It may need to restart one ore more times.
 
+For the most relevant maven builds, run configurations are checked into the repositories,
+open the "Run > Run Configurations" dialog from the main menu to browse and start a build.
+If you want to start a build from the command line, read the next chapter.
+
+== Build
+
+The build is based on maven tycho, the wrapper script `mvnw` in the root directory of the repository takes care of the maven installation.
+On Linux and Mac you might need to call `chmod +x mvnw`.
+
+To build the libraries from source, simply drop into the root directory and call 
+
+[source,bash]
+----
+./mvnw clean package
+----
+
+Afterwards, the main library will be located in `bundles/de.fhg.fokus.xtensions/target`
+
+The p2 update site containing the library is located in directory `p2/de.fhg.fokus.xtensions.p2/target/repository`.
+
+
+Have a look at the `.travis.yml` file on how snapshot builds (on every commit) and release builds and deployments
+(when a tag is pushed to GitHub, see <<Performing a Release>>) are done.
+
+=== Building Incubation Bundles
+
+To build incubation bundles, enable the maven profile "incubation".
+
+=== Code Coverage 
+
+To produce a Jacoco covarage report (how much library code is covered by the test cases) 
+and push the report to coveralls.io enable the maven profile  "coverage-report". 
+The result of the report is located in the directory 
+`releng/de.fhg.fokus.xtensions.report/target/site/jacoco-aggregate/`.
+In future the report generation and the coveralls publishing will be separated into different 
+maven profiles.
+
+Be aware that the coverage report misses all inlined Xtension library methods. This includes
+most of the methods of the class `de.fhg.fokus.xtensions.datetime.DurationExtensions`.
+
+=== Skipping Test Project Compilation
+
+To skip the compilation of the test project, pass the system property "release" to
+the maven build, e.g. passing parameter `-Drelease`. This does not actually trigger
+a release to bintray, it just skips compiling the test project. Have a look at the 
+`.travis.yml` file to see how a release deployment is performed on Travis CI.
+
+=== Documentation Build
+
+The documentation is written in AsciiDoc and written in a way so HTML can be generated 
+via link:https://toolchain.gitbook.com/[GitBook].
+
+To use GitBook, first install `npm` your preferred way. To install the GitBook tooling call
+
+[source,bash]
+----
+npm install gitbook-cli -g
+----
+
+To prepare the build of the documentation, switch to the root directory of the repository
+and call 
+
+[source,bash]
+----
+gitbook install
+----
+
+To actually generate the HTML, call the following command in the root repository location
+
+[source,bash]
+----
+gitbook build
+----
+
+The result of the generation should then be located in the `_book` directory.
+
+To start a web server providing a view on the documentation that should update itself whenever
+the AsciiDoc sources change, call the following command in the root repository path.
+
+[source,bash]
+----
+gitbook serve
+----
+
 == External Contributions
 
 Please have a look at the link:../CONTRIBUTING.adoc[contribution guide].
 
 == Performing a Release
 
+On every push to the GitHub repository a build is triggered and a snapshot is deployed to 
+the JFrog Artifactory maven snapshot repository. This requires no process. However, performing
+a release of a stable version requires several steps.
+
 Releasing a new version of the Xtensions library is mostly automated. To trigger a 
 release, a new tag has to be created in the GitHub project. This tag *must* be a 
 valid sem-ver version number `major.minor.patch`.
 
-Here is a checklist of steps to perform (in this order):
+Here is a checklist of steps to perform (in this order).
+Ideally the first three steps are already done directly after a previous release.
 
-- [ ] Update the version of root `pom.xml` (keep the `-SNAPSHOT` suffix, it will be removed during the build)
+- [ ] Update the version of root `pom.xml` (keep the `-SNAPSHOT` suffix, it will be removed during the build). 
 - [ ] Update the version of every bundle and feature project (see folders `bundles`, `features`, `tests`, `bundles-incubation`, and `tests-incubation`)
 - [ ] Adjust the `.travis/bintray-deploy.json` file declaring the new version
 - [ ] Update the `README.adoc` file

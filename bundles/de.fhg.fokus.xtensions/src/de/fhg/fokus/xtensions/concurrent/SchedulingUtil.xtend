@@ -57,7 +57,7 @@ final class SchedulingUtil {
 	 * 	<li>{@link SchedulingUtil#repeatEvery(long, TimeUnit)}</li>
 	 * 	<li>{@link SchedulingUtil#repeatEvery(ScheduledExecutorService, long, TimeUnit)}</li>
 	 * </ul>
-	 * When the {@link DelaySpecifier#withInitialDelay(long, org.eclipse.xtext.xbase.lib.Procedures.Procedure1) withInitialDelay(long initialDelay, (CompletableFuture<?>)=>void action)}
+	 * When the {@link DelaySpecifier#withInitialDelay(long, org.eclipse.xtext.xbase.lib.Procedures.Procedure1) withInitialDelay(long initialDelay, (CompletableFuture&lt;?&gt;)=&gt;void action)}
 	 * method is called the scheduling will be started, by scheduling the given action according to the scheduling 
 	 * information given to the function producing the DelaySpecifier and the given delay passed to withInitialDelay.<br>
 	 * This class is not intended to be sub-classed outside of the SchdulingExtensions.
@@ -92,14 +92,14 @@ final class SchedulingUtil {
 	 * (no matter how), the {@code action} will be un-scheduled and not be called again.<br><br>
 	 * Be aware that the execution of {@code action} will be performed on a single Thread, so if the execution of {@code action}
 	 * takes longer than the specified {@code period}, following executions are delayed. Consider using 
-	 * {@link SchedulingUtil#repeatEvery(ScheduledExecutorService, Duration, org.eclipse.xtext.xbase.lib.Procedures.Procedure1) repeatEvery(ScheduledExecutorService, Duration, (CompletableFuture<?>)=>void)}
+	 * {@link SchedulingUtil#repeatEvery(ScheduledExecutorService, Duration, org.eclipse.xtext.xbase.lib.Procedures.Procedure1) repeatEvery(ScheduledExecutorService, Duration, (CompletableFuture&lt;?&gt;)=&gt;void)}
 	 * to specify an own {@code ScheduledExecutorService} which may provide more threads for execution.<br><br>
 	 * Note: The use of {@code Duration} may cause a loss in time precision, if the overall period exceeds Long.MAX_VALUE nanoseconds, 
 	 * which is roughly a duration of 292.5 years. At most at most 999,999,999 nanoseconds (less than one 
 	 * second) may be stripped. Alternatively you can call 
-	 * {@link SchedulingUtil#repeatEvery(long, TimeUnit, org.eclipse.xtext.xbase.lib.Procedures.Procedure1) repeatEvery(long, TimeUnit, (CompletableFuture<?>)=>void)} or 
+	 * {@link SchedulingUtil#repeatEvery(long, TimeUnit, org.eclipse.xtext.xbase.lib.Procedures.Procedure1) repeatEvery(long, TimeUnit, (CompletableFuture&lt;?&gt;)=&gt;void)} or 
 	 * {@link SchedulingUtil#repeatEvery(ScheduledExecutorService, long, TimeUnit, org.eclipse.xtext.xbase.lib.Procedures.Procedure1) 
-	 * repeatEvery(ScheduledExecutorService, long, TimeUnit, (CompletableFuture<?>)=>void)}
+	 * repeatEvery(ScheduledExecutorService, long, TimeUnit, (CompletableFuture&lt;?&gt;)=&gt;void)}
 	 * to specify the time without loss of precision.
 	 * 
 	 * @param period at which the given {@code action} should be called.
@@ -133,8 +133,8 @@ final class SchedulingUtil {
 	 * Note: The use of {@code Duration} may cause a loss in time precision, if the overall period exceeds Long.MAX_VALUE nanoseconds, 
 	 * which is roughly a duration of 292.5 years. At most at most 999,999,999 nanoseconds (less than one 
 	 * second) may be stripped. Alternatively you can call 
-	 * {@link SchedulingUtil#repeatEvery(long, TimeUnit, org.eclipse.xtext.xbase.lib.Procedures.Procedure1) repeatEvery(long, TimeUnit, (CompletableFuture<?>)=>void)} or 
-	 * {@link SchedulingUtil#repeatEvery(ScheduledExecutorService, long, TimeUnit, org.eclipse.xtext.xbase.lib.Procedures.Procedure1) repeatEvery(ScheduledExecutorService, long, TimeUnit, (CompletableFuture<?>)=>void)}
+	 * {@link SchedulingUtil#repeatEvery(long, TimeUnit, org.eclipse.xtext.xbase.lib.Procedures.Procedure1) repeatEvery(long, TimeUnit, (CompletableFuture&lt;?&gt;)=&gt;void)} or 
+	 * {@link SchedulingUtil#repeatEvery(ScheduledExecutorService, long, TimeUnit, org.eclipse.xtext.xbase.lib.Procedures.Procedure1) repeatEvery(ScheduledExecutorService, long, TimeUnit, (CompletableFuture&lt;?&gt;)=&gt;void)}
 	 * to specify the time without loss of precision.<br>
 	 * 
 	 * @param scheduler the executor service used for scheduling the given {@code action}.
@@ -167,7 +167,7 @@ final class SchedulingUtil {
 	 * (no matter how), the {@code action} will be un-scheduled and not be called again.<br><br>
 	 * Be aware that the execution of {@code action} will be performed on a single Thread, so if the execution of {@code action}
 	 * takes longer than the specified {@code period}, following executions are delayed. Consider using 
-	 * {@link SchedulingUtil#repeatEvery(ScheduledExecutorService, Duration, org.eclipse.xtext.xbase.lib.Procedures.Procedure1) repeatEvery(ScheduledExecutorService, Duration, (CompletableFuture<?>)=>void)}
+	 * {@link SchedulingUtil#repeatEvery(ScheduledExecutorService, Duration, org.eclipse.xtext.xbase.lib.Procedures.Procedure1) repeatEvery(ScheduledExecutorService, Duration, (CompletableFuture&lt;?&gt;)=&gt;void)}
 	 * to specify an own {@code ScheduledExecutorService} which may provide more threads for execution.
 	 * 
 	 * @param period duration in {@code unit} at which the given {@code action} should be called.
@@ -395,7 +395,7 @@ final class SchedulingUtil {
 	 * specified by the parameters.<br>
 	 * The thread calling this method will not block.
 	 * @param time in {@code unit} after which the returned future will be completed with {@code null} value.
-	 *        The value of this parameter must be {> 0}.
+	 *        The value of this parameter must be {@code > 0}.
 	 * @param unit is the time unit of {@code time}
 	 * @return the future that can be used to check for delay till completion of the future or to cancel the completion
 	 * @throws NullPointerException if {@code unit} is {@code null}
@@ -423,7 +423,7 @@ final class SchedulingUtil {
 	 * which is roughly a duration of 292.5 years. At most at most 999,999,999 nanoseconds (less than one 
 	 * second) may be stripped.
 	 * @param duration is the time after which the returned future will be completed with {@code null} value.
-	 *        The value of this parameter must be {> 0}.
+	 *        The value of this parameter must be {@code > 0}.
 	 * @return the future that can be used to check for delay till completion of the future or to cancel the completion
 	 * @throws NullPointerException if {@code duration} is {@code null}
 	 * @throws IllegalArgumentException if {@code duration} value is {@code <= 0}

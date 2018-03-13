@@ -41,7 +41,7 @@ class StringSplitExtensions {
 	 * @param limit maximum amount of elements provided by the returned iterator.
 	 * @return iterator providing the split results
 	 * @throws NullPointerException if toSplit or pattern is null
-	 * @throws PatternSyntaxException if the {@code pattern}'s syntax is invalid
+	 * @throws java.util.regex.PatternSyntaxException if the {@code pattern}'s syntax is invalid
 	 * @see String#split(String,int)
 	 */
 	public static def Iterator<String> splitIt(String toSplit, String pattern, int limit) {
@@ -113,7 +113,7 @@ class StringSplitExtensions {
 	 * @param pattern the pattern defining where to split the input string {@code toSplit}.
 	 * @return iterator providing the split results
 	 * @throws NullPointerException if toSplit or pattern is null
-	 * @throws PatternSyntaxException if the {@code pattern}'s syntax is invalid
+	 * @throws java.util.regex.PatternSyntaxException if the {@code pattern}'s syntax is invalid
 	 * @see String#split(String)
 	 */
 	public static def Iterator<String> splitIt(CharSequence toSplit, String pattern) throws NullPointerException {

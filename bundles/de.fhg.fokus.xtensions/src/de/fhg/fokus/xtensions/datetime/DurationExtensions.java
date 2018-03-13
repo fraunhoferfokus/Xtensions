@@ -176,7 +176,7 @@ public final class DurationExtensions {
 	}
 
 	/**
-	 * Operator shortcut for {@link Duration#compareTo(Duration) a.compareTo(b) < 0}.
+	 * Operator shortcut for {@link Duration#compareTo(Duration) a.compareTo(b) &lt; 0}.
 	 * 
 	 * @param a left hand side of operator
 	 * @param b right hand side of operator
@@ -188,7 +188,7 @@ public final class DurationExtensions {
 	}
 
 	/**
-	 * Operator shortcut for {@link Duration#compareTo(Duration) a.compareTo(b) > 0}.
+	 * Operator shortcut for {@link Duration#compareTo(Duration) a.compareTo(b) &gt; 0}.
 	 * 
 	 * @param a left hand side of operator
 	 * @param b right hand side of operator
@@ -200,7 +200,7 @@ public final class DurationExtensions {
 	}
 	
 	/**
-	 * Operator shortcut for {@link Duration#compareTo(Duration) a.compareTo(b) <= 0}.
+	 * Operator shortcut for {@link Duration#compareTo(Duration) a.compareTo(b) &lt;= 0}.
 	 * 
 	 * @param a left hand side of operator
 	 * @param b right hand side of operator
@@ -212,7 +212,7 @@ public final class DurationExtensions {
 	}
 	
 	/**
-	 * Operator shortcut for {@link Duration#compareTo(Duration) a.compareTo(b) >= 0}.
+	 * Operator shortcut for {@link Duration#compareTo(Duration) a.compareTo(b) &gt;= 0}.
 	 * 
 	 * @param a left hand side of operator
 	 * @param b right hand side of operator

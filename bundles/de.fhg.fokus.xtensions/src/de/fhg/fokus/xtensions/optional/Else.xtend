@@ -60,6 +60,7 @@ abstract class Else {
 	 * lambdas, allowing better execution performance.
 	 * @param value value to be forwarded to {@code elseBlock}, if it is executed.
 	 * @param elseBlock code to be executed or not.
+	 * @param <T> type of {@code value} which will be passed to {@code elseBlock} if source optional has no value
 	 */
 	def abstract <T> void elseDo(T value, (T)=>void elseBlock)
 
@@ -70,6 +71,8 @@ abstract class Else {
 	 * lambdas, allowing better execution performance.
 	 * @param t value to be forwarded to {@code elseBlock}, if it is executed.
 	 * @param u value to be forwarded to {@code elseBlock}, if it is executed.
+	 * @param <T> type of {@code t} which will be passed to {@code elseBlock} if source optional has no value
+	 * @param <U> type of {@code u} which will be passed to {@code elseBlock} if source optional has no value
 	 * @param elseBlock code to be executed or not.
 	 */
 	def abstract <T, U> void elseDo(T t, U u, (T,U)=>void elseBlock)
