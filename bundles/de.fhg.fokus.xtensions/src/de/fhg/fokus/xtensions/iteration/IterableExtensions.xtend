@@ -64,6 +64,7 @@ final class IterableExtensions {
 	 * object. If the returned iterable will be traversed multiple times 
 	 * @param iterable the {@code Iterable} of which each element should be mapped to {@code int} values.
 	 * @param mapper the mapping function, mapping each element of {@code iterable} to an {@code int} value.
+	 * @param <T> type of elements in {@code iterable}, that are mapped to {@code int}s via {@code mapper}.
 	 * @return an iterable over primitive {@code int} values mapped from the elements of the input {@code iterable}.
 	 */
 	static def <T> IntIterable mapInt(Iterable<T> iterable, ToIntFunction<T> mapper){
@@ -110,6 +111,7 @@ final class IterableExtensions {
 	 * object. If the returned iterable will be traversed multiple times 
 	 * @param iterable the {@code Iterable} of which each element should be mapped to {@code long} values.
 	 * @param mapper the mapping function, mapping each element of {@code iterable} to an {@code long} value.
+	 * @param <T> type of elements in {@code iterable}, that are mapped to {@code long}s via {@code mapper}.
 	 * @return an iterable over primitive {@code long} values mapped from the elements of the input {@code iterable}.
 	 */
 	static def <T> LongIterable mapLong(Iterable<T> iterable, ToLongFunction<T> mapper){
@@ -156,6 +158,7 @@ final class IterableExtensions {
 	 * object. If the returned iterable will be traversed multiple times 
 	 * @param iterable the {@code Iterable} of which each element should be mapped to {@code double} values.
 	 * @param mapper the mapping function, mapping each element of {@code iterable} to an {@code double} value.
+	 * @param <T> type of elements in {@code iterable}, that are mapped to {@code double}s via {@code mapper}.
 	 * @return an iterable over primitive {@code double} values mapped from the elements of the input {@code iterable}.
 	 */
 	static def <T> DoubleIterable mapDouble(Iterable<T> iterable, ToDoubleFunction<T> mapper){
@@ -202,6 +205,7 @@ final class IterableExtensions {
 	 * be called. Otherwise uses {@link StreamSupport} to create a Stream with the
 	 * Spliterator created using {@link Iterable#spliterator()}.
 	 * @param it from which the returned Stream is created
+	 * @param <T> type of elements in {@code iterable}, that are being provided by the returning stream.
 	 * @return Stream to process all elements of the given Iterator {@code it}.
 	 */
 	static def <T> Stream<T> stream(Iterable<T> it) {
@@ -222,6 +226,7 @@ final class IterableExtensions {
 	 * be called. Otherwise uses {@link StreamSupport} to create the parallel Stream with the
 	 * Spliterator created using {@link Iterable#spliterator()}.
 	 * @param it from which the returned Stream is created
+	 * @param <T> type of elements in {@code iterable}, that are being provided by the returning stream.
 	 * @return parallel Stream to process all elements of the given Iterator {@code it}.
 	 */
 	static def <T> Stream<T> parallelStream(Iterable<T> it) {
@@ -239,6 +244,9 @@ final class IterableExtensions {
 	 * using a {@link Collector}.
 	 * @param data the iterable elements should be collected.
 	 * @param collector the collector reducing multiple values into a single result value
+	 * @param <T> type of elements in {@code iterable}
+	 * @param <A> type of mutable aggregator element used by {@code collector}
+	 * @param <R> type of the final element produced by {@code collector} that is being returned.
 	 * @return the result value computed via the given {@code collector} over each element 
 	 *  in the given {@code data} input.
 	 */

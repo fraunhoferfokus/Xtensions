@@ -47,7 +47,6 @@ import java.util.function.Consumer
  * 	 <li>{@link #forwardTo(CompletionStage, CompletableFuture)}</li>
  * 	 <li>{@link #forwardCancellation(CompletableFuture, CompletableFuture)}</li>
  * </ul>
- * </p>
  */
 final class CompletableFutureExtensions {
 

@@ -581,6 +581,7 @@ final class SchedulingUtil {
 	 *   Otherwise the future will be completed with the result value of the successful execution of {@code delayed}.
 	 *   If this future is completed by the caller of this method before {@code delayed} is started executing,
 	 *   the action will not be called.
+	 * @param <T> type of the object returned by the function {@code delayed} that will be provided by the returned future.
 	 * @throws NullPointerException if {@code delayed} or {@code delayUnit} is {@code null}
 	 * @throws IllegalArgumentException if {@code delayTime} value is {@code <= 0}
 	 * @see #delay(Duration, org.eclipse.xtext.xbase.lib.Functions.Function1)
@@ -631,6 +632,7 @@ final class SchedulingUtil {
 	 *   Otherwise the future will be completed with the result value of the successful execution of {@code delayed}.
 	 *   If this future is completed by the caller of this method before {@code delayed} is started executing,
 	 *   the action will not be called.
+	 * @param <T> type of the object returned by the function {@code delayed} that will be provided by the returned future.
 	 * @throws NullPointerException if {@code delayed} or {@code delayUnit} is {@code null}
 	 * @throws IllegalArgumentException if {@code delayBy} time is {@code <= 0}
 	 * @see #delay(long, TimeUnit, org.eclipse.xtext.xbase.lib.Functions.Function1)
@@ -665,6 +667,7 @@ final class SchedulingUtil {
 	 *   This function will be called on a new tread. If the function throws an exception, the returned
 	 *   future will be completed exceptionally with the thrown exception. Otherwise the future will
 	 *   be completed with the result value returned from successful execution of this function.
+	 * @param <T> type of the object returned by the function {@code delayed} that will be provided by the returned future.
 	 * @return future that will be completed exceptionally if {@code delayed} throws an exception. 
 	 *   Otherwise the future will be completed with the result value of the successful execution of {@code delayed}.
 	 *   If this future is completed by the caller of this method before {@code delayed} is started executing,

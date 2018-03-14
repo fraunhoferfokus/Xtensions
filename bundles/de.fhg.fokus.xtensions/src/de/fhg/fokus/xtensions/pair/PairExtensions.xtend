@@ -30,6 +30,8 @@ final class PairExtensions {
 	 * If the given {@code consumer} throws an exception it will be thrown out of this method.
 	 * @param pair the Pair from which key and value are taken and passed to {@code consumer}.
 	 * @param consumer will be called with key and value from {@code pair}
+	 * @param <K> Type of key element of {@code pair}
+	 * @param <V> Type of value element of {@code pair}
 	 * @return the same reference passed in as {@code pair}
 	 */
 	static def <K,V> Pair<K,V> =>(Pair<K,V> pair, (K,V)=>void consumer) {
@@ -43,6 +45,9 @@ final class PairExtensions {
 	 * function by returning a new {@code Pair}.
 	 * @param pair the Pair from which key and value are taken and passed to {@code combiner}
 	 * @param combiner the function to be called with key and value from {@code pair}
+	 * @param <K> Type of key element of {@code pair}
+	 * @param <V> Type of value element of {@code pair}
+	 * @param <R> Type of the result of the combination of key and value
 	 * @return result returned by {@code combiner}.
 	 */
 	static def <K,V,R> R combine(Pair<K,V> pair, (K,V)=>R combiner) {
@@ -56,6 +61,9 @@ final class PairExtensions {
 	 * is {@code null} an empty Optional will be returned.
 	 * @param pair the Pair from which key and value are taken and passed to {@code combiner} if none of them is {@code null}.
 	 * @param combiner the function to be called with non-null key and value from {@code pair}
+	 * @param <K> Type of key element of {@code pair}
+	 * @param <V> Type of value element of {@code pair}
+	 * @param <R> Type of the result of the combination of key and value
 	 * @return result returned by {@code combiner} wrapped in an Optional
 	 */
 	static def <K,V,R> Optional<R> safeCombine(Pair<K,V> pair, (K,V)=>R combiner) {

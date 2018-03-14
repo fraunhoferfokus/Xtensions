@@ -63,6 +63,8 @@ final class StreamExtensions {
 	 *  elements will be concatenated to a flat {@code Stream} containing all elements of the returned
 	 *  {@code Iterable}s.
 	 * @param flatMapper function returning an {@code Iterable} for each element in {@code stream}.
+	 * @param <T> Type of elements provided by {@code stream}.
+	 * @param <U> Type of elements {@code flatMapper} maps to from {@code T}.
 	 * @return Stream concatenating all elements returned by {@code flatMapper} for each elements
 	 *  provided by {@code stream}.
 	 * @throws NullPointerException if {@code stream} or {@code flatMapper} is {@code null}, or if 
@@ -82,6 +84,9 @@ final class StreamExtensions {
 	 * {@code Stream<U>}, so a stream of the the class it is filtered by.
 	 * @param input to be filtered to only contain instances of {@code clazz}
 	 * @param clazz object of the class the {@code input} should be filtered for.
+	 * @param <T> Type of elements provided by {@code stream}.
+	 * @param <U> Type, elements in {@code input} are checked to be. The resulting stream only 
+	 *   contains elements of that type.
 	 * @return {@code input} Stream filtered to only contain instances of {@code clazz}.
 	 */
 	static def <T, U> Stream<U> filter(Stream<T> input, Class<? extends U> clazz) {
@@ -102,6 +107,7 @@ final class StreamExtensions {
 	 *  is considered a match when the test returns {@code true} for a given
 	 *  element. If {@code test} throws an exception this exception will be 
 	 *  thrown from this method.
+	 * @param <T> Type of elements in {@code stream}.
 	 * @return an optional either holding the element found in {@code stream}
 	 *  or an empty optional if no element matched {@code test}.
 	 * @throws NullPointerException if {@code stream} or {@code test} is {@code null}
@@ -124,6 +130,7 @@ final class StreamExtensions {
 	 *  is considered a match when the test returns {@code true} for a given
 	 *  element. If {@code test} throws an exception this exception will be 
 	 *  thrown from this method.
+	 * @param <T> Type of elements in {@code stream}.
 	 * @return an optional either holding the element found in {@code stream}
 	 *  or an empty optional if no element matched {@code test}.
 	 * @throws NullPointerException if {@code stream} or {@code test} is {@code null}
@@ -140,6 +147,7 @@ final class StreamExtensions {
 	 * to the order implemented via the {@code Comparable} interface the elements
 	 * of the stream implement.
 	 * @param stream the stream to be reduced to the minimum element.
+	 * @param <T> Type of elements in {@code stream}.
 	 * @return an Optional holding the minimum element of the stream, 
 	 *   or an empty optional if the stream is empty.
 	 */
@@ -154,6 +162,7 @@ final class StreamExtensions {
 	 * to the order implemented via the {@code Comparable} interface the elements
 	 * of the stream implement.
 	 * @param stream the stream to be reduced to the maximum element.
+	 * @param <T> Type of elements in {@code stream}.
 	 * @return an Optional holding the maximum element of the stream, 
 	 *   or an empty optional if the stream is empty.
 	 */
@@ -165,6 +174,7 @@ final class StreamExtensions {
 	/**
 	 * Filters a {@code stream} to not include {@code null} values.
 	 * @param stream the stream to be filtered to exclude {@code null} values.
+	 * @param <T> Type of elements in {@code stream}.
 	 * @return filtered stream
 	 */
 	static def <T> Stream<T> filterNull(Stream<T> stream) {
@@ -179,6 +189,7 @@ final class StreamExtensions {
 	/**
 	 * This function is a simple shortcut for {@code stream.collect(Collectors.toList())}.
 	 * @param stream the stream to be collected into a new {@code List}.
+	 * @param <T> Type of elements in {@code stream}.
 	 * @return List containing all values from {@code stream}
 	 */
 //	@Inline(value="$1.collect(Collectors.toList())", imported=Collectors)
@@ -189,6 +200,7 @@ final class StreamExtensions {
 	/**
 	 * This function is a simple shortcut for {@code stream.collect(Collectors.toSet())}.
 	 * @param stream the stream to be collected into a new {@code Set}.
+	 * @param <T> Type of elements in {@code stream}.
 	 * @return Set containing all values from {@code stream}
 	 */
 //	@Inline(value="$1.collect(Collectors.toSet())", imported=Collectors)
@@ -202,6 +214,8 @@ final class StreamExtensions {
 	 * @param stream the stream to be collected into a new {@code Set}.
 	 * @param collectionFactory a {@code Supplier} which returns a new, empty
      * {@code Collection} (of an arbitrary sub-type) supporting mutation.
+	 * @param <T> Type of elements in {@code stream}.
+	 * @param <C> Type of (mutable) collection all elements of {@code stream} are added to.
 	 * @return Set containing all values from {@code stream}
 	 */
 //	@Inline(value="$1.collect(Collectors.toCollection($2))", imported=Collectors)
@@ -219,6 +233,8 @@ final class StreamExtensions {
 	 * values from both sources.
 	 * @param stream the stream that's elements are combined with every elements from {@code combineWith}
 	 * @param combineWith the elements to be combined with each element from {@code stream}
+	 * @param <T> Type of elements in {@code stream}.
+	 * @param <Z> Type of elements in {@code combineWith}.
 	 * @return stream of combinations of all elements from {@code stream} with every element of {@code combineWith}.
 	 */
 	static def <T, Z> Stream<Pair<T, Z>> combinations(Stream<T> stream, Iterable<Z> combineWith) {
@@ -235,6 +251,8 @@ final class StreamExtensions {
 	 * as {@link Pair}s of the values from both sources.
 	 * @param stream the stream that's elements are combined with every elements from {@code combineWith}
 	 * @param streamSupplier the elements to be combined with each element from {@code stream}
+	 * @param <T> Type of elements in {@code stream}.
+	 * @param <Z> Type of elements provided by stream, provided by {@code streamSupplier}
 	 * @return stream of combinations of all elements from {@code stream} with every element of the stream provided by {@code streamSupplier}.
 	 */
 	static def <T, Z> Stream<Pair<T, Z>> combinations(Stream<T> stream, ()=>Stream<Z> streamSupplier) {
@@ -250,6 +268,9 @@ final class StreamExtensions {
 	 * @param stream the stream that's elements are combined with every elements from {@code combineWith}
 	 * @param combineWith the elements to be combined with each element from {@code stream}
 	 * @param combiner will be used to combine elements from {@code stream} and {@code combineWith} to result values.
+	 * @param <T> Type of elements in {@code stream}.
+	 * @param <Z> Type of elements in {@code combineWith}.
+	 * @param <R> Result type of {@code combiner} function, which fuses a {@code T} and a {@code Z} object to one instance of {@code R}.
 	 * @return stream of combinations of all elements from {@code stream} with every element of {@code combineWith} 
 	 *   combined by using the {@code combiner} function.
 	 */
@@ -269,6 +290,9 @@ final class StreamExtensions {
 	 * @param stream the stream that's elements are combined with every elements from {@code combineWith}
 	 * @param streamSupplier the elements to be combined with each element from {@code stream}
 	 * @param combiner will be used to combine elements from {@code stream} and stream provided by {@code streamSupplier} to result values.
+	 * @param <T> Type of elements in {@code stream}.
+	 * @param <Z> Type of elements in stream, provided by {@code streamSupplier}.
+	 * @param <R> Result type of {@code combiner} function, which fuses a {@code T} and a {@code Z} object to one instance of {@code R}.
 	 * @return stream of combinations of all elements from {@code stream} with every element of the stream provided by {@code streamSupplier}
 	 *   combined by using the {@code combiner} function.
 	 */
@@ -285,6 +309,7 @@ final class StreamExtensions {
 	 * Operator shortcut for {@link Stream#concat(Stream,Stream) Stream.concat(first,second)}.
 	 * @param first containing the elements first provided by the resulting Stream
 	 * @param second elements provided by the resulting stream after the elements of {@code first}.
+	 * @param <T> Type of resulting concatinated stream. Both input streams must provide {@code T} objects, or objects of sub-types of {@code T}.
 	 * @return lazily concatenated stream of {@code first} and {@code second}
 	 */
 //	@Inline(value = "Stream.concat($1,$2)", imported=Stream)
@@ -307,6 +332,7 @@ final class StreamExtensions {
 	 * @param seed first element returned by the stream and seed for following elements by using {@code next}.
 	 * @param hasNext before each element is provided (except for the first one)
 	 * @param next operation providing the next element
+	 * @param <T> Type of elements of produced stream
 	 * @return Stream providing elements computing by {@code seed}, {@code hasNext}, and {@code next}.
 	 */
 	static def <T> Stream<T> iterate​(T seed, Predicate<? super T> hasNext, UnaryOperator<T> next) {
@@ -341,6 +367,7 @@ final class StreamExtensions {
 	 * @param seed first element returned by the stream and seed for following elements by using {@code next}.
 	 * @param hasNext before each element is provided (except for the first one)
 	 * @param next operation providing the next element
+	 * @param <T> Type of elements of produced stream
 	 * @return Stream providing elements computing by {@code seed}, {@code hasNext}, and {@code next}.
 	 * @see #iterate​(Object, Predicate, UnaryOperator)
 	 */
