@@ -14,6 +14,9 @@ import java.util.PrimitiveIterator.OfLong
 import java.util.function.LongConsumer
 import java.util.stream.LongStream
 import de.fhg.fokus.xtensions.iteration.PrimitiveIteratorExtensions
+import java.util.function.LongSupplier
+import java.util.function.LongUnaryOperator
+import java.util.function.LongPredicate
 
 /** 
  * This interface is a specialized version of an {@code Iterable<Long>} providing a {@link OfLong PrimitiveIterator.OfLong} 
@@ -60,7 +63,45 @@ interface LongIterable extends Iterable<Long> {
 		PrimitiveIteratorExtensions.streamRemaining(iterator)
 	} 
 	
-	// TODO public static LongIterable generate(final LongSupplier s)
-	// TODO public static LongIterable iterate(final long seed, final LongUnaryOperator f)
-	// TODO public static LongIterable iterate(final long seed, LongPredicate hasNext, final LongUnaryOperator next)
+	/** 
+	 * Creates a new LongIterable that will produce an infinite {@link OfLong} or {@link LongStream} based on the {@link LongSupplier} provided by supplier {@code s}.
+	 * @param s supplier, that provides an {@link LongSupplier} for each
+	 * iterator or stream created.
+	 * @return LongIterable based on the supplier {@code s}.
+	 */
+	public static def LongIterable generate(()=>LongSupplier s) {
+		new SupplierLongIterable(s)
+	}
+	
+	/** 
+	 * Creates {@link LongIterable} an infinite providing an infinite source of
+	 * numbers, starting with the given {@code seed} value and in every
+	 * subsequent step the result of the given {@code operator} applied on the
+	 * last step's value. So in the second step this would be{@code op.applyAsLong(seed)} and so on.
+	 * @param seed first value to be provided and used as seed fed to {@code op} in second step.
+	 * @param op this operator must be side-effect free.
+	 * @return and {@link LongIterable} providing infinite source of numbers
+	 * based on {@code seed} and {@code op}.
+	 */
+	public static def LongIterable iterate(long seed, LongUnaryOperator op) {
+		new IterateLongIterable(seed, op)
+	}
+	
+	/** 
+	 * Creates {@link LongPredicate} an which works similar to a traditional for-loop.
+	 * The first value provided by an iterator provided by the created iterable will be {@code seed} value. 
+	 * The iterator's {@code OfLong#next()} method will return the
+	 * boolean value provided by {@code LongPredicate} on the potentially next value.
+	 * This also means that if {@code LongPredicate} does not hold for the first value 
+	 * the iterator will not provide any value. The next value provided after the initial
+	 * one is {@code next} applied to the initial value. All following values provided by
+	 * the iterator will be computed from the last value by applying {@code next}.
+	 * @param seed initial value to be provided by iterators
+	 * @param hasNext method to check if iterator should provide a next value
+	 * @param next value mapping previous value provided by iterator to next value provided
+	 * @return iterable, providing an iterator based on {@code seed}, {@code hasNext}, and {@code next}.
+	 */
+	def static LongIterable iterate(long seed, LongPredicate hasNext, LongUnaryOperator next) {
+		new IterateLongIterableLimited(seed, hasNext, next)
+	}
 }
