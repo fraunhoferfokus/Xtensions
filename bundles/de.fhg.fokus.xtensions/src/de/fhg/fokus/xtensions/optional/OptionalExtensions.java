@@ -65,7 +65,7 @@ public final class OptionalExtensions {
 	private OptionalExtensions() {
 		throw new IllegalStateException("OptionalExtensions is not allowed to be instantiated");
 	}
-
+	// TODO static <T,U> U mapOr(Optional<T> self, (T)=>U, =>U) 
 	// TODO is any of the following functionality actually usefull???
 
 	// /**

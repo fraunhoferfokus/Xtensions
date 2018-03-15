@@ -92,6 +92,19 @@ abstract class Try<R> {
 		}
 	}
 	
+	def static <R> Try<R> tryOptional(()=>Optional<R> provider) {
+		try {
+			val result = provider.apply
+			if(result.present) {
+				completed(result.get)
+			} else {
+				completedEmpty
+			}
+		} catch(Exception e) {
+			completedExceptionally(e)
+		}
+	}
+	
 	def static <I,R> Try<R> doTry(I input, (I)=>R provider) {
 		try {
 			val result = provider.apply(input)
@@ -196,6 +209,8 @@ abstract class Try<R> {
 	 *   or holding an exception if the operation throws 
 	 */
 	abstract def <U> Try<U> thenTry((R)=>U action)
+	
+	abstract def <U> Try<U> thenTryOptional((R)=>Optional<U> action)
 	
 	abstract def <U, I extends AutoCloseable> Try<U> thenTryWith(()=>I resourceProducer,(I,R)=>U action)
 	
@@ -445,10 +460,18 @@ abstract class Try<R> {
 			none
 		}
 		
+		override <U> thenTryOptional((R)=>Optional<U> action) {
+			tryOptional[| action.apply(result)]
+		}
+		
 	}
 	
 	public final static class Empty<R> extends Try<R> {	
 		private static val Empty<?> INSTANCE = new Empty
+		
+		private def <U> cast() {
+			this as Empty as Empty<U>
+		}
 		
 		override <E> Empty<R> recoverException(Class<E> exceptionType, (E)=>R recovery) {
 			// No exception to recover from
@@ -515,15 +538,15 @@ abstract class Try<R> {
 		}
 		
 		override <U> Empty<U> thenTry((R)=>U action) {
-			this as Empty<?> as Empty<U>
+			cast
 		}
 		
 		override <U,I extends AutoCloseable> Empty<U> thenTryWith(()=>I resourceProducer, (I, R)=>U action) {
-			this as Empty<?> as Empty<U>
+			cast
 		}
 		
 		override <U> Empty<U> thenFlatTry((R)=>Try<U> action) {
-			this as Empty<?> as Empty<U>
+			cast
 		}
 		
 		override isEmpty() {
@@ -547,7 +570,7 @@ abstract class Try<R> {
 		}
 		
 		override <U> Empty<U> filter(Class<U> clazz) {
-			this as Empty<?> as Empty<U>
+			cast
 		}
 		
 		override <U> U transform((R)=>U resultTransformer, (Exception)=>U exceptionTranformer, ()=>U emptyTransformer) {
@@ -578,6 +601,10 @@ abstract class Try<R> {
 			none
 		}
 		
+		override <U> Empty<U> thenTryOptional((R)=>Optional<U> action) {
+			cast
+		}
+		
 	}
 	
 	public final static class Failure<R> extends Try<R> {
@@ -585,6 +612,10 @@ abstract class Try<R> {
 		
 		private new (Exception e) {
 			this.e = e
+		}
+		
+		private def <U> cast() {
+			this as Failure<?> as Failure<U>
 		}
 		
 		public def Exception get() {
@@ -642,19 +673,19 @@ abstract class Try<R> {
 			this
 		}
 		
-		override <U> thenTry((R)=>U action) {
+		override <U> Failure<U> thenTry((R)=>U action) {
 			// no result
-			this as Try<?> as Try<U>
+			cast
 		}
 		
-		override <U,I extends AutoCloseable> thenTryWith(()=>I resourceProducer, (I, R)=>U action) {
+		override <U,I extends AutoCloseable> Failure<U> thenTryWith(()=>I resourceProducer, (I, R)=>U action) {
 			// no result
-			this as Try<?> as Try<U>
+			cast
 		}
 		
-		override <U> thenFlatTry((R)=>Try<U> action) {
+		override <U> Failure<U> thenFlatTry((R)=>Try<U> action) {
 			// no result
-			this as Try<?> as Try<U>
+			cast
 		}
 		
 		override isEmpty() {
@@ -678,7 +709,7 @@ abstract class Try<R> {
 		}
 		
 		override <U> Failure<U> filter(Class<U> clazz) {
-			this as Failure<?> as Failure<U>
+			cast
 		}
 		
 		override <U> transform((R)=>U resultTransformer, (Exception)=>U exceptionTranformer, ()=>U emptyTransformer) {
@@ -731,6 +762,10 @@ abstract class Try<R> {
 		
 		override recover(R recovery) {
 			recovery
+		}
+		
+		override <U> thenTryOptional((R)=>Optional<U> action) {
+			cast
 		}
 		
 	}
