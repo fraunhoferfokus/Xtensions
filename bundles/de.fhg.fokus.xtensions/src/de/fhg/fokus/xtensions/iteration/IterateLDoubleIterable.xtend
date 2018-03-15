@@ -10,68 +10,68 @@
  *******************************************************************************/
 package de.fhg.fokus.xtensions.iteration
 
-import java.util.PrimitiveIterator.OfLong
-import java.util.function.LongUnaryOperator
-import java.util.function.LongConsumer
-import java.util.function.LongPredicate
+import java.util.PrimitiveIterator.OfDouble
+import java.util.function.DoubleUnaryOperator
+import java.util.function.DoubleConsumer
+import java.util.function.DoublePredicate
 import java.util.NoSuchElementException
-import java.util.stream.LongStream
+import java.util.stream.DoubleStream
 
 /**
- * Instances of this class should be provided using {@link LongIterable#iterate(long,LongUnaryOperator)}.<br>
- * LongIterable based on an long seed value and an LongUnaryOperator producing 
+ * Instances of this class should be provided using {@link DoubleIterable#iterate(double,DoubleUnaryOperator)}.<br>
+ * DoubleIterable based on an long seed value and an DoubleUnaryOperator producing 
  * the next value from the previous one. 
  */
-package class IterateLongIterable implements LongIterable {
+package class IterateDoubleIterable implements DoubleIterable {
 	
-	val long seed
-	val LongUnaryOperator operator
+	val double seed
+	val DoubleUnaryOperator operator
 	
-	new(long seed, LongUnaryOperator operator) {
+	new(double seed, DoubleUnaryOperator operator) {
 		this.seed = seed
 		this.operator = operator
 	}
 	
-	override OfLong iterator() {
-		new IterateOfLong(seed, operator)
+	override OfDouble iterator() {
+		new IterateOfDouble(seed, operator)
 	}
 	
-	override forEachLong(LongConsumer consumer) {
+	override forEachDouble(DoubleConsumer consumer) {
 		val op = operator
 		var next = seed
 		while(true) {
 			consumer.accept(next)
-			next = op.applyAsLong(next)
+			next = op.applyAsDouble(next)
 		}
 	}
 	
 	override stream() {
-		LongStream.iterate(seed, operator)
+		DoubleStream.iterate(seed, operator)
 	}
 	
 }
 
 /**
- * {@code OfLong} implementation of an infinite iterator based on a seed value
+ * {@code OfDouble} implementation of an infinite iterator based on a seed value
  * and a function mapping the current value to the next one.
  */
-package class IterateOfLong implements OfLong {
+package class IterateOfDouble implements OfDouble {
 	
-	var long next
-	val LongUnaryOperator operator
+	var double next
+	val DoubleUnaryOperator operator
 	
 	/**
-	 * @param l initial value to be returned by iterator
+	 * @param d initial value to be returned by iterator
 	 * @param operator operation mapping the current iterator value to the next
 	 */
-	new(long l, LongUnaryOperator operator) {
-		this.next = l
+	new(double d, DoubleUnaryOperator operator) {
+		this.next = d
 		this.operator = operator
 	}
 	
-	override nextLong() {
+	override nextDouble() {
 		val curr = next
-		next = operator.applyAsLong(curr)
+		next = operator.applyAsDouble(curr)
 		curr
 	}
 	
@@ -79,72 +79,72 @@ package class IterateOfLong implements OfLong {
 		true
 	}
 	
-	override forEachRemaining(LongConsumer action) {
+	override forEachRemaining(DoubleConsumer action) {
 		val op = operator
 		while(true) {
 			val curr = next
-			next = op.applyAsLong(curr)
+			next = op.applyAsDouble(curr)
 			action.accept(curr)
 		}
 	}
 	
 }
 
-package class IterateLongIterableLimited implements LongIterable {
+package class IterateDoubleIterableLimited implements DoubleIterable {
 	
-	val long seed
-	val LongPredicate hasNext
-	val LongUnaryOperator next
+	val double seed
+	val DoublePredicate hasNext
+	val DoubleUnaryOperator next
 	
-	new(long seed, LongPredicate hasNext, LongUnaryOperator next) {
+	new(double seed, DoublePredicate hasNext, DoubleUnaryOperator next) {
 		this.seed = seed
 		this.hasNext = hasNext
 		this.next = next
 	}
 	
-	override OfLong iterator() {
-		new IterateOfLongLimited(seed, hasNext, next)
+	override OfDouble iterator() {
+		new IterateOfDoubleLimited(seed, hasNext, next)
 	}
 	
-	override forEachLong(LongConsumer consumer) {
+	override forEachDouble(DoubleConsumer consumer) {
 		val hasNextOp = hasNext
 		val nextOp = next
 		var next = seed
 		while(hasNextOp.test(next)) {
 			consumer.accept(next)
-			next = nextOp.applyAsLong(next)
+			next = nextOp.applyAsDouble(next)
 		}
 	}
 	
 }
 
 /**
- * {@code OfLong} implementation of an infinite iterator based on a seed value
+ * {@code OfDouble} implementation of an infinite iterator based on a seed value
  * and a function mapping the current value to the next one.
  */
-package class IterateOfLongLimited implements OfLong {
+package class IterateOfDoubleLimited implements OfDouble {
 	
-	var long next
-	val LongUnaryOperator operator
-	val LongPredicate hasNext
+	var double next
+	val DoubleUnaryOperator operator
+	val DoublePredicate hasNext
 	
 	/**
 	 * @param seed initial value to be returned by iterator
 	 * @param hasNext predicate checking if a next value should be computed.
 	 * @param next operation mapping the current iterator value to the next
 	 */
-	new(long seed, LongPredicate hasNext, LongUnaryOperator next) {
+	new(double seed, DoublePredicate hasNext, DoubleUnaryOperator next) {
 		this.next = seed
 		this.operator = next
 		this.hasNext = hasNext
 	}
 	
-	override nextLong() {
+	override nextDouble() {
 		if(!hasNext.test(next)) {
 			throw new NoSuchElementException
 		}
 		val curr = next
-		next = operator.applyAsLong(curr)
+		next = operator.applyAsDouble(curr)
 		curr
 	}
 	
@@ -152,12 +152,12 @@ package class IterateOfLongLimited implements OfLong {
 		hasNext.test(next)
 	}
 	
-	override forEachRemaining(LongConsumer action) {
+	override forEachRemaining(DoubleConsumer action) {
 		val op = operator
 		val hasNext = this.hasNext
 		var curr = next
 		while(hasNext.test(curr)) {
-			val localNext = op.applyAsLong(curr)
+			val localNext = op.applyAsDouble(curr)
 			next = localNext
 			action.accept(curr)
 			curr = localNext

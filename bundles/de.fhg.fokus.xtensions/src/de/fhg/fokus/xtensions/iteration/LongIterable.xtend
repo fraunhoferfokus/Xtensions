@@ -41,8 +41,9 @@ interface LongIterable extends Iterable<Long> {
 	 * this method with a more efficient implementation.<br>
 	 * Be aware that on inifinite iterables this method only returns when the {@code consumer} throws an exception or terminates the runtime.
 	 * @param consumer the action to be called for each element in the iterable.
+	 * @throws NullPointerException may throw {@link } if {@link LongIterable#iterator() iterator()} returns {@code null}.
 	 */
-	def void forEachLong(LongConsumer consumer) {
+	def void forEachLong(LongConsumer consumer){
 		val OfLong iterator = iterator()
 		while (iterator.hasNext()) {
 			var long next = iterator.nextLong()
@@ -57,6 +58,7 @@ interface LongIterable extends Iterable<Long> {
 	 * recommended for the implementations of this interface to provide an own
 	 * implementation of this method.
 	 * @return a LongStream to iterate over the elements of this iterable.
+	 * @throws NullPointerException may be thrown if {@link LongIterable#iterator() iterator()} returns {@code null}.
 	 */
 	def LongStream stream() {
 		val OfLong iterator = iterator()
@@ -88,7 +90,7 @@ interface LongIterable extends Iterable<Long> {
 	}
 	
 	/** 
-	 * Creates {@link LongPredicate} an which works similar to a traditional for-loop.
+	 * Creates {@link LongIterable} an which works similar to a traditional for-loop.
 	 * The first value provided by an iterator provided by the created iterable will be {@code seed} value. 
 	 * The iterator's {@code OfLong#next()} method will return the
 	 * boolean value provided by {@code LongPredicate} on the potentially next value.
