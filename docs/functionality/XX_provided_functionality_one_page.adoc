@@ -25,18 +25,20 @@ toc::[]
 
 {% include "./06_iterable.adoc" %}
 
-{% include "./07_primitive_iterators.adoc" %}
+{% include "./07_iterator.adoc" %}
 
 {% include "./08_primitive_iterables.adoc" %}
 
-{% include "./09_strings.adoc" %}
+{% include "./09_primitive_iterators.adoc" %}
 
-{% include "./10_duration.adoc" %}
+{% include "./10_strings.adoc" %}
 
-{% include "./11_functions.adoc" %}
+{% include "./11_duration.adoc" %}
 
-{% include "./12_completable_future.adoc" %}
+{% include "./12_functions.adoc" %}
 
-{% include "./13_async_computations.adoc" %}
+{% include "./13_completable_future.adoc" %}
 
-{% include "./14_scheduling_util.adoc" %}
+{% include "./14_async_computations.adoc" %}
+
+{% include "./15_scheduling_util.adoc" %}
