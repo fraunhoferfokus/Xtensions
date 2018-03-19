@@ -4,6 +4,9 @@ import static extension de.fhg.fokus.xtensions.incubation.iteration.Loop.*
 import static extension de.fhg.fokus.xtensions.incubation.iteration.IteratorExtensions.*
 import org.junit.Test
 import de.fhg.fokus.xtensions.incubation.showcase.Person
+import de.fhg.fokus.xtensions.incubation.function.Trampoline
+import de.fhg.fokus.xtensions.incubation.function.Bounce
+import de.fhg.fokus.xtensions.incubation.Showcase.Parity
 
 class Showcase {
 	
@@ -62,6 +65,35 @@ class Showcase {
 		]
 		
 		println(julius.name)
+	}
+	
+	@Test
+	def void demoTrampoline() {
+		val first = 99
+		val firstResult = Trampoline.jump[even(first)]
+		println('''«first» is «firstResult»''')
+
+		val second = 104
+		val secondResult = Trampoline.jump[even(second)]
+		println('''«second» is «secondResult»''')
+	}
+	
+	enum Parity {EVEN, ODD}
+	
+	static def Bounce even(Trampoline<Parity> it, int value) {
+		if(value == 0) {
+			result(Parity.EVEN)
+		} else {
+			call[odd(value - 1)]
+		}
+	}
+	
+	static def Bounce odd(Trampoline<Parity> it, int value) {
+		if(value == 0) {
+			result(Parity.ODD)
+		} else {
+			call[even(value - 1)]
+		}
 	}
 	
 	@Test
