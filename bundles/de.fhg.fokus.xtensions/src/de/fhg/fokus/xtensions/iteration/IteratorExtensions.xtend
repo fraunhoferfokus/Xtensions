@@ -10,7 +10,7 @@ import java.util.function.ToDoubleFunction
 import static extension java.util.Objects.*
 
 /**
- * Extension methods to {@link @Iterator}. 
+ * Extension methods for the {@link Iterator} class. 
  */
 class IteratorExtensions {
 
