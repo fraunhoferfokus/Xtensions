@@ -23,7 +23,7 @@ public abstract class Either<L, R> {
 	public abstract def boolean isLeft()
 	public abstract def boolean isRight()
 	public abstract def L leftOr(L alternative)
-	public abstract def R rightOr(L alternative)
+	public abstract def R rightOr(R alternative)
 	public abstract def L leftOrCompute((R)=>L alternative)
 	public abstract def R rightOrCompute((L)=>R alternative)
 	public abstract def <X extends Exception> R rightOrThrow((L)=>X exceptionProvider) throws X
