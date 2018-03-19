@@ -17,14 +17,12 @@ import java.util.stream.StreamSupport
 import java.util.stream.Collector
 import java.util.function.ToIntFunction
 import java.util.function.IntConsumer
-import java.util.PrimitiveIterator.OfInt
 import static extension java.util.Objects.*
 import java.util.function.ToLongFunction
-import java.util.PrimitiveIterator.OfLong
 import java.util.function.LongConsumer
 import java.util.function.ToDoubleFunction
-import java.util.PrimitiveIterator.OfDouble
 import java.util.function.DoubleConsumer
+import static extension de.fhg.fokus.xtensions.iteration.IteratorExtensions.*
 
 /**
  * Additional extension functions for the {@link Iterable} class.
@@ -61,7 +59,8 @@ final class IterableExtensions {
 	 * {@code mapper} function for each element of the original {@code iterable}. 
 	 * The returned {@code IntIterable} is lazy, only performing
 	 * the {@code mapper} function when iterating over the original {@code iterable}
-	 * object. If the returned iterable will be traversed multiple times 
+	 * object. If the returned iterable will be traversed multiple times the {@code mapper}
+	 * function will be applied multiple times for each element.
 	 * @param iterable the {@code Iterable} of which each element should be mapped to {@code int} values.
 	 * @param mapper the mapping function, mapping each element of {@code iterable} to an {@code int} value.
 	 * @param <T> type of elements in {@code iterable}, that are mapped to {@code int}s via {@code mapper}.
@@ -72,20 +71,7 @@ final class IterableExtensions {
 		mapper.requireNonNull
 		new IntIterable {
 			override iterator() {
-				// TODO move into IteratorExtensions to allow Iterator#mapInt
-				new OfInt {
-					val iterator = iterable.iterator
-					
-					override nextInt() {
-						val current = iterator.next
-						mapper.applyAsInt(current)
-					}
-					
-					override hasNext() {
-						iterator.hasNext
-					}
-					
-				}
+				iterable.iterator.mapInt(mapper)
 			}
 			
 			override forEachInt(IntConsumer consumer) {
@@ -108,7 +94,8 @@ final class IterableExtensions {
 	 * {@code mapper} function for each element of the original {@code iterable}. 
 	 * The returned {@code LongIterable} is lazy, only performing
 	 * the {@code mapper} function when iterating over the original {@code iterable}
-	 * object. If the returned iterable will be traversed multiple times 
+	 * object. If the returned iterable will be traversed multiple times the {@code mapper}
+	 * function will be applied multiple times for each element.
 	 * @param iterable the {@code Iterable} of which each element should be mapped to {@code long} values.
 	 * @param mapper the mapping function, mapping each element of {@code iterable} to an {@code long} value.
 	 * @param <T> type of elements in {@code iterable}, that are mapped to {@code long}s via {@code mapper}.
@@ -119,20 +106,7 @@ final class IterableExtensions {
 		mapper.requireNonNull
 		new LongIterable {
 			override iterator() {
-				// TODO move into IteratorExtensions to allow Iterator#mapLong
-				new OfLong {
-					val iterator = iterable.iterator
-					
-					override nextLong() {
-						val current = iterator.next
-						mapper.applyAsLong(current)
-					}
-					
-					override hasNext() {
-						iterator.hasNext
-					}
-					
-				}
+				iterable.iterator.mapLong(mapper)
 			}
 			
 			override forEachLong(LongConsumer consumer) {
@@ -166,20 +140,7 @@ final class IterableExtensions {
 		mapper.requireNonNull
 		new DoubleIterable {
 			override iterator() {
-				// TODO move into IteratorExtensions to allow Iterator#mapLong
-				new OfDouble {
-					val iterator = iterable.iterator
-					
-					override nextDouble() {
-						val current = iterator.next
-						mapper.applyAsDouble(current)
-					}
-					
-					override hasNext() {
-						iterator.hasNext
-					}
-					
-				}
+				iterable.iterator.mapDouble(mapper)				
 			}
 			
 			override forEachDouble(DoubleConsumer consumer) {

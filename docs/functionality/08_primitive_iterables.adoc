@@ -97,7 +97,8 @@ var IntIterable ints = arr.asIntIterable(1, arr.length - 1)  // omit first and l
 
 === From Computations
 
-Currently only available on IntIterable
+In following we are using IntIterable to show how to create computed primitive iterables,
+but respective factory methods are also available on LongIterable and DoubleIterable.
 
 To create an IntIterable representing an infinite number of int values the static `generate`
 factory method can be used. This method has to provided with a function which itself provides

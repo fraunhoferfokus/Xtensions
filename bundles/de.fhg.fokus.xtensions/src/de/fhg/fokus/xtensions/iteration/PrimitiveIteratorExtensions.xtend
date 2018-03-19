@@ -25,9 +25,22 @@ import java.util.stream.DoubleStream
  */
 final class PrimitiveIteratorExtensions {
 	
-	// static def IntSummaryStatistics summaryStatistics(PrimitiveIterator.OfInt)
+	// static def IntSummaryStatistics summarize(PrimitiveIterator.OfInt)
+	// static def LongSummaryStatistics summarize(PrimitiveIterator.OfLong)
+	// static def DoubleSummaryStatistics summarize(PrimitiveIterator.OfDouble)
+	
 	// static def OptionalInt reduce(PrimitiveIterator.OfInt,IntBinaryOperator op)
 	// static def int reduce(PrimitiveIterator.OfInt, int identity, IntBinaryOperator op)
+	
+	// * min, 
+	// * max,
+	// * average,
+	// * sum​,
+	// * count,
+	
+	// * anyMatch(XXXPredicate),
+	// * allMatch(XXXPredicate)/noneMatch(XXXPredicate)
+	// * findFirst​(XXXPredicate)
 	
 	private new() {
 		throw new IllegalStateException("PrimitiveIteratorExtensions not intended to be instantiated")

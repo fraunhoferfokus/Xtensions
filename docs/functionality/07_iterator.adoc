@@ -1,0 +1,21 @@
+
+== Extensions to Iterator
+
+To map from an Iterator (over references) to a link:https://docs.oracle.com/javase/9/docs/api/java/util/PrimitiveIterator.html[``PrimitiveIterator``s],
+the class `de.fhg.fokus.xtensions.iteration.IteratorExtensions` provides the methods `mapInt`, `mapLong` and `mapDouble`.
+
+----
+import static java.util.stream.Collectors.*
+import static extension de.fhg.fokus.xtensions.iteration.IteratorExtensions.*
+// ...
+val Iterable<String> strings = #["fooooo", "baar", "baz"]
+val lengths = strings.iterator.mapInt[length]
+
+----
+
+[TIP]
+====
+Related JavaDocs:
+
+* https://javadoc.io/page/com.github.fraunhoferfokus.xtensions/de.fhg.fokus.xtensions/latest/de/fhg/fokus/xtensions/iteration/IteratorExtensions.html[IterableExtensions]
+====

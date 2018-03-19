@@ -43,6 +43,7 @@ import static extension de.fhg.fokus.xtensions.concurrent.CompletableFutureExten
 import static extension de.fhg.fokus.xtensions.datetime.DurationExtensions.*
 import static extension de.fhg.fokus.xtensions.function.FunctionExtensions.*
 import static extension de.fhg.fokus.xtensions.iteration.IterableExtensions.*
+import static extension de.fhg.fokus.xtensions.iteration.IteratorExtensions.*
 import static extension de.fhg.fokus.xtensions.iteration.PrimitiveArrayExtensions.*
 import static extension de.fhg.fokus.xtensions.optional.OptionalExtensions.*
 import static extension de.fhg.fokus.xtensions.optional.OptionalIntExtensions.*
@@ -193,6 +194,11 @@ class Showcase {
 			val hex = Long.toHexString(it)
 			println(hex)
 		]
+	}
+	
+	@Test def void iteratorDemo() {
+		val Iterable<String> strings = #["fooooo", "baar", "baz"]
+		val lengths = strings.iterator.mapInt[length]
 	}
 	
 	@Test def void optionalDemo() {
