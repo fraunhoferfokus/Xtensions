@@ -111,7 +111,7 @@ class SchedulingUtilTest {
 		Thread.sleep(250)
 		fut.cancel(false)
 		val resultCount = count.get
-		assertTrue(resultCount >= 4 && resultCount <= 5)
+		resultCount.assertRange(4,5)
 		// now let's test if cancellation worked
 		Thread.sleep(20) 
 		assertEquals(resultCount, count.get)

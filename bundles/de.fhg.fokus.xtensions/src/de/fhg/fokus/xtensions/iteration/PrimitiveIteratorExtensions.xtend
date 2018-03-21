@@ -17,6 +17,9 @@ import java.util.stream.StreamSupport
 import java.util.Spliterator
 import java.util.stream.LongStream
 import java.util.stream.DoubleStream
+import java.util.IntSummaryStatistics
+import java.util.LongSummaryStatistics
+import java.util.DoubleSummaryStatistics
 
 /**
  * This class contains static methods for the primitive iterators defined in {@link PrimitiveIterator}.
@@ -24,10 +27,6 @@ import java.util.stream.DoubleStream
  * The class is not intended to be instantiated.
  */
 final class PrimitiveIteratorExtensions {
-	
-	// static def IntSummaryStatistics summarize(PrimitiveIterator.OfInt)
-	// static def LongSummaryStatistics summarize(PrimitiveIterator.OfLong)
-	// static def DoubleSummaryStatistics summarize(PrimitiveIterator.OfDouble)
 	
 	// static def OptionalInt reduce(PrimitiveIterator.OfInt,IntBinaryOperator op)
 	// static def int reduce(PrimitiveIterator.OfInt, int identity, IntBinaryOperator op)
@@ -41,6 +40,8 @@ final class PrimitiveIteratorExtensions {
 	// * anyMatch(XXXPredicate),
 	// * allMatch(XXXPredicate)/noneMatch(XXXPredicate)
 	// * findFirst​(XXXPredicate)
+	// * findFirst
+	// * filter(XXXPredicate)
 	
 	private new() {
 		throw new IllegalStateException("PrimitiveIteratorExtensions not intended to be instantiated")
@@ -80,6 +81,24 @@ final class PrimitiveIteratorExtensions {
 	}
 	
 	
+	/**
+	 * This method will read all remaining {@code int} values from the given
+	 * {@code iterator} and creates and returns an {@link IntSummaryStatistics} over all
+	 * these elements.
+	 * @param iterator primitive iterator over elements to be summarized
+	 * @return a statistics object over all elements in {@code iterator}
+	 * @throws NullPointerException if {@code iterator} is {@code null}.
+	 */
+	static def IntSummaryStatistics summarize(PrimitiveIterator.OfInt iterator) {
+		val result = new IntSummaryStatistics
+		while(iterator.hasNext) {
+			val next = iterator.nextInt
+			result.accept(next)
+		}
+		result
+	}
+	
+	
 	///////////////////////////////////
 	// for PrimitiveIterator.OfLong  //
 	///////////////////////////////////
@@ -111,6 +130,23 @@ final class PrimitiveIteratorExtensions {
 	private static def Spliterator.OfLong toSpliterator(PrimitiveIterator.OfLong wrapped) {
 		val characteristics = Spliterator.NONNULL
 		Spliterators.spliteratorUnknownSize(wrapped,characteristics)
+	}
+	
+	/**
+	 * This method will read all remaining {@code long} values from the given
+	 * {@code iterator} and creates and returns an {@link LongSummaryStatistics} over all
+	 * these elements.
+	 * @param iterator primitive iterator over elements to be summarized
+	 * @return a statistics object over all elements in {@code iterator}
+	 * @throws NullPointerException if {@code iterator} is {@code null}.
+	 */
+	static def LongSummaryStatistics summarize(PrimitiveIterator.OfLong iterator) {
+		val result = new LongSummaryStatistics
+		while(iterator.hasNext) {
+			val next = iterator.nextLong
+			result.accept(next)
+		}
+		result
 	}
 	
 	
@@ -145,5 +181,22 @@ final class PrimitiveIteratorExtensions {
 	private static def Spliterator.OfDouble toSpliterator(PrimitiveIterator.OfDouble wrapped) {
 		val characteristics = Spliterator.NONNULL
 		Spliterators.spliteratorUnknownSize(wrapped,characteristics)
+	}
+	
+	/**
+	 * This method will read all remaining {@code double} values from the given
+	 * {@code iterator} and creates and returns an {@link DoubleSummaryStatistics} over all
+	 * these elements.
+	 * @param iterator primitive iterator over elements to be summarized
+	 * @return a statistics object over all elements in {@code iterator}
+	 * @throws NullPointerException if {@code iterator} is {@code null}.
+	 */
+	static def DoubleSummaryStatistics summarize(PrimitiveIterator.OfDouble iterator) {
+		val result = new DoubleSummaryStatistics
+		while(iterator.hasNext) {
+			val next = iterator.nextDouble
+			result.accept(next)
+		}
+		result
 	}
 }

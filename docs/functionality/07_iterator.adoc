@@ -4,14 +4,18 @@
 To map from an Iterator (over references) to a link:https://docs.oracle.com/javase/9/docs/api/java/util/PrimitiveIterator.html[``PrimitiveIterator``s],
 the class `de.fhg.fokus.xtensions.iteration.IteratorExtensions` provides the methods `mapInt`, `mapLong` and `mapDouble`.
 
+[source,xtend]
 ----
 import static java.util.stream.Collectors.*
 import static extension de.fhg.fokus.xtensions.iteration.IteratorExtensions.*
 // ...
 val Iterable<String> strings = #["fooooo", "baar", "baz"]
-val lengths = strings.iterator.mapInt[length]
-
+val summary = strings.iterator.mapInt[length].summarize
+println("Size of longest string is " + summary.max)
 ----
+
+TIP: See <<09_primitive_iterators.adoc#,Primitive Iterators>> for more information on the `summarize` extension function. 
+
 
 [TIP]
 ====

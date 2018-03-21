@@ -22,7 +22,7 @@ pair => [k,v|
 
 The `combine` extension method takes a function to which key and value of a Pair is passed to,
 to merge both objects. The result returned by the function will be returned by the `combine` method.
-The difference to the `>>>` operator, provided by the <<11_functions.adoc#,Extensions to Functions>>
+The difference to the `>>>` operator, provided by the <<12_functions.adoc#,Extensions to Functions>>
 is only that due to operator precedence calling further methods on the result needs further braces.
 
 Example:

@@ -90,7 +90,7 @@ delay(50.milliseconds) [
 	"default value"
 ].forwardTo(result) <1>
 ----
-<1> This extension method is explained in <<12_completable_future.adoc#,Extensions to CompletableFuture>>
+<1> This extension method is explained in <<13_completable_future.adoc#,Extensions to CompletableFuture>>
 
 
 The method `waitFor` will create a `CompletableFuture` that will be completed successfully
@@ -113,7 +113,7 @@ waitFor(50.milliseconds) [
 ]
 ----
 The same effect as shown here can be achieved with the `cancelOnTimeout` extension method on CompletableFuture, 
-described in <<12_completable_future.adoc#,Extensions to CompletableFuture>>.
+described in <<13_completable_future.adoc#,Extensions to CompletableFuture>>.
 
 
 [TIP]

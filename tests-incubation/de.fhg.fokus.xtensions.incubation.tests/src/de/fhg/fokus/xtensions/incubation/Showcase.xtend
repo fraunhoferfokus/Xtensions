@@ -7,6 +7,12 @@ import de.fhg.fokus.xtensions.incubation.showcase.Person
 import de.fhg.fokus.xtensions.incubation.function.Trampoline
 import de.fhg.fokus.xtensions.incubation.function.Bounce
 import de.fhg.fokus.xtensions.incubation.Showcase.Parity
+import static de.fhg.fokus.xtensions.incubation.function.Recursion.*
+import de.fhg.fokus.xtensions.incubation.function.Recursion
+import java.math.BigInteger
+import java.text.DecimalFormatSymbols
+import java.util.Locale
+import java.text.DecimalFormat
 
 class Showcase {
 	
@@ -65,6 +71,37 @@ class Showcase {
 		]
 		
 		println(julius.name)
+	}
+	
+	@Test 
+	def void demoRecursiveLambda() {
+		val (long)=>long factorial = recursive [it,n |
+			if(n == 0) {
+				1L
+			} else {
+				n * apply(n-1)
+			}
+		]
+		
+		val x = 5000L // try changing this to 5000: every now and then StackOverFlowException
+		println('''Factorial of «x» = «factorial.apply(x)»''')
+	}
+	
+	@Test
+	def void demoTailrecLambda() {
+		val factorialTailrec = tailrec [it, BigInteger n , BigInteger acc|
+			if(n == BigInteger.ZERO) {
+				result(acc)
+			} else {
+				apply(n - BigInteger.ONE, n * acc)
+			}
+		]
+		val factorial = [long n| factorialTailrec.apply(BigInteger.valueOf(n), BigInteger.ONE)]
+		
+		val x = 5000L
+	    val result = factorial.apply(x)
+	    val resultStr = String.format("%,d",result)
+		println('''Factorial of «x» = «resultStr»''')
 	}
 	
 	@Test

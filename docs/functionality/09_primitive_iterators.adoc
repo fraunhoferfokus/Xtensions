@@ -7,6 +7,20 @@ efforts to implement. Instread, this library provides the class
 create primitive streams (from `java.util.stream`) for the remaining elements of a given iterator via the 
 extension methods `streamRemaining` or `parallelStreamRemaining`.
 
+To create a summary object providing the minimum value, maximum value, average value, sum value, and count of elements,
+the `PrimitiveIteratorExtensions` class provides a `summarize` function for all three primitive iterators.
+
+
+Example:
+
+[source,xtend]
+----
+val range = 1..100
+val summary = range.intIterator.summarize
+println('''Sum of elements in range [«range.start»..«range.end»] is «summary.sum»''')
+----
+
+Tip: If you want to know more about the extension methods available on `IntegerRange`, have a look at chapter <<02_ranges.adoc#,Extensions to IntegerRange>>
 
 [TIP]
 ====

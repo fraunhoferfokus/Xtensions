@@ -38,7 +38,7 @@ val fut = CompletableFuture.supplyAsync([
 
 TIP: You may have noticed that the syntax for spawning a supplier via CompletableFuture#supplyAsync on a 
 custom executor does not look elegant, since the pool parameter is the last one. So the lambda cannot be 
-written behind the closing parenthesis of the parameter list. Have a look at the section <<13_async_computations.adoc#,Async Computations>> 
+written behind the closing parenthesis of the parameter list. Have a look at the section <<14_async_computations.adoc#,Async Computations>> 
 for a more Xtend style API.
 
 NOTE: Currently there there are no `thenAsync` versions of the `then` methods implemented, but they are 
@@ -291,7 +291,7 @@ val sleepy = blockOpPool.asyncRun [ CompletableFuture<?> it | // <1>
 // ...
 sleepy.cancel // may interrupt Thread.sleep
 ----
-<1> Here an extension method described in <<13_async_computations.adoc#,Async Computations>> is used.
+<1> Here an extension method described in <<14_async_computations.adoc#,Async Computations>> is used.
 
 
 The following functions introduced in JDK 9 on `CompletableFuture` have been back-ported
