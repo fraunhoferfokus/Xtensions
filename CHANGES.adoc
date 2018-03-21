@@ -2,6 +2,11 @@
 
 == Verions 1.1.0
 
+link:https://github.com/fraunhoferfokus/Xtensions/milestone/2?closed=1[Related GitHub issues]
+
+- Summarize extension methods for ``PrimitiveIterator``s
+- Functional factory methods for and in `LongIterable` and `DoubleIterable`
+
 Nothing done yet.
 
 == Verions 1.0.0
