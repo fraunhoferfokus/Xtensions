@@ -10,7 +10,8 @@
 	    Max Bureck (Fraunhofer FOKUS) - initial config
 	    
 	    
-	* Enable profile "coverage-report" to push Jacoco coverage report to coveralls.io
+	* Enable profile "coverage-report" to create a Jacoco coverage
+	* To push the code coverage report to coveralls.io, pass parameter "coveralls". This automatically enables profile "coverage-report"
 	* To build incubation bundles, enable profile "incubation"
 	* On release pass property "release", e.g. passing parameter "-Drelease"
  -->
@@ -110,6 +111,11 @@
 		
 		<profile>
 			<id>coverage-report</id>
+			<activation>
+				<property>
+					<name>coveralls</name>
+				</property>
+			</activation>
 			
 			<modules>
 				<module>releng/de.fhg.fokus.xtensions.report</module>

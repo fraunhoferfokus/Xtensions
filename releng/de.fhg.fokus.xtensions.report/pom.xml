@@ -38,7 +38,12 @@
 
 	<profiles>
 		<profile>
-			<id>coverage-report</id>
+			<id>coveralls</id>
+			<activation>
+				<property>
+					<name>coveralls</name>
+				</property>
+			</activation>
 			<build>
 				<plugins>
 					<plugin>

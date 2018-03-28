@@ -9,7 +9,7 @@ link:https://github.com/fraunhoferfokus/Xtensions/milestone/2?closed=1[Related G
 
 Nothing done yet.
 
-== Verions 1.0.0
+== Version 1.0.0
 
 Everything new 😊
 

@@ -61,11 +61,13 @@ To build incubation bundles, enable the maven profile "incubation".
 === Code Coverage 
 
 To produce a Jacoco covarage report (how much library code is covered by the test cases) 
-and push the report to coveralls.io enable the maven profile  "coverage-report". 
+enable the maven profile  `coverage-report`. 
 The result of the report is located in the directory 
 `releng/de.fhg.fokus.xtensions.report/target/site/jacoco-aggregate/`.
-In future the report generation and the coveralls publishing will be separated into different 
-maven profiles.
+
+To push the results of the code coverage report to coveralls.io, define the system property
+`coveralls`, this will automatically enable profile `coverage-report` as well, it 
+does not have to be activated separately. This can be done by passing parameter `-Dcoveralls` when invoking maven.
 
 Be aware that the coverage report misses all inlined Xtension library methods. This includes
 most of the methods of the class `de.fhg.fokus.xtensions.datetime.DurationExtensions`.
