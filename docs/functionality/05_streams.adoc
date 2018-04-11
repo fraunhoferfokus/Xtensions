@@ -23,7 +23,7 @@ val s = Stream.of(42, "Hello", Double.NaN, "World")
 ----
 
 TIP: Since joining Strings is a common operation, the `StringStreamExtensions` allow to call `join`
-directly on the Stream. Have a look at [Extensions to Streams of Strings].
+directly on the Stream. Have a look at <<Extensions to Streams of Strings>>.
 
 Some other collectors, especially the ones bridging to the collections API are also used very often,
 but using the collect method with the methods from the `Collectors` class is a bit verbose. +
