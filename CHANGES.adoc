@@ -1,15 +1,22 @@
 = Changes to Xtensions
+:toc:
+:toclevels: 1
+:toc-title: Version Overview:
 
-== Verions 1.1.0
+
+== Version 1.1.0 (Unreleased)
 
 link:https://github.com/fraunhoferfokus/Xtensions/milestone/2?closed=1[Related GitHub issues]
+
+=== Added 
 
 - Summarize extension methods for ``PrimitiveIterator``s
 - Functional factory methods for and in `LongIterable` and `DoubleIterable`
 
-Nothing done yet.
 
-== Version 1.0.0
+== Version 1.0.0 - 2018-03-02
+
+=== Added 
 
 Everything new 😊
 
