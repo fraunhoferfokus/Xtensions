@@ -789,12 +789,12 @@ class SchedulingUtilTest {
 	def void testDelayScheduler() {
 		val expected = "Result string"
 		val scheduler = new ScheduledThreadPoolExecutor(1)
-		val fut = scheduler.delay(10, TimeUnit.MILLISECONDS) [
+		val fut = scheduler.delay(50, TimeUnit.MILLISECONDS) [
 			expected
 		]
-		assertFalse("Expected future to complete after 10 ms, not immediately", fut.done)
-		Thread.sleep(100)
-		assertTrue("Expected future to complete after 10 ms", fut.done)
+		assertFalse("Expected future to complete after 50 ms, not immediately", fut.done)
+		Thread.sleep(200)
+		assertTrue("Expected future to complete after 50 ms", fut.done)
 		assertSame("Expected future to complete with null value", expected, fut.get)
 	}
 	
