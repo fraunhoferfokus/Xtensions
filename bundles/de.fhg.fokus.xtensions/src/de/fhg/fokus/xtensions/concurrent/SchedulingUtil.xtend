@@ -49,6 +49,31 @@ final class SchedulingUtil {
 		}
 
 	}
+	
+	/**
+	 * This ScheduledCompletableFuture is wrapping around a {@code ScheduledFuture<?>}, forwarding the {@code getDelay}
+	 * and {@code compareTo} calls to the ones from the wrapped. The wrapped {@code ScheduledFuture<?>} is provided
+	 * by subclasses via the the abstract {@link #getScheduled()} method. Note that the wrapped future will be tried
+	 * to be cancelled, as soon as the wrapped future completes. 
+	 */
+	private abstract static class WrappingScheduledCompletableFuture<T> extends ScheduledCompletableFuture<T> {
+		
+		protected abstract def ScheduledFuture<?> getScheduled()
+		
+		new() {
+			this.whenComplete[
+				scheduled.cancel(false)
+			]
+		}
+
+		override long getDelay(TimeUnit unit) {
+			scheduled.getDelay(unit)
+		}
+
+		override int compareTo(Delayed o) {
+			scheduled.compareTo(o)
+		}
+	}
 
 	/**
 	 * Adds delay information to an action to be scheduled. Instances of this class are created via one of the 
@@ -311,7 +336,7 @@ final class SchedulingUtil {
 	private static def ScheduledCompletableFuture<?> scheduleAtFixedRate(ScheduledExecutorService scheduler,
 		long initialDelay, long rate, TimeUnit unit, (ScheduledCompletableFuture<?>)=>void action) {
 		action.requireNonNull
-		val result = new ScheduledCompletableFuture<Void>() {
+		val result = new WrappingScheduledCompletableFuture<Void>() {
 			val Runnable task = [
 				try {
 					action.apply(this)
@@ -320,16 +345,9 @@ final class SchedulingUtil {
 				}
 			]
 			val scheduled = scheduler.scheduleAtFixedRate(task, initialDelay, rate, unit);
-
-			@SuppressWarnings("unused") // we need to call whenCancelled in anonymous class
-			val afterCancel = this.whenComplete[scheduled.cancel(false)]
-
-			override getDelay(TimeUnit unit) {
-				scheduled.getDelay(unit)
-			}
-
-			override compareTo(Delayed o) {
-				scheduled.compareTo(o)
+			
+			override protected getScheduled() {
+				scheduled
 			}
 
 		}
@@ -338,21 +356,14 @@ final class SchedulingUtil {
 
 	private static def ScheduledCompletableFuture<Void> waitForInternal(long time, TimeUnit unit,
 		ScheduledExecutorService scheduler) {
-		val result = new ScheduledCompletableFuture<Void>() {
+		val result = new WrappingScheduledCompletableFuture<Void>() {
 			val Runnable task = [
 				this.complete(null)
 			]
 			val scheduled = scheduler.schedule(task, time, unit);
-
-			@SuppressWarnings("unused") // we need to call whenCancelled in anonymous class
-			val afterCancel = this.whenComplete[scheduled.cancel(false)]
-
-			override getDelay(TimeUnit unit) {
-				scheduled.getDelay(unit)
-			}
-
-			override compareTo(Delayed o) {
-				scheduled.compareTo(o)
+			
+			override protected getScheduled() {
+				scheduled
 			}
 
 		}
@@ -362,7 +373,7 @@ final class SchedulingUtil {
 	private static def ScheduledCompletableFuture<?> waitForInternal(long time, TimeUnit unit,
 		ScheduledExecutorService scheduler, (ScheduledCompletableFuture<?>)=>void then) {
 
-		val result = new ScheduledCompletableFuture<Void>() {
+		val result = new WrappingScheduledCompletableFuture<Void>() {
 			val Runnable task = [
 				try {
 					then.apply(this)
@@ -372,16 +383,9 @@ final class SchedulingUtil {
 				}
 			]
 			val scheduled = scheduler.schedule(task, time, unit);
-
-			@SuppressWarnings("unused") // we need to call whenCancelled in anonymous class
-			val afterCancel = this.whenComplete[scheduled.cancel(false)]
-
-			override getDelay(TimeUnit unit) {
-				scheduled.getDelay(unit)
-			}
-
-			override compareTo(Delayed o) {
-				scheduled.compareTo(o)
+			
+			override protected getScheduled() {
+				scheduled
 			}
 
 		}

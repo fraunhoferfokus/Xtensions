@@ -197,7 +197,7 @@ public final class FunctionExtensions {
 	 */
 	public static <T> Function1<T, Boolean> and(Function1<? super T, Boolean> test,
 			Function1<? super T, Boolean> test2) {
-		return (t) -> test.apply(t) && test2.apply(t);
+		return t -> test.apply(t) && test2.apply(t);
 	}
 
 	/**
@@ -217,7 +217,7 @@ public final class FunctionExtensions {
 	 */
 	public static <T> Function1<T, Boolean> or(Function1<? super T, Boolean> test,
 			Function1<? super T, Boolean> test2) {
-		return (t) -> test.apply(t) || test2.apply(t);
+		return t -> test.apply(t) || test2.apply(t);
 	}
 
 	/**
@@ -231,6 +231,6 @@ public final class FunctionExtensions {
 	 * @return function that will call {@code test} and return the negated return value.
 	 */
 	public static <T> Function1<T, Boolean> negate(Function1<T, Boolean> test) {
-		return (t) -> !test.apply(t);
+		return t -> !test.apply(t);
 	}
 }

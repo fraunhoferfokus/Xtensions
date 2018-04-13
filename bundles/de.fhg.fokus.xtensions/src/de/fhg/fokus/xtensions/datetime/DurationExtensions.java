@@ -29,6 +29,10 @@ import org.eclipse.xtext.xbase.lib.Inline;
  */
 public final class DurationExtensions {
 	
+	private DurationExtensions() {
+		throw new IllegalStateException("DurationExtensions is not intended to be instantiated.");
+	}
+	
 	/**
 	 * Alias for {@link Duration#ofNanos(long)}.
 	 * @param ns nanoseconds

@@ -181,7 +181,9 @@ public final class OptionalIntExtensions {
 			if(result != null) {
 				return result;
 			} else {
-				return cache[cacheIndex] = OptionalInt.of(i);
+				final OptionalInt cachedResult = OptionalInt.of(i);
+				cache[cacheIndex] = cachedResult;
+				return cachedResult;
 			}
 		}
 	}

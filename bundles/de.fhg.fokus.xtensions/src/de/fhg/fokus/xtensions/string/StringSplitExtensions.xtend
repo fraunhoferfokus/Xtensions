@@ -16,6 +16,7 @@ import java.util.Iterator
 import java.util.NoSuchElementException
 import java.util.Objects
 import java.util.stream.Stream
+import de.fhg.fokus.xtensions.iteration.internal.AbstractReadUntilNullIterator
 
 /**
  * Utility class holding static extension functions to split strings.
@@ -185,15 +186,14 @@ class StringSplitExtensions {
 		}
 		
 	}
-
+	
 	/**
 	 * Iterator class that should behave like a lazy version of 
 	 * {@link String#split(String, int)} with a negative integer as second
 	 * parameter.
 	 */
-	private static class UnlimitedSplitIterator implements Iterator<String> {
+	private static class UnlimitedSplitIterator extends AbstractReadUntilNullIterator<String> {
 		private final Matcher matcher
-		protected String next
 		private int index
 		private CharSequence input
 
@@ -212,7 +212,7 @@ class StringSplitExtensions {
 			readAndSetNext()
 		}
 
-		def String readNext() {
+		override String readNext() {
 			if(matcher.hitEnd) {
 				return null
 			}
@@ -255,26 +255,9 @@ class StringSplitExtensions {
 				return null
 			}
 		}
-
-		protected def void readAndSetNext() {
-			next = readNext
-		}
-
-		override hasNext() {
-			next !== null
-		}
-
-		override next() {
-			if (next === null) {
-				throw new NoSuchElementException
-			}
-			var String result = next
-			readAndSetNext()
-			result
-		}
 	}
 
-	private static final class UnlimitedSplitIteratorNoTrailingEmpty implements Iterator<String> {
+	private static final class UnlimitedSplitIteratorNoTrailingEmpty extends AbstractReadUntilNullIterator<String> {
 
 		private static final val EMPTY = ""
 
@@ -295,7 +278,7 @@ class StringSplitExtensions {
 			readAndSetNext()
 		}
 
-		private def String readNext() {
+		protected override String readNext() {
 			// did we skip over empty strings?
 			if (upcomingEmptyCount > 0) {
 				upcomingEmptyCount--;
@@ -383,23 +366,6 @@ class StringSplitExtensions {
 				firstAfterEmpty = after
 				return EMPTY
 			}
-		}
-
-		private def readAndSetNext() {
-			next = readNext
-		}
-
-		override hasNext() {
-			next !== null
-		}
-
-		override next() {
-			if (next === null) {
-				throw new NoSuchElementException
-			}
-			var String result = next
-			readAndSetNext()
-			result
 		}
 
 	}

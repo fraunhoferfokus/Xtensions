@@ -128,7 +128,9 @@ public final class OptionalLongExtensions {
 			if(result != null) {
 				return result;
 			} else {
-				return cache[cacheIndex] = OptionalLong.of(l);
+				final OptionalLong cachedResult = OptionalLong.of(l);
+				cache[cacheIndex] = cachedResult;
+				return cachedResult;
 			}
 		}
 	}
