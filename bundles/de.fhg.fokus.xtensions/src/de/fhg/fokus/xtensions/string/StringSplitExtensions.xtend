@@ -262,7 +262,6 @@ class StringSplitExtensions {
 		private static final val EMPTY = ""
 
 		private final Matcher matcher
-		private String next
 		private String firstAfterEmpty
 		private int index
 		private int upcomingEmptyCount
