@@ -130,6 +130,9 @@ val len = lenOpt.orElse(0)
 println("Length is " + len)
 ----
 
+The call chain `map[...].orElseGet[..]` is pretty common. As a shortcut the method `mapOrGet` 
+is provided.
+
 
 Some methods on Optional introduced in Java 9 are available as retrofitted extension methods.
 When compiling a class using the extension method targeting Java 9, the native Optional method has precedence and will be used.

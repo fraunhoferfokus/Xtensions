@@ -889,6 +889,40 @@ class OptionalExtensionsTest {
 		assertSame(expected, result2)
 	}
 	
+	//////////////
+	// mapOrGet //
+	//////////////
+	
+	@Test(expected = NullPointerException) def void mapOrGetSelfNull() {
+		val Optional<String> o = null
+		o.mapOrGet([throw new IllegalStateException])[throw new IllegalStateException]
+	}
+	
+	@Test(expected = NullPointerException) def void mapOrGetMapperNull() {
+		val Optional<String> o = Optional.empty
+		o.mapOrGet(null)[throw new IllegalStateException]
+	}
+	@Test(expected = NullPointerException) def void mapOrGetFallbackNull() {
+		val Optional<String> o = Optional.empty
+		o.mapOrGet([throw new IllegalStateException], null)
+	}
+	
+	@Test def void mapOrGetEmpty() {
+		val o = Optional.empty
+		val expected = "wrrr"
+		val result = o.mapOrGet([throw new IllegalStateException])[expected]
+		assertSame(expected, result)
+	}
+	
+	@Test def void mapOrGetMappingToNull() {
+		val o = Optional.of("input")
+		val expected = "voila!"
+		val AtomicBoolean called = new AtomicBoolean(false)
+		val result = o.mapOrGet([called.set(true); null])[expected]
+		assertSame(expected, result)
+		assertTrue(called.get)
+	}
+	
 //	@Test def void getOrReturn() {
 //		val test = callGetOrReturnNoReturn("foo")
 //		assertEquals("Some foo", test.get())

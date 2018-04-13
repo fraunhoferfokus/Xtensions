@@ -14,6 +14,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.OptionalDouble;
 import java.util.OptionalInt;
@@ -32,6 +33,7 @@ import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.xtext.xbase.lib.Functions.Function0;
+import org.eclipse.xtext.xbase.lib.Functions.Function1;
 import org.eclipse.xtext.xbase.lib.Inline;
 import org.eclipse.xtext.xbase.lib.IntegerRange;
 import org.eclipse.xtext.xbase.lib.Procedures.Procedure0;
@@ -65,7 +67,6 @@ public final class OptionalExtensions {
 	private OptionalExtensions() {
 		throw new IllegalStateException("OptionalExtensions is not allowed to be instantiated");
 	}
-	// TODO static def <T,U> U mapOr(Optional<T> self, (T)=>U, =>U) 
 	// TODO is any of the following functionality actually usefull???
 
 	// /**
@@ -889,6 +890,37 @@ public final class OptionalExtensions {
 	public static <U, T extends U> Optional<U> upcast(Optional<T> opt) {
 		return (Optional<U>) opt;
 	}
+	
+	/**
+	 * This method is like a shortcut for {@code self.map(mapper).orElseGet(fallback)}
+	 * (ignoring the fact that we are using different functional interfaces). But the 
+	 * {@code map} function will produce a wrapper {@code Optional} instance if the 
+	 * original {@code Optional} contains a value. So this method, additional to allowing
+	 * a shorter call chain, may save one object allocation. If either {@code mapper} or 
+	 * {@code fallback} throws an exception when being executed in this method, the exception
+	 * will be thrown out of this method.
+	 * 
+	 * @param self original optional that's value is supposed to be mapped to the result value.
+	 * @param mapper the function mapping to either the result value or {@code}
+	 * @param fallback will be called to get the result value when either {@code self} is an
+	 *  empty optional, or the {@code mapper} returns a {@code null} value.
+	 * @param <T> type of object held by {@code self}
+	 * @param <U> result type
+	 * @return either the mapped value from {@code self} or the value provided by {@code fallback}
+	 * @throws NullPointerException if {@code self}, {@code mapper} or {@code fallback} is {@code null}
+	 */
+	public static <T,U> U mapOrGet(Optional<T> self, Function1<T,U> mapper, Function0<U> fallback) {
+		Objects.requireNonNull(mapper);
+		Objects.requireNonNull(fallback);
+		if(self.isPresent()) {
+			final T value = self.get();
+			final U mapped = mapper.apply(value);
+			if(mapped != null) {
+				return mapped;
+			}
+		}
+		return fallback.apply();
+	}
 
 	//////////////////////////////////
 	// Java 9 forward compatibility //
@@ -953,7 +985,7 @@ public final class OptionalExtensions {
 	 */
 	@Pure
 	public static <T> Stream<T> stream​(@NonNull Optional<T> self) {
-		return self.map(Stream::of).orElseGet(Stream::empty);
+		return mapOrGet(self,Stream::of,Stream::empty);
 	}
 
 }
