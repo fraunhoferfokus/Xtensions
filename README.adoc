@@ -22,6 +22,12 @@ image:https://codecov.io/gh/fraunhoferfokus/Xtensions/branch/master/graph/badge.
 image:https://javadoc.io/badge/com.github.fraunhoferfokus.xtensions/de.fhg.fokus.xtensions.svg["Javadocs", link="https://javadoc.io/doc/com.github.fraunhoferfokus.xtensions/de.fhg.fokus.xtensions"]
 
 
+image:https://sonarcloud.io/api/project_badges/measure?project=com.github.fraunhoferfokus.xtensions%3Axtensions.master&metric=alert_status["Quality Gate Status", link=https://sonarcloud.io/dashboard?id=com.github.fraunhoferfokus.xtensions%3Axtensions.master] 
+image:https://sonarcloud.io/api/project_badges/measure?project=com.github.fraunhoferfokus.xtensions%3Axtensions.master&metric=vulnerabilities["Number of Vulnerabilities", link=https://sonarcloud.io/project/issues?id=com.github.fraunhoferfokus.xtensions%3Axtensions.master&resolved=false&types=VULNERABILITY] 
+image:https://sonarcloud.io/api/project_badges/measure?project=com.github.fraunhoferfokus.xtensions%3Axtensions.master&metric=bugs["Number of Bugs", link=https://sonarcloud.io/project/issues?id=com.github.fraunhoferfokus.xtensions%3Axtensions.master&resolved=false&types=BUG] 
+image:https://sonarcloud.io/api/project_badges/measure?project=com.github.fraunhoferfokus.xtensions%3Axtensions.master&metric=code_smells["Number of Code Smells", link=https://sonarcloud.io/project/issues?id=com.github.fraunhoferfokus.xtensions%3Axtensions.master&resolved=false&types=CODE_SMELL] 
+
+
 
 This library is mainly a collection of https://www.eclipse.org/xtend/[Xtend] extension methods
 for classes in the Java 8 standard library and the Xtend standard library. A few goals are:
