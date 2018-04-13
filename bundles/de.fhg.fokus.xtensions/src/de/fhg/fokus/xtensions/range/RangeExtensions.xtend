@@ -32,6 +32,7 @@ final class RangeExtensions {
 	
 	// TODO count (of steps)
 	// TODO random access by index
+	// TODO interface for IntegerRanges, which can be constructed via rangeA + rangeB
 
 	/**
 	 * This method iterates over all integers in range {@code r} and applies the given {@code consumer} for every element.<br>

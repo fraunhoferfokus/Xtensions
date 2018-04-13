@@ -2,7 +2,6 @@ package de.fhg.fokus.xtensions.iteration.internal
 
 import de.fhg.fokus.xtensions.iteration.ClassGroupingSet
 import com.google.common.collect.ImmutableSetMultimap
-import java.util.List
 import java.util.Map
 import java.util.Set
 

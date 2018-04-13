@@ -17,9 +17,6 @@ import de.fhg.fokus.xtensions.iteration.PrimitiveIteratorExtensions
 import java.util.function.DoubleSupplier
 import java.util.function.DoubleUnaryOperator
 import java.util.function.DoublePredicate
-import java.util.PrimitiveIterator.OfLong
-import java.util.function.LongSupplier
-import java.util.stream.LongStream
 
 /** 
  * This interface is a specialized version of an {@code Iterable<Double>} providing a {@link OfDouble PrimitiveIterator.OfDouble} 
