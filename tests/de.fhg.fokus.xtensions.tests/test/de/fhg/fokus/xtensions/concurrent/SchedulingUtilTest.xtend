@@ -61,7 +61,7 @@ class SchedulingUtilTest {
 	}
 	
 	
-	@Test(timeout = 100)
+	@Test(timeout = 1000)
 	def void testRepeatEverySelfCancellation() {
 		val res = new AtomicBoolean(false)
 		val fut = repeatEvery(20, TimeUnit.MILLISECONDS) [
@@ -70,7 +70,7 @@ class SchedulingUtilTest {
 			cancel(false)
 		]
 		Util.expectException(CancellationException) [
-			fut.get(50, TimeUnit.MILLISECONDS)
+			fut.get(60, TimeUnit.MILLISECONDS)
 		]
 		assertTrue(res.get)
 	}
@@ -109,14 +109,14 @@ class SchedulingUtilTest {
 		Thread.sleep(250)
 		fut.cancel(false)
 		val resultCount = count.get
-		resultCount.assertRange(4,5)
+		resultCount.assertRange(4,6)
 		// now let's test if cancellation worked
 		Thread.sleep(20) 
 		assertEquals(resultCount, count.get)
 	}
 	
 	
-	@Test(timeout = 100)
+	@Test(timeout = 1000)
 	def void testRepeatEveryWithInitialDelaySelfCancellation() {
 		val res = new AtomicBoolean(false)
 		val fut = repeatEvery(20, TimeUnit.MILLISECONDS).withInitialDelay(10) [
@@ -125,7 +125,7 @@ class SchedulingUtilTest {
 			cancel(false)
 		]
 		Util.expectException(CancellationException) [
-			fut.get(50, TimeUnit.MILLISECONDS)
+			fut.get(60, TimeUnit.MILLISECONDS)
 		]
 		assertTrue(res.get)
 	}
@@ -183,7 +183,7 @@ class SchedulingUtilTest {
 	}
 	
 	
-	@Test(timeout = 100)
+	@Test(timeout = 1000)
 	def void testRepeatEveryWithInitialDelaySchedulerSelfCancellation() {
 		val res = new AtomicBoolean(false)
 		val scheduler = new ScheduledThreadPoolExecutor(1)
@@ -193,7 +193,7 @@ class SchedulingUtilTest {
 			cancel(false)
 		]
 		Util.expectException(CancellationException) [
-			fut.get(30, TimeUnit.MILLISECONDS)
+			fut.get(60, TimeUnit.MILLISECONDS)
 		]
 		assertTrue(res.get)
 	}
