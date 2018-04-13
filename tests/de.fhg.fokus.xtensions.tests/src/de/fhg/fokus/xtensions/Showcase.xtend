@@ -758,4 +758,21 @@ class Showcase {
 		"Foo" -> 3
 	}
 	
+	@Test
+	def void groupByDemo() {
+		val foo = "foo"
+		val bar = "bar"
+		val baz = "baz"
+		val traverseMe = #[foo, #[bar], baz, #[foo], bar]
+		val groups = traverseMe.groupIntoSetBy(String, List)
+		
+		val Set<String> strings = groups.get(String)
+		val Set<List> lists = groups.get(List)
+		val inNoList = strings
+			.filter[str| 
+				!lists.exists[it.contains(str)]
+			].toList
+		println("Elements contained in no list: " + inNoList)
+	}
+	
 }

@@ -59,6 +59,36 @@ println("Average length: " + summary.average)
 println("Max length: " + summary.max)
 ----
 
+
+A fairly common task in Model-to-Model transformations is to find objects of one type that are not referenced by 
+some other objects. This is usually done by navigation over all elements in a model, finding all elements of both
+types and then finding the elements that are actually not referenced. This is typically done by traversing the 
+complete model twice to find the elements of both types. This can be an expensive operation if the input model
+is large. The solution is to traverse the model just once and group the elements according to their type.
+
+This library provides a method allowing exactly this. The method `groupIntoListBy` and `groupIntoSetBy`
+groups elements of an iterable by their type.
+
+Example:
+
+[source,xtend]
+----
+val foo = "foo"
+val bar = "bar"
+val baz = "baz"
+val traverseMe = #[foo, #[bar], baz, #[foo], bar]
+val groups = traverseMe.groupIntoSetBy(String, List)
+
+val Set<String> strings = groups.get(String)
+val Set<List> lists = groups.get(List)
+val inNoList = strings
+	.filter[str| 
+		!lists.exists[it.contains(str)]
+	].toList
+println("Elements contained in no list: " + inNoList)
+----
+
+
 [TIP]
 ====
 Related JavaDocs:

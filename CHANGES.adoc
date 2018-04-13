@@ -12,6 +12,7 @@ link:https://github.com/fraunhoferfokus/Xtensions/milestone/2?closed=1[Related G
 
 - Summarize extension methods for ``PrimitiveIterator``s
 - Functional factory methods for and in `LongIterable` and `DoubleIterable`
+- `Iterator`/`Iterable` extension methods `groupIntoListBy` and `groupIntoSetBy` to group elements by given classes
 
 
 == Version 1.0.0 - 2018-03-02

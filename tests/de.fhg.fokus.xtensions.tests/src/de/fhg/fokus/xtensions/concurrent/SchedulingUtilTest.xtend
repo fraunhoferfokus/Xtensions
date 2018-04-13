@@ -22,8 +22,6 @@ import java.time.Duration
 import java.util.concurrent.ScheduledThreadPoolExecutor
 import java.util.concurrent.ThreadFactory
 import java.util.concurrent.atomic.AtomicReference
-import java.time.temporal.TemporalUnit
-import java.time.temporal.ChronoUnit
 import java.util.concurrent.ScheduledExecutorService
 
 class SchedulingUtilTest {

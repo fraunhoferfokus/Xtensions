@@ -10,19 +10,26 @@
  *******************************************************************************/
 package de.fhg.fokus.xtensions.iteration
 
+import com.google.common.collect.ImmutableListMultimap
+import com.google.common.collect.ImmutableSetMultimap
+import de.fhg.fokus.xtensions.iteration.internal.ClassGroupingListImpl
+import de.fhg.fokus.xtensions.iteration.internal.ClassGroupingSetImpl
 import java.util.Collection
 import java.util.Objects
-import java.util.stream.Stream
-import java.util.stream.StreamSupport
-import java.util.stream.Collector
-import java.util.function.ToIntFunction
+import java.util.function.DoubleConsumer
 import java.util.function.IntConsumer
-import static extension java.util.Objects.*
-import java.util.function.ToLongFunction
 import java.util.function.LongConsumer
 import java.util.function.ToDoubleFunction
-import java.util.function.DoubleConsumer
+import java.util.function.ToIntFunction
+import java.util.function.ToLongFunction
+import java.util.stream.Collector
+import java.util.stream.Stream
+import java.util.stream.StreamSupport
+
+import static de.fhg.fokus.xtensions.iteration.ArrayExtensions.*
+
 import static extension de.fhg.fokus.xtensions.iteration.IteratorExtensions.*
+import static extension java.util.Objects.*
 
 /**
  * Additional extension functions for the {@link Iterable} class.
@@ -39,16 +46,10 @@ final class IterableExtensions {
 // static def <T, A, C> Map<Boolean,C> partitionBy(Iterable<T>, Collector<? super T,A,C>, Predicate<T>) // Own impl of Map extending AbstractMap, maybe provide as Collector
 // Maybe interface Partitions<T,C> extends Map<Boolean,C> { def C getTrue(); def C getFalse(); } // avoids boxing integers
 
-// static def <T> ClassGrouping groupBy(Iterable<T>, Class<?>... classes) // extend HashMap, maybe provide as Collector
-// interface ClassGrouping { 
-//  List<Class<?>> getGroupingClasses();
-// 	<T> List<T> get(Class<T> clazz) throws NoSuchElementException;
-//	Map<Class<?>,List<?>> asMap(); // will be immutable view
-// }
-
 // static def <T,Y> Pair<List<Y>,List<T>> partitionBy(Iterable<T>, Class<Y>)
 // static def <T,Y,AT,AY,DT,DY> Pair<DY,DT> partitionBy(Iterable<T>, Class<Y>, Collector<? super T, AT, DT>, Collector<? super Y, AY, DY>)
 // static def <T> Iterable<T> without(Iterable<T>, Collection<?> other) // Note most performant using Set as other
+// static def <T,Y> Iterable<T,Y> without(Iterable<T>, Collection<?> other, BiPredicate<T,Y> where) 
 	
 	private new() {
 		throw new IllegalStateException
@@ -222,4 +223,46 @@ final class IterableExtensions {
 		}
 		return finisher.apply(container)
 	}
+	
+	/**
+	 * Groups the elements in {@code iterable} into sets by the classes given via parameters {@code firstGroup}, {@code firstGroup}, and {@code additionalGroups}.
+	 * The elements will be checked to be instance of the given classes in the 
+	 * order they appear in the parameter list. So if e.g. classes {@code Object} and {@code String}
+	 * are passed into the function in this order, an instance of {@code String} will land
+	 * in the group of {@code Object}. Also note that objects that are not matching any given class
+	 * are simply omitted from the resulting grouping. If you need a group for all objects that 
+	 * were not matched, just pass in the class of {@code Object} as the last parameter.
+	 * @param iterable the iterable, that provides the elements to be be grouped into sets by the given classes
+	 * @param firstGroup first class elements of {@code iterator} are be grouped by
+	 * @param secondGroup first class elements of {@code iterator} are be grouped by
+	 * @param additionalGroups further classes to group elements by. This parameter is allowed to be {@code null}.
+	 * @return a grouping of elements by the classes, provided via the parameters {@code firstGroup}, {@code firstGroup}, and {@code additionalGroups}.
+	 */
+	static def ClassGroupingSet groupIntoSetBy(Iterable<?> iterable, Class<?> firstGroup, Class<?> secondGroup, Class<?>... additionalGroups) {
+		val iterator = iterable.iterator
+		iterator.groupIntoSetBy(firstGroup, secondGroup, additionalGroups)
+	}
+	
+	/**
+	 * Groups the elements in {@code iterable} into lists by the classes given via parameters {@code firstGroup}, {@code firstGroup}, and {@code additionalGroups}.
+	 * The elements will be checked to be instance of the given classes in the 
+	 * order they appear in the parameter list. So if e.g. classes {@code Object} and {@code String}
+	 * are passed into the function in this order, an instance of {@code String} will land
+	 * in the group of {@code Object}. Also note that objects that are not matching any given class
+	 * are simply omitted from the resulting grouping. If you need a group for all objects that 
+	 * were not matched, just pass in the class of {@code Object} as the last parameter.
+	 * @param iterable the iterable, that provides the elements to be be grouped into sets by the given classes
+	 * @param firstGroup first class elements of {@code iterator} are be grouped by
+	 * @param secondGroup first class elements of {@code iterator} are be grouped by
+	 * @param additionalGroups further classes to group elements by. This parameter is allowed to be {@code null}.
+	 * @return a grouping of elements by the classes, provided via the parameters {@code firstGroup}, {@code firstGroup}, and {@code additionalGroups}.
+	 */
+	static def ClassGroupingList groupIntoListBy(Iterable<?> iterable, Class<?> firstGroup, Class<?> secondGroup, Class<?>... additionalGroups) {
+		val iterator = iterable.iterator
+		iterator.groupIntoListBy(firstGroup, secondGroup, additionalGroups)
+	}
 }
+
+
+
+
