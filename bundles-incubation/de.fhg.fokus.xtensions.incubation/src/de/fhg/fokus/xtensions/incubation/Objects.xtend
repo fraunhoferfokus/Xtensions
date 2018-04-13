@@ -1,8 +1,28 @@
 package de.fhg.fokus.xtensions.incubation
 
 import java.util.function.Supplier
+import java.util.function.ToIntFunction
+import java.util.function.Predicate
 
 class Objects {
+
+	// TODO: public static def <T> long getLong(T obj, long onNull, ToLongFunction<T> mapper)
+	// TODO: public static def <T> double getLong(T obj, double onNull, ToDoubleFunction<T> mapper)
+	public static def <T> int getInt(T obj, int onNull, ToIntFunction<T> mapper) {
+		if (obj === null) {
+			onNull
+		} else {
+			mapper.applyAsInt(obj)
+		}
+	}
+
+	public static def <T> boolean getBool(T obj, boolean onNull, Predicate<T> mapper) {
+		if (obj === null) {
+			onNull
+		} else {
+			mapper.test(obj)
+		}
+	}
 
 	/**
 	 * Java 9 forward compatible alias for 
@@ -32,6 +52,20 @@ class Objects {
 			toTest
 		} else {
 			recovery
+		}
+	}
+
+	/**
+	 * This method calls the given {@code consumer} with {@code t}, if 
+	 * {@code t !== null}.<br>
+	 * This method is useful when using a value in a long
+	 * {@code ?.} navigation chain. Instead of buffering the
+	 * value into a variable and checking the variable for {@code null}
+	 * or navigating the chain again.
+	 */
+	public static def <T> ifNotNull(T t, (T)=>void consumer) {
+		if (t !== null) {
+			consumer.apply(t)
 		}
 	}
 

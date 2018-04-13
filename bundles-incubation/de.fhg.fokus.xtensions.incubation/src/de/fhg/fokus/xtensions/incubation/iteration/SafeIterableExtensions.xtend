@@ -4,6 +4,9 @@ import java.util.Collections
 import java.util.Optional
 import static extension de.fhg.fokus.xtensions.optional.OptionalExtensions.*
 import java.util.Objects
+import java.util.Collection
+import java.util.function.Predicate
+import static extension de.fhg.fokus.xtensions.incubation.Objects.*
 
 /**
  * <br>
@@ -32,6 +35,14 @@ class SafeIterableExtensions {
 //			iterable.filterNull.exists2(test)
 //		}
 //	}
+
+	static def int safeSize(Iterable<?> iterable) {
+		switch(it : iterable) {
+			case null: 0
+			Collection<?>: it.size
+			default: it.size
+		}
+	}
 	
 	public static def <T,U> safeMap(Iterable<T> iterable, extension (T)=>U mapper) {
 		iterable?.map[it?.apply]?.filterNull.orEmpty // maybe replace with filterOrMap when done
@@ -53,8 +64,16 @@ class SafeIterableExtensions {
 	}
 	
 	// TODO static def <T,Y> Optional<Y> safeFindFirst(Iterable<T> iterable, Class<? extends Y> clazz)
-	public static def <T> Optional<T> safeFindFirst(Iterable<T> iterable, extension (T)=>boolean test) {
-		iterable?.findFirst[it?.apply ?: false].maybe
+	public static def <T> Optional<T> safeFindFirst(Iterable<T> iterable, Predicate<T> test) {
+		if(test === null) {
+			return none
+		}
+		iterable?.findFirst[
+			if(it === null) 
+				false 
+			else 
+				test.test(it)
+		].maybe
 	}
 	
 	public static def <T> Optional<T> safeHead(Iterable<T> iterable) {
