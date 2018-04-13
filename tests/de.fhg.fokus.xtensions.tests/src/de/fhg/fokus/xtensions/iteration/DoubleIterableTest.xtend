@@ -15,7 +15,7 @@ class DoubleIterableTest {
 	
 	private static class MyException extends Exception{}
 	
-	@Test(timeout = 100) def void generateIterator() {
+	@Test(timeout = 1000) def void generateIterator() {
 		val DoubleIterable doubles = DoubleIterable.generate [
 			val double[] d = #[0.0d]
 			[
