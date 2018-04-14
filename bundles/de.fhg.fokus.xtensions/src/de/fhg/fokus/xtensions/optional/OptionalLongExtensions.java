@@ -62,38 +62,6 @@ public final class OptionalLongExtensions {
 	
 	private OptionalLongExtensions() {
 	}
-
-//	@FunctionalInterface
-//	public interface LongPresenceCheck extends LongConsumer, Procedure1<@NonNull OptionalLong> {
-//
-//		/**
-//		 * User method, will be called if Optional contains a value.
-//		 */
-//		@Override
-//		void accept(long value);
-//
-//		@Override
-//		default void apply(@NonNull OptionalLong p) {
-//			p.ifPresent(this);
-//		}
-//
-//		@Pure
-//		default Procedure1<@NonNull OptionalLong> elseDo(@NonNull Procedure0 or) {
-//			return o -> {
-//				if (o.isPresent()) {
-//					accept(o.getAsLong());
-//				} else {
-//					or.apply();
-//				}
-//			};
-//		}
-//
-//	}
-//
-//	@Pure
-//	public static <T> @NonNull LongPresenceCheck longPresent(@NonNull LongConsumer either) {
-//		return either::accept;
-//	}
 	
 	/**
 	 * This method is an alias for {@link OptionalLong#of(long)}.

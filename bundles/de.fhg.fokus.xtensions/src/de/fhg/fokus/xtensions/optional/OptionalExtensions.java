@@ -298,65 +298,6 @@ public final class OptionalExtensions {
 		return (@NonNull Optional<U>) self.filter(clazz::isInstance);
 	}
 
-	// TODO needed? whenPresent seems way clearer
-	// /**
-	// * @see OptionalExtensions#ifPresent(Consumer)
-	// * @param <T>
-	// */
-	// @FunctionalInterface
-	// public interface PresenceCheck<T> extends Procedure1<@NonNull Optional<T>> {
-	//
-	// /**
-	// * User method, will be called if Optional contains a value.
-	// */
-	// void ifPresent(T t);
-	//
-	// @Override
-	// default void apply(Optional<T> p) {
-	// p.ifPresent(this::ifPresent);
-	// }
-	//
-	// @Pure
-	// default @NonNull Procedure1<@NonNull Optional<T>> elseDo(@NonNull Procedure0
-	// or) {
-	// return o -> {
-	// if (o.isPresent()) {
-	// ifPresent(o.get());
-	// } else {
-	// or.apply();
-	// }
-	// };
-	// }
-	//
-	// }
-	//
-	// // due to problems with the Xtend compiler we cannot use PresenceCheck as
-	// // parameter
-	// // type and have to accept Consumer instead
-	// /**
-	// * This method is a good fit to be used with the
-	// * {@link FunctionExtensions#operator_tripleGreaterThan(Object,
-	// org.eclipse.xtext.xbase.lib.Functions.Function1)
-	// * >>>} operator defined in class {@code AdditionalFunctionExtensions}.<br>
-	// * Example:
-	// *
-	// * <pre>
-	// * {@code Optional.of("Hello") >>> ifPresent [
-	// * println(it)
-	// * ].elseDo [
-	// * println("No value!")
-	// * ]}
-	// * </pre>
-	// *
-	// * @param either
-	// * @return
-	// */
-	// @Pure
-	// public static <T> @NonNull PresenceCheck<T> ifPresent(@NonNull
-	// Consumer<@NonNull T> either) {
-	// return either::accept;
-	// }
-
 	/**
 	 * This extension method will check if a value is present in {@code self} and if
 	 * so will call {@code onPresent} with that value. The returned {@code Else}

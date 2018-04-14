@@ -56,39 +56,6 @@ public final class OptionalDoubleExtensions {
 
 	private OptionalDoubleExtensions() {
 	}
-
-// TODO needed? whenPresent seems way clearer
-//	@FunctionalInterface
-//	public interface DoublePresenceCheck extends DoubleConsumer, Procedure1<@NonNull OptionalDouble> {
-//
-//		/**
-//		 * User method, will be called if Optional contains a value.
-//		 */
-//		@Override
-//		void accept(double value);
-//
-//		@Override
-//		default void apply(@NonNull OptionalDouble p) {
-//			p.ifPresent(this);
-//		}
-//
-//		@Pure
-//		default Procedure1<@NonNull OptionalDouble> elseDo(@NonNull Procedure0 or) {
-//			return o -> {
-//				if (o.isPresent()) {
-//					accept(o.getAsDouble());
-//				} else {
-//					or.apply();
-//				}
-//			};
-//		}
-//
-//	}
-//
-//	@Pure
-//	public static <T> @NonNull DoublePresenceCheck ifPresent(@NonNull DoubleConsumer either) {
-//		return either::accept;
-//	}
 	
 	/**
 	 * This extension method will check if a value is present in {@code self} and if so will call {@code onPresent}

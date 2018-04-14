@@ -63,42 +63,6 @@ public final class OptionalIntExtensions {
 	
 	private OptionalIntExtensions() {
 	}
-
-//	@FunctionalInterface
-//	public interface IntPresenceCheck extends IntConsumer, Procedure1<@NonNull OptionalInt> {
-//
-//		/**
-//		 * User method, will be called if Optional contains a value.
-//		 */
-//		@Override
-//		void accept(int value);
-//
-//		/**
-//		 * Checks if {@code p} holds a value and if so, calls {@link #accept(int)}
-//		 * with value from the given optional {@code p}.
-//		 */
-//		@Override
-//		default void apply(@NonNull OptionalInt p) {
-//			p.ifPresent(this);
-//		}
-//
-//		@Pure
-//		default Procedure1<@NonNull OptionalInt> elseDo(@NonNull Procedure0 or) {
-//			return o -> {
-//				if (o.isPresent()) {
-//					accept(o.getAsInt());
-//				} else {
-//					or.apply();
-//				}
-//			};
-//		}
-//
-//	}
-//
-//	@Pure
-//	public static <T> @NonNull IntPresenceCheck intPresent(@NonNull IntConsumer either) {
-//		return either::accept;
-//	}
 	
 	/**
 	 * This extension method will check if a value is present in {@code self} and if so will call {@code onPresent}
