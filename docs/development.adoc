@@ -137,6 +137,7 @@ Ideally the first three steps are already done directly after a previous release
 - [ ] Update the version of every bundle and feature project (see folders `bundles`, `features`, `tests`, `bundles-incubation`, and `tests-incubation`)
 - [ ] Adjust the `.travis/bintray-deploy.json` file declaring the new version
 - [ ] Update the `README.adoc` file
+- [ ] Update the `CHANGES.adoc` file (add release date)
 - [ ] Create/push the tag of the new version number
 - [ ] Check if p2 deployment to bintray worked
 - [ ] Log into bintray to promote the release to maven central
