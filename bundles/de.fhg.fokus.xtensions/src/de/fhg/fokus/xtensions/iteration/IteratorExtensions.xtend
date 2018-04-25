@@ -14,6 +14,8 @@ import static extension de.fhg.fokus.xtensions.iteration.ArrayExtensions.*
 import de.fhg.fokus.xtensions.iteration.internal.ClassGroupingListImpl
 import de.fhg.fokus.xtensions.iteration.internal.ClassGroupingSetImpl
 import com.google.common.collect.ImmutableSetMultimap
+import java.util.Collection
+import java.util.Objects
 
 /**
  * Extension methods for the {@link Iterator} class. 
@@ -164,6 +166,27 @@ class IteratorExtensions {
 				}
 			}
 		]
+	}
+	
+	/**
+	 * Filters the given {@code iterator} by filtering all elements out that are also included
+	 * in the given {@code Iterable toExclude}. If an element from {@code iterator} is {@code null} it is removed 
+	 * if {@code toExclude} also contains a {@code null} value. Otherwise elements {@code e} from 
+	 * {@code iterator} are only removed, if {@code toExclude} contains an element {@code o}, where {@code e.equals(o)}.
+	 * @param iterator the iterator to be filtered. Must not be {@code null}.
+	 * @param toExclude the elements not to be included in the resulting iterator. Must not be {@code null}.
+	 * @return filtered {@code iterator} not containing elements from {@code toExclude}.
+	 * @throws NullPointerException will be thrown if {@code iterator} or {@code toExclude} is {@code null}.
+	 */
+	public static def <T> Iterator<T> withoutAll(Iterator<T> iterator, Iterable<?> toExclude) {
+		Objects.requireNonNull(toExclude,"toExclude")
+		Objects.requireNonNull(iterator,"iterator")
+		val filterFunc = if(toExclude instanceof Collection<?>) {
+			[!toExclude.contains(it)]
+		} else {
+			[Object element| !toExclude.exists[it == element]]
+		}
+		iterator.filter(filterFunc)
 	}
 
 }

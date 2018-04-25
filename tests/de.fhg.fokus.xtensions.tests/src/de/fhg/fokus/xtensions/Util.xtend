@@ -15,8 +15,11 @@ import java.util.NoSuchElementException
 import java.util.PrimitiveIterator.OfInt
 import java.util.PrimitiveIterator.OfLong
 import java.util.PrimitiveIterator.OfDouble
+import java.util.Iterator
 
 class Util {
+	
+	private static String HAS_NEXT_MSG = "Iterator.hasNext returns true"
 	
 	public static def <X extends Exception> X expectException(Class<X> exClass, ()=>void action) {
 		try {
@@ -31,10 +34,17 @@ class Util {
 		throw new AssertionError("Expected exception of type " + exClass.name)
 	}
 	
+	public static def assertEmptyIterator(Iterator<?> iterator) {
+		assertNotNull(iterator)
+		assertFalse(HAS_NEXT_MSG, iterator.hasNext)
+		expectException(NoSuchElementException) [
+			iterator.next
+		]
+	}
 	
 	public static def assertEmptyIntIterator(OfInt iterator) {
 		assertNotNull(iterator)
-		assertFalse(iterator.hasNext)
+		assertFalse(HAS_NEXT_MSG, iterator.hasNext)
 		expectException(NoSuchElementException) [
 			iterator.nextInt
 		]
@@ -42,7 +52,7 @@ class Util {
 	
 	public static def assertEmptyLongIterator(OfLong iterator) {
 		assertNotNull(iterator)
-		assertFalse(iterator.hasNext)
+		assertFalse(HAS_NEXT_MSG, iterator.hasNext)
 		expectException(NoSuchElementException) [
 			iterator.nextLong
 		]
@@ -50,7 +60,7 @@ class Util {
 	
 	public static def assertEmptyDoubleIterator(OfDouble iterator) {
 		assertNotNull(iterator)
-		assertFalse(iterator.hasNext)
+		assertFalse(HAS_NEXT_MSG, iterator.hasNext)
 		expectException(NoSuchElementException) [
 			iterator.nextDouble
 		]

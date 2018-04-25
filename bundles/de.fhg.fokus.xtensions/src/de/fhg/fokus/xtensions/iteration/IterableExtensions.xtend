@@ -10,10 +10,6 @@
  *******************************************************************************/
 package de.fhg.fokus.xtensions.iteration
 
-import com.google.common.collect.ImmutableListMultimap
-import com.google.common.collect.ImmutableSetMultimap
-import de.fhg.fokus.xtensions.iteration.internal.ClassGroupingListImpl
-import de.fhg.fokus.xtensions.iteration.internal.ClassGroupingSetImpl
 import java.util.Collection
 import java.util.Objects
 import java.util.function.DoubleConsumer
@@ -25,8 +21,6 @@ import java.util.function.ToLongFunction
 import java.util.stream.Collector
 import java.util.stream.Stream
 import java.util.stream.StreamSupport
-
-import static de.fhg.fokus.xtensions.iteration.ArrayExtensions.*
 
 import static extension de.fhg.fokus.xtensions.iteration.IteratorExtensions.*
 import static extension java.util.Objects.*
@@ -48,8 +42,8 @@ final class IterableExtensions {
 
 // static def <T,Y> Pair<List<Y>,List<T>> partitionBy(Iterable<T>, Class<Y>)
 // static def <T,Y,AT,AY,DT,DY> Pair<DY,DT> partitionBy(Iterable<T>, Class<Y>, Collector<? super T, AT, DT>, Collector<? super Y, AY, DY>)
-// static def <T> Iterable<T> without(Iterable<T>, Collection<?> other) // Note most performant using Set as other
-// static def <T,Y> Iterable<T,Y> without(Iterable<T>, Collection<?> other, BiPredicate<T,Y> where) 
+// static def <T> Iterable<T> withoutAll(Iterable<T>, Iterable<?> other) // Note most performant using Set as other
+// static def <T,Y> Iterable<T,Y> withoutAll(Iterable<T>, Iterable<?> other, BiPredicate<T,Y> where) 
 	
 	private new() {
 		throw new IllegalStateException
@@ -260,6 +254,22 @@ final class IterableExtensions {
 	static def ClassGroupingList groupIntoListBy(Iterable<?> iterable, Class<?> firstGroup, Class<?> secondGroup, Class<?>... additionalGroups) {
 		val iterator = iterable.iterator
 		iterator.groupIntoListBy(firstGroup, secondGroup, additionalGroups)
+	}
+	
+	/**
+	 * Filters the given {@code iterable} by filtering all elements out that are also included
+	 * in the given {@code Iterable toExclude}. If an element from {@code iterable} is {@code null} it is removed 
+	 * if {@code toExclude} also contains a {@code null} value. Otherwise elements {@code e} from 
+	 * {@code iterable} are only removed, if {@code toExclude} contains an element {@code o}, where {@code e.equals(o)}.
+	 * @param iterable the iterable to be filtered. Must not be {@code null}.
+	 * @param toExclude the elements not to be included in the resulting iterator. Must not be {@code null}.
+	 * @return filtered {@code iterable} not containing elements from {@code toExclude}.
+	 * @throws NullPointerException will be thrown if {@code iterable} or {@code toExclude} is {@code null}.
+	 */
+	static def <T> Iterable<T> withoutAll(Iterable<T> iterable, Iterable<?> toExclude) {
+		iterable.requireNonNull
+		toExclude.requireNonNull;
+		[iterable.iterator.withoutAll(toExclude)]
 	}
 }
 

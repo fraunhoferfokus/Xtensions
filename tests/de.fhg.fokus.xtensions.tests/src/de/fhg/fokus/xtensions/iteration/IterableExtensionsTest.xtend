@@ -21,6 +21,7 @@ import java.util.List
 import java.beans.XMLEncoder
 import java.util.regex.Pattern
 import java.io.File
+import java.util.ArrayList
 
 class IterableExtensionsTest {
 
@@ -879,5 +880,75 @@ class IterableExtensionsTest {
 		resultMap.get(Pattern) => [
 			assertNull(it)
 		]
+	}
+	
+	////////////////
+	// withoutAll //
+	////////////////
+	
+	@Test(expected = NullPointerException) def void testWithoutAllIterableNull() {
+		val Iterable<?> i = null
+		i.withoutAll(#[])
+	}
+	
+	@Test(expected = NullPointerException) def void testWithoutAllToExcludeNull() {
+		val Iterable<?> i = #[]
+		i.withoutAll(null)
+	}
+	
+	@Test def void testWithoutAllEmtpyIterator() {
+		val Iterable<?> i = #[]
+		val result = i.withoutAll(#["Foo", 1L])
+		assertTrue(result.empty)
+	}
+	
+	@Test def void testWithoutAllFilterNoElements() {
+		val source = #["foo", "bar", 42L]
+		val result = source.withoutAll(#[Pattern.compile(".*"), "boo"]).toList
+		assertEquals(source, result)
+	}
+	
+	@Test def void testWithoutAllFilterNoElementsIterable() {
+		val source = #["foo", "bar", 42L]
+		val List<Object> excludeList = #[Pattern.compile(".*"), "boo"]
+		val Iterable<?> toExclude = [|excludeList.iterator]
+		val result = source.withoutAll(toExclude).toList
+		assertEquals(source, result)
+	}
+	
+	@Test def void testWithoutAllFilterAllElements() {
+		val source = #["foo", "bar", 42L]
+		val List<Object> toExclude = new ArrayList(source)
+		toExclude.add(300)
+		val result = source.withoutAll(toExclude)
+		assertTrue(result.empty)
+	}
+	
+	@Test def void testWithoutAllFilterAllElementsIterable() {
+		val source = #["foo", "bar", 42L]
+		val toExclude = source + #[300]
+		val result = source.withoutAll(toExclude)
+		assertTrue(result.empty)
+	}
+	
+	@Test def void testWithoutAllFilterSomeElements() {
+		val List<Object> toExclude = newArrayList("foo", 42L)
+		val source = new ArrayList(toExclude)
+		val expectedRemaining = "bar"
+		source.add(expectedRemaining)
+		val result = source.withoutAll(toExclude)
+		val resultList = result.toList
+		assertEquals(#[expectedRemaining], resultList)
+	}
+	
+	@Test def void testWithoutAllFilterSomeElementsIterable() {
+		val List<Object> toExcludeList = newArrayList("foo", 42L)
+		val Iterable<?> toExclude = [|toExcludeList.iterator]
+		val source = new ArrayList(toExcludeList)
+		val expectedRemaining = "bar"
+		source.add(expectedRemaining)
+		val result = source.withoutAll(toExclude)
+		val resultList = result.toList
+		assertEquals(#[expectedRemaining], resultList)
 	}
 }
