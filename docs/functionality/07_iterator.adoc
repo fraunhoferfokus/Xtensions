@@ -17,6 +17,19 @@ println("Size of longest string is " + summary.max)
 TIP: See <<09_primitive_iterators.adoc#,Primitive Iterators>> for more information on the `summarize` extension function. 
 
 
+To exclude elements of one `Iterable` from the sequence provided by an `Iterator`, the method `withoutAll` can be used.
+[source,xtend]
+----
+val s = #["I", "boo", "pity", "char", "the", "fool"]
+	.iterator
+	.withoutAll(#{"boo", "char"})
+	.join(" ")
+println(s)
+----
+
+CAUTION: Performance of `withoutAll` is best when using an appropriate `java.util.Set`, such as `HashSet` for the elements to exclude.
+
+
 [TIP]
 ====
 Related JavaDocs:

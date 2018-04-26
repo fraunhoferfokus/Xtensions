@@ -161,6 +161,11 @@ class Showcase {
 			.ifPresent [
 				println('''The average string lenght is «it»''')
 			]
+			
+		val s = #["I", "boo", "pity", "char", "the", "fool"]
+			.withoutAll(#{"boo", "char"})
+			.join(" ")
+		println(s)
 	}
 	
 	private def OptionalDouble averageSize(Iterable<String> strings) {
@@ -201,6 +206,12 @@ class Showcase {
 		val Iterable<String> strings = #["fooooo", "baar", "baz"]
 		val summary = strings.iterator.mapInt[length].summarize
 		println("Size of longest string is " + summary.max)
+		
+		val s = #["I", "boo", "pity", "char", "the", "fool"]
+			.iterator
+			.withoutAll(#{"boo", "char"})
+			.join(" ")
+		println(s)
 	}
 	
 	@Test def void primitiveIteratorDemo() {

@@ -89,6 +89,17 @@ println("Elements contained in no list: " + inNoList)
 ----
 
 
+To exclude elements of one `Iterable` from another, the method `withoutAll` can be used.
+[source,xtend]
+----
+val s = #["I", "boo", "pity", "char", "the", "fool"]
+	.withoutAll(#{"boo", "char"})
+	.join(" ")
+println(s)
+----
+
+CAUTION: Performance of `withoutAll` is best when using an appropriate `java.util.Set`, such as `HashSet` for the elements to exclude.
+
 [TIP]
 ====
 Related JavaDocs:
