@@ -38,7 +38,7 @@ range.forEachInt [
 ]
 ----
 
-To interact with consumers expecting an `IntIterable` (see <<08_primitive_iterables.adoc#,Primitive Iterables>>), which is a generic interface 
+To interact with consumers expecting an `IntIterable` (see <<08_primitive_iterables.adoc#,From Xtend Ranges>>), which is a generic interface 
 for iteration over primitive int values provided by this library, the extension method
 `asIntIterable` was provided.
 
