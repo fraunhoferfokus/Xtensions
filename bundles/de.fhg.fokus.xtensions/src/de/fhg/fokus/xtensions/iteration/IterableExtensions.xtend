@@ -32,18 +32,13 @@ final class IterableExtensions {
 
 // static def <T,V> Iterable<Pair<T,V>> zip(Iterable<? extends T>, Iterable<? extends V>)
 // static def <T,V,Y> Iterable<Y> zip(Iterable<? extends T>, Iterable<? extends V>, (T,V)=>Y merger)
-// static def <X,Y> Iterable<Pair<X,Y>> combinations(Iterable<X>,Iterable<Y>)
-// static def <X,Y> Iterable<Pair<X,Y>> combinations(Iterable<X>,Iterable<Y>, BiPredicate<X,Y>)
 // static def <T> List<T> toImmutableList(Iterable<T>)
-// static def <T> Iterable<T> peek(Iterable<T>,(T)=>void action)
 // static def <T> Map<Boolean,List<T>> partitionBy(Iterable<T>, Predicate<T>) // Own impl of Map extending AbstractMap
 // static def <T, A, C> Map<Boolean,C> partitionBy(Iterable<T>, Collector<? super T,A,C>, Predicate<T>) // Own impl of Map extending AbstractMap, maybe provide as Collector
 // Maybe interface Partitions<T,C> extends Map<Boolean,C> { def C getTrue(); def C getFalse(); } // avoids boxing integers
 
 // static def <T,Y> Pair<List<Y>,List<T>> partitionBy(Iterable<T>, Class<Y>)
 // static def <T,Y,AT,AY,DT,DY> Pair<DY,DT> partitionBy(Iterable<T>, Class<Y>, Collector<? super T, AT, DT>, Collector<? super Y, AY, DY>)
-// static def <T> Iterable<T> withoutAll(Iterable<T>, Iterable<?> other) // Note most performant using Set as other
-// static def <T,Y> Iterable<T,Y> withoutAll(Iterable<T>, Iterable<?> other, BiPredicate<T,Y> where) 
 	
 	private new() {
 		throw new IllegalStateException
