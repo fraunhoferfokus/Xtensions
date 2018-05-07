@@ -225,7 +225,8 @@ final class IterableExtensions {
 	 * @param firstGroup first class elements of {@code iterator} are be grouped by
 	 * @param secondGroup first class elements of {@code iterator} are be grouped by
 	 * @param additionalGroups further classes to group elements by. This parameter is allowed to be {@code null}.
-	 * @return a grouping of elements by the classes, provided via the parameters {@code firstGroup}, {@code firstGroup}, and {@code additionalGroups}.
+	 * @return a grouping of elements by the classes, provided via the parameters {@code firstGroup}, {@code firstGroup}, and {@code additionalGroups}
+	 * @since 1.1.0.
 	 */
 	static def ClassGroupingSet groupIntoSetBy(Iterable<?> iterable, Class<?> firstGroup, Class<?> secondGroup, Class<?>... additionalGroups) {
 		val iterator = iterable.iterator
@@ -245,6 +246,7 @@ final class IterableExtensions {
 	 * @param secondGroup first class elements of {@code iterator} are be grouped by
 	 * @param additionalGroups further classes to group elements by. This parameter is allowed to be {@code null}.
 	 * @return a grouping of elements by the classes, provided via the parameters {@code firstGroup}, {@code firstGroup}, and {@code additionalGroups}.
+	 * @since 1.1.0
 	 */
 	static def ClassGroupingList groupIntoListBy(Iterable<?> iterable, Class<?> firstGroup, Class<?> secondGroup, Class<?>... additionalGroups) {
 		val iterator = iterable.iterator
@@ -260,6 +262,7 @@ final class IterableExtensions {
 	 * @param toExclude the elements not to be included in the resulting iterator. Must not be {@code null}.
 	 * @return filtered {@code iterable} not containing elements from {@code toExclude}.
 	 * @throws NullPointerException will be thrown if {@code iterable} or {@code toExclude} is {@code null}.
+	 * @since 1.1.0
 	 */
 	static def <T> Iterable<T> withoutAll(Iterable<T> iterable, Iterable<?> toExclude) {
 		iterable.requireNonNull

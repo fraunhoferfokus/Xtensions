@@ -849,6 +849,7 @@ public final class OptionalExtensions {
 	 * @param <U> result type
 	 * @return either the mapped value from {@code self} or the value provided by {@code fallback}
 	 * @throws NullPointerException if {@code self}, {@code mapper} or {@code fallback} is {@code null}
+	 * @since 1.1.0
 	 */
 	public static <T,U> U mapOrGet(Optional<T> self, Function1<T,U> mapper, Function0<U> fallback) {
 		Objects.requireNonNull(mapper);

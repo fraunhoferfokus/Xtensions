@@ -243,7 +243,7 @@ final class StreamExtensions {
 	}
 
 	/**
-	 * This function returns a stream of the Cartesian product of {@code stream} and the elements of the stream
+	 * This function returns a stream of the Cartesian Product of {@code stream} and the elements of the stream
 	 * provided by {@code streamSupplier}.
 	 * Note that this function will call {@code streamSupplier} for each element in {@code stream}, so it is expected
 	 * that on every call the given {@code streamSupplier} returns a stream of the same elements. The 

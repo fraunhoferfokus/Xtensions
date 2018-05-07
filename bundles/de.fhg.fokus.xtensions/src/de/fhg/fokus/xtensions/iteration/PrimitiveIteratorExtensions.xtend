@@ -10,16 +10,16 @@
  *******************************************************************************/
 package de.fhg.fokus.xtensions.iteration
 
-import java.util.PrimitiveIterator
-import java.util.stream.IntStream
-import java.util.Spliterators
-import java.util.stream.StreamSupport
-import java.util.Spliterator
-import java.util.stream.LongStream
-import java.util.stream.DoubleStream
+import java.util.DoubleSummaryStatistics
 import java.util.IntSummaryStatistics
 import java.util.LongSummaryStatistics
-import java.util.DoubleSummaryStatistics
+import java.util.PrimitiveIterator
+import java.util.Spliterator
+import java.util.Spliterators
+import java.util.stream.DoubleStream
+import java.util.stream.IntStream
+import java.util.stream.LongStream
+import java.util.stream.StreamSupport
 
 /**
  * This class contains static methods for the primitive iterators defined in {@link PrimitiveIterator}.
@@ -88,6 +88,7 @@ final class PrimitiveIteratorExtensions {
 	 * @param iterator primitive iterator over elements to be summarized
 	 * @return a statistics object over all elements in {@code iterator}
 	 * @throws NullPointerException if {@code iterator} is {@code null}.
+	 * @since 1.1.0
 	 */
 	static def IntSummaryStatistics summarize(PrimitiveIterator.OfInt iterator) {
 		val result = new IntSummaryStatistics
@@ -139,6 +140,7 @@ final class PrimitiveIteratorExtensions {
 	 * @param iterator primitive iterator over elements to be summarized
 	 * @return a statistics object over all elements in {@code iterator}
 	 * @throws NullPointerException if {@code iterator} is {@code null}.
+	 * @since 1.1.0
 	 */
 	static def LongSummaryStatistics summarize(PrimitiveIterator.OfLong iterator) {
 		val result = new LongSummaryStatistics
@@ -190,6 +192,7 @@ final class PrimitiveIteratorExtensions {
 	 * @param iterator primitive iterator over elements to be summarized
 	 * @return a statistics object over all elements in {@code iterator}
 	 * @throws NullPointerException if {@code iterator} is {@code null}.
+	 * @since 1.1.0
 	 */
 	static def DoubleSummaryStatistics summarize(PrimitiveIterator.OfDouble iterator) {
 		val result = new DoubleSummaryStatistics

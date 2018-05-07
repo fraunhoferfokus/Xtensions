@@ -123,6 +123,7 @@ class IteratorExtensions {
 	 * @param secondGroup first class elements of {@code iterator} are be grouped by
 	 * @param additionalGroups further classes to group elements by. This parameter is allowed to be {@code null}.
 	 * @return a grouping of elements by the classes, provided via the parameters {@code firstGroup}, {@code firstGroup}, and {@code additionalGroups}.
+	 * @since 1.1.0
 	 */
 	static def ClassGroupingSet groupIntoSetBy(Iterator<?> iterator, Class<?> firstGroup, Class<?> secondGroup, Class<?>... additionalGroups) {
 		val Class<?>[] partitionKeys = copyIntoNewArray(Class, firstGroup, secondGroup, additionalGroups)
@@ -145,6 +146,7 @@ class IteratorExtensions {
 	 * @param secondGroup first class elements of {@code iterator} are be grouped by
 	 * @param additionalGroups further classes to group elements by. This parameter is allowed to be {@code null}.
 	 * @return a grouping of elements by the classes, provided via the parameters {@code firstGroup}, {@code firstGroup}, and {@code additionalGroups}.
+	 * @since 1.1.0
 	 */
 	static def ClassGroupingList groupIntoListBy(Iterator<?> iterator, Class<?> firstGroup, Class<?> secondGroup, Class<?>... additionalGroups) {
 		val Class<?>[] partitionKeys = copyIntoNewArray(Class, firstGroup, secondGroup, additionalGroups)
