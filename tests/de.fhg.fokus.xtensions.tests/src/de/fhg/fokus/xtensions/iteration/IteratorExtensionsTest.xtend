@@ -14,6 +14,9 @@ import java.beans.XMLEncoder
 import java.io.File
 import java.util.regex.Pattern
 import java.util.ArrayList
+import java.util.Collections
+import java.util.Arrays
+import java.util.Set
 
 class IteratorExtensionsTest {
 	////////////
@@ -844,5 +847,171 @@ class IteratorExtensionsTest {
 		val actual = result.next
 		assertSame(expectedRemaining, actual)
 		Util.assertEmptyIterator(result)
+	}
+	
+	//////////////////
+	// combinations //
+	//////////////////
+	
+	@Test(expected = NullPointerException) def void testCombinationsIteratorNull() {
+		val Iterator<String> iterator = null
+		iterator.combinations(#["foo"])
+	}
+	
+	@Test(expected = NullPointerException) def void testCombinationsOtherNull() {
+		val Iterator<String> iterator = #["foo"].iterator
+		iterator.combinations(null)
+	}
+	
+	@Test def void testCombinationsItertorEmptyIterable() {
+		val list = Collections.emptyIterator.combinations(#["foo", "bar"]).toList
+		assertTrue(list.empty)
+	}
+	
+	@Test def void testCombinationsOtherEmpty() {
+		val list = Arrays.asList("foo", "bar").iterator.combinations(#[]).toList
+		assertTrue(list.empty)
+	}
+	
+	@Test def void testCombinationsIteratorAndOtherWithElements() {
+		val result = Arrays.asList("foo", "bar")
+			.iterator
+			.combinations(#[1,2])
+			.toSet
+		val Set<Pair<String,Integer>> expected = #{"foo"->1, "bar"->1, "foo"->2, "bar"->2}
+		assertEquals(expected, result)
+	}
+	
+	///////////////////////////
+	// combinations (merger) //
+	///////////////////////////
+	
+	@Test(expected = NullPointerException) def void testCombinationsMergeIteratorNull() {
+		val Iterator<String> iterator = null
+		iterator.combinations(#["foo"])[a,b| a+b]
+	}
+	
+	@Test(expected = NullPointerException) def void testCombinationsMergeOtherNull() {
+		val Iterator<String> iterator = #["foo"].iterator
+		iterator.combinations(null)[a,b| a+b]
+	}
+	
+	@Test(expected = NullPointerException) def void testCombinationsMergeMergerNull() {
+		val result = Arrays.asList("foo", "bar")
+			.iterator
+			.combinations(#[1,2], null)
+	}
+	
+	@Test def void testCombinationsMergeItertorEmptyIterable() {
+		val list = Collections
+			.emptyIterator
+			.combinations(#["foo", "bar"])[a,b| a+b]
+			.toList
+		assertTrue(list.empty)
+	}
+	
+	@Test def void testCombinationsMergeOtherEmpty() {
+		val list = Arrays.asList("foo", "bar").iterator.combinations(#[]).toList
+		assertTrue(list.empty)
+	}
+	
+	@Test def void testCombinationsMergeIteratorAndOtherWithElements() {
+		val Set<String> result = Arrays.asList("foo", "bar")
+			.iterator
+			.combinations(#[1,2])[a,b| a+b]
+			.toSet
+		val Set<String> expected = #{"foo1", "bar1", "foo2","bar2"}
+		assertEquals(expected, result)
+	}
+	
+	///////////////////////
+	// combinationsWhere //
+	///////////////////////
+	
+	@Test(expected = NullPointerException) def void testCombinationsWhereIteratorNull() {
+		val Iterator<String> iterator = null
+		iterator.combinationsWhere(#["foo"])[true]
+	}
+	
+	@Test(expected = NullPointerException) def void testCombinationsWhereOtherNull() {
+		val Iterator<String> iterator = #["foo"].iterator
+		iterator.combinationsWhere(null)[true]
+	}
+	
+	@Test(expected = NullPointerException) def void testCombinationsWhereWhereNull() {
+		val result = Arrays.asList("foo", "bar")
+			.iterator
+			.combinationsWhere(#[1,2], null)
+	}
+	
+	@Test def void testCombinationsWhereItertorEmptyIterable() {
+		val list = Collections
+			.emptyIterator
+			.combinationsWhere(#["foo", "bar"])[true]
+			.toList
+		assertTrue(list.empty)
+	}
+	
+	@Test def void testCombinationsWhereOtherEmpty() {
+		val list = Arrays.asList("foo", "bar").iterator.combinationsWhere(#[])[true].toList
+		assertTrue(list.empty)
+	}
+	
+	@Test def void testCombinationsWhereIteratorAndOtherWithElements() {
+		val Set<Pair<String,Integer>> result = Arrays.asList("foo", "bar", "baz")
+			.iterator
+			.combinationsWhere(#[1,2,3,4])[a,b| a.startsWith("b") && (b % 2 == 0)]
+			.toSet
+		val Set<Pair<String,Integer>> expected = #{"bar" -> 2, "bar" -> 4, "baz" -> 2, "baz" -> 4}
+		assertEquals(expected, result)
+	}
+	
+	
+	///////////////////////////////
+	// combinationsWhere (merge) //
+	///////////////////////////////
+	
+	@Test(expected = NullPointerException) def void testCombinationsWhereMergeIteratorNull() {
+		val Iterator<String> iterator = null
+		iterator.combinationsWhere(#["foo"],[true])[a,b| a+b]
+	}
+	
+	@Test(expected = NullPointerException) def void testCombinationsWhereMergeOtherNull() {
+		val Iterator<String> iterator = #["foo"].iterator
+		iterator.combinationsWhere(null,[true])[a,b| a+b]
+	}
+	
+	@Test(expected = NullPointerException) def void testCombinationsWhereMergeWhereNull() {
+		val result = Arrays.asList("foo", "bar")
+			.iterator
+			.combinationsWhere(#[1,2], null)[a,b| a+b]
+	}
+	
+	@Test(expected = NullPointerException) def void testCombinationsWhereMergeMergerNull() {
+		val result = Arrays.asList("foo", "bar")
+			.iterator
+			.combinationsWhere(#[1,2], [true], null)
+	}
+	
+	@Test def void testCombinationsWhereMergeItertorEmptyIterable() {
+		val list = Collections
+			.emptyIterator
+			.combinationsWhere(#["foo", "bar"],[true])[a,b| a+b]
+			.toList
+		assertTrue(list.empty)
+	}
+	
+	@Test def void testCombinationsWhereMergeOtherEmpty() {
+		val list = Arrays.asList("foo", "bar").iterator.combinationsWhere(#[],[true])[a,b| a+b].toList
+		assertTrue(list.empty)
+	}
+	
+	@Test def void testCombinationsWhereMergeIteratorAndOtherWithElements() {
+		val Set<String> result = Arrays.asList("foo", "bar", "baz")
+			.iterator
+			.combinationsWhere(#[1,2,3,4],[a,b| a.startsWith("b") && (b % 2 == 0)])[a,b| a+b]
+			.toSet
+		val Set<String> expected = #{"bar2", "bar4", "baz2", "baz4"}
+		assertEquals(expected, result)
 	}
 }

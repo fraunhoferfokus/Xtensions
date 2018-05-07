@@ -10,6 +10,7 @@ link:https://github.com/fraunhoferfokus/Xtensions/milestone/2?closed=1[Related G
 
 === Added 
 
+- Bumped Xtend minimum version to `2.13`
 - Summarize extension methods for ``PrimitiveIterator``s
 - Functional factory methods for and in `LongIterable` and `DoubleIterable`
 - `Iterator`/`Iterable` extension methods `groupIntoListBy` and `groupIntoSetBy` to group elements by given classes

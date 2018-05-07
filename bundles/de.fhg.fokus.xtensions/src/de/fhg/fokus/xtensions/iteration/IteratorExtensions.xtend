@@ -16,6 +16,7 @@ import de.fhg.fokus.xtensions.iteration.internal.ClassGroupingSetImpl
 import com.google.common.collect.ImmutableSetMultimap
 import java.util.Collection
 import java.util.Objects
+import java.util.function.BiPredicate
 
 /**
  * Extension methods for the {@link Iterator} class. 
@@ -177,6 +178,7 @@ class IteratorExtensions {
 	 * @param toExclude the elements not to be included in the resulting iterator. Must not be {@code null}.
 	 * @return filtered {@code iterator} not containing elements from {@code toExclude}.
 	 * @throws NullPointerException will be thrown if {@code iterator} or {@code toExclude} is {@code null}.
+	 * @since 1.1.0
 	 */
 	public static def <T> Iterator<T> withoutAll(Iterator<T> iterator, Iterable<?> toExclude) {
 		Objects.requireNonNull(toExclude,"toExclude")
@@ -187,6 +189,107 @@ class IteratorExtensions {
 			[Object element| !toExclude.exists[it == element]]
 		}
 		iterator.filter(filterFunc)
+	}
+	
+	/**
+	 * This function returns a new Iterator providing the elements of the Cartesian Product of the elements provided 
+	 * by {@code iterator} and the elements of the {@code other}. The 
+	 * combination of elements of the {@code iterator} and the {@code other} are represented 
+	 * as {@link Pair}s of the values from both sources.
+	 * 
+	 * @param iterator the iterator that's elements are combined with every elements from {@code other}. Must not be {@code null}.
+	 * @param other the elements to be combined with each element from {@code iterator}. Must not be {@code null}.
+	 * @param <X> Type of elements in {@code iterator}.
+	 * @param <Y> Type of elements provided by {@code other}
+	 * @return iterator of combinations of all elements from {@code iterator} with every element of the elements provided by {@code other}.
+	 * @throws NullPointerException is thrown if {@code iterator} or {@code other} is {@code null}
+	 * @since 1.1.0
+	 */
+	public static def <X,Y> Iterator<Pair<X,Y>> combinations(Iterator<X> iterator, Iterable<Y> other) {
+		other.requireNonNull("other")
+		iterator.requireNonNull("iterator").flatMap[i| other.iterator.map[i -> it]]
+	}
+	
+	/**
+	 * This function returns a new Iterator providing the elements of the Cartesian Product of the elements provided 
+	 * by {@code iterator} and the elements of the {@code other}. The 
+	 * combination of elements of the {@code iterator} and the {@code other} are computed using the {@code merger}
+	 * function.
+	 * 
+	 * @param iterator the iterator that's elements are combined with every elements from {@code other}. Must not be {@code null}.
+	 * @param other the elements to be combined with each element from {@code iterator}. Must not be {@code null}.
+	 * @param merger the function combining the elements from {@code iterator} and {@code other}.
+	 * @param <X> Type of elements in {@code iterator}.
+	 * @param <Y> Type of elements provided by {@code other}
+	 * @param <Z> Type of the merged elements
+	 * @return iterator of combinations of all elements from {@code iterator} with every element of the elements provided by {@code other}.
+	 * @throws NullPointerException is thrown if {@code iterator}, or {@code other}, or {@code merger} is {@code null}
+	 * @since 1.1.0
+	 */
+	static def <X,Y,Z> Iterator<Z> combinations(Iterator<X> iterator, Iterable<Y> other, (X,Y)=>Z merger) {
+		other.requireNonNull("other")
+		merger.requireNonNull("merger")
+		iterator.requireNonNull("iterator")
+			.flatMap[X x| other.iterator.map[Y y| merger.apply(x,y)]]
+	}
+	
+	/**
+	 * This function returns a new Iterator providing the elements of the Cartesian Product of the elements provided 
+	 * by {@code iterator} and the elements of the {@code other}. A combination of values from {@code iterator} and 
+	 * {@code other} will only be included in the resulting iterator, if the {@code where} predicate holds true for
+	 * the combination. The combination of elements are represented as {@link Pair}s of the values from both sources.
+	 * 
+	 * @param iterator the iterator that's elements are combined with every elements from {@code other}. Must not be {@code null}.
+	 * @param other the elements to be combined with each element from {@code iterator}. Must not be {@code null}.
+	 * @param where a filtering predicate to only produce combinations for which this predicate holds true. Must not be {@code null}.
+	 * @param <X> Type of elements in {@code iterator}.
+	 * @param <Y> Type of elements provided by {@code other}
+	 * @return iterator of combinations of all elements from {@code iterator} with every element of the elements provided by {@code other} 
+	 *  for which the {@code where} predicate holds true.
+	 * @throws NullPointerException is thrown if {@code iterator}, or {@code other} or {@code where} is {@code null}
+	 * @since 1.1.0
+	 */
+	static def <X,Y> Iterator<Pair<X,Y>> combinationsWhere(Iterator<X> iterator, Iterable<Y> other, BiPredicate<X,Y> where) {
+		other.requireNonNull("other")
+		where.requireNonNull("where")
+		iterator.requireNonNull("iterator")
+			.flatMap[x| 
+				other.iterator
+					.filter[y| where.test(x,y)]
+					.map[x -> it]
+			]
+	}
+	
+
+	/**
+	 * This function returns a new Iterator providing the elements of the Cartesian Product of the elements provided 
+	 * by {@code iterator} and the elements of the {@code other}. A combination of values from {@code iterator} and 
+	 * {@code other} will only be included in the resulting iterator, if the {@code where} predicate holds true for
+	 * the combination. The combination of elements of the {@code iterator} and the {@code other} are computed using 
+	 * the {@code merger} function.
+	 * 
+	 * @param iterator the iterator that's elements are combined with every elements from {@code other}. Must not be {@code null}.
+	 * @param other the elements to be combined with each element from {@code iterator}. Must not be {@code null}.
+	 * @param where a filtering predicate to only produce combinations for which this predicate holds true. Must not be {@code null}.
+	 * @param merger the function combining the elements from {@code iterator} and {@code other}.
+	 * @param <X> Type of elements in {@code iterator}.
+	 * @param <Y> Type of elements provided by {@code other}
+	 * @param <Z> Type of the merged elements
+	 * @return iterator of combinations of all elements from {@code iterator} with every element of the elements provided by {@code other} 
+	 *  for which the {@code where} predicate holds true. The elements are a result of the {@code merger} call for each combination
+	 * @throws NullPointerException is thrown if {@code iterator}, or {@code other}, or {@code where}, or {@code merger} is {@code null}
+	 * @since 1.1.0
+	 */
+	static def <X,Y,Z> Iterator<Z> combinationsWhere(Iterator<X> iterator, Iterable<Y> other, BiPredicate<X,Y> where, (X,Y)=>Z merger) {
+		other.requireNonNull("other")
+		where.requireNonNull("where")
+		merger.requireNonNull("merger")
+		iterator.requireNonNull("iterator")
+			.flatMap[x| 
+				other.iterator
+					.filter[y| where.test(x,y)]
+					.map[y| merger.apply(x,y)]
+			]
 	}
 
 }
