@@ -863,7 +863,7 @@ class IteratorExtensionsTest {
 		iterator.combinations(null)
 	}
 	
-	@Test def void testCombinationsItertorEmptyIterable() {
+	@Test def void testCombinationsIteratorEmptyIterable() {
 		val list = Collections.emptyIterator.combinations(#["foo", "bar"]).toList
 		assertTrue(list.empty)
 	}
@@ -902,7 +902,7 @@ class IteratorExtensionsTest {
 			.combinations(#[1,2], null)
 	}
 	
-	@Test def void testCombinationsMergeItertorEmptyIterable() {
+	@Test def void testCombinationsMergeIteratorEmptyIterable() {
 		val list = Collections
 			.emptyIterator
 			.combinations(#["foo", "bar"])[a,b| a+b]
@@ -944,7 +944,7 @@ class IteratorExtensionsTest {
 			.combinationsWhere(#[1,2], null)
 	}
 	
-	@Test def void testCombinationsWhereItertorEmptyIterable() {
+	@Test def void testCombinationsWhereIteratorEmptyIterable() {
 		val list = Collections
 			.emptyIterator
 			.combinationsWhere(#["foo", "bar"])[true]
@@ -993,7 +993,7 @@ class IteratorExtensionsTest {
 			.combinationsWhere(#[1,2], [true], null)
 	}
 	
-	@Test def void testCombinationsWhereMergeItertorEmptyIterable() {
+	@Test def void testCombinationsWhereMergeIteratorEmptyIterable() {
 		val list = Collections
 			.emptyIterator
 			.combinationsWhere(#["foo", "bar"],[true])[a,b| a+b]

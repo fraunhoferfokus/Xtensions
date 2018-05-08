@@ -24,6 +24,7 @@ import java.util.stream.StreamSupport
 
 import static extension de.fhg.fokus.xtensions.iteration.IteratorExtensions.*
 import static extension java.util.Objects.*
+import java.util.function.BiPredicate
 
 /**
  * Additional extension functions for the {@link Iterable} class.
@@ -222,8 +223,8 @@ final class IterableExtensions {
 	 * are simply omitted from the resulting grouping. If you need a group for all objects that 
 	 * were not matched, just pass in the class of {@code Object} as the last parameter.
 	 * @param iterable the iterable, that provides the elements to be be grouped into sets by the given classes
-	 * @param firstGroup first class elements of {@code iterator} are be grouped by
-	 * @param secondGroup first class elements of {@code iterator} are be grouped by
+	 * @param firstGroup first class elements of {@code iterable} are be grouped by
+	 * @param secondGroup first class elements of {@code iterable} are be grouped by
 	 * @param additionalGroups further classes to group elements by. This parameter is allowed to be {@code null}.
 	 * @return a grouping of elements by the classes, provided via the parameters {@code firstGroup}, {@code firstGroup}, and {@code additionalGroups}
 	 * @since 1.1.0.
@@ -242,8 +243,8 @@ final class IterableExtensions {
 	 * are simply omitted from the resulting grouping. If you need a group for all objects that 
 	 * were not matched, just pass in the class of {@code Object} as the last parameter.
 	 * @param iterable the iterable, that provides the elements to be be grouped into sets by the given classes
-	 * @param firstGroup first class elements of {@code iterator} are be grouped by
-	 * @param secondGroup first class elements of {@code iterator} are be grouped by
+	 * @param firstGroup first class elements of {@code iterable} are be grouped by
+	 * @param secondGroup first class elements of {@code iterable} are be grouped by
 	 * @param additionalGroups further classes to group elements by. This parameter is allowed to be {@code null}.
 	 * @return a grouping of elements by the classes, provided via the parameters {@code firstGroup}, {@code firstGroup}, and {@code additionalGroups}.
 	 * @since 1.1.0
@@ -259,7 +260,7 @@ final class IterableExtensions {
 	 * if {@code toExclude} also contains a {@code null} value. Otherwise elements {@code e} from 
 	 * {@code iterable} are only removed, if {@code toExclude} contains an element {@code o}, where {@code e.equals(o)}.
 	 * @param iterable the iterable to be filtered. Must not be {@code null}.
-	 * @param toExclude the elements not to be included in the resulting iterator. Must not be {@code null}.
+	 * @param toExclude the elements not to be included in the resulting iterable. Must not be {@code null}.
 	 * @return filtered {@code iterable} not containing elements from {@code toExclude}.
 	 * @throws NullPointerException will be thrown if {@code iterable} or {@code toExclude} is {@code null}.
 	 * @since 1.1.0
@@ -268,6 +269,101 @@ final class IterableExtensions {
 		iterable.requireNonNull
 		toExclude.requireNonNull;
 		[iterable.iterator.withoutAll(toExclude)]
+	}
+	
+	
+	/**
+	 * This function returns a new Iterable providing the elements of the Cartesian Product of the elements provided 
+	 * by {@code iterable} and the elements of the {@code other}. The 
+	 * combination of elements of the {@code iterable} and the {@code other} are represented 
+	 * as {@link Pair}s of the values from both sources.
+	 * 
+	 * @param iterable the iterable that's elements are combined with every elements from {@code other}. Must not be {@code null}.
+	 * @param other the elements to be combined with each element from {@code iterable}. Must not be {@code null}.
+	 * @param <X> Type of elements in {@code iterable}.
+	 * @param <Y> Type of elements provided by {@code other}
+	 * @return iterable of combinations of all elements from {@code iterable} with every element of the elements provided by {@code other}.
+	 * @throws NullPointerException is thrown if {@code iterable} or {@code other} is {@code null}
+	 * @since 1.1.0
+	 */
+	public static def <X,Y> Iterable<Pair<X,Y>> combinations(Iterable<X> iterable, Iterable<Y> other) {
+		iterable.requireNonNull("iterable")
+		other.requireNonNull("other");
+		[iterable.iterator.combinations(other)]
+	}
+	
+	/**
+	 * This function returns a new Iterable providing the elements of the Cartesian Product of the elements provided 
+	 * by {@code iterable} and the elements of the {@code other}. The 
+	 * combination of elements of the {@code iterable} and the {@code other} are computed using the {@code merger}
+	 * function.
+	 * 
+	 * @param iterable the iterable that's elements are combined with every elements from {@code other}. Must not be {@code null}.
+	 * @param other the elements to be combined with each element from {@code iterable}. Must not be {@code null}.
+	 * @param merger the function combining the elements from {@code iterable} and {@code other}.
+	 * @param <X> Type of elements in {@code iterable}.
+	 * @param <Y> Type of elements provided by {@code other}
+	 * @param <Z> Type of the merged elements
+	 * @return Iterable of combinations of all elements from {@code iterable} with every element of the elements provided by {@code other}.
+	 * @throws NullPointerException is thrown if {@code iterable}, or {@code other}, or {@code merger} is {@code null}
+	 * @since 1.1.0
+	 */
+	static def <X,Y,Z> Iterable<Z> combinations(Iterable<X> iterable, Iterable<Y> other, (X,Y)=>Z merger) {
+		other.requireNonNull("other")
+		merger.requireNonNull("merger")
+		iterable.requireNonNull("iterable");
+		[iterable.iterator.combinations(other,merger)]
+	}
+	
+	/**
+	 * This function returns a new Iterable providing the elements of the Cartesian Product of the elements provided 
+	 * by {@code iterable} and the elements of the {@code other}. A combination of values from {@code iterable} and 
+	 * {@code other} will only be included in the resulting iterable, if the {@code where} predicate holds true for
+	 * the combination. The combination of elements are represented as {@link Pair}s of the values from both sources.
+	 * 
+	 * @param iterable the iterable that's elements are combined with every elements from {@code other}. Must not be {@code null}.
+	 * @param other the elements to be combined with each element from {@code iterable}. Must not be {@code null}.
+	 * @param where a filtering predicate to only produce combinations for which this predicate holds true. Must not be {@code null}.
+	 * @param <X> Type of elements in {@code iterable}.
+	 * @param <Y> Type of elements provided by {@code other}
+	 * @return iterable of combinations of all elements from {@code iterable} with every element of the elements provided by {@code other} 
+	 *  for which the {@code where} predicate holds true.
+	 * @throws NullPointerException is thrown if {@code iterable}, or {@code other} or {@code where} is {@code null}
+	 * @since 1.1.0
+	 */
+	static def <X,Y> Iterable<Pair<X,Y>> combinationsWhere(Iterable<X> iterable, Iterable<Y> other, BiPredicate<X,Y> where) {
+		other.requireNonNull("other")
+		where.requireNonNull("where")
+		iterable.requireNonNull("iterable");
+		[iterable.iterator.combinationsWhere(other,where)]
+	}
+	
+
+	/**
+	 * This function returns a new Iterable providing the elements of the Cartesian Product of the elements provided 
+	 * by {@code iterable} and the elements of the {@code other}. A combination of values from {@code iterable} and 
+	 * {@code other} will only be included in the resulting iterable, if the {@code where} predicate holds true for
+	 * the combination. The combination of elements of the {@code iterable} and the {@code other} are computed using 
+	 * the {@code merger} function.
+	 * 
+	 * @param iterable the iterable that's elements are combined with every elements from {@code other}. Must not be {@code null}.
+	 * @param other the elements to be combined with each element from {@code iterable}. Must not be {@code null}.
+	 * @param where a filtering predicate to only produce combinations for which this predicate holds true. Must not be {@code null}.
+	 * @param merger the function combining the elements from {@code iterable} and {@code other}.
+	 * @param <X> Type of elements in {@code iterable}.
+	 * @param <Y> Type of elements provided by {@code other}
+	 * @param <Z> Type of the merged elements
+	 * @return iterable of combinations of all elements from {@code iterable} with every element of the elements provided by {@code other} 
+	 *  for which the {@code where} predicate holds true. The elements are a result of the {@code merger} call for each combination
+	 * @throws NullPointerException is thrown if {@code iterable}, or {@code other}, or {@code where}, or {@code merger} is {@code null}
+	 * @since 1.1.0
+	 */
+	static def <X,Y,Z> Iterable<Z> combinationsWhere(Iterable<X> iterable, Iterable<Y> other, BiPredicate<X,Y> where, (X,Y)=>Z merger) {
+		iterable.requireNonNull("iterable")
+		other.requireNonNull("other")
+		where.requireNonNull("where")
+		merger.requireNonNull("merger");
+		[iterable.iterator.combinationsWhere(other,where,merger)]
 	}
 }
 
