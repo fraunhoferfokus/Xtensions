@@ -31,16 +31,6 @@ import java.util.function.BiPredicate
  */
 final class IterableExtensions {
 
-// static def <T,V> Iterable<Pair<T,V>> zip(Iterable<? extends T>, Iterable<? extends V>)
-// static def <T,V,Y> Iterable<Y> zip(Iterable<? extends T>, Iterable<? extends V>, (T,V)=>Y merger)
-// static def <T> List<T> toImmutableList(Iterable<T>)
-// static def <T> Map<Boolean,List<T>> partitionBy(Iterable<T>, Predicate<T>) // Own impl of Map extending AbstractMap
-// static def <T, A, C> Map<Boolean,C> partitionBy(Iterable<T>, Collector<? super T,A,C>, Predicate<T>) // Own impl of Map extending AbstractMap, maybe provide as Collector
-// Maybe interface Partitions<T,C> extends Map<Boolean,C> { def C getTrue(); def C getFalse(); } // avoids boxing integers
-
-// static def <T,Y> Pair<List<Y>,List<T>> partitionBy(Iterable<T>, Class<Y>)
-// static def <T,Y,AT,AY,DT,DY> Pair<DY,DT> partitionBy(Iterable<T>, Class<Y>, Collector<? super T, AT, DT>, Collector<? super Y, AY, DY>)
-	
 	private new() {
 		throw new IllegalStateException
 	}
