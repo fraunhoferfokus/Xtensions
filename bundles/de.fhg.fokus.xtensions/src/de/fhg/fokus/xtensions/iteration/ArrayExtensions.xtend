@@ -6,7 +6,7 @@ import static extension java.util.Objects.*
 /**
  * Extension methods for object arrays.
  */
-package class ArrayExtensions {
+class ArrayExtensions {
 	
 	// TODO make class and forEach method public when API is documented and tested throughly for edge cases
 	
@@ -15,10 +15,19 @@ package class ArrayExtensions {
 	}
 	
 	/**
-	 * Allows iteration over elements of the given {@code array} without 
-	 * allocating an {@code Iterable} and {@code Iterator}.
+	 * Allows iteration over elements of the given {@code array} and 
+	 * invoking a given {@code action} for every element without 
+	 * allocating an {@code Iterable} and {@code Iterator} (as done when
+	 * using the built in version of Xtend).
+	 * 
+	 * @param array the array to be iterated over.
+	 * @param action the action being applied to every element in {@code array}.
+	 * @param <T> Element type of {@code array}
+	 * @throws NullPointerException if {@code array} or {@code action} is {@code null}.
 	 */
-	package static def <T> void forEach(T[] array, (T)=>void action) {
+	static def <T> void forEach(T[] array, (T)=>void action) {
+		array.requireNonNull("array")
+		action.requireNonNull("action")
 		for(var i=0;i<array.length;i++) {
 			action.apply(array.get(i))
 		}
