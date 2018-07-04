@@ -67,7 +67,7 @@ public final class OptionalExtensions {
 	private OptionalExtensions() {
 		throw new IllegalStateException("OptionalExtensions is not allowed to be instantiated");
 	}
-	// TODO is any of the following functionality actually usefull???
+	// TODO is any of the following functionality actually useful???
 
 	// /**
 	// * This function is basically a factory function for {@link Optional},

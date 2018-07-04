@@ -8,8 +8,6 @@ import static extension java.util.Objects.*
  */
 class ArrayExtensions {
 	
-	// TODO make class and forEach method public when API is documented and tested throughly for edge cases
-	
 	private new() {
 		throw new IllegalStateException()
 	}

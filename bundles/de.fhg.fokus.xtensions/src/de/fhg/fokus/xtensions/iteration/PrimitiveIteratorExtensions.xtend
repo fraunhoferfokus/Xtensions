@@ -27,21 +27,12 @@ import java.util.stream.StreamSupport
  * The class is not intended to be instantiated.
  */
 final class PrimitiveIteratorExtensions {
-	
-	// static def OptionalInt reduce(PrimitiveIterator.OfInt,IntBinaryOperator op)
-	// static def int reduce(PrimitiveIterator.OfInt, int identity, IntBinaryOperator op)
-	
+
 	// * min, 
 	// * max,
 	// * average,
 	// * sum​,
 	// * count,
-	
-	// * anyMatch(XXXPredicate),
-	// * allMatch(XXXPredicate)/noneMatch(XXXPredicate)
-	// * findFirst​(XXXPredicate)
-	// * findFirst
-	// * filter(XXXPredicate)
 	
 	private new() {
 		throw new IllegalStateException("PrimitiveIteratorExtensions not intended to be instantiated")
