@@ -219,8 +219,8 @@ final class IterableExtensions {
 	 * @param secondGroup first class elements of {@code iterable} are be grouped by
 	 * @param additionalGroups further classes to group elements by. This parameter is allowed to be {@code null}.
 	 * @return a grouping of elements by the classes, provided via the parameters {@code firstGroup}, {@code firstGroup}, and {@code additionalGroups}
-	 * @see #partitionBy(Iterable, Class)
-	 * @see #partitionBy(Iterable, Class, Collector)
+	 * @see IterableExtensions#partitionBy(Iterable, Class)
+	 * @see IterableExtensions#partitionBy(Iterable, Class, Collector, Collector)
 	 * @since 1.1.0.
 	 */
 	static def ClassGroupingSet groupIntoSetBy(Iterable<?> iterable, Class<?> firstGroup, Class<?> secondGroup, Class<?>... additionalGroups) {
@@ -241,8 +241,8 @@ final class IterableExtensions {
 	 * @param secondGroup first class elements of {@code iterable} are be grouped by
 	 * @param additionalGroups further classes to group elements by. This parameter is allowed to be {@code null}.
 	 * @return a grouping of elements by the classes, provided via the parameters {@code firstGroup}, {@code firstGroup}, and {@code additionalGroups}.
-	 * @see #partitionBy(Iterable, Class)
-	 * @see #partitionBy(Iterable, Class, Collector)
+	 * @see IterableExtensions#partitionBy(Iterable, Class)
+	 * @see IterableExtensions#partitionBy(Iterable, Class, Collector, Collector)
 	 * @since 1.1.0
 	 */
 	static def ClassGroupingList groupIntoListBy(Iterable<?> iterable, Class<?> firstGroup, Class<?> secondGroup, Class<?>... additionalGroups) {
@@ -257,6 +257,7 @@ final class IterableExtensions {
 	 * {@code iterable} are only removed, if {@code toExclude} contains an element {@code o}, where {@code e.equals(o)}.
 	 * @param iterable the iterable to be filtered. Must not be {@code null}.
 	 * @param toExclude the elements not to be included in the resulting iterable. Must not be {@code null}.
+	 * @param <T> Type of elements in {@code iterable}
 	 * @return filtered {@code iterable} not containing elements from {@code toExclude}.
 	 * @throws NullPointerException will be thrown if {@code iterable} or {@code toExclude} is {@code null}.
 	 * @since 1.1.0
@@ -378,8 +379,8 @@ final class IterableExtensions {
 	 * @return partition of elements in {@code iterable}, providing the selected elements, that are instance of {@code selectionClass}, and rejected elements
 	 *  not instance of {@code selectionClass}.
 	 * @throws NullPointerException if {@code iterable} or {@code selectionClass} is {@code null}
-	 * @see #groupIntoListBy(Iterable, Class, Class,Class[])
-	 * @see #groupIntoSetBy(Iterable, Class, Class,Class[])
+	 * @see IterableExtensions#groupIntoListBy(Iterable, Class, Class,Class[])
+	 * @see IterableExtensions#groupIntoSetBy(Iterable, Class, Class,Class[])
 	 * @since 1.1.0
 	 */
 	static def <X,Y> Partition<List<Y>,List<X>> partitionBy(Iterable<X> iterable, Class<Y> selectionClass) {
@@ -408,8 +409,8 @@ final class IterableExtensions {
 	 * @return partition of elements in {@code iterable}, providing the aggregation of selected elements, that are instance of {@code selectionClass}, 
 	 *  and the aggregation of rejected elements not instance of {@code selectionClass}.
 	 * @throws NullPointerException if {@code iterable}, {@code selectionClass}, {@code selectedCollector} or {@code rejectedCollector} is {@code null}
-	 * @see #groupIntoListBy(Iterable, Class, Class,Class[])
-	 * @see #groupIntoSetBy(Iterable, Class, Class,Class[])
+	 * @see IterableExtensions#groupIntoListBy(Iterable, Class, Class,Class[])
+	 * @see IterableExtensions#groupIntoSetBy(Iterable, Class, Class,Class[])
 	 * @since 1.1.0
 	 */
 	static def <X,Y,S,R> Partition<S,R> partitionBy(Iterable<X> iterable, Class<Y> selectionClass, Collector<Y, ?, S> selectedCollector, Collector<X, ?, R> rejectedCollector) {
@@ -453,13 +454,14 @@ final class IterableExtensions {
 	 *  end up in the selected part, others land in the rejected part.
 	 * @param collector used for aggregating the selected and rejected elements in the returned partition.
 	 * @param <X> Type of elements in {@code iterable}
+	 * @param <AX> Type aggregated elements of returned partition
 	 * @return partition of elements in {@code iterable}, providing the selected elements, for which {@code partitionPredicate}
 	 *  evaluates to {@code true} aggregated using the given {@code collector} and rejected elements for which {@code partitionPredicate} 
 	 * evaluates to {@code false} aggregated using the given {@code collector}.
 	 * @throws NullPointerException if {@code iterable}, {@code collector} or {@code partitionPredicate} is {@code null}
 	 * @since 1.1.0
 	 */
-	static def <X,Y,AX> Partition<AX,AX> partitionBy(Iterable<X> iterable, Predicate<X> partitionPredicate, Collector<X, ?, AX> collector) {
+	static def <X,AX> Partition<AX,AX> partitionBy(Iterable<X> iterable, Predicate<X> partitionPredicate, Collector<X, ?, AX> collector) {
 		iterable.requireNonNull("iterable").iterator.partitionBy(partitionPredicate, collector)
 	}
 	
@@ -477,6 +479,8 @@ final class IterableExtensions {
 	 * @param selectedCollector used for aggregating the selected elements in the returned partition.
 	 * @param rejectedCollector used for aggregating the rejected elements in the returned partition.
 	 * @param <X> Type of elements in {@code iterable}
+	 * @param <AS> Type of aggregated elements of selected part of returned partition
+	 * @param <AR>Type of aggregated elements of rejected part of returned partition
 	 * @return partition of elements in {@code iterable}, providing the selected elements, for which {@code partitionPredicate}
 	 *  evaluates to {@code true} aggregated using the given {@code collector} and rejected elements for which {@code partitionPredicate} 
 	 * evaluates to {@code false} aggregated using the given {@code collector}.

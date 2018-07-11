@@ -12,6 +12,7 @@ interface ClassGrouping {
 	/**
 	 * List of classes the grouping grouped object instances by.
 	 * The returned list will be unmodifiable.
+	 * @return classes elements are grouped by
 	 */
 	def List<Class<?>> getGroupingClasses()
 	
@@ -25,6 +26,7 @@ interface ClassGrouping {
 	 * not one of the subclasses of the grouping class.
 	 * @param clazz the class object used for grouping
 	 * @return the collection of objects that were grouped by class {@code clazz}
+	 * @param <T> Type defined by {@code clazz} the returned elements are grouped by
 	 */
  	def <T> Collection<T> get(Class<T> clazz)
  	

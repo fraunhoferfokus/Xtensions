@@ -47,6 +47,7 @@ interface Partition<S,R> {
 	 * the value for key {@code null}.
 	 * @param partition the partition for which a map is created. The rejected part will be 
 	 *  provided under key {@code true} and the rejected part under key {@code false}.
+	 * @param <X> type of the selected and rejected parts of the given {@code partition}
 	 * @return Map providing the {@code selected} part of {@code partition} for key {@code true}
 	 *  and the {@code rejected} part for key {@code false}.
 	 * @throws NullPointerException will be thrown if {@code partition} is {@code null}.
@@ -72,6 +73,7 @@ interface Partition<S,R> {
 	 * @return Partition, where the selected part will be provided by 
 	 *  returning the value for key {@code true} from the wrapped {@code map} and
 	 *  the value for key {@code false}.
+	 * @param <X> type of the value elements in {@code map}
 	 * @throws NullPointerException will be thrown if {@code map} is {@code null}.
 	 */
 	static def <X> Partition<X,X> asPartition(Map<Boolean, X> map) {

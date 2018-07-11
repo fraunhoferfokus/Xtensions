@@ -25,6 +25,7 @@ import java.util.stream.StreamSupport
  * This class contains static methods for the primitive iterators defined in {@link PrimitiveIterator}.
  * The methods are intended to be used as extension methods.
  * The class is not intended to be instantiated.
+ * @since 1.1.0
  */
 final class PrimitiveIteratorExtensions {
 

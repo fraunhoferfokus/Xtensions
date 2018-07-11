@@ -20,6 +20,7 @@ interface ClassGroupingSet extends ClassGrouping {
 	 * Note that unlinke the {@link #get(Class)} method, the map
 	 * will return {@code null} if the key class is not one of the 
 	 * classes returned by {@link #getGroupingClasses()}.
+	 * @return Map representation of the {@code ClassGroupingSet}
 	 */
 	def Map<Class<?>,Set<?>> asMap();
 }
