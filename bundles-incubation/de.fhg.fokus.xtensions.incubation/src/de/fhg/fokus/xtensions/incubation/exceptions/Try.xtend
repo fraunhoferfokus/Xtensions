@@ -306,7 +306,7 @@ abstract class Try<R> {
 	 * @see Try#upcast(Empty)
 	 * @see Try#upcast(Failure)
 	 */
-	public static def <U, R extends U> Try<U> upcast(Try<R> t) {
+	static def <U, R extends U> Try<U> upcast(Try<R> t) {
 		t as Try<?> as Try<U>
 	}
 
@@ -316,7 +316,7 @@ abstract class Try<R> {
 	 * @see Try#upcast(Empty)
 	 * @see Try#upcast(Failure)
 	 */
-	public static def <U, R extends U> Success<U> upcast(Success<R> t) {
+	static def <U, R extends U> Success<U> upcast(Success<R> t) {
 		t as Success<?> as Success<U>
 	}
 
@@ -326,7 +326,7 @@ abstract class Try<R> {
 	 * @see Try#upcast(Try)
 	 * @see Try#upcast(Failure)
 	 */
-	public static def <U, R extends U> Empty<U> upcast(Empty<R> t) {
+	static def <U, R extends U> Empty<U> upcast(Empty<R> t) {
 		t as Empty<?> as Empty<U>
 	}
 
@@ -336,13 +336,13 @@ abstract class Try<R> {
 	 * @see Try#upcast(Empty)
 	 * @see Try#upcast(Try)
 	 */
-	public static def <U, R extends U> Failure<U> upcast(Failure<R> t) {
+	static def <U, R extends U> Failure<U> upcast(Failure<R> t) {
 		t as Failure<?> as Failure<U>
 	}
 
-	public final static class Success<R> extends Try<R> {
+	 final static class Success<R> extends Try<R> {
 
-		private val R result
+		val R result
 
 		private new(R result) {
 			this.result = result
@@ -523,8 +523,8 @@ abstract class Try<R> {
 
 	}
 
-	public final static class Empty<R> extends Try<R> {
-		private static val Empty<?> INSTANCE = new Empty
+	 final static class Empty<R> extends Try<R> {
+		static val Empty<?> INSTANCE = new Empty
 
 		private def <U> cast() {
 			this as Empty as Empty<U>
@@ -680,8 +680,8 @@ abstract class Try<R> {
 
 	}
 
-	public final static class Failure<R> extends Try<R> {
-		private val Throwable e
+	 final static class Failure<R> extends Try<R> {
+		val Throwable e
 
 		private new(Throwable e) {
 			this.e = e
@@ -691,11 +691,11 @@ abstract class Try<R> {
 			this as Failure<?> as Failure<U>
 		}
 
-		public def Throwable get() {
+		def Throwable get() {
 			e
 		}
 		
-		public def boolean is(Class<? extends Throwable> exceptionType) {
+		def boolean is(Class<? extends Throwable> exceptionType) {
 			exceptionType.isInstance(e)
 		} 
 

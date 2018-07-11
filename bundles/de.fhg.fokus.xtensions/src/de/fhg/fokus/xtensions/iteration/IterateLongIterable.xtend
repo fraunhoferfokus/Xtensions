@@ -116,6 +116,7 @@ package class IterateLongIterableLimited implements LongIterable {
 		}
 	}
 	
+	// When setting minimum to Java 9, overwrite stream() method calling LongStream.iterate(seed, hasNext, next)
 }
 
 /**

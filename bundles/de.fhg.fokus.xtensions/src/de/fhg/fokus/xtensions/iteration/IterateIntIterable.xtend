@@ -116,6 +116,8 @@ package class IterateIntIterableLimited implements IntIterable {
 		}
 	}
 	
+	// When setting minimum to Java 9, overwrite stream() method calling IntStream.iterate(seed, hasNext, next)
+	
 }
 
 /**

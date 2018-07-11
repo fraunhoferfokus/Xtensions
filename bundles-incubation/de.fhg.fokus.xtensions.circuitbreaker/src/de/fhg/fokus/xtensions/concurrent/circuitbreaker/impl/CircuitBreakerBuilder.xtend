@@ -36,7 +36,7 @@ final class CircuitBreakerBuilder<T> implements Cloneable {
 	 * Method creating a CircuitBreakerBuilder, passes it to the given {@code builderBlock} and 
 	 * calls build on the builder afterwards.
 	 */
-	public static def <T> CircuitBreaker<T> build((CircuitBreakerBuilder<T>)=>void builderBlock) {
+	static def <T> CircuitBreaker<T> build((CircuitBreakerBuilder<T>)=>void builderBlock) {
 		val builder = create()
 		builderBlock.apply(builder)
 		builder.build
@@ -45,7 +45,7 @@ final class CircuitBreakerBuilder<T> implements Cloneable {
 	/**
 	 * Factory method for builder
 	 */
-	public static def <T> CircuitBreakerBuilder<T> create() {
+	static def <T> CircuitBreakerBuilder<T> create() {
 		new CircuitBreakerBuilder<T>
 	}
 
@@ -156,7 +156,7 @@ final class CircuitBreakerBuilder<T> implements Cloneable {
 		result
 	}
 
-	protected override def CircuitBreakerBuilder<T> clone() {
+	protected override CircuitBreakerBuilder<T> clone() {
 		super.clone as CircuitBreakerBuilder<T>
 	}
 }
@@ -174,20 +174,20 @@ package class CancelledFromOutsideException extends CancellationException {
  */
 package final class SimpleCircuitBreaker<T> implements CircuitBreaker<T> {
 
-	private static val String NULL_FROM_ACTION_MSG = "Action returned null instead of CompletableFuture"
-	private static val String DEFAULT_EXCEPTION_NULL_MSG = "Default exception was null"
+	static val String NULL_FROM_ACTION_MSG = "Action returned null instead of CompletableFuture"
+	static val String DEFAULT_EXCEPTION_NULL_MSG = "Default exception was null"
 
-	private extension val CircuitBreakerBuilder<T> config
+	extension val CircuitBreakerBuilder<T> config
 	
 	/**
 	 * Internal state, checking if calls are allowed or not,
 	 * based on success and error statistics.
 	 */
-	private val CircuitBreakerState breakerState
+	val CircuitBreakerState breakerState
 	
 	// chooses between: providing a default value, providing default exception, choosing original exception
-	private val (Throwable, CompletableFuture<T>)=>void lastResortResultCompletion
-	private val (=>Throwable, CompletableFuture<T>)=>void lazyLastResortResultCompletion
+	val (Throwable, CompletableFuture<T>)=>void lastResortResultCompletion
+	val (=>Throwable, CompletableFuture<T>)=>void lazyLastResortResultCompletion
 
 	package new(CircuitBreakerBuilder<T> builder) {
 		this.config = builder

@@ -10,24 +10,24 @@
  *******************************************************************************/
 package de.fhg.fokus.xtensions.concurrent
 
-import org.junit.Test
-import static org.junit.Assert.*
-import static extension de.fhg.fokus.xtensions.concurrent.AsyncCompute.*
-import java.util.concurrent.atomic.AtomicBoolean
-import org.junit.Rule
-import org.junit.rules.Timeout
-import org.junit.rules.ExpectedException
-import java.util.concurrent.CompletionException
-import static  org.hamcrest.core.IsInstanceOf.instanceOf
-import java.util.concurrent.Semaphore
-import java.util.concurrent.Executors
-import java.util.concurrent.atomic.AtomicReference
-import java.util.concurrent.TimeUnit
 import de.fhg.fokus.xtensions.Util
-import java.util.concurrent.CancellationException
-import org.hamcrest.core.Is
-import java.util.concurrent.TimeoutException
 import java.util.concurrent.CompletableFuture
+import java.util.concurrent.CompletionException
+import java.util.concurrent.Executors
+import java.util.concurrent.Semaphore
+import java.util.concurrent.TimeUnit
+import java.util.concurrent.TimeoutException
+import java.util.concurrent.atomic.AtomicBoolean
+import java.util.concurrent.atomic.AtomicReference
+import org.junit.Rule
+import org.junit.Test
+import org.junit.rules.ExpectedException
+import org.junit.rules.Timeout
+
+import static org.hamcrest.core.IsInstanceOf.instanceOf
+import static org.junit.Assert.*
+
+import static extension de.fhg.fokus.xtensions.concurrent.AsyncCompute.*
 
 class AsyncComputeTest {
 	
@@ -898,7 +898,7 @@ class AsyncComputeTest {
 	@Test def void testAsyncSupplyExceptionallyTimeoutScheduler() {
 		val scheduler = Executors.newScheduledThreadPool(1)
 		val fut = scheduler.asyncSupply(1,TimeUnit.NANOSECONDS) [
-			Thread.sleep(10)
+			Thread.sleep(100)
 			throw new IllegalStateException
 		]
 		Thread.sleep(50)

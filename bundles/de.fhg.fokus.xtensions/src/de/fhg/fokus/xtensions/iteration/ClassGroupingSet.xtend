@@ -8,7 +8,7 @@ import java.util.Set
  * @see de.fhg.fokus.xtensions.iteration.IterableExtensions#groupIntoSetBy(Iterable, Class, Class, Class...)
  * @see de.fhg.fokus.xtensions.iteration.IteratorExtensions#groupIntoSetBy(java.util.Iterator, Class, Class, Class...)
  */
-public interface ClassGroupingSet extends ClassGrouping {
+interface ClassGroupingSet extends ClassGrouping {
 	
 	/**
 	 * {@inheritDoc}

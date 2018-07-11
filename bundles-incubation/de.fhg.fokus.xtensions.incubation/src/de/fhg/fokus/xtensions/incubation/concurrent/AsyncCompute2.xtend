@@ -19,7 +19,7 @@ class AsyncCompute2 {
 		/**
 	 * 
 	 */
-	public static def <R> CompletableFuture<R> async((CompletableFuture<R>)=>FutureCompletion<R> runAsync) {
+	static def <R> CompletableFuture<R> async((CompletableFuture<R>)=>FutureCompletion<R> runAsync) {
 		async(ForkJoinPool.commonPool, runAsync)
 	}
 
@@ -47,8 +47,7 @@ class AsyncCompute2 {
 	 * @param runAsync
 	 * @return
 	 */
-	public static def <R> CompletableFuture<R> async(Executor executor,
-		(CompletableFuture<R>)=>FutureCompletion<R> runAsync) {
+	static def <R> CompletableFuture<R> async(Executor executor, (CompletableFuture<R>)=>FutureCompletion<R> runAsync) {
 		val CompletableFuture<R> fut = new CompletableFuture<R>
 		executor.execute [|
 			try {
@@ -85,7 +84,7 @@ class AsyncCompute2 {
 
 	// TODO documentation
 	// TODO allow Duration here
-	public static def <R> CompletableFuture<R> async(long timeout, TimeUnit unit,
+	static def <R> CompletableFuture<R> async(long timeout, TimeUnit unit,
 		(CompletableFuture<R>)=>FutureCompletion<R> runAsync) {
 		val fut = async(runAsync)
 		fut.cancelOnTimeout(timeout, unit)
@@ -93,7 +92,7 @@ class AsyncCompute2 {
 
 	// TODO documentation
 	// TODO allow Duration here
-	public static def <R> CompletableFuture<R> async(Executor executor, long timeout, TimeUnit unit, 
+	static def <R> CompletableFuture<R> async(Executor executor, long timeout, TimeUnit unit,
 		(CompletableFuture<R>)=>FutureCompletion<R> runAsync) {
 		val fut = async(executor, runAsync)
 		fut.cancelOnTimeout(timeout, unit)
@@ -101,7 +100,7 @@ class AsyncCompute2 {
 
 	// TODO documentation
 	// TODO allow Duration here
-	public static def <R> CompletableFuture<R> async(ScheduledExecutorService scheduler, long timeout, TimeUnit unit,
+	static def <R> CompletableFuture<R> async(ScheduledExecutorService scheduler, long timeout, TimeUnit unit,
 		(CompletableFuture<R>)=>FutureCompletion<R> runAsync) {
 		val fut = async(runAsync)
 		fut.cancelOnTimeout(scheduler, timeout, unit)
@@ -109,7 +108,7 @@ class AsyncCompute2 {
 
 	// TODO documentation
 	// TODO allow Duration here
-	public static def <R> CompletableFuture<R> async(ScheduledExecutorService scheduler, long timeout, TimeUnit unit,
+	static def <R> CompletableFuture<R> async(ScheduledExecutorService scheduler, long timeout, TimeUnit unit,
 		Executor executor, (CompletableFuture<R>)=>FutureCompletion<R> runAsync) {
 		val fut = async(executor, runAsync)
 		fut.cancelOnTimeout(scheduler, timeout, unit)

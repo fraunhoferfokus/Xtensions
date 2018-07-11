@@ -56,7 +56,7 @@ final class AsyncCompute {
 	 *  may be cancelled by the user, the {@code runAsync} function is advised to check the future for completion.
 	 * @throws NullPointerException if {@code runAsync} is {@code null}
 	 */
-	public static def <R> CompletableFuture<R> asyncSupply((CompletableFuture<?>)=>R runAsync) {
+	static def <R> CompletableFuture<R> asyncSupply((CompletableFuture<?>)=>R runAsync) {
 		asyncSupply(ForkJoinPool.commonPool, runAsync)
 	}
 
@@ -76,7 +76,7 @@ final class AsyncCompute {
 	 *  may be cancelled by the user, the {@code runAsync} function is advised to check the future for completion.
 	 * @throws NullPointerException if {@code runAsync} is {@code null}
 	 */
-	public static def <R> CompletableFuture<R> asyncSupply(Executor executor, (CompletableFuture<?>)=>R runAsync) {
+	static def <R> CompletableFuture<R> asyncSupply(Executor executor, (CompletableFuture<?>)=>R runAsync) {
 		Objects.requireNonNull(runAsync)
 		val CompletableFuture<R> fut = new CompletableFuture
 		executor.execute [|
@@ -112,8 +112,7 @@ final class AsyncCompute {
 	 *  may be cancelled by the user, the {@code runAsync} function is advised to check the future for completion.
 	 * @throws NullPointerException if {@code runAsync} is {@code null}
 	 */
-	public static def <R> CompletableFuture<R> asyncSupply(long timeout, TimeUnit unit,
-		(CompletableFuture<?>)=>R runAsync) {
+	static def <R> CompletableFuture<R> asyncSupply(long timeout, TimeUnit unit, (CompletableFuture<?>)=>R runAsync) {
 		val CompletableFuture<R> fut = asyncSupply(runAsync)
 		fut.failOnTimeout(timeout, unit)
 	}
@@ -142,8 +141,8 @@ final class AsyncCompute {
 	 * @return future that will used to provide result from concurrently executed {@code runAsync}. This future
 	 *  may be cancelled by the user, the {@code runAsync} function is advised to check the future for cancellation/completion.
 	 */
-	public static def <R> CompletableFuture<R> asyncSupply(ScheduledExecutorService scheduler, long timeout,
-		TimeUnit unit, (CompletableFuture<?>)=>R runAsync) {
+	static def <R> CompletableFuture<R> asyncSupply(ScheduledExecutorService scheduler, long timeout, TimeUnit unit,
+		(CompletableFuture<?>)=>R runAsync) {
 		val CompletableFuture<R> fut = asyncSupply(runAsync)
 		fut.failOnTimeout(scheduler, timeout, unit)[new TimeoutException]
 	}
@@ -172,7 +171,7 @@ final class AsyncCompute {
 	 * @return future that will used to provide result from concurrently executed {@code runAsync}. This future
 	 *  may be cancelled by the user, the {@code runAsync} function is advised to check the future for completion.
 	 */
-	public static def <R> CompletableFuture<R> asyncSupply(Executor executor, long timeout, TimeUnit unit,
+	static def <R> CompletableFuture<R> asyncSupply(Executor executor, long timeout, TimeUnit unit,
 		(CompletableFuture<?>)=>R runAsync) {
 		val CompletableFuture<R> fut = asyncSupply(executor, runAsync)
 		fut.failOnTimeout(timeout, unit)
@@ -203,8 +202,8 @@ final class AsyncCompute {
 	 * @return future that will used to provide result from concurrently executed {@code runAsync}. This future
 	 *  may be cancelled by the user, the {@code runAsync} function is advised to check the future for completion.
 	 */
-	public static def <R> CompletableFuture<R> asyncSupply(Executor executor, ScheduledExecutorService scheduler,
-		long timeout, TimeUnit unit, (CompletableFuture<?>)=>R runAsync) {
+	static def <R> CompletableFuture<R> asyncSupply(Executor executor, ScheduledExecutorService scheduler, long timeout,
+		TimeUnit unit, (CompletableFuture<?>)=>R runAsync) {
 		val CompletableFuture<R> fut = asyncSupply(executor, runAsync)
 		fut.failOnTimeout(scheduler, timeout, unit)[new TimeoutException]
 	}
@@ -217,7 +216,7 @@ final class AsyncCompute {
 	 *   exceptionally if {@code runAsync} throws an exception.
 	 * @see AsyncCompute#asyncRun(Executor,org.eclipse.xtext.xbase.lib.Procedures.Procedure1)
 	 */
-	public static def CompletableFuture<?> asyncRun((CompletableFuture<?>)=>void runAsync) {
+	static def CompletableFuture<?> asyncRun((CompletableFuture<?>)=>void runAsync) {
 		asyncRun(ForkJoinPool.commonPool, runAsync)
 	}
 
@@ -236,7 +235,7 @@ final class AsyncCompute {
 	 *  will be passed to this procedure to allow checking for completion from the outside.
 	 * @return future that will be created in this method and passed to {@code runAsync}.
 	 */
-	public static def CompletableFuture<?> asyncRun(Executor executor, (CompletableFuture<?>)=>void runAsync) {
+	static def CompletableFuture<?> asyncRun(Executor executor, (CompletableFuture<?>)=>void runAsync) {
 		Objects.requireNonNull(executor)
 		Objects.requireNonNull(runAsync)
 		val CompletableFuture<Object> fut = new CompletableFuture
@@ -264,8 +263,7 @@ final class AsyncCompute {
 	 * @return the future which will be completed with a {@code null} value after successful execution of {@code runAsync} or exceptionally if {@code runAsync} throws an exception.
 	 * @see AsyncCompute#asyncRun(Executor,long,TimeUnit,org.eclipse.xtext.xbase.lib.Procedures.Procedure1)
 	 */
-	public static def CompletableFuture<?> asyncRun(long timeout, TimeUnit unit,
-		(CompletableFuture<?>)=>void runAsync) {
+	static def CompletableFuture<?> asyncRun(long timeout, TimeUnit unit, (CompletableFuture<?>)=>void runAsync) {
 		asyncRun(ForkJoinPool.commonPool, timeout, unit, runAsync)
 	}
 
@@ -288,7 +286,7 @@ final class AsyncCompute {
 	 *  will be passed to this procedure to allow checking for completion from the outside.
 	 * @return future that will be created in this method and passed to {@code runAsync}.
 	 */
-	public static def CompletableFuture<?> asyncRun(Executor executor, long timeout, TimeUnit unit,
+	static def CompletableFuture<?> asyncRun(Executor executor, long timeout, TimeUnit unit,
 		(CompletableFuture<?>)=>void runAsync) {
 		val fut = asyncRun(executor, runAsync)
 		fut.failOnTimeout(timeout, unit)
@@ -317,8 +315,8 @@ final class AsyncCompute {
 	 *  will be passed to this procedure to allow checking for completion from the outside.
 	 * @return future that will be created in this method and passed to {@code runAsync}.
 	 */
-	public static def CompletableFuture<?> asyncRun(Executor executor, ScheduledExecutorService scheduler,
-		long timeout, TimeUnit unit, (CompletableFuture<?>)=>void runAsync) {
+	static def CompletableFuture<?> asyncRun(Executor executor, ScheduledExecutorService scheduler, long timeout,
+		TimeUnit unit, (CompletableFuture<?>)=>void runAsync) {
 		val fut = asyncRun(executor, runAsync)
 		fut.failOnTimeout(scheduler, timeout, unit)[new TimeoutException]
 	}

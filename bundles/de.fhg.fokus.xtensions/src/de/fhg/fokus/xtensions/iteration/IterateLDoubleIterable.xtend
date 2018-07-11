@@ -116,6 +116,8 @@ package class IterateDoubleIterableLimited implements DoubleIterable {
 		}
 	}
 	
+	// When setting minimum to Java 9, overwrite stream() method calling DoubleStream.iterate(seed, hasNext, next)
+	
 }
 
 /**

@@ -8,7 +8,7 @@ class Objects {
 
 	// TODO: public static def <T> long getLong(T obj, long onNull, ToLongFunction<T> mapper)
 	// TODO: public static def <T> double getLong(T obj, double onNull, ToDoubleFunction<T> mapper)
-	public static def <T> int getInt(T obj, int onNull, ToIntFunction<T> mapper) {
+	static def <T> int getInt(T obj, int onNull, ToIntFunction<T> mapper) {
 		if (obj === null) {
 			onNull
 		} else {
@@ -16,7 +16,7 @@ class Objects {
 		}
 	}
 
-	public static def <T> boolean getBool(T obj, boolean onNull, Predicate<T> mapper) {
+	static def <T> boolean getBool(T obj, boolean onNull, Predicate<T> mapper) {
 		if (obj === null) {
 			onNull
 		} else {
@@ -28,10 +28,10 @@ class Objects {
 	 * Java 9 forward compatible alias for 
 	 * {@link Objects#recoverNull(Object,org.eclipse.xtext.xbase.lib.Functions.Function0) recoverNull(T, =>T)}
 	 */
-	public static def <T> T requireNonNullElseGet​(T obj, Supplier<? extends T> supplier) {
+	static def <T> T requireNonNullElseGet​(T obj, Supplier<? extends T> supplier) {
 	}
 
-	public static def <T> T recoverNull(T toTest, =>T recovery) {
+	static def <T> T recoverNull(T toTest, =>T recovery) {
 		if (toTest !== null) {
 			toTest
 		} else {
@@ -43,11 +43,11 @@ class Objects {
 	 * Java 9 forward compatible alias for 
 	 * {@link Objects#recoverNull(Object,Object) recoverNull(T,T)}
 	 */
-	public static def <T> T requireNonNullElse​(T obj, T defaultObj) {
+	static def <T> T requireNonNullElse​(T obj, T defaultObj) {
 		obj.recoverNull(defaultObj)
 	}
 
-	public static def <T> T recoverNull(T toTest, T recovery) {
+	static def <T> T recoverNull(T toTest, T recovery) {
 		if (toTest !== null) {
 			toTest
 		} else {
@@ -63,10 +63,9 @@ class Objects {
 	 * value into a variable and checking the variable for {@code null}
 	 * or navigating the chain again.
 	 */
-	public static def <T> ifNotNull(T t, (T)=>void consumer) {
+	static def <T> ifNotNull(T t, (T)=>void consumer) {
 		if (t !== null) {
 			consumer.apply(t)
 		}
 	}
-
 }

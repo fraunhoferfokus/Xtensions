@@ -17,21 +17,29 @@ import java.time.LocalDate
 import java.util.ArrayList
 import java.util.Iterator
 import java.util.List
+import java.util.Map
 import java.util.Optional
+import java.util.OptionalDouble
 import java.util.OptionalInt
 import java.util.PrimitiveIterator
 import java.util.Random
+import java.util.Set
 import java.util.concurrent.CompletableFuture
+import java.util.concurrent.CompletionException
+import java.util.concurrent.Executor
 import java.util.concurrent.Executors
+import java.util.concurrent.ScheduledThreadPoolExecutor
 import java.util.concurrent.TimeUnit
+import java.util.concurrent.TimeoutException
 import java.util.concurrent.atomic.AtomicBoolean
+import java.util.function.Function
 import java.util.regex.Pattern
-import java.util.stream.Collectors
 import java.util.stream.IntStream
 import java.util.stream.Stream
 import org.eclipse.xtend.lib.annotations.Accessors
 import org.eclipse.xtend.lib.annotations.FinalFieldsConstructor
 import org.junit.Assert
+import org.junit.Ignore
 import org.junit.Test
 
 import static de.fhg.fokus.xtensions.concurrent.SchedulingUtil.*
@@ -44,8 +52,8 @@ import static extension de.fhg.fokus.xtensions.datetime.DurationExtensions.*
 import static extension de.fhg.fokus.xtensions.function.FunctionExtensions.*
 import static extension de.fhg.fokus.xtensions.iteration.IterableExtensions.*
 import static extension de.fhg.fokus.xtensions.iteration.IteratorExtensions.*
-import static extension de.fhg.fokus.xtensions.iteration.PrimitiveIteratorExtensions.*
 import static extension de.fhg.fokus.xtensions.iteration.PrimitiveArrayExtensions.*
+import static extension de.fhg.fokus.xtensions.iteration.PrimitiveIteratorExtensions.*
 import static extension de.fhg.fokus.xtensions.optional.OptionalExtensions.*
 import static extension de.fhg.fokus.xtensions.optional.OptionalIntExtensions.*
 import static extension de.fhg.fokus.xtensions.pair.PairExtensions.*
@@ -55,18 +63,7 @@ import static extension de.fhg.fokus.xtensions.stream.StringStreamExtensions.*
 import static extension de.fhg.fokus.xtensions.string.StringMatchExtensions.*
 import static extension de.fhg.fokus.xtensions.string.StringSplitExtensions.*
 import static extension java.util.Arrays.stream
-import java.util.OptionalDouble
-import java.util.Set
-import java.util.function.Function
-import java.util.Map
-import de.fhg.fokus.xtensions.concurrent.CompletableFutureExtensions
-import java.util.concurrent.ForkJoinPool
-import java.util.concurrent.Executor
-import java.util.concurrent.TimeoutException
-import java.util.concurrent.ScheduledExecutorService
-import java.util.concurrent.ScheduledThreadPoolExecutor
-import java.util.concurrent.CompletionException
-import org.junit.Ignore
+import java.util.stream.Collectors
 
 @Ignore
 class Showcase {
@@ -786,4 +783,28 @@ class Showcase {
 		println("Elements contained in no list: " + inNoList)
 	}
 	
+	@Test
+	def void partitionByClassDemo() {
+		val char[] chars = #[0x0020 as char, 0x0034 as char]
+		val List<CharSequence> list = #[
+			"Hello", 
+			new StringBuilder().append(chars), 
+			"Xtend", 
+			new StringBuilder().append(0x0032 as char)
+		]
+		list.iterator.partitionBy(String) => [
+			println('''Selected: "«selected.join(" ")»"''')	
+			println('''Rejected: "«rejected.join("")»"''')
+		]
+	}
+	
+	@Test
+	def void partitionByPredicateCollectors() {
+		val list = #["foo", "bla", "foo", "hui", "fun"]
+		val partition = list.iterator.partitionBy([startsWith("f")], Collectors::toSet, Collectors::toList)
+		val Set<String> selected = partition.selected
+		val List<String> rejected = partition.rejected
+		println("Unique words starting with 'f' : " + selected.join(", "))
+		println("Other words: " + rejected.join(", "))
+	}
 }

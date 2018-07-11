@@ -34,9 +34,9 @@ final class StringMatchExtensions {
 	 */
 	private static class MatchStringIterator implements Iterator<String> {
 
-		private Matcher matcher;
-		private boolean hasNext
-		private CharSequence input
+		Matcher matcher;
+		boolean hasNext
+		CharSequence input
 
 		new(CharSequence toMatch, Pattern pattern) {
 			input = toMatch
@@ -64,10 +64,10 @@ final class StringMatchExtensions {
 	 */
 	private static class MatchResultIterator implements Iterator<MatchResult> {
 		
-		private Matcher nextMatcher
-		private boolean hasNext
-		private CharSequence input
-		private Pattern pattern
+		Matcher nextMatcher
+		boolean hasNext
+		CharSequence input
+		Pattern pattern
 		
 		new(CharSequence toMatch, Pattern p) {
 			pattern = p
@@ -105,7 +105,7 @@ final class StringMatchExtensions {
 	 * @return iterator over all matches of {@code pattern} in {@code toMatch}.
 	 * @see StringMatchExtensions#matchResultIt(CharSequence, Pattern)
 	 */
-	public static def Iterator<String> matchIt(CharSequence toMatch, Pattern pattern) {
+	static def Iterator<String> matchIt(CharSequence toMatch, Pattern pattern) {
 		Objects.requireNonNull(toMatch)
 		Objects.requireNonNull(pattern)
 		new MatchStringIterator(toMatch, pattern)
@@ -122,7 +122,7 @@ final class StringMatchExtensions {
 	 * @return iterator over all matches of {@code pattern} in {@code toMatch}.
 	 * @see StringMatchExtensions#matchResultIt(CharSequence, String)
 	 */
-	public static def Iterator<String> matchIt(CharSequence toMatch, String pattern) {
+	static def Iterator<String> matchIt(CharSequence toMatch, String pattern) {
 		Objects.requireNonNull(toMatch)
 		Objects.requireNonNull(pattern)
 		matchIt(toMatch, Pattern.compile(pattern))
@@ -137,7 +137,7 @@ final class StringMatchExtensions {
 	 * @param pattern the pattern to be used to find matches in {@code toMatch}.
 	 * @return iterator over all {@code MatchResult}s for {@code pattern} in {@code toMatch}.
 	 */
-	public static def Iterator<MatchResult> matchResultIt(CharSequence toMatch, Pattern pattern) {
+	static def Iterator<MatchResult> matchResultIt(CharSequence toMatch, Pattern pattern) {
 		new MatchResultIterator(toMatch, pattern)
 	}
 	
@@ -150,7 +150,7 @@ final class StringMatchExtensions {
 	 * @param pattern the pattern to be used to find matches in {@code toMatch}.
 	 * @return iterator over all {@code MatchResult}s for {@code pattern} in {@code toMatch}.
 	 */
-	public static def Iterator<MatchResult> matchResultIt(CharSequence toMatch, String pattern) {
+	static def Iterator<MatchResult> matchResultIt(CharSequence toMatch, String pattern) {
 		toMatch.matchResultIt(Pattern.compile(pattern))
 	}
 	

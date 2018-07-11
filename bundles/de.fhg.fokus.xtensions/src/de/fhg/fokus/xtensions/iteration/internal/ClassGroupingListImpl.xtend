@@ -8,9 +8,9 @@ import java.util.Map
 /**
  * Implementation of {@link ClassGroupingList}, based on {@link ImmutableListMultimap}.
  */
-public final class ClassGroupingListImpl extends AbstractClassGrouping implements ClassGroupingList {
+final class ClassGroupingListImpl extends AbstractClassGrouping implements ClassGroupingList {
 	
-	private val ImmutableListMultimap<Class<?>,Object> backingMap
+	val ImmutableListMultimap<Class<?>, Object> backingMap
 	
 	new(ImmutableListMultimap<Class<?>,Object> map, Class<?>[] keys) {
 		super(keys)

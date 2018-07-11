@@ -9,7 +9,7 @@ import java.util.List
 package abstract class AbstractClassGrouping implements ClassGrouping {
 	
 	Class<?>[] keys
-	private transient var List<Class<?>> keysList
+	transient var List<Class<?>> keysList
 
 	new(Class<?>[] keys) {
 		this.keys = keys

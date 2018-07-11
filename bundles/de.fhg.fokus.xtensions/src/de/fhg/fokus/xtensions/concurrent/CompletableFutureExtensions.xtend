@@ -914,17 +914,17 @@ final class CompletableFutureExtensions {
 	 * orTimeout(CompletableFuture&lt;R&gt;, (TimeoutConfig)=&gt;void)}
 	 * extension method.
 	 */
-	public static final class TimeoutConfig {
+	static final class TimeoutConfig {
 		private new() {
 		}
 
-		private var long timeout = 1
-		private var TimeUnit timeUnit = null
-		private var ScheduledExecutorService executor = null
-		private var tryShutdown = false
-		private var =>Throwable exceptionProvider = null
-		private var boolean cancelBackPropagation = false
-		private var boolean cancelOriginalOnTimeout = false
+		var long timeout = 1
+		var TimeUnit timeUnit = null
+		var ScheduledExecutorService executor = null
+		var tryShutdown = false
+		var =>Throwable exceptionProvider = null
+		var boolean cancelBackPropagation = false
+		var boolean cancelOriginalOnTimeout = false
 
 		/**
 		 * Sets the time duration after which the timeout operation is triggered.<br>
@@ -1033,7 +1033,7 @@ final class CompletableFutureExtensions {
 	 * @return future that will be cancelled if {@code fut} is not completed before the
 	 *   timeout configured by {@code config} exceeded.
 	 */
-	public static def <R> CompletableFuture<R> orTimeout(CompletableFuture<R> fut, (TimeoutConfig)=>void config) {
+	static def <R> CompletableFuture<R> orTimeout(CompletableFuture<R> fut, (TimeoutConfig)=>void config) {
 		Objects.requireNonNull(fut)
 		Objects.requireNonNull(config)
 		val configData = new TimeoutConfig

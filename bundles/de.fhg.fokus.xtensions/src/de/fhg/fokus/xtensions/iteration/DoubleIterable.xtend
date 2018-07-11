@@ -64,12 +64,12 @@ interface DoubleIterable extends Iterable<Double> {
 	} 
 	
 	/**
-   * Creates a new LongIterable that will produce an infinite {@link OfDouble} or {@link DoubleStream} based on the {@link DoubleSupplier} provided by supplier {@code s}.
-   * @param s supplier, that provides an {@link DoubleSupplier} for each
-   * iterator or stream created.
-   * @return DoubleIterable based on the supplier {@code s}.
-   */
-	public static def DoubleIterable generate(()=>DoubleSupplier s) {
+	 * Creates a new LongIterable that will produce an infinite {@link OfDouble} or {@link DoubleStream} based on the {@link DoubleSupplier} provided by supplier {@code s}.
+	 * @param s supplier, that provides an {@link DoubleSupplier} for each
+	 * iterator or stream created.
+	 * @return DoubleIterable based on the supplier {@code s}.
+	 */
+	static def DoubleIterable generate(()=>DoubleSupplier s) {
 		new SupplierDoubleIterable(s)
 	}
 	
@@ -83,7 +83,7 @@ interface DoubleIterable extends Iterable<Double> {
 	 * @return and {@link DoubleIterable} providing infinite source of numbers
 	 * based on {@code seed} and {@code op}.
 	 */
-	public static def DoubleIterable iterate(double seed, DoubleUnaryOperator op) {
+	static def DoubleIterable iterate(double seed, DoubleUnaryOperator op) {
 		new IterateDoubleIterable(seed, op)
 	}
 	
@@ -101,7 +101,7 @@ interface DoubleIterable extends Iterable<Double> {
 	 * @param next value mapping previous value provided by iterator to next value provided
 	 * @return iterable, providing an iterator based on {@code seed}, {@code hasNext}, and {@code next}.
 	 */
-	public static def DoubleIterable iterate(double seed, DoublePredicate hasNext, DoubleUnaryOperator next) {
+	static def DoubleIterable iterate(double seed, DoublePredicate hasNext, DoubleUnaryOperator next) {
 		new IterateDoubleIterableLimited(seed, hasNext, next)
 	}
 }

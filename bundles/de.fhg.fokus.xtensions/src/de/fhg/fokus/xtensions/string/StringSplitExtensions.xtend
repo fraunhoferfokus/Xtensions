@@ -45,7 +45,7 @@ class StringSplitExtensions {
 	 * @throws java.util.regex.PatternSyntaxException if the {@code pattern}'s syntax is invalid
 	 * @see String#split(String,int)
 	 */
-	public static def Iterator<String> splitIt(String toSplit, String pattern, int limit) {
+	static def Iterator<String> splitIt(String toSplit, String pattern, int limit) {
 		toSplit.splitIt(Pattern.compile(pattern), limit)
 	}
 	
@@ -65,14 +65,14 @@ class StringSplitExtensions {
 	 * @throws NullPointerException if toSplit or pattern is null
 	 * @see Pattern#split(CharSequence,int)
 	 */
-	public static def Iterator<String> splitIt(CharSequence toSplit, Pattern pattern, int limit) throws NullPointerException {
+	static def Iterator<String> splitIt(CharSequence toSplit, Pattern pattern, int limit) throws NullPointerException {
 		if (toSplit.length == 0) {
 			return new EmptyStringIterator
 		}
-		if(limit<0) {
+		if (limit < 0) {
 			return new UnlimitedSplitIterator(toSplit, pattern)
 		}
-		if(limit == 0) {
+		if (limit == 0) {
 			return new UnlimitedSplitIteratorNoTrailingEmpty(toSplit, pattern)
 		}
 		// else: limited iterator
@@ -93,7 +93,7 @@ class StringSplitExtensions {
 	 * @throws NullPointerException if toSplit or pattern is null
 	 * @see Pattern#split(CharSequence)
 	 */
-	public static def Iterator<String> splitIt(CharSequence toSplit, Pattern pattern) throws NullPointerException {
+	static def Iterator<String> splitIt(CharSequence toSplit, Pattern pattern) throws NullPointerException {
 		Objects.requireNonNull(toSplit)
 		if (toSplit.length == 0) {
 			new EmptyStringIterator
@@ -117,7 +117,7 @@ class StringSplitExtensions {
 	 * @throws java.util.regex.PatternSyntaxException if the {@code pattern}'s syntax is invalid
 	 * @see String#split(String)
 	 */
-	public static def Iterator<String> splitIt(CharSequence toSplit, String pattern) throws NullPointerException {
+	static def Iterator<String> splitIt(CharSequence toSplit, String pattern) throws NullPointerException {
 		toSplit.splitIt(Pattern.compile(pattern))
 	}
 	
@@ -128,9 +128,9 @@ class StringSplitExtensions {
 	 * @param pattern the pattern used to split the parameter {@code toSplit}
 	 * @return stream over all split results of splitting {@code toSplit} at points defined by {@code pattern}.
 	 */
-	 @Pure
+	@Pure
 //	 @Inline(value = "Pattern.compile($2).splitAsStream($1)", imported = Pattern)
-	public static def Stream<String> splitAsStream(CharSequence toSplit, String pattern) {
+	static def Stream<String> splitAsStream(CharSequence toSplit, String pattern) {
 		Pattern.compile(pattern).splitAsStream(toSplit)
 	}
 	
@@ -139,7 +139,7 @@ class StringSplitExtensions {
 	 */
 	private static final class EmptyStringIterator implements Iterator<String> {
 
-		private boolean read = false
+		boolean read = false
 
 		override hasNext() {
 			!read
@@ -160,8 +160,8 @@ class StringSplitExtensions {
 	 * parameter.
 	 */
 	private static class LimitedSplitIterator extends UnlimitedSplitIterator {
-		private int limit
-		private int readCount
+		int limit
+		int readCount
 		
 		new(CharSequence toSplit, Pattern pattern, int limit) {
 			super(toSplit, pattern)
@@ -193,9 +193,9 @@ class StringSplitExtensions {
 	 * parameter.
 	 */
 	private static class UnlimitedSplitIterator extends AbstractReadUntilNullIterator<String> {
-		private final Matcher matcher
-		private int index
-		private CharSequence input
+		final Matcher matcher
+		int index
+		CharSequence input
 
 		new(CharSequence toSplit, Pattern pattern) {
 			val m = pattern.matcher(toSplit)
@@ -259,13 +259,13 @@ class StringSplitExtensions {
 
 	private static final class UnlimitedSplitIteratorNoTrailingEmpty extends AbstractReadUntilNullIterator<String> {
 
-		private static final val EMPTY = ""
+		static val EMPTY = ""
 
-		private final Matcher matcher
-		private String firstAfterEmpty
-		private int index
-		private int upcomingEmptyCount
-		private CharSequence input
+		final Matcher matcher
+		String firstAfterEmpty
+		int index
+		int upcomingEmptyCount
+		CharSequence input
 
 		new(CharSequence toSplit, Pattern pattern) {
 			val m = pattern.matcher(toSplit)

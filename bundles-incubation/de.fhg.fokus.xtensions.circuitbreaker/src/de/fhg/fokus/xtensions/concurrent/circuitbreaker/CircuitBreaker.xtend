@@ -141,8 +141,8 @@ final class CircuitOpenException extends Exception {
  * the action should be canceled using this exception class.
  */
 final class CancellationByTimeoutException extends CancellationException {
-	private val long timeout;
-	private val TimeUnit timeoutTimeUnit;
+	val long timeout;
+	val TimeUnit timeoutTimeUnit;
 	
 	/**
 	 * Passes the timeout time and time unit that passed, so that an action was 

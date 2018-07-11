@@ -26,8 +26,8 @@ class DefaultCircuitBreakerTest {
 	@Data
 	private static class AlwaysOpenCircuitBreakerState implements CircuitBreakerState {
 
-		private val AtomicBoolean success;
-		private val AtomicReference<String> msg;
+		val AtomicBoolean success;
+		val AtomicReference<String> msg;
 
 		override isCallPossible(String name) {
 			false
@@ -48,7 +48,7 @@ class DefaultCircuitBreakerTest {
 	@Data
 	private static class NeverReachRetry implements RetryStrategy {
 
-		private val AtomicBoolean success;
+		val AtomicBoolean success;
 
 		override <T> withRetryTimeout(CompletableFuture<T> fut) {
 			fut
@@ -90,7 +90,7 @@ class DefaultCircuitBreakerTest {
 		Assert.assertTrue(errorMsg.get, success.get)
 	}
 
-	public static class AlwaysClosedCircuitBreakerState implements CircuitBreakerState {
+	 static class AlwaysClosedCircuitBreakerState implements CircuitBreakerState {
 
 		val successCount = new AtomicInteger(0)
 		val failCount = new AtomicInteger(0)
@@ -109,8 +109,7 @@ class DefaultCircuitBreakerTest {
 
 	}
 
-	@Data
-	public static class ReachRetryTimes implements RetryStrategy {
+	@Data static class ReachRetryTimes implements RetryStrategy {
 		val int max
 		package val retryCount = new AtomicInteger(0)
 
@@ -281,8 +280,7 @@ class DefaultCircuitBreakerTest {
 	
 	
 
-	@Data
-	public static class AlwaysRetryNoTimeout implements RetryStrategy {
+	@Data static class AlwaysRetryNoTimeout implements RetryStrategy {
 		
 		package val retryCount = new AtomicInteger(0)
 
@@ -296,8 +294,7 @@ class DefaultCircuitBreakerTest {
 
 	}
 	
-	@Data
-	public static class OpenAfterNFailuresCircuitBreakerState implements CircuitBreakerState {
+	@Data static class OpenAfterNFailuresCircuitBreakerState implements CircuitBreakerState {
 
 		val successCount = new AtomicInteger(0)
 		val failCount = new AtomicInteger(0)
@@ -354,8 +351,7 @@ class DefaultCircuitBreakerTest {
 		Assert.assertEquals(successMsg, 0, actualSuccessCount)
 	}
 
-	@Data
-	public static class ReachRetryTimesWithTimeout implements RetryStrategy {
+	@Data static class ReachRetryTimesWithTimeout implements RetryStrategy {
 		val int max
 		package val count = new AtomicInteger(0)
 		val long time

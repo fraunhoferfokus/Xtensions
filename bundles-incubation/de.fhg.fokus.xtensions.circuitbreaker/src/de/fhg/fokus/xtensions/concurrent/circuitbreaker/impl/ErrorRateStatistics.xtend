@@ -95,8 +95,8 @@ package class ErrorRateStatistics {
 
 	// true = error, false = success
 	val boolean[] data
-	private val int errors
-	private val int index
+	val int errors
+	val int index
 
 	/**
 	 * @param size amount of sampled results (success/error)

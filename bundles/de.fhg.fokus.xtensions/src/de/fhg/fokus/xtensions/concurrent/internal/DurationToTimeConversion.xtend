@@ -15,8 +15,7 @@ class DurationToTimeConversion {
 	 * Holder class for an {@code amount} of time and its
 	 * time {@code unit}.
 	 */
-	@Data
-	public static class Time {
+	@Data static class Time {
 		public final long amount;
 		public final TimeUnit unit;
 	}
@@ -33,7 +32,7 @@ class DurationToTimeConversion {
 	 * @param duration the duration to be represented as {@link Time}.
 	 * @return Time representation of given {@code duration}
 	 */
-	public static def Time toTime(Duration duration) {
+	static def Time toTime(Duration duration) {
 		// should we go for seconds or for nanos?
 		val seconds = duration.seconds
 		val nanos = duration.nano
@@ -51,9 +50,9 @@ class DurationToTimeConversion {
 		// this would cause no loss in precision
 		try {
 			val secondsInNanos = Math.multiplyExact(seconds, 1_000_000_000)
-			val overallNanos = Math.addExact(secondsInNanos,nanos)
+			val overallNanos = Math.addExact(secondsInNanos, nanos)
 			return overallNanos -> TimeUnit.NANOSECONDS
-		} catch(ArithmeticException e) {
+		} catch (ArithmeticException e) {
 			// overflow occurred, we need to find different strategy
 		}
 
@@ -61,8 +60,8 @@ class DurationToTimeConversion {
 		// do seconds fit into long of millis?
 		var secondsInMillis = 0L
 		try {
-			secondsInMillis = Math.multiplyExact(seconds,1_000)
-		} catch(ArithmeticException e) {
+			secondsInMillis = Math.multiplyExact(seconds, 1_000)
+		} catch (ArithmeticException e) {
 			// overflow occurred, we simply stick to seconds
 			return seconds -> TimeUnit.SECONDS
 		}
@@ -70,14 +69,13 @@ class DurationToTimeConversion {
 		// does duration fit in milliseconds?
 		val nanosInMillis = nanos / 1_000_000
 		return try {
-			val milliSum = Math.addExact(secondsInMillis,nanosInMillis)
+			val milliSum = Math.addExact(secondsInMillis, nanosInMillis)
 			milliSum -> TimeUnit.MILLISECONDS
-		} catch(ArithmeticException e) {
+		} catch (ArithmeticException e) {
 			// On overflow we keep milliseconds. 
 			// We lose less than a second by choosing Long.MAX_VALUE millis.
 			// Switching to seconds could lose more precision than staying with millis.
 			Long.MAX_VALUE -> TimeUnit.MILLISECONDS
 		}
 	}
-
 }

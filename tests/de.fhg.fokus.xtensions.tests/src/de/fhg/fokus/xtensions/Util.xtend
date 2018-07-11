@@ -19,13 +19,13 @@ import java.util.Iterator
 
 class Util {
 	
-	private static String HAS_NEXT_MSG = "Iterator.hasNext returns true"
+	static String HAS_NEXT_MSG = "Iterator.hasNext returns true"
 	
-	public static def <X extends Exception> X expectException(Class<X> exClass, ()=>void action) {
+	static def <X extends Exception> X expectException(Class<X> exClass, ()=>void action) {
 		try {
 			action.apply
-		} catch(Exception e) {
-			if(exClass.isInstance(e)) {
+		} catch (Exception e) {
+			if (exClass.isInstance(e)) {
 				return exClass.cast(e)
 			}
 			val msg = "Exception not instance of " + exClass.name + "; Actual class: " + e.class.name
@@ -34,7 +34,7 @@ class Util {
 		throw new AssertionError("Expected exception of type " + exClass.name)
 	}
 	
-	public static def assertEmptyIterator(Iterator<?> iterator) {
+	static def assertEmptyIterator(Iterator<?> iterator) {
 		assertNotNull(iterator)
 		assertFalse(HAS_NEXT_MSG, iterator.hasNext)
 		expectException(NoSuchElementException) [
@@ -42,7 +42,7 @@ class Util {
 		]
 	}
 	
-	public static def assertEmptyIntIterator(OfInt iterator) {
+	static def assertEmptyIntIterator(OfInt iterator) {
 		assertNotNull(iterator)
 		assertFalse(HAS_NEXT_MSG, iterator.hasNext)
 		expectException(NoSuchElementException) [
@@ -50,7 +50,7 @@ class Util {
 		]
 	}
 	
-	public static def assertEmptyLongIterator(OfLong iterator) {
+	static def assertEmptyLongIterator(OfLong iterator) {
 		assertNotNull(iterator)
 		assertFalse(HAS_NEXT_MSG, iterator.hasNext)
 		expectException(NoSuchElementException) [
@@ -58,7 +58,7 @@ class Util {
 		]
 	}
 	
-	public static def assertEmptyDoubleIterator(OfDouble iterator) {
+	static def assertEmptyDoubleIterator(OfDouble iterator) {
 		assertNotNull(iterator)
 		assertFalse(HAS_NEXT_MSG, iterator.hasNext)
 		expectException(NoSuchElementException) [

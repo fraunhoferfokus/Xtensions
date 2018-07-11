@@ -7,7 +7,7 @@ import java.util.Collection
  * Grouping of objects by a list of classes. The group of classes by which 
  * elements are grouped is provided by 
  */
-public interface ClassGrouping {
+interface ClassGrouping {
 	
 	/**
 	 * List of classes the grouping grouped object instances by.

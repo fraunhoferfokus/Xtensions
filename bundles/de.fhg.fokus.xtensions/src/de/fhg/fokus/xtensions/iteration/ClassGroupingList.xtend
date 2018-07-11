@@ -8,7 +8,7 @@ import java.util.Map
  * @see de.fhg.fokus.xtensions.iteration.IterableExtensions#groupIntoListBy(Iterable, Class, Class, Class...)
  * @see de.fhg.fokus.xtensions.iteration.IteratorExtensions#groupIntoListBy(java.util.Iterator, Class, Class, Class...)
  */
-public interface ClassGroupingList extends ClassGrouping {
+interface ClassGroupingList extends ClassGrouping {
 	
 	/**
 	 * {@inheritDoc}

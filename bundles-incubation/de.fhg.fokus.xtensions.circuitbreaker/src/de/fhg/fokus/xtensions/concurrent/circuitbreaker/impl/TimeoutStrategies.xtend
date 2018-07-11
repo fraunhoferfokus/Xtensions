@@ -1,9 +1,8 @@
 package de.fhg.fokus.xtensions.concurrent.circuitbreaker.impl
 
-import java.util.concurrent.TimeUnit
 import de.fhg.fokus.xtensions.concurrent.circuitbreaker.TimeoutStrategy
 import java.util.Objects
-import de.fhg.fokus.xtensions.concurrent.circuitbreaker.TimeoutStrategy.TimeFactory
+import java.util.concurrent.TimeUnit
 
 /**
  * Default builder for instances of {@link BackoffStrategy}.

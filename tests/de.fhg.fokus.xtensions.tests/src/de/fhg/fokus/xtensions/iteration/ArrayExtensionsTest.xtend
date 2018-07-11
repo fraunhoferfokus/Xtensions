@@ -12,41 +12,40 @@ import java.time.ZoneId
  */
 class ArrayExtensionsTest {
 	
-	@Test(expected = NullPointerException) public def testForEachArrayNull() {
+	@Test(expected=NullPointerException) def testForEachArrayNull() {
 		val Object[] arr = null
 		arr.forEach [
 			fail()
 		]
 	}
 	
-	@Test(expected = NullPointerException) public def testForEachActionNull() {
+	@Test(expected=NullPointerException) def testForEachActionNull() {
 		val Object[] arr = #[]
 		arr.forEach(null)
 	}
 	
-	@Test public def testForEachEmptyArray() {
+	@Test def testForEachEmptyArray() {
 		val Object[] arr = #[]
 		arr.forEach [
 			fail()
 		]
 	}
 	
-	@Test public def testForEachOneElementArray() {
+	@Test def testForEachOneElementArray() {
 		val Object[] arr = #["foo"]
 		val result = newArrayList
 		arr.forEach [
 			result.add(it)
 		]
-		assertArrayEquals(arr,result)
+		assertArrayEquals(arr, result)
 	}
 	
-	@Test public def testForEachSomeElementsArray() {
+	@Test def testForEachSomeElementsArray() {
 		val Object[] arr = #["foo", 42, LocalDateTime.now(ZoneId.systemDefault)]
 		val result = newArrayList
 		arr.forEach [
 			result.add(it)
 		]
-		assertArrayEquals(arr,result)
+		assertArrayEquals(arr, result)
 	}
-	
 }

@@ -8,32 +8,32 @@ package de.fhg.fokus.xtensions.incubation.function
  * As the entry point, call {@link Trampoline#jump(Function1) Trampoline.jump}, in the passed
  * lambda, the first pseudo-tail-recursive call can be started.
  */
-public class Trampoline<T> {
+class Trampoline<T> {
 	
-	private static Bounce nowCall = new Bounce
-	private static Bounce nowReturn = new Bounce
+	static Bounce nowCall = new Bounce
+	static Bounce nowReturn = new Bounce
 	
-	private T result
-	private (Trampoline<T>)=>Bounce toCall
+	T result
+	(Trampoline<T>)=>Bounce toCall
 	
 	/**
 	 * Starting point for pseudo-recursive call.
 	 * @param jump Function starting 
 	 */
-	public static def <T> T jump((Trampoline<T>)=>Bounce jump) {
+	static def <T> T jump((Trampoline<T>)=>Bounce jump) {
 		val trampoline = new Trampoline<T>
 		trampoline.toCall = jump
 		var Bounce r
 		do {
 			r = trampoline.toCall.apply(trampoline)
-		} while(r !== nowReturn)
+		} while (r !== nowReturn)
 		trampoline.result
 	}
 	
 	/**
 	 * Start pseudo-recursive call
 	 */
-	public def Bounce call((Trampoline<T>)=>Bounce callee) {
+	def Bounce call((Trampoline<T>)=>Bounce callee) {
 		this.toCall = callee
 		nowCall
 	}
@@ -41,7 +41,7 @@ public class Trampoline<T> {
 	/**
 	 * Return result a value
 	 */
-	public def Bounce result(T t) {
+	def Bounce result(T t) {
 		this.result = t
 		nowReturn
 	}
@@ -59,6 +59,6 @@ public class Trampoline<T> {
  * </li>
  * </ul>
  */
-public class Bounce {
+class Bounce {
 	package new() {}
 }

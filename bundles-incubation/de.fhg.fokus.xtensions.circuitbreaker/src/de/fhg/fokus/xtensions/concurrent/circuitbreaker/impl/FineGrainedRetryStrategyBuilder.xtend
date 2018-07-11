@@ -41,14 +41,14 @@ package class FineGrainedRetryStrategyBuilder {
 // TODO make public when finished
 @Data
 package class Repeat {
-	private val long timeout;
-	private val TimeUnit timeUnit;
+	val long timeout;
+	val TimeUnit timeUnit;
 
-	public def boolean doRepeat() {
+	def boolean doRepeat() {
 		return timeout >= 0;
 	}
 
-	public def void ifRepeat(TimeConsumer func) {
+	def void ifRepeat(TimeConsumer func) {
 		if (doRepeat) {
 			func.accept(timeout, timeUnit)
 		}
@@ -58,31 +58,31 @@ package class Repeat {
 
 	public static Repeat REPEAT_WITHOUT_TIMEOUT = new Repeat(0, null)
 
-	public static def ->(long time, TimeUnit unit) {
+	static def ->(long time, TimeUnit unit) {
 		new Repeat(time, unit)
 	}
 
-	public static def Repeat NANOSECONDS(long time) {
+	static def Repeat NANOSECONDS(long time) {
 		new Repeat(time, NANOSECONDS)
 	}
 
-	public static def Repeat MILLISECONDS(long time) {
+	static def Repeat MILLISECONDS(long time) {
 		new Repeat(time, MILLISECONDS)
 	}
 
-	public static def Repeat SECONDS(long time) {
+	static def Repeat SECONDS(long time) {
 		new Repeat(time, SECONDS)
 	}
 
-	public static def Repeat MINUTES(long time) {
+	static def Repeat MINUTES(long time) {
 		new Repeat(time, MINUTES)
 	}
 
-	public static def Repeat HOURS(long time) {
+	static def Repeat HOURS(long time) {
 		new Repeat(time, HOURS)
 	}
 
-	public static def Repeat DAYS(long time) {
+	static def Repeat DAYS(long time) {
 		new Repeat(time, DAYS)
 	}
 }

@@ -423,7 +423,7 @@ public final class OptionalExtensions {
 	@Pure
 	@Inline(value = "Optional.ofNullable($1)", imported = Optional.class)
 	public static <T> @NonNull Optional<T> maybe(@Nullable T t) {
-		return Optional.ofNullable((T) t);
+		return Optional.ofNullable(t);
 	}
 
 	/**
