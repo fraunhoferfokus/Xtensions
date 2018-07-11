@@ -11,10 +11,13 @@
 package de.fhg.fokus.xtensions.iteration
 
 import java.util.Collection
+import java.util.List
 import java.util.Objects
+import java.util.function.BiPredicate
 import java.util.function.DoubleConsumer
 import java.util.function.IntConsumer
 import java.util.function.LongConsumer
+import java.util.function.Predicate
 import java.util.function.ToDoubleFunction
 import java.util.function.ToIntFunction
 import java.util.function.ToLongFunction
@@ -24,7 +27,6 @@ import java.util.stream.StreamSupport
 
 import static extension de.fhg.fokus.xtensions.iteration.IteratorExtensions.*
 import static extension java.util.Objects.*
-import java.util.function.BiPredicate
 
 /**
  * Additional extension functions for the {@link Iterable} class.
@@ -217,6 +219,8 @@ final class IterableExtensions {
 	 * @param secondGroup first class elements of {@code iterable} are be grouped by
 	 * @param additionalGroups further classes to group elements by. This parameter is allowed to be {@code null}.
 	 * @return a grouping of elements by the classes, provided via the parameters {@code firstGroup}, {@code firstGroup}, and {@code additionalGroups}
+	 * @see #partitionBy(Iterable, Class)
+	 * @see #partitionBy(Iterable, Class, Collector)
 	 * @since 1.1.0.
 	 */
 	static def ClassGroupingSet groupIntoSetBy(Iterable<?> iterable, Class<?> firstGroup, Class<?> secondGroup, Class<?>... additionalGroups) {
@@ -237,6 +241,8 @@ final class IterableExtensions {
 	 * @param secondGroup first class elements of {@code iterable} are be grouped by
 	 * @param additionalGroups further classes to group elements by. This parameter is allowed to be {@code null}.
 	 * @return a grouping of elements by the classes, provided via the parameters {@code firstGroup}, {@code firstGroup}, and {@code additionalGroups}.
+	 * @see #partitionBy(Iterable, Class)
+	 * @see #partitionBy(Iterable, Class, Collector)
 	 * @since 1.1.0
 	 */
 	static def ClassGroupingList groupIntoListBy(Iterable<?> iterable, Class<?> firstGroup, Class<?> secondGroup, Class<?>... additionalGroups) {
@@ -276,7 +282,7 @@ final class IterableExtensions {
 	 * @throws NullPointerException is thrown if {@code iterable} or {@code other} is {@code null}
 	 * @since 1.1.0
 	 */
-	public static def <X,Y> Iterable<Pair<X,Y>> combinations(Iterable<X> iterable, Iterable<Y> other) {
+	static def <X, Y> Iterable<Pair<X, Y>> combinations(Iterable<X> iterable, Iterable<Y> other) {
 		iterable.requireNonNull("iterable")
 		other.requireNonNull("other");
 		[iterable.iterator.combinations(other)]
@@ -354,6 +360,131 @@ final class IterableExtensions {
 		where.requireNonNull("where")
 		merger.requireNonNull("merger");
 		[iterable.iterator.combinationsWhere(other,where,merger)]
+	}
+	
+	/**
+	 * This method partitions the elements in {@code iterable} into elements instance of {@code selectionClass}
+	 * and elements that are not. The returned partition holds the elements instance of {@code selectionClass} 
+	 * in the selected partition and the other elements in the rejected partition. Partitions are Lists of the 
+	 * elements. The relative order of the elements in {@code iterable} is preserved in the respective partitions. 
+	 * There is no guarantee about mutability or thread safety of the list partitions. If there is no element
+	 * selected or rejected, the respective parts will hold an empty List; the parts are guaranteed to be not {@code null}.
+	 * @param iterable source iterable, that's elements are partitioned based on {@code selectionClass}
+	 * @param selectionClass the class elements in {@code iterable} are checked to be instance of. Elements 
+	 *   that are instance of {@code selectionClass} will be added to the selected partition of the result.
+	 *   Elements that are not, will end up in the rejected partition.
+	 * @param <X> Type of elements in {@code iterable}
+	 * @param <Y> Type of elements that are part of {@code iterable} and will be put into the resulting selected partition.
+	 * @return partition of elements in {@code iterable}, providing the selected elements, that are instance of {@code selectionClass}, and rejected elements
+	 *  not instance of {@code selectionClass}.
+	 * @throws NullPointerException if {@code iterable} or {@code selectionClass} is {@code null}
+	 * @see #groupIntoListBy(Iterable, Class, Class,Class[])
+	 * @see #groupIntoSetBy(Iterable, Class, Class,Class[])
+	 * @since 1.1.0
+	 */
+	static def <X,Y> Partition<List<Y>,List<X>> partitionBy(Iterable<X> iterable, Class<Y> selectionClass) {
+		iterable.iterator.partitionBy(selectionClass)
+	}
+	
+	/**
+	 * This method partitions the elements in {@code iterable} into elements instance of {@code selectionClass}
+	 * and elements that are not. Elements instance of {@code selectionClass} are aggregated using the {@code selectedCollector}
+	 * and the result will be available via the selected part of the returned partition. Elements not instance of {@code selectionClass}
+	 * are aggregated using the {@code rejectedCollector} and provided via the selected part of the returned partition.
+	 * 
+	 * @param iterable source iterable, that's elements are partitioned based on {@code selectionClass}
+	 * @param selectionClass the class elements in {@code iterable} are checked to be instance of. Elements 
+	 *   that are instance of {@code selectionClass} will be aggregated into the selected partition of the result.
+	 *   Elements that are not, will end up in the aggregated rejected partition.
+	 * @param selectedCollector aggregates all elements in {@code iterable} that are instance of {@code selectionClass}. The 
+	 *  aggregation result will be provided by the selected part of the returned partition.
+	 * @param rejectedCollector aggregates all elements in {@code iterable} that are <em>not</em> instance of {@code selectionClass}. The 
+	 *  aggregation result will be provided by the rejected part of the returned partition.
+	 * @param <X> Type of elements in {@code iterable}
+	 * @param <Y> Type of elements that are part of {@code iterable} and will be put into the resulting aggregation of the selected 
+	 *  part of the returned partition.
+	 * @param <S> Aggregation result type of the selected part of the returned partition, created by {@code selectedCollector}.
+	 * @param <R> Aggregation result type of the rejected part of the returned partition, created by {@code rejectedCollector}.
+	 * @return partition of elements in {@code iterable}, providing the aggregation of selected elements, that are instance of {@code selectionClass}, 
+	 *  and the aggregation of rejected elements not instance of {@code selectionClass}.
+	 * @throws NullPointerException if {@code iterable}, {@code selectionClass}, {@code selectedCollector} or {@code rejectedCollector} is {@code null}
+	 * @see #groupIntoListBy(Iterable, Class, Class,Class[])
+	 * @see #groupIntoSetBy(Iterable, Class, Class,Class[])
+	 * @since 1.1.0
+	 */
+	static def <X,Y,S,R> Partition<S,R> partitionBy(Iterable<X> iterable, Class<Y> selectionClass, Collector<Y, ?, S> selectedCollector, Collector<X, ?, R> rejectedCollector) {
+		iterable.requireNonNull("iterable").iterator.partitionBy(selectionClass,selectedCollector,rejectedCollector)
+	}
+	
+	/**
+	 * This method partitions the elements in {@code iterable} into elements for which {@code partitionPredicate}
+	 * evaluates to {@code true} and elements for which {@code partitionPredicate} evaluates to {@code false}. 
+	 * The selected part of the returned partition holds the elements for which {@code partitionPredicate}
+	 * evaluates to {@code true}, the rejected part contains the other elements from {@code iterable}. 
+	 * Partition parts are Lists of the elements. The relative order of the elements in {@code iterable} is preserved 
+	 * in the respective partitions. There is no guarantee about mutability or thread safety of the lists. 
+	 * If there is no element selected or rejected, the respective parts will hold an empty List; the parts are 
+	 * guaranteed to be not {@code null}.
+	 * 
+	 * @param iterable source iterable, that's elements are partitioned based on {@code selectionClass}
+	 * @param partitionPredicate predicate deciding if an element in {@code iterable} will end up in the 
+	 *  selected or rejected part of the returned partition. Elements for which the test returns {@code true} 
+	 *  end up in the selected part, others land in the rejected part.
+	 * @param <X> Type of elements in {@code iterable}
+	 * @return partition of elements in {@code iterable}, providing the selected elements, for which {@code partitionPredicate}
+	 *  evaluates to {@code true} and rejected elements for which {@code partitionPredicate} evaluates to {@code false}.
+	 * @throws NullPointerException if {@code iterable} or {@code partitionPredicate} is {@code null}
+	 * @since 1.1.0
+	 */
+	static def <X> Partition<List<X>,List<X>> partitionBy(Iterable<X> iterable, Predicate<X> partitionPredicate) {
+		iterable.requireNonNull("iterable").iterator.partitionBy(partitionPredicate)
+	}
+	
+	/**
+	 * This method partitions the elements in {@code iterable} into aggregated elements for which {@code partitionPredicate}
+	 * evaluates to {@code true} and aggregated elements for which {@code partitionPredicate} evaluates to {@code false}. 
+	 * The selected part of the returned partition holds the elements aggregated using the given {@code collector} for which 
+	 * {@code partitionPredicate} evaluates to {@code true}. The rejected part contains the other elements aggregated using the 
+	 * given {@code collector} from {@code iterable}.
+	 * 
+	 * @param iterable source iterable, that's elements are partitioned based on {@code selectionClass}
+	 * @param partitionPredicate predicate deciding if an element in {@code iterable} will end up in the 
+	 *  selected or rejected part of the returned partition. Elements for which the test returns {@code true} 
+	 *  end up in the selected part, others land in the rejected part.
+	 * @param collector used for aggregating the selected and rejected elements in the returned partition.
+	 * @param <X> Type of elements in {@code iterable}
+	 * @return partition of elements in {@code iterable}, providing the selected elements, for which {@code partitionPredicate}
+	 *  evaluates to {@code true} aggregated using the given {@code collector} and rejected elements for which {@code partitionPredicate} 
+	 * evaluates to {@code false} aggregated using the given {@code collector}.
+	 * @throws NullPointerException if {@code iterable}, {@code collector} or {@code partitionPredicate} is {@code null}
+	 * @since 1.1.0
+	 */
+	static def <X,Y,AX> Partition<AX,AX> partitionBy(Iterable<X> iterable, Predicate<X> partitionPredicate, Collector<X, ?, AX> collector) {
+		iterable.requireNonNull("iterable").iterator.partitionBy(partitionPredicate, collector)
+	}
+	
+	/**
+	 * This method partitions the elements in {@code iterable} into aggregated elements for which {@code partitionPredicate}
+	 * evaluates to {@code true} and aggregated elements for which {@code partitionPredicate} evaluates to {@code false}. 
+	 * The selected part of the returned partition holds the elements aggregated using the given {@code selectedCollector} for which 
+	 * {@code partitionPredicate} evaluates to {@code true}. The rejected part contains the other elements aggregated using the 
+	 * given {@code rejectedCollector} from {@code iterable}.
+	 * 
+	 * @param iterable source iterable, that's elements are partitioned based on {@code selectionClass}
+	 * @param partitionPredicate predicate deciding if an element in {@code iterable} will end up aggregated in the 
+	 *  selected or aggregated in the rejected part of the returned partition. Elements for which the test returns {@code true} 
+	 *  end up in the aggregated selected part, others land in the aggregated rejected part.
+	 * @param selectedCollector used for aggregating the selected elements in the returned partition.
+	 * @param rejectedCollector used for aggregating the rejected elements in the returned partition.
+	 * @param <X> Type of elements in {@code iterable}
+	 * @return partition of elements in {@code iterable}, providing the selected elements, for which {@code partitionPredicate}
+	 *  evaluates to {@code true} aggregated using the given {@code collector} and rejected elements for which {@code partitionPredicate} 
+	 * evaluates to {@code false} aggregated using the given {@code collector}.
+	 * @throws NullPointerException if {@code iterable}, {@code selectedCollector}, {@code rejectedCollector} or {@code partitionPredicate} is {@code null}
+	 * @since 1.1.0
+	 */
+	static def <X,AS,AR> Partition<AS,AR> partitionBy(Iterable<X> iterable, Predicate<X> partitionPredicate, Collector<X, ?, AS> selectedCollector, Collector<X, ?, AR> rejectedCollector) {
+		iterable.requireNonNull("iterable").iterator.partitionBy(partitionPredicate, selectedCollector, rejectedCollector)
 	}
 }
 

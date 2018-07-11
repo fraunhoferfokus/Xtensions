@@ -24,6 +24,8 @@ import java.io.File
 import java.util.ArrayList
 import java.util.Collections
 import java.util.Set
+import java.util.stream.Collectors
+import java.util.function.Predicate
 
 class IterableExtensionsTest {
 
@@ -1110,5 +1112,365 @@ class IterableExtensionsTest {
 			.toSet
 		val Set<String> expected = #{"bar2", "bar4", "baz2", "baz4"}
 		assertEquals(expected, result)
+	}
+	
+	//////////////////////////////////
+	// partitionBy (selectionClass) //
+	//////////////////////////////////
+	
+	@Test(expected = NullPointerException) def void testPartitionBySelectionClassIteratorNull() {
+		val Iterable<String> i = null
+		i.partitionBy(Integer)
+	}
+	
+	@Test(expected = NullPointerException) def void testPartitionBySelectionClassSelectionClassNull() {
+		val Iterable<String> i = #[]
+		i.partitionBy(null as Class<String>)
+	}
+	
+	@Test def void testPartitionBySelectionClassEmptyIterable() {
+		val Iterable<Number> i = #[]
+		val result = i.partitionBy(Integer)
+		assertNotNull(result)
+		val selected = result.selected
+		assertNotNull(selected)
+		assertTrue(selected.empty)
+		val rejected = result.rejected
+		assertNotNull(rejected)
+		assertTrue(rejected.empty)
+	}
+	
+	@Test def void testPartitionBySelectionClassOnlySelected() {
+		val List<Number> l = #[32, 64, 4711]
+		val result = l.partitionBy(Integer)
+		assertNotNull(result)
+		val selected = result.selected
+		assertNotNull(selected)
+		assertEquals(selected, l)
+		val rejected = result.rejected
+		assertNotNull(rejected)
+		assertTrue(rejected.empty)
+	}
+	
+	@Test def void testPartitionBySelectionClassOnlyRejected() {
+		val List<Number> l = #[11, 4533, 91]
+		val result = l.partitionBy(Double)
+		assertNotNull(result)
+		val rejected = result.rejected
+		assertNotNull(rejected)
+		assertEquals(rejected, l)
+		val selected = result.selected
+		assertNotNull(selected)
+		assertTrue(selected.empty)
+	}
+	
+	@Test def void testPartitionBySelectionClass() {
+		val List<Number> l = #[64d, 33, 51f, 4711]
+		val result = l.partitionBy(Integer)
+		assertNotNull(result)
+		val rejected = result.rejected
+		assertNotNull(rejected)
+		assertEquals(#[64d, 51f], rejected)
+		val selected = result.selected
+		assertNotNull(selected)
+		assertEquals(#[33, 4711], selected)
+	}
+	
+	////////////////////////////////////////////////////////////////////////
+	// partitionBy (selectionClass, selectedCollector, rejectedCollector) //
+	////////////////////////////////////////////////////////////////////////
+	
+	
+	@Test(expected = NullPointerException) def void testPartitionBySelectionClassCollectorsIteratorNull() {
+		val Iterable<String> i = null
+		val selectedCollector = Collectors::toSet
+		val rejectedCollector = Collectors::toSet
+		i.partitionBy(Integer,selectedCollector,rejectedCollector)
+	}
+	
+	@Test(expected = NullPointerException) def void testPartitionBySelectionClassCollectorSelectionClassNull() {
+		val Iterable<String> i = #[]
+		val selectedCollector = Collectors::toSet
+		val rejectedCollector = Collectors::toSet
+		i.partitionBy(null as Class<Integer>, selectedCollector, rejectedCollector)
+	}
+	
+	@Test(expected = NullPointerException) def void testPartitionBySelectionClassCollectorSelectedCollectorNull() {
+		val Iterable<String> i = #[]
+		val collector = Collectors::toSet
+		i.partitionBy(String, null, collector)
+	}
+	
+	@Test(expected = NullPointerException) def void testPartitionBySelectionClassCollectorRejectedCollectorNull() {
+		val Iterable<String> i = #[]
+		val collector = Collectors::toSet
+		i.partitionBy(String, collector, null)
+	}
+	
+	@Test def void testPartitionBySelectionClassCollectorsEmptyIterable() {
+		val Iterable<Number> i = #[]
+		val selectedCollector = Collectors::toSet
+		val rejectedCollector = Collectors::toSet
+		val result = i.partitionBy(Integer, selectedCollector, rejectedCollector)
+		assertNotNull(result)
+		val Set<Integer> selected = result.selected
+		assertNotNull(selected)
+		assertTrue(selected.empty)
+		val Set<Number> rejected = result.rejected
+		assertNotNull(rejected)
+		assertTrue(rejected.empty)
+	}
+	
+	@Test def void testPartitionBySelectionClassCollecotrsOnlySelected() {
+		val List<Number> l = #[32, 64, 4711]
+		val selectedCollector = Collectors::toSet
+		val rejectedCollector = Collectors::toSet
+		val result = l.partitionBy(Integer, selectedCollector, rejectedCollector)
+		assertNotNull(result)
+		val Set<Integer> selected = result.selected
+		assertNotNull(selected)
+		assertEquals(selected, l.toSet)
+		val Set<Number> rejected = result.rejected
+		assertNotNull(rejected)
+		assertTrue(rejected.empty)
+	}
+	
+	@Test def void testPartitionBySelectionClassCollectorsOnlyRejected() {
+		val List<Number> l = #[11, 4533, 91]
+		val selectedCollector = Collectors::toSet
+		val rejectedCollector = Collectors::toSet
+		val result = l.partitionBy(Double, selectedCollector, rejectedCollector)
+		assertNotNull(result)
+		val Set<Number> rejected = result.rejected
+		assertNotNull(rejected)
+		assertEquals(l.toSet, rejected)
+		val Set<Double> selected = result.selected
+		assertNotNull(selected)
+		assertTrue(selected.empty)
+	}
+	
+	@Test def void testPartitionBySelectionClassCollectors() {
+		val List<Number> l = #[64d, 33, 51f, 4711]
+		val selectedCollector = Collectors::toSet
+		val rejectedCollector = Collectors::toSet
+		val result = l.partitionBy(Integer, selectedCollector, rejectedCollector)
+		assertNotNull(result)
+		val Set<Number> rejected = result.rejected
+		assertNotNull(rejected)
+		assertEquals(#{64d, 51f}, rejected)
+		val Set<Integer> selected = result.selected
+		assertNotNull(selected)
+		assertEquals(#{33, 4711}, selected)
+	}
+	
+	//////////////////////////////////////
+	// partitionBy (partitionPredicate) //
+	//////////////////////////////////////
+	
+	@Test(expected = NullPointerException) def void testPartitionByPredicateIteratorNull() {
+		val Iterable<String> i = null
+		i.partitionBy[true]
+	}
+	
+	@Test(expected = NullPointerException) def void testPartitionByPredicatePredicateNull() {
+		val Iterable<String> i = #[]
+		i.partitionBy(null as Predicate<String>)
+	}
+	
+	@Test def void testPartitionByPredicateEmptyIterable() {
+		val Iterable<Number> i = #[]
+		val result = i.partitionBy[true]
+		assertNotNull(result)
+		val selected = result.selected
+		assertNotNull(selected)
+		assertTrue(selected.empty)
+		val rejected = result.rejected
+		assertNotNull(rejected)
+		assertTrue(rejected.empty)
+	}
+	
+	@Test def void testPartitionByPredicateOnlySelected() {
+		val List<Number> l = #[32, 64, 4711]
+		val result = l.partitionBy[true]
+		assertNotNull(result)
+		val selected = result.selected
+		assertNotNull(selected)
+		assertEquals(selected, l)
+		val rejected = result.rejected
+		assertNotNull(rejected)
+		assertTrue(rejected.empty)
+	}
+	
+	@Test def void testPartitionByPredicateOnlyRejected() {
+		val List<Number> l = #[11, 4533, 91]
+		val result = l.partitionBy[false]
+		assertNotNull(result)
+		val selected = result.selected
+		assertNotNull(selected)
+		assertTrue(selected.empty)
+		val rejected = result.rejected
+		assertNotNull(rejected)
+		assertEquals(rejected, l)
+	}
+	
+	@Test def void testPartitionByPredicate() {
+		val List<Number> l = #[64d, 33, 51f, 4711]
+		val result = l.partitionBy[it.doubleValue > 60]
+		assertNotNull(result)
+		val selected = result.selected
+		assertNotNull(selected)
+		assertEquals(#[64d, 4711], selected)
+		val rejected = result.rejected
+		assertNotNull(rejected)
+		assertEquals(#[33, 51f], rejected)
+	}
+	
+	
+	/////////////////////////////////////////////////
+	// partitionBy (partitionPredicate, collector) //
+	/////////////////////////////////////////////////
+	
+	@Test(expected = NullPointerException) def void testPartitionByPredicateCollectorIteratorNull() {
+		val Iterable<String> i = null
+		i.partitionBy([true], Collectors.toList)
+	}
+	
+	@Test(expected = NullPointerException) def void testPartitionByPredicateCollectorPredicateNull() {
+		val Iterable<String> i = #[]
+		i.partitionBy(null as Predicate<String>, Collectors.toList)
+	}
+	
+	@Test(expected = NullPointerException) def void testPartitionByPredicateCollectorCollectorNull() {
+		val Iterable<String> i = #[]
+		i.partitionBy([true], null)
+	}
+	
+	@Test def void testPartitionByPredicateCollectorEmptyIterable() {
+		val Iterable<Number> i = #[]
+		val result = i.partitionBy([true], Collectors::toSet)
+		assertNotNull(result)
+		val Set<Number> selected = result.selected
+		assertNotNull(selected)
+		assertTrue(selected.empty)
+		val Set<Number> rejected = result.rejected
+		assertNotNull(rejected)
+		assertTrue(rejected.empty)
+	}
+	
+	@Test def void testPartitionByPredicateCollectorOnlySelected() {
+		val List<Integer> l = #[32, 64, 4711]
+		val result = l.partitionBy([true], Collectors::toSet)
+		assertNotNull(result)
+		val Set<Integer> selected = result.selected
+		assertNotNull(selected)
+		assertEquals(selected, l.toSet)
+		val Set<Integer> rejected = result.rejected
+		assertNotNull(rejected)
+		assertTrue(rejected.empty)
+	}
+	
+	@Test def void testPartitionByPredicateCollectorOnlyRejected() {
+		val List<Integer> l = #[11, 4533, 91]
+		val result = l.partitionBy([false], Collectors::toSet)
+		assertNotNull(result)
+		val Set<Integer> rejected = result.rejected
+		assertNotNull(rejected)
+		assertEquals(l.toSet, rejected)
+		val Set<Integer> selected = result.selected
+		assertNotNull(selected)
+		assertTrue(selected.empty)
+	}
+	
+	@Test def void testPartitionByPredicateCollector() {
+		val List<Number> l = #[64d, 33, 51f, 4711]
+		val result = l.partitionBy([it.doubleValue > 60], Collectors::toSet)
+		assertNotNull(result)
+		val Set<Number> selected = result.selected
+		assertNotNull(selected)
+		assertEquals(#{64d, 4711}, selected)
+		val Set<Number> rejected = result.rejected
+		assertNotNull(rejected)
+		assertEquals(#{33, 51f}, rejected)
+	}
+	
+	
+	////////////////////////////////////////////////////////////////////////////
+	// partitionBy (partitionPredicate, selectedCollector, rejectedCollector) //
+	////////////////////////////////////////////////////////////////////////////
+	
+	@Test(expected = NullPointerException) def void testPartitionByPredicateCollectorsIteratorNull() {
+		val Iterable<String> i = null
+		i.partitionBy([true], Collectors.toList, Collectors.toSet)
+	}
+	
+	@Test(expected = NullPointerException) def void testPartitionByPredicateCollectorsPredicateNull() {
+		val Iterable<String> i = #[]
+		i.partitionBy(null as Predicate<String>, Collectors.toList, Collectors.toSet)
+	}
+	
+	@Test(expected = NullPointerException) def void testPartitionByPredicateCollectorSelectedCollectorNull() {
+		val Iterable<String> i = #[]
+		i.partitionBy([true], null, Collectors.toSet)
+	}
+	
+	@Test(expected = NullPointerException) def void testPartitionByPredicateCollectorrejectedCollectorNull() {
+		val Iterable<String> i = #[]
+		i.partitionBy([true], Collectors.toSet, null)
+	}
+	
+	@Test def void testPartitionByPredicateCollectorsEmptyIterable() {
+		val Iterable<Number> i = #[]
+		val selectedCollector = Collectors::toList
+		val rejectedCollector = Collectors::toSet
+		val result = i.partitionBy([true], selectedCollector, rejectedCollector)
+		assertNotNull(result)
+		val List<Number> selected = result.selected
+		assertNotNull(selected)
+		assertTrue(selected.empty)
+		val Set<Number> rejected = result.rejected
+		assertNotNull(rejected)
+		assertTrue(rejected.empty)
+	}
+	
+	@Test def void testPartitionByPredicateCollecotrsOnlySelected() {
+		val List<Integer> l = #[32, 64, 4711]
+		val selectedCollector = Collectors::toSet
+		val rejectedCollector = Collectors::toSet
+		val result = l.partitionBy([true], selectedCollector, rejectedCollector)
+		assertNotNull(result)
+		val Set<Integer> selected = result.selected
+		assertNotNull(selected)
+		assertEquals(selected, l.toSet)
+		val Set<Integer> rejected = result.rejected
+		assertNotNull(rejected)
+		assertTrue(rejected.empty)
+	}
+	
+	@Test def void testPartitionByPredicateCollectorsOnlyRejected() {
+		val List<Integer> l = #[11, 4533, 91]
+		val selectedCollector = Collectors::toSet
+		val rejectedCollector = Collectors::toSet
+		val result = l.partitionBy([false], selectedCollector, rejectedCollector)
+		assertNotNull(result)
+		val Set<Integer> rejected = result.rejected
+		assertNotNull(rejected)
+		assertEquals(l.toSet, rejected)
+		val Set<Integer> selected = result.selected
+		assertNotNull(selected)
+		assertTrue(selected.empty)
+	}
+	
+	@Test def void testPartitionByPredicateCollectors() {
+		val List<Number> l = #[64d, 33, 51f, 4711]
+		val selectedCollector = Collectors::toSet
+		val rejectedCollector = Collectors::toSet
+		val result = l.partitionBy([it.doubleValue > 60], selectedCollector, rejectedCollector)
+		assertNotNull(result)
+		val Set<Number> selected = result.selected
+		assertNotNull(selected)
+		assertEquals(#{64d, 4711}, selected)
+		val Set<Number> rejected = result.rejected
+		assertNotNull(rejected)
+		assertEquals(#{33, 51f}, rejected)
 	}
 }

@@ -17,6 +17,13 @@ import com.google.common.collect.ImmutableSetMultimap
 import java.util.Collection
 import java.util.Objects
 import java.util.function.BiPredicate
+import java.util.stream.Collector
+import java.util.function.BiConsumer
+import java.util.function.Function
+import de.fhg.fokus.xtensions.iteration.internal.PartitionImpl
+import java.util.List
+import java.util.function.Predicate
+import static extension java.util.Objects.*
 
 /**
  * Extension methods for the {@link Iterator} class. 
@@ -38,7 +45,7 @@ class IteratorExtensions {
 	 * @return a {@code PrimitiveIterator.OfInt} mapped from the elements of the input {@code iterator}.
 	 * @throws NullPointerException if {@code iterator} or {@code mapper} is {@code null}
 	 */
-	public static def <T> OfInt mapInt(Iterator<T> iterator, ToIntFunction<T> mapper) {
+	static def <T> OfInt mapInt(Iterator<T> iterator, ToIntFunction<T> mapper) {
 		iterator.requireNonNull
 		mapper.requireNonNull
 		new OfInt {
@@ -66,7 +73,7 @@ class IteratorExtensions {
 	 * @return a {@code PrimitiveIterator.OfLong} mapped from the elements of the input {@code iterator}.
 	 * @throws NullPointerException if {@code iterator} or {@code mapper} is {@code null}
 	 */
-	public static def <T> OfLong mapLong(Iterator<T> iterator, ToLongFunction<T> mapper) {
+	static def <T> OfLong mapLong(Iterator<T> iterator, ToLongFunction<T> mapper) {
 		iterator.requireNonNull
 		mapper.requireNonNull
 		new OfLong {
@@ -94,7 +101,7 @@ class IteratorExtensions {
 	 * @return a {@code PrimitiveIterator.OfDouble} mapped from the elements of the input {@code iterator}.
 	 * @throws NullPointerException if {@code iterator} or {@code mapper} is {@code null}
 	 */
-	public static def <T> OfDouble mapDouble(Iterator<T> iterator, ToDoubleFunction<T> mapper) {
+	static def <T> OfDouble mapDouble(Iterator<T> iterator, ToDoubleFunction<T> mapper) {
 		iterator.requireNonNull
 		mapper.requireNonNull
 		new OfDouble {
@@ -109,7 +116,7 @@ class IteratorExtensions {
 
 		}
 	}
-	
+
 	/**
 	 * Groups the elements in {@code iterator} into sets by the classes given via parameters {@code firstGroup}, {@code firstGroup}, and {@code additionalGroups}.
 	 * The elements will be checked to be instance of the given classes in the 
@@ -123,16 +130,19 @@ class IteratorExtensions {
 	 * @param secondGroup first class elements of {@code iterator} are be grouped by
 	 * @param additionalGroups further classes to group elements by. This parameter is allowed to be {@code null}.
 	 * @return a grouping of elements by the classes, provided via the parameters {@code firstGroup}, {@code firstGroup}, and {@code additionalGroups}.
+	 * @see #partitionBy(Iterator, Class)
+	 * @see #partitionBy(Iterator, Class, Collector)
 	 * @since 1.1.0
 	 */
-	static def ClassGroupingSet groupIntoSetBy(Iterator<?> iterator, Class<?> firstGroup, Class<?> secondGroup, Class<?>... additionalGroups) {
+	static def ClassGroupingSet groupIntoSetBy(Iterator<?> iterator, Class<?> firstGroup, Class<?> secondGroup,
+		Class<?>... additionalGroups) {
 		val Class<?>[] partitionKeys = copyIntoNewArray(Class, firstGroup, secondGroup, additionalGroups)
 		val builder = ImmutableSetMultimap.builder
 		iterator.addElementsToGroups(builder, partitionKeys)
 		val map = builder.build
 		new ClassGroupingSetImpl(map, partitionKeys)
 	}
-	
+
 	/**
 	 * Groups the elements in {@code iterator} into lists by the classes given via parameters {@code firstGroup}, {@code firstGroup}, and {@code additionalGroups}.
 	 * The elements will be checked to be instance of the given classes in the 
@@ -146,31 +156,35 @@ class IteratorExtensions {
 	 * @param secondGroup first class elements of {@code iterator} are be grouped by
 	 * @param additionalGroups further classes to group elements by. This parameter is allowed to be {@code null}.
 	 * @return a grouping of elements by the classes, provided via the parameters {@code firstGroup}, {@code firstGroup}, and {@code additionalGroups}.
+	 * @see #partitionBy(Iterator, Class)
+	 * @see #partitionBy(Iterator, Class, Collector)
 	 * @since 1.1.0
 	 */
-	static def ClassGroupingList groupIntoListBy(Iterator<?> iterator, Class<?> firstGroup, Class<?> secondGroup, Class<?>... additionalGroups) {
+	static def ClassGroupingList groupIntoListBy(Iterator<?> iterator, Class<?> firstGroup, Class<?> secondGroup,
+		Class<?>... additionalGroups) {
 		val Class<?>[] partitionKeys = copyIntoNewArray(Class, firstGroup, secondGroup, additionalGroups)
 		val builder = ImmutableListMultimap.builder
 		iterator.addElementsToGroups(builder, partitionKeys)
 		val map = builder.build
 		new ClassGroupingListImpl(map, partitionKeys)
 	}
-	
-	private static def <T> addElementsToGroups(Iterator<T> iterator, ImmutableMultimap.Builder<Class<?>, Object> builder, Class<?>[] partitionKeys) {
-		iterator.forEach [
+
+	private static def <T> addElementsToGroups(Iterator<T> iterator,
+		ImmutableMultimap.Builder<Class<?>, Object> builder, Class<?>[] partitionKeys) {
+		iterator.forEachRemaining [
 			// Find first class it is instance of
-			for(var i = 0; i < partitionKeys.length; i++) {
+			for (var i = 0; i < partitionKeys.length; i++) {
 				val clazz = partitionKeys.get(i)
-				if(clazz.isInstance(it)) {
+				if (clazz.isInstance(it)) {
 					// Add it under Class group
 					builder.put(clazz, it)
-					// continue with next element in iterable
+					// continue with next element in iterator
 					return
 				}
 			}
 		]
 	}
-	
+
 	/**
 	 * Filters the given {@code iterator} by filtering all elements out that are also included
 	 * in the given {@code Iterable toExclude}. If an element from {@code iterator} is {@code null} it is removed 
@@ -182,17 +196,17 @@ class IteratorExtensions {
 	 * @throws NullPointerException will be thrown if {@code iterator} or {@code toExclude} is {@code null}.
 	 * @since 1.1.0
 	 */
-	public static def <T> Iterator<T> withoutAll(Iterator<T> iterator, Iterable<?> toExclude) {
-		Objects.requireNonNull(toExclude,"toExclude")
-		Objects.requireNonNull(iterator,"iterator")
-		val filterFunc = if(toExclude instanceof Collection<?>) {
-			[!toExclude.contains(it)]
-		} else {
-			[Object element| !toExclude.exists[it == element]]
-		}
+	static def <T> Iterator<T> withoutAll(Iterator<T> iterator, Iterable<?> toExclude) {
+		Objects.requireNonNull(toExclude, "toExclude")
+		Objects.requireNonNull(iterator, "iterator")
+		val filterFunc = if (toExclude instanceof Collection<?>) {
+				[!toExclude.contains(it)]
+			} else {
+				[Object element|!toExclude.exists[it == element]]
+			}
 		iterator.filter(filterFunc)
 	}
-	
+
 	/**
 	 * This function returns a new Iterator providing the elements of the Cartesian Product of the elements provided 
 	 * by {@code iterator} and the elements of the {@code other}. The 
@@ -207,11 +221,11 @@ class IteratorExtensions {
 	 * @throws NullPointerException is thrown if {@code iterator} or {@code other} is {@code null}
 	 * @since 1.1.0
 	 */
-	public static def <X,Y> Iterator<Pair<X,Y>> combinations(Iterator<X> iterator, Iterable<Y> other) {
+	static def <X, Y> Iterator<Pair<X, Y>> combinations(Iterator<X> iterator, Iterable<Y> other) {
 		other.requireNonNull("other")
-		iterator.requireNonNull("iterator").flatMap[i| other.iterator.map[i -> it]]
+		iterator.requireNonNull("iterator").flatMap[i|other.iterator.map[i -> it]]
 	}
-	
+
 	/**
 	 * This function returns a new Iterator providing the elements of the Cartesian Product of the elements provided 
 	 * by {@code iterator} and the elements of the {@code other}. The 
@@ -228,13 +242,12 @@ class IteratorExtensions {
 	 * @throws NullPointerException is thrown if {@code iterator}, or {@code other}, or {@code merger} is {@code null}
 	 * @since 1.1.0
 	 */
-	static def <X,Y,Z> Iterator<Z> combinations(Iterator<X> iterator, Iterable<Y> other, (X,Y)=>Z merger) {
+	static def <X, Y, Z> Iterator<Z> combinations(Iterator<X> iterator, Iterable<Y> other, (X, Y)=>Z merger) {
 		other.requireNonNull("other")
 		merger.requireNonNull("merger")
-		iterator.requireNonNull("iterator")
-			.flatMap[X x| other.iterator.map[Y y| merger.apply(x,y)]]
+		iterator.requireNonNull("iterator").flatMap[X x|other.iterator.map[Y y|merger.apply(x, y)]]
 	}
-	
+
 	/**
 	 * This function returns a new Iterator providing the elements of the Cartesian Product of the elements provided 
 	 * by {@code iterator} and the elements of the {@code other}. A combination of values from {@code iterator} and 
@@ -251,17 +264,14 @@ class IteratorExtensions {
 	 * @throws NullPointerException is thrown if {@code iterator}, or {@code other} or {@code where} is {@code null}
 	 * @since 1.1.0
 	 */
-	static def <X,Y> Iterator<Pair<X,Y>> combinationsWhere(Iterator<X> iterator, Iterable<Y> other, BiPredicate<X,Y> where) {
+	static def <X, Y> Iterator<Pair<X, Y>> combinationsWhere(Iterator<X> iterator, Iterable<Y> other,
+		BiPredicate<X, Y> where) {
 		other.requireNonNull("other")
 		where.requireNonNull("where")
-		iterator.requireNonNull("iterator")
-			.flatMap[x| 
-				other.iterator
-					.filter[y| where.test(x,y)]
-					.map[x -> it]
-			]
+		iterator.requireNonNull("iterator").flatMap [ x |
+			other.iterator.filter[y|where.test(x, y)].map[x -> it]
+		]
 	}
-	
 
 	/**
 	 * This function returns a new Iterator providing the elements of the Cartesian Product of the elements provided 
@@ -282,16 +292,227 @@ class IteratorExtensions {
 	 * @throws NullPointerException is thrown if {@code iterator}, or {@code other}, or {@code where}, or {@code merger} is {@code null}
 	 * @since 1.1.0
 	 */
-	static def <X,Y,Z> Iterator<Z> combinationsWhere(Iterator<X> iterator, Iterable<Y> other, BiPredicate<X,Y> where, (X,Y)=>Z merger) {
+	static def <X, Y, Z> Iterator<Z> combinationsWhere(Iterator<X> iterator, Iterable<Y> other, BiPredicate<X, Y> where,
+		(X, Y)=>Z merger) {
 		other.requireNonNull("other")
 		where.requireNonNull("where")
 		merger.requireNonNull("merger")
-		iterator.requireNonNull("iterator")
-			.flatMap[x| 
-				other.iterator
-					.filter[y| where.test(x,y)]
-					.map[y| merger.apply(x,y)]
-			]
+		iterator.requireNonNull("iterator").flatMap [ x |
+			other.iterator.filter[y|where.test(x, y)].map[y|merger.apply(x, y)]
+		]
 	}
 
+	/**
+	 * This method partitions the elements in the given {@code iterator} into elements instance of {@code selectionClass}
+	 * and elements that are not. The returned partition holds the elements instance of {@code selectionClass} 
+	 * in the selected partition and the other elements in the rejected partition. Partitions are Lists of the 
+	 * elements. The relative order of the elements in {@code iterator} is preserved in the respective partitions. 
+	 * There is no guarantee about mutability or thread safety of the list partitions. If there is no element
+	 * selected or rejected, the respective parts will hold an empty List; the parts are guaranteed to be not {@code null}.
+	 * 
+	 * @param iterator source iterator, that's elements are partitioned based on {@code selectionClass}
+	 * @param selectionClass the class elements in {@code iterator} are checked to be instance of. Elements 
+	 *   that are instance of {@code selectionClass} will be added to the selected partition of the result.
+	 *   Elements that are not, will end up in the rejected partition.
+	 * @return partition of elements in {@code iterator}, providing the selected elements, that are instance of {@code selectionClass}, and rejected elements
+	 *  not instance of {@code selectionClass}.
+	 * @param <X> Type of elements in {@code iterator}
+	 * @param <Y> Type of elements that are part of {@code iterator} and will be put into the resulting selected partition.
+	 * @throws NullPointerException if {@code iterator} or {@code selectionClass} is {@code null}
+	 * @see #groupIntoListBy(Iterator, Class, Class,Class[])
+	 * @see #groupIntoSetBy(Iterator, Class, Class,Class[])
+	 * @since 1.1.0
+	 */
+	static def <X, Y> Partition<List<Y>, List<X>> partitionBy(Iterator<X> iterator, Class<Y> selectionClass) {
+		selectionClass.requireNonNull("selectionClass")
+		val selected = newArrayList
+		val rejected = newArrayList
+		iterator.forEachRemaining [
+			if (selectionClass.isInstance(it)) {
+				selected.add(selectionClass.cast(it))
+			} else {
+				rejected.add(it)
+			}
+		]
+		new PartitionImpl(selected, rejected)
+	}
+
+	/**
+	 * This method partitions the elements provided by the {@code iterator} into elements instance of {@code selectionClass}
+	 * and elements that are not. Elements instance of {@code selectionClass} are aggregated using the {@code selectedCollector}
+	 * and the result will be available via the selected part of the returned partition. Elements not instance of {@code selectionClass}
+	 * are aggregated using the {@code rejectedCollector} and provided via the selected part of the returned partition.
+	 * 
+	 * @param iterator source iterator, that's elements are partitioned based on {@code selectionClass}
+	 * @param selectionClass the class elements provided by {@code iterator} are checked to be instance of. Elements 
+	 *   that are instance of {@code selectionClass} will be aggregated into the selected partition of the result.
+	 *   Elements that are not, will end up in the aggregated rejected partition.
+	 * @param selectedCollector aggregates all elements provided by {@code iterator} that are instance of {@code selectionClass}. The 
+	 *  aggregation result will be provided by the selected part of the returned partition.
+	 * @param rejectedCollector aggregates all elements provided by {@code iterator} that are <em>not</em> instance of {@code selectionClass}. The 
+	 *  aggregation result will be provided by the rejected part of the returned partition.
+	 * @param <X> Type of elements provided by {@code iterator}
+	 * @param <Y> Type of elements that are part of the {@code iterator} and will be put into the resulting aggregation of the selected 
+	 *  part of the returned partition.
+	 * @param <S> Aggregation result type of the selected part of the returned partition, created by {@code selectedCollector}.
+	 * @param <R> Aggregation result type of the rejected part of the returned partition, created by {@code rejectedCollector}.
+	 * @return partition of elements provided by {@code iterator}, providing the aggregation of selected elements, that are instance of {@code selectionClass}, 
+	 *  and the aggregation of rejected elements not instance of {@code selectionClass}.
+	 * @throws NullPointerException if {@code iterator}, {@code selectionClass}, {@code selectedCollector} or {@code rejectedCollector} is {@code null}
+	 * @see #groupIntoListBy(Iterator, Class, Class,Class[])
+	 * @see #groupIntoSetBy(Iterator, Class, Class,Class[])
+	 * @since 1.1.0
+	 */
+	static def <X, Y, S, R> Partition<S, R> partitionBy(Iterator<X> iterator, Class<Y> selectionClass,
+		Collector<Y, ?, S> selectedCollector, Collector<X, ?, R> rejectedCollector) {
+		selectionClass.requireNonNull("selectionClass")
+
+		val selectedAcc = selectedCollector.supplier.get
+		val rejectedAcc = rejectedCollector.supplier.get
+
+		val selctedAccumulator = selectedCollector.accumulator.requireNonNull as BiConsumer<Object, Y>
+		val rejectedAccumulator = rejectedCollector.accumulator.requireNonNull as BiConsumer<Object, X>
+
+		val selectedFinisher = selectedCollector.finisher.requireNonNull as Function<Object, S>
+		val rejectedFinisher = rejectedCollector.finisher.requireNonNull as Function<Object, R>
+
+		// Partition into selected and rejected by either calling selctedAccumulator or rejectedAccumulator
+		iterator.forEachRemaining [
+			if (selectionClass.isInstance(it)) {
+				val curr = selectionClass.cast(it)
+				selctedAccumulator.accept(selectedAcc, curr)
+			} else {
+				rejectedAccumulator.accept(rejectedAcc, it)
+			}
+		]
+		val selected = selectedFinisher.apply(selectedAcc)
+		val rejected = rejectedFinisher.apply(rejectedAcc)
+
+		new PartitionImpl(selected, rejected)
+	}
+
+	/**
+	 * This method partitions the elements provided by the {@code iterator} into elements for which {@code partitionPredicate}
+	 * evaluates to {@code true} and elements for which {@code partitionPredicate} evaluates to {@code false}. 
+	 * The selected part of the returned partition holds the elements for which {@code partitionPredicate}
+	 * evaluates to {@code true}, the rejected part contains the other elements from the {@code iterator}. 
+	 * Partition parts are Lists of the elements. The relative order of the elements provided by the {@code iterator} is preserved 
+	 * in the respective partitions. There is no guarantee about mutability or thread safety of the lists. If there is no element
+	 * selected or rejected, the respective parts will hold an empty List; the parts are guaranteed to be not {@code null}.
+	 * 
+	 * @param iterator source iterator, that's elements are partitioned based on {@code selectionClass}
+	 * @param partitionPredicate predicate deciding if an element provided by {@code iterator} will end up in the 
+	 *  selected or rejected part of the returned partition. Elements for which the test returns {@code true} 
+	 *  end up in the selected part, others land in the rejected part.
+	 * @param <X> Type of elements provided by {@code iterator}
+	 * @return partition of elements provided by {@code iterator}, providing the selected elements, for which {@code partitionPredicate}
+	 *  evaluates to {@code true} and rejected elements for which {@code partitionPredicate} evaluates to {@code false}.
+	 * @throws NullPointerException if {@code iterator} or {@code partitionPredicate} is {@code null}
+	 * @since 1.1.0
+	 */
+	static def <X, Y> Partition<List<X>, List<X>> partitionBy(Iterator<X> iterator, Predicate<X> partitionPredicate) {
+		partitionPredicate.requireNonNull("partitionPredicate")
+		val selected = newArrayList
+		val rejected = newArrayList
+		iterator.forEachRemaining [
+			if (partitionPredicate.test(it)) {
+				selected.add(it)
+			} else {
+				rejected.add(it)
+			}
+		]
+		new PartitionImpl(selected, rejected)
+	}
+
+	/**
+	 * This method partitions the elements provided by {@code iterator} into aggregated elements for which {@code partitionPredicate}
+	 * evaluates to {@code true} and aggregated elements for which {@code partitionPredicate} evaluates to {@code false}. 
+	 * The selected part of the returned partition holds the elements aggregated using the given {@code collector} for which 
+	 * {@code partitionPredicate} evaluates to {@code true}. The rejected part contains the other elements aggregated using the 
+	 * given {@code collector} from the {@code iterator}.
+	 * 
+	 * @param iterator source iterator, that's provided elements are partitioned based on {@code selectionClass}
+	 * @param partitionPredicate predicate deciding if an element in {@code iterator} will end up in the 
+	 *  selected or rejected part of the returned partition. Elements for which the test returns {@code true} 
+	 *  end up in the selected part, others land in the rejected part.
+	 * @param collector used for aggregating the selected and rejected elements in the returned partition.
+	 * @param <X> Type of elements provided by {@code iterator}
+	 * @return partition of elements provided by {@code iterator}, providing the selected elements, for which {@code partitionPredicate}
+	 *  evaluates to {@code true} aggregated using the given {@code collector} and rejected elements for which {@code partitionPredicate} 
+	 * evaluates to {@code false} aggregated using the given {@code collector}.
+	 * @throws NullPointerException if {@code iterator}, {@code collector} or {@code partitionPredicate} is {@code null}
+	 * @since 1.1.0
+	 */
+	static def <X, Y, AX> Partition<AX, AX> partitionBy(Iterator<X> iterator, Predicate<X> partitionPredicate,
+		Collector<X, ?, AX> collector) {
+		partitionPredicate.requireNonNull("partitionPredicate")
+		val accSupplier = collector.supplier
+		val selectedAcc = accSupplier.get
+		val rejectedAcc = accSupplier.get
+
+		val selctedAccumulator = collector.accumulator.requireNonNull as BiConsumer<Object, X>
+		val rejectedAccumulator = collector.accumulator.requireNonNull as BiConsumer<Object, X>
+
+		val finisher = collector.finisher.requireNonNull as Function<Object, AX>
+
+		// Partition into selected and rejected by either calling selctedAccumulator or rejectedAccumulator
+		iterator.forEachRemaining [
+			if (partitionPredicate.test(it)) {
+				selctedAccumulator.accept(selectedAcc, it)
+			} else {
+				rejectedAccumulator.accept(rejectedAcc, it)
+			}
+		]
+		val selected = finisher.apply(selectedAcc)
+		val rejected = finisher.apply(rejectedAcc)
+
+		new PartitionImpl(selected, rejected)
+	}
+
+	/**
+	 * This method partitions the elements provided by {@code iterator} into aggregated elements for which {@code partitionPredicate}
+	 * evaluates to {@code true} and aggregated elements for which {@code partitionPredicate} evaluates to {@code false}. 
+	 * The selected part of the returned partition holds the elements aggregated using the given {@code selectedCollector} for which 
+	 * {@code partitionPredicate} evaluates to {@code true}. The rejected part contains the other elements aggregated using the 
+	 * given {@code rejectedCollector} from {@code iterator}.
+	 * 
+	 * @param iteartor source iterator, that's provided elements are partitioned based on {@code selectionClass}
+	 * @param partitionPredicate predicate deciding if an element provided by {@code iterator} will end up aggregated in the 
+	 *  selected or aggregated in the rejected part of the returned partition. Elements for which the test returns {@code true} 
+	 *  end up in the aggregated selected part, others land in the aggregated rejected part.
+	 * @param selectedCollector used for aggregating the selected elements in the returned partition.
+	 * @param rejectedCollector used for aggregating the rejected elements in the returned partition.
+	 * @param <X> Type of elements provided by {@code iterator}
+	 * @return partition of elements provided by {@code iterator}, providing the selected elements, for which {@code partitionPredicate}
+	 *  evaluates to {@code true} aggregated using the given {@code collector} and rejected elements for which {@code partitionPredicate} 
+	 * evaluates to {@code false} aggregated using the given {@code collector}.
+	 * @throws NullPointerException if {@code iterator}, {@code selectedCollector}, {@code rejectedCollector} or {@code partitionPredicate} is {@code null}
+	 * @since 1.1.0
+	 */
+	static def <X, AS, AR> Partition<AS, AR> partitionBy(Iterator<X> iterator, Predicate<X> partitionPredicate,
+		Collector<X, ?, AS> selectedCollector, Collector<X, ?, AR> rejectedCollector) {
+		iterator.requireNonNull("iterator")
+		partitionPredicate.requireNonNull("partitionPredicate")
+		val selectedAcc = selectedCollector.supplier.get
+		val rejectedAcc = rejectedCollector.supplier.get
+
+		val selctedAccumulator = selectedCollector.accumulator.requireNonNull as BiConsumer<Object, X>
+		val rejectedAccumulator = rejectedCollector.accumulator.requireNonNull as BiConsumer<Object, X>
+
+		val selectedFinisher = selectedCollector.finisher.requireNonNull as Function<Object, AS>
+		val rejectedFinisher = rejectedCollector.finisher.requireNonNull as Function<Object, AR>
+
+		// Partition into selected and rejected by either calling selctedAccumulator or rejectedAccumulator
+		iterator.forEachRemaining [
+			if (partitionPredicate.test(it)) {
+				selctedAccumulator.accept(selectedAcc, it)
+			} else {
+				rejectedAccumulator.accept(rejectedAcc, it)
+			}
+		]
+		val selected = selectedFinisher.apply(selectedAcc)
+		val rejected = rejectedFinisher.apply(rejectedAcc)
+
+		new PartitionImpl(selected, rejected)
+	}
 }

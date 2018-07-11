@@ -100,6 +100,69 @@ println(s)
 
 CAUTION: Performance of `withoutAll` is best when using an appropriate `java.util.Set`, such as `HashSet` for the elements to exclude.
 
+To partition the elements of an `Iterable` based on a predicate or the class (elements are tested to be instance of) into two parts: 
+selected and rejected. The selected part will contain the elements for which the predicate evaluates to `true` or elements are instance 
+of the given partitioning class. The rejected part will contain the other elements. 
+
+Example:
+
+
+[source,xtend]
+----
+import static extension de.fhg.fokus.xtensions.iteration.IterableExtensions.*
+// ...
+val char[] chars = #[0x0020 as char, 0x0034 as char]
+val List<CharSequence> list = #[
+	"Hello", 
+	new StringBuilder().append(chars), 
+	"Xtend", 
+	new StringBuilder().append(0x0032 as char)
+]
+list.partitionBy(String) => [
+	println('''Selected: "«selected.join(" ")»"''')	
+	println('''Rejected: "«rejected.join("")»"''')
+]
+---- 
+
+For both versions of the `partitionBy` method there exist overloads that take instances of https://docs.oracle.com/javase/8/docs/api/java/util/stream/Collector.html[`Collector`].
+
+Example:
+
+
+[source,xtend]
+----
+import static extension de.fhg.fokus.xtensions.iteration.IterableExtensions.*
+import static java.util.stream.Collectors.*
+import java.util.Set
+import java.util.List
+// ...
+val list = #["foo", "bla", "foo", "hui", "fun"]
+val partition = list.partitionBy([startsWith("f")], toSet, toList)
+val Set<String> selected = partition.selected
+val List<String> rejected = partition.rejected
+println("Unique words starting with 'f' : " + selected.join(", "))
+println("Other words: " + rejected.join(", "))
+---- 
+
+
+Note that the https://docs.oracle.com/javase/8/docs/api/java/util/stream/Collectors.html#partitioningBy-java.util.function.Predicate-[`Collectors#partitioningBy`] Collector from the JDK aggregates into a `Map<Boolean,List<T>>` where `T` is the type of the elements in a collected stream. Another https://docs.oracle.com/javase/8/docs/api/java/util/stream/Collectors.html#partitioningBy-java.util.function.Predicate-java.util.stream.Collector-[`partitioningBy`] overload from `Collectors` aggregates the map values and returns a `Map<Boolean,D>` where `D` is the aggregation of a "downstream" `Collector`. 
+
+
+[source,xtend]
+----
+val list = #["foo", "bla", "foo", "hui", "fun"]
+val partition = list.partitionBy([startsWith("f")], Collectors::toSet, Collectors::toList)
+val Set<String> selected = partition.selected
+val List<String> rejected = partition.rejected
+println("Unique words starting with 'f' : " + selected.join(", "))
+println("Other words: " + rejected.join(", "))
+---- 
+
+To allow a similar workflow to the JDK version, for the `Partition` of this library a `asMap` extension method is provided 
+for `Partitions` having the same type for the selected and rejected part. The other way around an extension method is provided 
+to wrap a `Map<Boolean,X>` into a `Partition<X,X>`.
+
+
 [TIP]
 ====
 Related JavaDocs:
