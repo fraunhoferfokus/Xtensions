@@ -482,12 +482,12 @@ class SchedulingUtilTest {
 	@Test
 	def void testWaitForCallback() {
 		val result = new AtomicBoolean(false)
-		val fut = waitFor(10, TimeUnit.MILLISECONDS) [
+		val fut = waitFor(100, TimeUnit.MILLISECONDS) [
 			result.set(true)
 		]
-		assertFalse("Expected future to complete after 10 ms, not immediately", fut.done)
-		Thread.sleep(100)
-		assertTrue("Expected future to complete after 10 ms", fut.done)
+		assertFalse("Expected future to complete after 100 ms, not immediately", fut.done)
+		Thread.sleep(200)
+		assertTrue("Expected future to complete after 100 ms", fut.done)
 		assertNull("Expected future to complete with null value", fut.get)
 		assertTrue("Expected callback to be executed",result.get)
 	}
@@ -526,12 +526,12 @@ class SchedulingUtilTest {
 	@Test
 	def void testWaitForCallbackDuration() {
 		val result = new AtomicBoolean(false)
-		val fut = waitFor(Duration.ofMillis(10)) [
+		val fut = waitFor(Duration.ofMillis(100)) [
 			result.set(true)
 		]
-		assertFalse("Expected future to complete after 10 ms, not immediately", fut.done)
-		Thread.sleep(100)
-		assertTrue("Expected future to complete after 10 ms", fut.done)
+		assertFalse("Expected future to complete after 100 ms, not immediately", fut.done)
+		Thread.sleep(200)
+		assertTrue("Expected future to complete after 100 ms", fut.done)
 		assertNull("Expected future to complete with null value", fut.get)
 		assertTrue("Expected callback to be executed",result.get)
 	}
@@ -586,12 +586,12 @@ class SchedulingUtilTest {
 	def void testWaitForCallbackScheduler() {
 		val scheduler = new ScheduledThreadPoolExecutor(1)
 		val result = new AtomicBoolean(false)
-		val fut = scheduler.waitFor(10, TimeUnit.MILLISECONDS) [
+		val fut = scheduler.waitFor(100, TimeUnit.MILLISECONDS) [
 			result.set(true)
 		]
-		assertFalse("Expected future to complete after 10 ms, not immediately", fut.done)
-		Thread.sleep(100)
-		assertTrue("Expected future to complete after 10 ms", fut.done)
+		assertFalse("Expected future to complete after 100 ms, not immediately", fut.done)
+		Thread.sleep(200)
+		assertTrue("Expected future to complete after 100 ms", fut.done)
 		assertNull("Expected future to complete with null value", fut.get)
 		assertTrue("Expected callback to be executed",result.get)
 	}
@@ -650,12 +650,12 @@ class SchedulingUtilTest {
 	@Test
 	def void testDelayCallback() {
 		val expected = "Result string"
-		val fut = delay(10, TimeUnit.MILLISECONDS) [
+		val fut = delay(100, TimeUnit.MILLISECONDS) [
 			expected
 		]
-		assertFalse("Expected future to complete after 10 ms, not immediately", fut.done)
-		Thread.sleep(100)
-		assertTrue("Expected future to complete after 10 ms", fut.done)
+		assertFalse("Expected future to complete after 100 ms, not immediately", fut.done)
+		Thread.sleep(200)
+		assertTrue("Expected future to complete after 100 ms", fut.done)
 		assertSame("Expected future to complete with null value", expected, fut.get)
 	}
 	
@@ -663,13 +663,13 @@ class SchedulingUtilTest {
 	@Test
 	def void testDelayCallbackSelfCancellation() {
 		val expected = "Result string"
-		val fut = delay(10, TimeUnit.MILLISECONDS) [
+		val fut = delay(100, TimeUnit.MILLISECONDS) [
 			cancel(false)
 			expected
 		]
-		assertFalse("Expected future to complete after 10 ms, not immediately", fut.done)
-		Thread.sleep(100)
-		assertTrue("Expected future to complete after 10 ms", fut.done)
+		assertFalse("Expected future to complete after 100 ms, not immediately", fut.done)
+		Thread.sleep(200)
+		assertTrue("Expected future to complete after 100 ms", fut.done)
 		Util.expectException(CancellationException) [
 			fut.get
 		]
@@ -709,12 +709,12 @@ class SchedulingUtilTest {
 	@Test
 	def void testDelayDurationCallback() {
 		val expected = "Result string"
-		val fut = delay(Duration.ofMillis(10)) [
+		val fut = delay(Duration.ofMillis(100)) [
 			expected
 		]
-		assertFalse("Expected future to complete after 10 ms, not immediately", fut.done)
-		Thread.sleep(100)
-		assertTrue("Expected future to complete after 10 ms", fut.done)
+		assertFalse("Expected future to complete after 100 ms, not immediately", fut.done)
+		Thread.sleep(200)
+		assertTrue("Expected future to complete after 100 ms", fut.done)
 		assertSame("Expected future to complete with null value", expected, fut.get)
 	}
 	
@@ -722,13 +722,13 @@ class SchedulingUtilTest {
 	@Test
 	def void testDelayDurationCallbackSelfCancellation() {
 		val expected = "Result string"
-		val fut = delay(Duration.ofMillis(10)) [
+		val fut = delay(Duration.ofMillis(100)) [
 			cancel(false)
 			expected
 		]
-		assertFalse("Expected future to complete after 10 ms, not immediately", fut.done)
-		Thread.sleep(100)
-		assertTrue("Expected future to complete after 10 ms", fut.done)
+		assertFalse("Expected future to complete after 100 ms, not immediately", fut.done)
+		Thread.sleep(200)
+		assertTrue("Expected future to complete after 100 ms", fut.done)
 		Util.expectException(CancellationException) [
 			fut.get
 		]
