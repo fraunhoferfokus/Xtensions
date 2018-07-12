@@ -18,6 +18,8 @@ import java.util.function.LongConsumer
 import java.util.function.DoubleConsumer
 import java.util.Arrays
 import de.fhg.fokus.xtensions.iteration.internal.PrimitiveIterableUtil
+import de.fhg.fokus.xtensions.iteration.internal.IntStreamable
+import java.util.stream.IntStream
 
 /**
  * This class provides extension methods on arrays of the primitive types {@code int}, {@code long}, {@code float}, and {@code double}.
@@ -231,7 +233,7 @@ package class IntArrayIterable implements IntIterable {
 /**
  * This class is an implementation of {@link PrimitiveIterator.OfInt} for {@code int[]}.
  */
-package class IntegerArrayIterator implements PrimitiveIterator.OfInt {
+package class IntegerArrayIterator implements PrimitiveIterator.OfInt, IntStreamable {
 	val int[] arr
 	var int next
 	val int endExcluding
@@ -260,6 +262,14 @@ package class IntegerArrayIterator implements PrimitiveIterator.OfInt {
 		val end = endExcluding
 		for (var i = next; i < end; next = (i=i+1)) {
 			action.accept(arr.get(i))
+		}
+	}
+	
+	override streamInts() {
+		if(next >= endExcluding) {
+			IntStream.empty
+		} else {
+			Arrays.stream(arr, next, arr.length)
 		}
 	}
 
