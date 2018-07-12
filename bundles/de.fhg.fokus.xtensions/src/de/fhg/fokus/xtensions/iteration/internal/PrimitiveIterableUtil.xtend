@@ -51,13 +51,8 @@ final class PrimitiveIterableUtil {
 		}
 	};
 
-	public static OfInt EMPTY_INTITERATOR = new EmptyOfInt
-	
-	/**
-	 * Empty {@code OfInt} iterator implementation
-	 */
-	private static final class EmptyOfInt implements OfInt, IntStreamable {
-		
+	public static OfInt EMPTY_INTITERATOR = new OfInt() {
+
 		override hasNext() {
 			false
 		}
@@ -67,11 +62,6 @@ final class PrimitiveIterableUtil {
 		}
 
 		override forEachRemaining(IntConsumer action) {}
-		
-		override streamInts() {
-			IntStream.empty
-		}
-		
 	}
 
 	public static final LongIterable EMPTY_LONGITERABLE = new LongIterable() {
@@ -91,10 +81,8 @@ final class PrimitiveIterableUtil {
 		}
 	}
 
-	public static final OfLong EMPTY_LONGITERATOR = new EmptyOfLong
-	
-	private static final class EmptyOfLong implements OfLong, LongStreamable {
-		
+	public static final OfLong EMPTY_LONGITERATOR = new OfLong() {
+
 		override hasNext() {
 			false
 		}
@@ -104,16 +92,9 @@ final class PrimitiveIterableUtil {
 		}
 
 		override forEachRemaining(LongConsumer action) {}
-		
-		override streamLongs() {
-			LongStream.empty
-		}
-		
-	}
+	};
 
-	public static final OfDouble EMPTY_DOUBLEITERATOR = new EmptyOfDouble
-	
-	private static final class EmptyOfDouble implements OfDouble, DoubleStreamable {
+	public static final OfDouble EMPTY_DOUBLEITERATOR = new OfDouble() {
 
 		override hasNext() {
 			false
@@ -124,12 +105,7 @@ final class PrimitiveIterableUtil {
 		}
 
 		override forEachRemaining(DoubleConsumer action) {}
-		
-		override streamDoubles() {
-			DoubleStream.empty
-		}
-		
-	}
+	};
 
 	public static final DoubleIterable EMPTY_DOUBLEITERABLE = new DoubleIterable() {
 
