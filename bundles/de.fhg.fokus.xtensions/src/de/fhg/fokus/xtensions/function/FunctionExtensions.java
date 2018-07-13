@@ -27,15 +27,8 @@ import static java.util.Objects.*;
  */
 public final class FunctionExtensions {
 
-	// TODO andThenDo Function -> Procedure returns procedure
-	// TODO Function1<T,R>#andThen(Procedure1<R>): (T)=>void // if no ambiguity
-	// TODO Function1<T,Pair<X,Y>>#andThen(Function2<X,Y,V>) -> Function1<T,V> // if
-	// no ambiguity introduced
-	// TODO Function0<Pair<X,Y>>#andThen(Function2<X,Y,V>) -> Function0<V> // if no
-	// ambiguity introduced
-	// TODO Function2<T,T> till Function6<T,...,T>#spread (Iterable<T>/T[]), throw
-	// if too little params. Non type save variant?
-	// TODO Predicate#on -> .then((U)=>U) : Function1<U,U> ???
+	// TODO public static def (T)=>void andThen((T)=>R function, R=>void action) // for more params as well
+	// TODO Predicate#elseSupply((U)=>U supply) : Function1<U,U> ???
 
 	private FunctionExtensions() {
 		throw new IllegalStateException("FunctionExtensions is not allowed to be instantiated");
