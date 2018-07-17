@@ -169,6 +169,7 @@ class SchedulingUtilTest {
 	def void testRepeatEveryWithInitialDelayScheduler() {
 		val count = new AtomicInteger(0)
 		val scheduler = new ScheduledThreadPoolExecutor(1)
+		scheduler.prestartCoreThread
 		Thread.sleep(50) // make scheduler thread start first
 		val fut = scheduler.repeatEvery(40, TimeUnit.MILLISECONDS).withInitialDelay(10) [
 			count.incrementAndGet
@@ -187,6 +188,7 @@ class SchedulingUtilTest {
 	def void testRepeatEveryWithInitialDelaySchedulerSelfCancellation() {
 		val res = new AtomicBoolean(false)
 		val scheduler = new ScheduledThreadPoolExecutor(1)
+		scheduler.prestartCoreThread
 		val fut = scheduler.repeatEvery(20, TimeUnit.MILLISECONDS).withInitialDelay(10) [
 			assertFalse(res.get)
 			res.set(true)
@@ -224,6 +226,7 @@ class SchedulingUtilTest {
 	def void testRepeatEveryScheduler() {
 		val count = new AtomicInteger(0)
 		val scheduler = new ScheduledThreadPoolExecutor(1)
+		scheduler.prestartCoreThread
 		val fut = scheduler.repeatEvery(20, TimeUnit.MILLISECONDS) [
 			count.incrementAndGet
 		]
@@ -241,6 +244,7 @@ class SchedulingUtilTest {
 	def void testRepeatEverySchedulerSelfCancellation() {
 		val res = new AtomicBoolean(false)
 		val scheduler = new ScheduledThreadPoolExecutor(1)
+		scheduler.prestartCoreThread
 		val fut = scheduler.repeatEvery(20, TimeUnit.MILLISECONDS) [
 			assertFalse(res.get)
 			res.set(true)
@@ -350,6 +354,7 @@ class SchedulingUtilTest {
 	def void testRepeatEverySchedulerDuration() {
 		val count = new AtomicInteger(0)
 		val scheduler = new ScheduledThreadPoolExecutor(1)
+		scheduler.prestartCoreThread
 		val fut = scheduler.repeatEvery(Duration.ofMillis(50)) [
 			count.incrementAndGet
 		]
@@ -370,6 +375,7 @@ class SchedulingUtilTest {
 	@Test(timeout = 100)
 	def void testRepeatEveryDurationSchedulerSelfCancellation() {
 		val scheduler = new ScheduledThreadPoolExecutor(1)
+		scheduler.prestartCoreThread
 		val res = new AtomicBoolean(false)
 		val fut = scheduler.repeatEvery(Duration.ofMillis(20)) [
 			assertFalse(res.get)
@@ -585,6 +591,7 @@ class SchedulingUtilTest {
 	@Test
 	def void testWaitForCallbackScheduler() {
 		val scheduler = new ScheduledThreadPoolExecutor(1)
+		scheduler.prestartCoreThread
 		val result = new AtomicBoolean(false)
 		val fut = scheduler.waitFor(100, TimeUnit.MILLISECONDS) [
 			result.set(true)
@@ -787,6 +794,7 @@ class SchedulingUtilTest {
 	def void testDelayScheduler() {
 		val expected = "Result string"
 		val scheduler = new ScheduledThreadPoolExecutor(1)
+		scheduler.prestartCoreThread
 		val fut = scheduler.delay(50, TimeUnit.MILLISECONDS) [
 			expected
 		]
@@ -801,6 +809,7 @@ class SchedulingUtilTest {
 	def void testDelaySchedulerSelfCancellation() {
 		val expected = "Result string"
 		val scheduler = new ScheduledThreadPoolExecutor(1)
+		scheduler.prestartCoreThread
 		val fut = scheduler.delay(10, TimeUnit.MILLISECONDS) [
 			cancel(false)
 			expected
