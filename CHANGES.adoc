@@ -12,13 +12,14 @@ link:https://github.com/fraunhoferfokus/Xtensions/milestone/2?closed=1[Related G
 
 - Bumped Xtend minimum version to `2.13`
 - Added `combinations` and `combinationsWith` extension methods for `Iterator` and `Iterable` to generate cartesian products.
-- Added `withoutAll` extension methods for `Iterable` and `Iterator`
+- Added `withoutAll` extension methods for `Iterable` and `Iterator` to filter elements from the source available in another `Iterable`.
 - Added `partitionBy` extension methods for `Iterator` and `Iterable`, partitioning elements into two aggregates: selected and rejected.
-- `Iterator`/`Iterable` extension methods `groupIntoListBy` and `groupIntoSetBy` to group elements by given classes
-- Summarize extension methods for ``PrimitiveIterator``s
-- Functional factory methods for and in `LongIterable` and `DoubleIterable`
-- Added `mapOrGet` extension method for `Optional`
-- Added `forEach` method for object arrays
+- `Iterator`/`Iterable` extension methods `groupIntoListBy` and `groupIntoSetBy` to group elements by given classes.
+- Added `summarize` extension methods for ``PrimitiveIterator``s to compute count, min, max, average and sum of provided values.
+- Added `streamRemainingExhaustive` extension method for ``PrimitiveIterator``s that is guaranteed to pull elements from the originating iterator.
+- Functional factory methods for and in `LongIterable` and `DoubleIterable`.
+- Added `mapOrGet` extension method for `Optional`.
+- Added `forEach` method for object arrays to iterate over elements without instantiation of an iterator.
 
 
 == Version 1.0.0 - 2018-03-02

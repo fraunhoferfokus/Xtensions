@@ -71,7 +71,8 @@ final class PrimitiveIteratorExtensions {
 	 * other than that the elements returned by the iterator are not {@code null}.
 	 * Note that this method does <em>not</em> guarantee that the given iterator will
 	 * be exhausted. If the underlying iterator implementation is known the stream
-	 * may not pull elements from the {@code wrapped} iterator.
+	 * may not pull elements from the {@code wrapped} iterator in order to create
+	 * a stream that may have better characteristics in some way.
 	 * @param wrapped the iterator from which the returned stream is created from
 	 * @return stream providing the remaining elements from {@code wrapped}
 	 * @see PrimitiveIteratorExtensions#streamRemaining(OfInt)
@@ -130,7 +131,8 @@ final class PrimitiveIteratorExtensions {
 	 * other than that the elements returned by the iterator are not {@code null}.
 	 * Note that this method does <em>not</em> guarantee that the given iterator will
 	 * be exhausted. If the underlying iterator implementation is known the stream
-	 * may not pull elements from the {@code wrapped} iterator.
+	 * may not pull elements from the {@code wrapped} iterator in order to create
+	 * a stream that may have better characteristics in some way.
 	 * @param wrapped the iterator from which the returned stream is created from
 	 * @return stream providing the remaining elements from {@code wrapped}
 	 * @see PrimitiveIteratorExtensions#streamRemainingExhaustive(OfLong)
@@ -206,7 +208,8 @@ final class PrimitiveIteratorExtensions {
 	 * other than that the elements returned by the iterator are not {@code null}.
 	 * Note that this method does <em>not</em> guarantee that the given iterator will
 	 * be exhausted. If the underlying iterator implementation is known the stream
-	 * may not pull elements from the {@code wrapped} iterator.
+	 * may not pull elements from the {@code wrapped} iterator in order to create
+	 * a stream that may have better characteristics in some way.
 	 * @param wrapped the iterator from which the returned stream is created from
 	 * @return stream providing the remaining elements from {@code wrapped}
 	 * @see PrimitiveIteratorExtensions#streamRemainingExhaustive(OfDouble)
