@@ -16,6 +16,7 @@ import java.util.function.DoubleConsumer
 import java.util.function.DoublePredicate
 import java.util.NoSuchElementException
 import java.util.stream.DoubleStream
+import de.fhg.fokus.xtensions.iteration.internal.DoubleStreamable
 
 /**
  * Instances of this class should be provided using {@link DoubleIterable#iterate(double,DoubleUnaryOperator)}.<br>
@@ -55,7 +56,7 @@ package class IterateDoubleIterable implements DoubleIterable {
  * {@code OfDouble} implementation of an infinite iterator based on a seed value
  * and a function mapping the current value to the next one.
  */
-package class IterateOfDouble implements OfDouble {
+package class IterateOfDouble implements OfDouble, DoubleStreamable {
 	
 	var double next
 	val DoubleUnaryOperator operator
@@ -86,6 +87,10 @@ package class IterateOfDouble implements OfDouble {
 			next = op.applyAsDouble(curr)
 			action.accept(curr)
 		}
+	}
+	
+	override streamDoubles() {
+		DoubleStream.iterate(next, operator)
 	}
 	
 }

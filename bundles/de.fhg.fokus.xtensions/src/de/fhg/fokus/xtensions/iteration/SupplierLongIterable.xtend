@@ -14,6 +14,7 @@ import java.util.function.LongSupplier
 import java.util.function.LongConsumer
 import java.util.stream.LongStream
 import java.util.PrimitiveIterator.OfLong
+import de.fhg.fokus.xtensions.iteration.internal.LongStreamable
 
 /**
  * LongSupplier based LongInterable that should be created via the static factory method
@@ -45,7 +46,7 @@ package class SupplierLongIterable implements LongIterable {
 	
 }
 
-package class SupplierLongInterator implements OfLong {
+package class SupplierLongInterator implements OfLong, LongStreamable {
 	val LongSupplier supplier
 	
 	new(LongSupplier supplier) {
@@ -67,4 +68,9 @@ package class SupplierLongInterator implements OfLong {
 			action.accept(l)
 		}
 	}
+	
+	override streamLongs() {
+		LongStream.generate(supplier)
+	}
+	
 }

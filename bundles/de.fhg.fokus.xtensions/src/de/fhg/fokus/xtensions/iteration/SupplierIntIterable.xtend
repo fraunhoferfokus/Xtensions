@@ -14,6 +14,7 @@ import java.util.function.IntSupplier
 import java.util.PrimitiveIterator.OfInt
 import java.util.stream.IntStream
 import java.util.function.IntConsumer
+import de.fhg.fokus.xtensions.iteration.internal.IntStreamable
 
 /**
  * IntSupplier based IntInterable that should be created via the static factory method
@@ -45,7 +46,7 @@ package class SupplierIntIterable implements IntIterable {
 	
 }
 
-package class SupplierIntInterator implements OfInt {
+package class SupplierIntInterator implements OfInt, IntStreamable {
 	
 	val IntSupplier supplier
 	
@@ -67,6 +68,10 @@ package class SupplierIntInterator implements OfInt {
 			val i = ints.getAsInt
 			action.accept(i)
 		}
+	}
+	
+	override streamInts() {
+		IntStream.generate(supplier)
 	}
 	
 } 

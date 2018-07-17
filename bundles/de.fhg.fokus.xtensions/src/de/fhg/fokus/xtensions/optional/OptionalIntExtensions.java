@@ -36,6 +36,7 @@ import org.eclipse.xtext.xbase.lib.Pure;
 
 import de.fhg.fokus.xtensions.iteration.IntIterable;
 import de.fhg.fokus.xtensions.iteration.LongIterable;
+import de.fhg.fokus.xtensions.iteration.internal.IntStreamable;
 import de.fhg.fokus.xtensions.iteration.internal.PrimitiveIterableUtil;
 
 /**
@@ -360,7 +361,7 @@ public final class OptionalIntExtensions {
 	/**
 	 * Single value iterator
 	 */
-	private static class ValueIterator implements java.util.PrimitiveIterator.OfInt {
+	private static class ValueIterator implements java.util.PrimitiveIterator.OfInt, IntStreamable {
 		final int value;
 		boolean done = false;
 
@@ -380,6 +381,15 @@ public final class OptionalIntExtensions {
 			} else {
 				done = true;
 				return value;
+			}
+		}
+
+		@Override
+		public IntStream streamInts() {
+			if(done) {
+				return IntStream.empty();
+			} else {
+				return IntStream.of(value);
 			}
 		}
 	}

@@ -35,6 +35,7 @@ import org.eclipse.xtext.xbase.lib.Procedures.Procedure0;
 import org.eclipse.xtext.xbase.lib.Pure;
 
 import de.fhg.fokus.xtensions.iteration.LongIterable;
+import de.fhg.fokus.xtensions.iteration.internal.LongStreamable;
 import de.fhg.fokus.xtensions.iteration.internal.PrimitiveIterableUtil;
 
 /**
@@ -325,7 +326,7 @@ public final class OptionalLongExtensions {
 		}
 	}
 
-	private static class ValueIterator implements OfLong {
+	private static class ValueIterator implements OfLong, LongStreamable {
 		final long value;
 		boolean done = false;
 
@@ -345,6 +346,15 @@ public final class OptionalLongExtensions {
 			} else {
 				done = true;
 				return value;
+			}
+		}
+
+		@Override
+		public LongStream streamLongs() {
+			if(done) {
+				return LongStream.empty();
+			} else {
+				return LongStream.of(value);
 			}
 		}
 	}

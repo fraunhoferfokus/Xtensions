@@ -19,6 +19,7 @@ import java.util.PrimitiveIterator
 import java.util.NoSuchElementException
 import de.fhg.fokus.xtensions.iteration.IntIterable
 import java.util.Objects
+import de.fhg.fokus.xtensions.iteration.internal.IntStreamable
 
 /**
  * This class provides static extension methods to {@link IntegerRange}. To use these methods in Xtend, import this class via <br>
@@ -91,12 +92,24 @@ final class RangeExtensions {
 	 * @return stream of integer values provided by the given range {@code r}.
 	 */
 	def static IntStream stream(IntegerRange r) {
-		if(r.step == 1) {
+		stream(r.start, r.end, r.step)
+	}
+	
+	/**
+	 * Provides an {@code IntStream} for the range of elements specified by {@code start}, {@code end} and {@code step}
+	 * @param start first element returned by the stream
+	 * @param end last element returned by the stream (or upper bound if the last step would exceed the end)
+	 * @param step the step which will be added for each element on {@code start}
+	 * @return IntStream which will cover all elements in the range specified by {@code start}, {@code end}
+	 *  and {@code step}
+	 */
+	package def static IntStream stream(int start, int end, int step) {
+		if(step == 1) {
 			// we assume that for the simple case the stream
 			// specialized on that case does less work
-			IntStream.rangeClosed(r.start, r.end)
+			IntStream.rangeClosed(start, end)
 		} else {
-			val spliterator = new IntegerRangeSpliterator(r)
+			val spliterator = new IntegerRangeSpliterator(start, end, step)
 			StreamSupport.intStream(spliterator, false)	
 		}
 	}
@@ -108,9 +121,14 @@ final class RangeExtensions {
 	 * @return parallel stream of integer values provided by the given range {@code r}.
 	 */
 	def static IntStream parallelStream(IntegerRange r) {
-		// TODO use IntStream.range() if r.step == 1
-		val spliterator = new IntegerRangeSpliterator(r)
-		StreamSupport.intStream(spliterator, true)
+		if(r.step == 1) {
+			// we assume that for the simple case the stream
+			// specialized on that case does less work
+			IntStream.rangeClosed(r.start, r.end).parallel()
+		} else {
+			val spliterator = new IntegerRangeSpliterator(r)
+			StreamSupport.intStream(spliterator, true)
+		}
 	}
 	
 	def static PrimitiveIterator.OfInt intIterator(IntegerRange r) {
@@ -152,7 +170,7 @@ package class IntegerRangeIntIterable implements IntIterable {
 	
 }
 
-package class IntegerRangeIntIterator implements PrimitiveIterator.OfInt {
+package class IntegerRangeIntIterator implements PrimitiveIterator.OfInt, IntStreamable {
 	
 	val IntegerRange range
 	var int next;
@@ -177,6 +195,10 @@ package class IntegerRangeIntIterator implements PrimitiveIterator.OfInt {
 				return next >= end
 			else
 				return next <= end
+	}
+	
+	override streamInts() {
+		RangeExtensions.stream(next, range.end, range.step)
 	}
 	
 }

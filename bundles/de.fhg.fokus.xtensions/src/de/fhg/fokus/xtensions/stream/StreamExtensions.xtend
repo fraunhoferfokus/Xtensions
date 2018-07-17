@@ -369,7 +369,7 @@ final class StreamExtensions {
 	 * @param next operation providing the next element
 	 * @param <T> Type of elements of produced stream
 	 * @return Stream providing elements computing by {@code seed}, {@code hasNext}, and {@code next}.
-	 * @see #iterate​(Object, Predicate, UnaryOperator)
+	 * @see StreamExtensions#iterate​(Object, Predicate, UnaryOperator)
 	 */
 	static def <T> Stream<T> iterate​(Class<Stream> clazz, T seed, Predicate<? super T> hasNext, UnaryOperator<T> next) {
 		iterate​(seed,hasNext, next)

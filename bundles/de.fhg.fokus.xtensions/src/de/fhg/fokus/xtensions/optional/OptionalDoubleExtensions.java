@@ -36,6 +36,7 @@ import org.eclipse.xtext.xbase.lib.Pure;
 
 import de.fhg.fokus.xtensions.iteration.DoubleIterable;
 import de.fhg.fokus.xtensions.iteration.LongIterable;
+import de.fhg.fokus.xtensions.iteration.internal.DoubleStreamable;
 import de.fhg.fokus.xtensions.iteration.internal.PrimitiveIterableUtil;
 
 /**
@@ -279,7 +280,7 @@ public final class OptionalDoubleExtensions {
 		}
 	}
 
-	private static class ValueIterator implements OfDouble {
+	private static class ValueIterator implements OfDouble, DoubleStreamable {
 		final double value;
 		boolean done = false;
 
@@ -299,6 +300,15 @@ public final class OptionalDoubleExtensions {
 			} else {
 				done = true;
 				return value;
+			}
+		}
+
+		@Override
+		public DoubleStream streamDoubles() {
+			if(done) {
+				return DoubleStream.empty();
+			} else {
+				return DoubleStream.of(value);
 			}
 		}
 	}

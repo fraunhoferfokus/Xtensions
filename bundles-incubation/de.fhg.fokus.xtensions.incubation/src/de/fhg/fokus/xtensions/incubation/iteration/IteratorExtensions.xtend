@@ -1,11 +1,7 @@
 package de.fhg.fokus.xtensions.incubation.iteration
 
-import java.util.stream.Stream
-import java.util.Iterator
-import java.util.stream.StreamSupport
-import java.util.Spliterator
-import java.util.Spliterators
 import com.google.common.collect.AbstractIterator
+import java.util.Iterator
 import java.util.function.Predicate
 
 /**
@@ -21,13 +17,6 @@ class IteratorExtensions {
 	// TODO filter2(Predicate<T>), exists2(Predicate<T>), dropWhile2(Predicate<T>), takeWhile2(Predicate<T>), Optional<T> findLast2(Predicate<T>), forall2(Predicate<T>)
 	// TODO all of the above for Iterable
 	// TODO mapInt, mapLong, mapDouble
-	/**
-	 * Creates a Java 8 stream of all remaining elements provided by the {@code iterator}.
-	 */
-	static def <T> Stream<T> streamRemaining(Iterator<T> iterator) {
-		val spliterator = Spliterators.spliteratorUnknownSize(iterator, Spliterator.ORDERED)
-		StreamSupport.stream(spliterator, false);
-	}
 	
 	// TODO create same for Iterable
 	/**
@@ -100,18 +89,6 @@ class IteratorExtensions {
 			}
 
 		}
-	}
-
-	private static def <T,U> Iterator<U> nextIterator(Iterator<T> iterator, (T)=>Iterator<U> mapper) {
-		while(iterator.hasNext) {
-			val nextEl = iterator.next
-			val nextIt = mapper.apply(nextEl)
-			if(nextIt !== null && nextIt.hasNext) {
-				return nextIt
-			}
-		}
-		// no further iterator found
-		null
 	}
 	
 	/**

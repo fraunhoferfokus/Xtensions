@@ -14,6 +14,7 @@ import java.util.function.DoubleSupplier
 import java.util.function.DoubleConsumer
 import java.util.stream.DoubleStream
 import java.util.PrimitiveIterator.OfDouble
+import de.fhg.fokus.xtensions.iteration.internal.DoubleStreamable
 
 /**
  * DoubleSupplier based DoubleInterable that should be created via the static factory method
@@ -28,7 +29,7 @@ package class SupplierDoubleIterable implements DoubleIterable {
 	}
 	
 	override iterator() {
-		new SupplierDoubleInterator(supplier.apply)
+		new SupplierDoubleIterator(supplier.apply)
 	}
 	
 	override stream() {
@@ -45,7 +46,7 @@ package class SupplierDoubleIterable implements DoubleIterable {
 	
 }
 
-package class SupplierDoubleInterator implements OfDouble {
+package class SupplierDoubleIterator implements OfDouble, DoubleStreamable {
 	val DoubleSupplier supplier
 	
 	new(DoubleSupplier supplier) {
@@ -67,4 +68,9 @@ package class SupplierDoubleInterator implements OfDouble {
 			action.accept(l)
 		}
 	}
+	
+	override streamDoubles() {
+		DoubleStream.generate(supplier)
+	}
+	
 }

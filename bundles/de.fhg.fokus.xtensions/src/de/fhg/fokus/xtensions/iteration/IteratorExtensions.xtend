@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2017-2018 Max Bureck (Fraunhofer FOKUS) and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v2.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v20.html
+ *
+ * Contributors:
+ *     Max Bureck (Fraunhofer FOKUS) - initial API and implementation
+ *******************************************************************************/
 package de.fhg.fokus.xtensions.iteration
 
 import java.util.Iterator
@@ -24,6 +34,12 @@ import de.fhg.fokus.xtensions.iteration.internal.PartitionImpl
 import java.util.List
 import java.util.function.Predicate
 import static extension java.util.Objects.*
+import de.fhg.fokus.xtensions.iteration.internal.IntStreamable
+import java.util.stream.Stream
+import java.util.Spliterators
+import java.util.stream.StreamSupport
+import de.fhg.fokus.xtensions.iteration.internal.DoubleStreamable
+import de.fhg.fokus.xtensions.iteration.internal.LongStreamable
 
 /**
  * Extension methods for the {@link Iterator} class. 
@@ -48,18 +64,47 @@ class IteratorExtensions {
 	static def <T> OfInt mapInt(Iterator<T> iterator, ToIntFunction<T> mapper) {
 		iterator.requireNonNull
 		mapper.requireNonNull
-		new OfInt {
-
-			override nextInt() {
-				val current = iterator.next
-				mapper.applyAsInt(current)
-			}
-
-			override hasNext() {
-				iterator.hasNext
-			}
-
+		new MappedOfInt(iterator, mapper)
+	}
+	
+	/**
+	 * Implementation of a {@code PrimitiveIterator.OfInt} mapping the elements
+	 * of an {@code Iterator} to primitive {@code int} values based on a given {@code ToIntFunction}.
+	 */
+	private static final class MappedOfInt<T> implements OfInt, IntStreamable {
+		
+		val Iterator<T> iterator
+		val ToIntFunction<T> mapper
+		
+		new (Iterator<T> iterator, ToIntFunction<T> mapper) {
+			this.iterator = iterator
+			this.mapper = mapper
 		}
+
+		override nextInt() {
+			val current = iterator.next
+			mapper.applyAsInt(current)
+		}
+
+		override hasNext() {
+			iterator.hasNext
+		}
+		
+		override streamInts() {
+			iterator.streamRemaining.mapToInt(mapper)
+		}
+		
+	}
+	
+	/**
+	 * Creates a Java 8 stream of all remaining elements provided by the {@code iterator}.
+	 * @param iterator source of elements provided by returned stream
+	 * @return stream of elements taken from {@code iterator}
+	 */
+	private static def <T> Stream<T> streamRemaining(Iterator<T> iterator) {
+		// when made public, test iterator for being null
+		val spliterator = Spliterators.spliteratorUnknownSize(iterator, 0)
+		StreamSupport.stream(spliterator, false);
 	}
 
 	/**
@@ -76,17 +121,33 @@ class IteratorExtensions {
 	static def <T> OfLong mapLong(Iterator<T> iterator, ToLongFunction<T> mapper) {
 		iterator.requireNonNull
 		mapper.requireNonNull
-		new OfLong {
+		new MappedOfLong(iterator, mapper)
+	}
+	
+	/**
+	 * Implementation of a {@code PrimitiveIterator.OfLong} mapping the elements
+	 * of an {@code Iterator} to primitive {@code long} values based on a given {@code ToLongFunction}.
+	 */
+	private static final class MappedOfLong<T> implements OfLong, LongStreamable {
+		val Iterator<T> iterator
+		val ToLongFunction<T> mapper
+		
+		new(Iterator<T> iterator, ToLongFunction<T> mapper) {
+			this.iterator = iterator
+			this.mapper = mapper
+		}
+		
+		override nextLong() {
+			val current = iterator.next
+			mapper.applyAsLong(current)
+		}
 
-			override nextLong() {
-				val current = iterator.next
-				mapper.applyAsLong(current)
-			}
-
-			override hasNext() {
-				iterator.hasNext
-			}
-
+		override hasNext() {
+			iterator.hasNext
+		}
+		
+		override streamLongs() {
+			iterator.streamRemaining.mapToLong(mapper)
 		}
 	}
 
@@ -104,17 +165,35 @@ class IteratorExtensions {
 	static def <T> OfDouble mapDouble(Iterator<T> iterator, ToDoubleFunction<T> mapper) {
 		iterator.requireNonNull
 		mapper.requireNonNull
-		new OfDouble {
-			override nextDouble() {
-				val current = iterator.next
-				mapper.applyAsDouble(current)
-			}
-
-			override hasNext() {
-				iterator.hasNext
-			}
-
+		new MappedOfDouble(iterator, mapper)
+	}
+	
+	/**
+	 * Implementation of a {@code PrimitiveIterator.OfDouble} mapping the elements
+	 * of an {@code Iterator} to primitive {@code double} values based on a given {@code ToDoubleFunction}.
+	 */
+	private static final class MappedOfDouble<T> implements OfDouble, DoubleStreamable {
+		val Iterator<T> iterator
+		val ToDoubleFunction<T> mapper
+		
+		new(Iterator<T> iterator, ToDoubleFunction<T> mapper) {
+			this.iterator = iterator
+			this.mapper = mapper
 		}
+		
+		override nextDouble() {
+			val current = iterator.next
+			mapper.applyAsDouble(current)
+		}
+
+		override hasNext() {
+			iterator.hasNext
+		}
+		
+		override streamDoubles() {
+			iterator.streamRemaining().mapToDouble(mapper)
+		}
+		
 	}
 
 	/**

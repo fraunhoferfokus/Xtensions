@@ -16,6 +16,7 @@ import java.util.function.LongConsumer
 import java.util.function.LongPredicate
 import java.util.NoSuchElementException
 import java.util.stream.LongStream
+import de.fhg.fokus.xtensions.iteration.internal.LongStreamable
 
 /**
  * Instances of this class should be provided using {@link LongIterable#iterate(long,LongUnaryOperator)}.<br>
@@ -55,7 +56,7 @@ package class IterateLongIterable implements LongIterable {
  * {@code OfLong} implementation of an infinite iterator based on a seed value
  * and a function mapping the current value to the next one.
  */
-package class IterateOfLong implements OfLong {
+package class IterateOfLong implements OfLong, LongStreamable {
 	
 	var long next
 	val LongUnaryOperator operator
@@ -86,6 +87,10 @@ package class IterateOfLong implements OfLong {
 			next = op.applyAsLong(curr)
 			action.accept(curr)
 		}
+	}
+	
+	override streamLongs() {
+		LongStream.iterate(next, operator)
 	}
 	
 }
