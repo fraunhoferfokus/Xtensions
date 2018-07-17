@@ -70,6 +70,7 @@ interface LongIterable extends Iterable<Long> {
 	 * @param s supplier, that provides an {@link LongSupplier} for each
 	 * iterator or stream created.
 	 * @return LongIterable based on the supplier {@code s}.
+	 * @since 1.1.0
 	 */
 	static def LongIterable generate(()=>LongSupplier s) {
 		new SupplierLongIterable(s)
@@ -84,6 +85,7 @@ interface LongIterable extends Iterable<Long> {
 	 * @param op this operator must be side-effect free.
 	 * @return and {@link LongIterable} providing infinite source of numbers
 	 * based on {@code seed} and {@code op}.
+	 * @since 1.1.0
 	 */
 	static def LongIterable iterate(long seed, LongUnaryOperator op) {
 		new IterateLongIterable(seed, op)
@@ -102,6 +104,7 @@ interface LongIterable extends Iterable<Long> {
 	 * @param hasNext method to check if iterator should provide a next value
 	 * @param next value mapping previous value provided by iterator to next value provided
 	 * @return iterable, providing an iterator based on {@code seed}, {@code hasNext}, and {@code next}.
+	 * @since 1.1.0
 	 */
 	def static LongIterable iterate(long seed, LongPredicate hasNext, LongUnaryOperator next) {
 		new IterateLongIterableLimited(seed, hasNext, next)

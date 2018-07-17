@@ -32,6 +32,7 @@ class ArrayExtensions {
 	 * @param action the action being applied to every element in {@code array}.
 	 * @param <T> Element type of {@code array}
 	 * @throws NullPointerException if {@code array} or {@code action} is {@code null}.
+	 * @since 1.1.0
 	 */
 	static def <T> void forEach(T[] array, (T)=>void action) {
 		array.requireNonNull("array")

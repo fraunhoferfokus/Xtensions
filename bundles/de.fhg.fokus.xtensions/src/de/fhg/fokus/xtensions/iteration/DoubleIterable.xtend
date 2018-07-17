@@ -68,6 +68,7 @@ interface DoubleIterable extends Iterable<Double> {
 	 * @param s supplier, that provides an {@link DoubleSupplier} for each
 	 * iterator or stream created.
 	 * @return DoubleIterable based on the supplier {@code s}.
+	 * @since 1.1.0
 	 */
 	static def DoubleIterable generate(()=>DoubleSupplier s) {
 		new SupplierDoubleIterable(s)
@@ -82,6 +83,7 @@ interface DoubleIterable extends Iterable<Double> {
 	 * @param op this operator must be side-effect free.
 	 * @return and {@link DoubleIterable} providing infinite source of numbers
 	 * based on {@code seed} and {@code op}.
+	 * @since 1.1.0
 	 */
 	static def DoubleIterable iterate(double seed, DoubleUnaryOperator op) {
 		new IterateDoubleIterable(seed, op)
@@ -100,6 +102,7 @@ interface DoubleIterable extends Iterable<Double> {
 	 * @param hasNext method to check if iterator should provide a next value
 	 * @param next value mapping previous value provided by iterator to next value provided
 	 * @return iterable, providing an iterator based on {@code seed}, {@code hasNext}, and {@code next}.
+	 * @since 1.1.0
 	 */
 	static def DoubleIterable iterate(double seed, DoublePredicate hasNext, DoubleUnaryOperator next) {
 		new IterateDoubleIterableLimited(seed, hasNext, next)
