@@ -28,6 +28,7 @@ import static org.hamcrest.core.IsInstanceOf.instanceOf
 import static org.junit.Assert.*
 
 import static extension de.fhg.fokus.xtensions.concurrent.AsyncCompute.*
+import java.util.concurrent.ScheduledThreadPoolExecutor
 
 class AsyncComputeTest {
 	
@@ -387,7 +388,8 @@ class AsyncComputeTest {
 	}
 	
 	@Test def void testAsyncRunWithTimeoutScheduler() {
-		val scheduler = Executors.newScheduledThreadPool(1)
+		val scheduler = new ScheduledThreadPoolExecutor(1)
+		scheduler.prestartCoreThread
 		val sema = new Semaphore(0)
 		val fut = scheduler.asyncRun(1,TimeUnit.NANOSECONDS) [
 			Thread.sleep(50)
@@ -410,7 +412,8 @@ class AsyncComputeTest {
 	}
 	
 	@Test def void testAsyncRunExceptionallyOnTimeoutScheduler() {
-		val scheduler = Executors.newScheduledThreadPool(1)
+		val scheduler = new ScheduledThreadPoolExecutor(1)
+		scheduler.prestartCoreThread
 		val fut = scheduler.asyncRun(1, TimeUnit.MILLISECONDS) [
 			Thread.sleep(50)
 			throw new NullPointerException
@@ -465,7 +468,8 @@ class AsyncComputeTest {
 	}
 	
 	@Test def void testAsyncRunExceptionallyCancellationNoModifyNoTimeoutScheduler() {
-		val scheduler = Executors.newScheduledThreadPool(1)
+		val scheduler = new ScheduledThreadPoolExecutor(1)
+		scheduler.prestartCoreThread
 		val sema = new Semaphore(0)
 		val fut = scheduler.asyncRun(2,TimeUnit.SECONDS) [
 			sema.acquire
@@ -478,7 +482,8 @@ class AsyncComputeTest {
 	}
 	
 	@Test def void testAsyncRunExceptionallyTimeoutScheduler() {
-		val scheduler = Executors.newScheduledThreadPool(1)
+		val scheduler = new ScheduledThreadPoolExecutor(1)
+		scheduler.prestartCoreThread
 		val fut = scheduler.asyncRun(1,TimeUnit.NANOSECONDS) [
 			Thread.sleep(10)
 			throw new IllegalStateException
@@ -799,7 +804,8 @@ class AsyncComputeTest {
 	}
 	
 	@Test def void testAsyncSupplyWithTimeoutScheduler() {
-		val scheduler = Executors.newScheduledThreadPool(1)
+		val scheduler = new ScheduledThreadPoolExecutor(1)
+		scheduler.prestartCoreThread
 		val sema = new Semaphore(0)
 		val fut = scheduler.asyncSupply(1,TimeUnit.NANOSECONDS) [
 			Thread.sleep(50)
@@ -826,7 +832,8 @@ class AsyncComputeTest {
 	}
 	
 	@Test def void testAsyncSupplyExceptionallyOnTimeoutScheduler() {
-		val scheduler = Executors.newScheduledThreadPool(1)
+		val scheduler = new ScheduledThreadPoolExecutor(1)
+		scheduler.prestartCoreThread
 		val fut = scheduler.asyncSupply(1, TimeUnit.MILLISECONDS) [
 			Thread.sleep(50)
 			throw new NullPointerException
@@ -837,7 +844,8 @@ class AsyncComputeTest {
 	}
 	
 	@Test def void testAsyncSupplyCancellationNoTimeoutScheduler() {
-		val scheduler = Executors.newScheduledThreadPool(1)
+		val scheduler = new ScheduledThreadPoolExecutor(1)
+		scheduler.prestartCoreThread
 		val success = new AtomicBoolean(true) // if block is not started at all, cancellation kicked in early
 		val blockStart = new Semaphore(0)
 		val fut = scheduler.asyncSupply(10, TimeUnit.SECONDS) [
@@ -896,7 +904,8 @@ class AsyncComputeTest {
 	}
 	
 	@Test def void testAsyncSupplyExceptionallyTimeoutScheduler() {
-		val scheduler = Executors.newScheduledThreadPool(1)
+		val scheduler = new ScheduledThreadPoolExecutor(1)
+		scheduler.prestartCoreThread
 		val fut = scheduler.asyncSupply(1,TimeUnit.NANOSECONDS) [
 			Thread.sleep(100)
 			throw new IllegalStateException
