@@ -27,6 +27,7 @@ import java.util.stream.StreamSupport
 
 import static extension de.fhg.fokus.xtensions.iteration.IteratorExtensions.*
 import static extension java.util.Objects.*
+import de.fhg.fokus.xtensions.iteration.internal.PartitionImpl
 
 /**
  * Additional extension functions for the {@link Iterable} class.
@@ -438,7 +439,19 @@ final class IterableExtensions {
 	 * @since 1.1.0
 	 */
 	static def <X> Partition<List<X>,List<X>> partitionBy(Iterable<X> iterable, Predicate<X> partitionPredicate) {
-		iterable.requireNonNull("iterable").iterator.partitionBy(partitionPredicate)
+		// the implementation is simple enough to not call the related method
+		// on the iterator and duplicate the logic to avoid instantiation of a new iterator
+		partitionPredicate.requireNonNull("partitionPredicate")
+		val selected = newArrayList
+		val rejected = newArrayList
+		iterable.forEach [
+			if (partitionPredicate.test(it)) {
+				selected.add(it)
+			} else {
+				rejected.add(it)
+			}
+		]
+		new PartitionImpl(selected, rejected)
 	}
 	
 	/**
@@ -489,6 +502,83 @@ final class IterableExtensions {
 	 */
 	static def <X,AS,AR> Partition<AS,AR> partitionBy(Iterable<X> iterable, Predicate<X> partitionPredicate, Collector<X, ?, AS> selectedCollector, Collector<X, ?, AR> rejectedCollector) {
 		iterable.requireNonNull("iterable").iterator.partitionBy(partitionPredicate, selectedCollector, rejectedCollector)
+	}
+	
+	/**
+	 * This method will add the elements of {@code iterable} to the {@code target} collection
+	 * and then return the {@code target} collection. The elements will be added to {@code target}
+	 * in the order that is provided by the {@code forEach} method defined on {@code iterable}.<br>
+	 * <em><b>Attention:</b></em> Even though this method looks functional it produces a side effect.
+	 * When the method is returning the {@code target} collection will include the elements of 
+	 * {@code iterable}. This is intentional and is beneficial if the the elements need to be used
+	 * in subsequent statement after calling this method.
+	 * <br><br>
+	 * This method is introduced for the common case of a single target collection.
+	 * The {@link IterableExtensions#into(Iterable, Collection[]) vararg overload} will 
+	 * create may implicitly create an array instance. This is avoided with this 
+	 * overload.
+	 * 
+	 * @param iterable the source of elements to be added to {@code target}. Must not be {@code null}.
+	 * @param target the collection to which the elements of {@code iterable} are added to. This reference
+	 *  will also be returned by this method. Must not be {@code null}.
+	 * @return the {@code target} reference. The elements from {@code iterable} will have been added to it when
+	 *  being returned.
+	 * @param <X> Type of elements of {@code target}. Must be either {@code T} or a super class of {@code T}.
+	 * @param <T> Type of elements of {@code iterable}.
+	 * @throws NullPointerException if {@code iterable}, {@code selectedCollector}, or {@code target} is {@code null}
+	 * @see IterableExtensions#into(Iterable, Collection[])
+	 * @since 1.1.0
+	 */
+	static def <X, T extends X> Collection<X> into(Iterable<T> iterable, Collection<X> target) {
+		// the implementation is simple enough to not call the related method
+		// on the iterator and duplicate the logic to avoid instantiation of a new iterator
+		target.requireNonNull("target")
+		iterable.requireNonNull("iterable").forEach [
+			// We do not use forEach here to avoid creating a capturing lambda instance
+			target.add(it)
+		]
+		target
+	}
+	
+	/**
+	 * This method will add the elements of {@code iterable} to the all of the collection in {@code targets}
+	 * and then return all those collections in an array. The elements will be added to the {@code targets} collections
+	 * in the order that is provided by the {@code forEach} method defined on {@code iterable}.<br>
+	 * <em><b>Attention:</b></em> Even though this method looks functional it produces a side effect.
+	 * When the method is returning the {@code targets} collections will include the elements of 
+	 * {@code iterable}. This is intentional and is beneficial if the the elements need to be used
+	 * in subsequent statement after calling this method.
+	 * 
+	 * @param iterable the source of elements to be added to the collections in {@code targets}. Must not be {@code null}.
+	 * @param targets the collections to which the elements of {@code iterable} are added to. An array of the same collections
+	 *  will also be returned by this method. Must not be {@code null} and no contained collection reference must be {@code null}.
+	 * @return the collections from {@code targets}. The elements from {@code iterable} will have been added to each of the contained 
+	 *  collections when being returned.
+	 * @param <X> Type of elements of collections in {@code targets}. Must be either {@code T} or a super class of {@code T}.
+	 * @param <T> Type of elements of {@code iterable}.
+	 * @throws NullPointerException if {@code iterable}, {@code selectedCollector}, or {@code targets}, or a 
+	 *  collection in {@code target} is {@code null}.
+	 * @see IterableExtensions#into(Iterable, Collection)
+	 * @since 1.1.0
+	 */
+	static def <X, T extends X> Collection<X>[] into(Iterable<T> iterable, Collection<X>... targets) {
+		// the implementation is simple enough to not call the related method
+		// on the iterator and duplicate the logic to avoid instantiation of a new iterator
+		
+		targets.requireNonNull("target").forEach [
+			it.requireNonNull("element in target")
+		]
+		// Defensive copy of array
+		val internalTarget = targets.clone
+		val length = internalTarget.length
+		
+		iterable.forEach [
+			// We do not use forEach here to avoid creating a capturing lambda instance
+			for(var i = 0; i < length; i++) {
+				targets.get(i).add(it)
+			}
+		]
+		internalTarget
 	}
 }
 

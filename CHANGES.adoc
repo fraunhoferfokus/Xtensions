@@ -14,7 +14,8 @@ link:https://github.com/fraunhoferfokus/Xtensions/milestone/2?closed=1[Related G
 - Added `combinations` and `combinationsWith` extension methods for `Iterator` and `Iterable` to generate cartesian products.
 - Added `withoutAll` extension methods for `Iterable` and `Iterator` to filter elements from the source available in another `Iterable`.
 - Added `partitionBy` extension methods for `Iterator` and `Iterable`, partitioning elements into two aggregates: selected and rejected.
-- `Iterator`/`Iterable` extension methods `groupIntoListBy` and `groupIntoSetBy` to group elements by given classes.
+- Added `Iterator`/`Iterable` extension methods `groupIntoListBy` and `groupIntoSetBy` to group elements by given classes.
+- Added `into` extension methods to `Iterator`/`Iterable` to add elements to one or more ``Collection``s.
 - Added `summarize` extension methods for ``PrimitiveIterator``s to compute count, min, max, average and sum of provided values.
 - Added `streamRemainingExhaustive` extension method for ``PrimitiveIterator``s that is guaranteed to pull elements from the originating iterator.
 - Functional factory methods for and in `LongIterable` and `DoubleIterable`.

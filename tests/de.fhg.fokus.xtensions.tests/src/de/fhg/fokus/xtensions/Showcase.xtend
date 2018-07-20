@@ -807,4 +807,17 @@ class Showcase {
 		println("Unique words starting with 'f' : " + selected.join(", "))
 		println("Other words: " + rejected.join(", "))
 	}
+	
+	@Test
+	def void intoDemo() {
+		val namesWithB = newArrayList("Barbara", "Bob", "Brian")
+		val newNames = #["Justin", "Anna", "Bruce", "Chris", "Becky"]
+		newNames.iterator
+			.filter[it.toFirstLower.startsWith("b")]
+			.into(namesWithB)
+		
+		namesWithB.forEach[
+			println(it)
+		]
+	}
 }

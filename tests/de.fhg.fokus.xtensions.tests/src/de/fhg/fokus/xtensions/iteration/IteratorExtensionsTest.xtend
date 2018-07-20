@@ -19,6 +19,7 @@ import java.util.Arrays
 import java.util.Set
 import java.util.stream.Collectors
 import java.util.function.Predicate
+import java.util.Collection
 
 class IteratorExtensionsTest {
 	////////////
@@ -1391,4 +1392,107 @@ class IteratorExtensionsTest {
 		assertNotNull(rejected)
 		assertEquals(#{33, 51f}, rejected)
 	}
+	
+	//////////////
+	// into one //
+	//////////////
+	
+	@Test(expected = NullPointerException) 
+	def void testIntoCollectionIteratorNull() {
+		val Iterator<String> i = null
+		i.into(newArrayList)
+	}
+	
+	@Test(expected = NullPointerException) 
+	def void testIntoCollectionTargetNull() {
+		#["foo"].iterator.into(null as Collection<String>)
+	}
+	
+	@Test
+	def void testIntoCollectionTestInEqualsOut() {
+		val expected = newArrayList
+		val result = #["foo", "bar"].iterator.into(expected)
+		assertSame(expected, result)
+	}
+	
+	@Test
+	def void testIntoCollectionIteratorEmpty() {
+		val expected = #["foo", "bar"]
+		val target = new ArrayList(expected)
+		val result = #[].iterator.into(target)
+		assertEquals(expected, result)
+	}
+	
+	@Test
+	def void testIntoCollectionTargetEmpty() {
+		val expected = #["foo", "bar"]
+		val target = newArrayList
+		val result = expected.iterator.into(target)
+		assertEquals(expected, result)
+	}
+	
+	@Test
+	def void testIntoCollection() {
+		val expected = #["foo", "bar", "one", "two"]
+		val target = newArrayList("foo", "bar")
+		val result = #["one", "two"].iterator.into(target)
+		assertEquals(expected, result)
+	}
+	
+	//////////////////
+	// into varargs //
+	//////////////////
+	
+	@Test(expected = NullPointerException) 
+	def void testIntoCollectionsIteratorNull() {
+		val Iterator<String> i = null
+		i.into(newArrayList,newArrayList)
+	}
+	
+	@Test(expected = NullPointerException) 
+	def void testIntoCollectionsTargetNull() {
+		#["foo"].iterator.into(null as Collection<String>[])
+	}
+	
+	@Test(expected = NullPointerException) 
+	def void testIntoCollectionsIteratorOneTargetNull() {
+		val Iterator<String> i = #[].iterator
+		i.into(newArrayList,null)
+	}
+	
+	@Test 
+	def void testIntoCollectionsIteratorNoTarget() {
+		val result = #["foo", "bar"].iterator.into
+		assertEquals(0, result.length)
+	}
+	
+	@Test
+	def void testIntoCollectionsIteratorEmpty() {
+		val a = #["foo", "bar"]
+		val b = #["hui", "buh"]
+		val Collection<String>[] expected = #[a, b].toArray(newArrayOfSize(2))
+		val Collection<String>[] result = #[].iterator.into(a,b)
+		assertArrayEquals(expected, result)
+	}
+	
+	@Test
+	def void testIntoCollectionsOneCollection() {
+		val Collection<String>[] expected = #[#["foo", "bar", "one", "two"]].toArray(newArrayOfSize(1))
+		val target = newArrayList("foo", "bar")
+		val result = #["one", "two"].iterator.into(#[target])
+		assertArrayEquals(expected, result)
+	}
+	
+	@Test
+	def void testIntoCollectionsTwoCollections() {
+		val Collection<String>[] expected = #[#["foo", "bar", "one", "two"], #["alpha", "beta", "one", "two"]]
+			.toArray(newArrayOfSize(2))
+		val target1 = newArrayList("foo", "bar")
+		val target2 = newArrayList("alpha", "beta")
+		val result = #["one", "two"].iterator.into(#[target1,target2])
+		assertArrayEquals(expected, result)
+		assertSame(target1, result.get(0))
+		assertSame(target2, result.get(1))
+	}
+	
 }

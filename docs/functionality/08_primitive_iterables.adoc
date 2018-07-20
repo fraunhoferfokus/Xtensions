@@ -150,16 +150,6 @@ val IntIterable ints = IntIterable.iterate(0, [it<=10], [it+2])
 ----
 
 
-[TIP]
-====
-Related JavaDocs:
-
-* https://javadoc.io/page/com.github.fraunhoferfokus.xtensions/de.fhg.fokus.xtensions/latest/de/fhg/fokus/xtensions/iteration/DoubleIterable.html[DoubleIterable]
-* https://javadoc.io/page/com.github.fraunhoferfokus.xtensions/de.fhg.fokus.xtensions/latest/de/fhg/fokus/xtensions/iteration/IntIterable.html[IntIterable]
-* https://javadoc.io/page/com.github.fraunhoferfokus.xtensions/de.fhg.fokus.xtensions/latest/de/fhg/fokus/xtensions/iteration/LongIterable.html[LongIterable]
-====
-
-
 === From Xtend Ranges
 
 Creating iterables from `org.eclipse.xtext.xbase.lib.IntegerRange` can be done via the extensions 
@@ -193,3 +183,14 @@ import static extension de.fhg.fokus.xtensions.optional.OptionalIntExtensions.*
 // ...
 val IntItreable ints = some(42).asIterable
 ----
+
+
+
+[TIP]
+====
+Related JavaDocs:
+
+* https://javadoc.io/page/com.github.fraunhoferfokus.xtensions/de.fhg.fokus.xtensions/latest/de/fhg/fokus/xtensions/iteration/DoubleIterable.html[DoubleIterable]
+* https://javadoc.io/page/com.github.fraunhoferfokus.xtensions/de.fhg.fokus.xtensions/latest/de/fhg/fokus/xtensions/iteration/IntIterable.html[IntIterable]
+* https://javadoc.io/page/com.github.fraunhoferfokus.xtensions/de.fhg.fokus.xtensions/latest/de/fhg/fokus/xtensions/iteration/LongIterable.html[LongIterable]
+====

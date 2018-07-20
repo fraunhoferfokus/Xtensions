@@ -49,7 +49,7 @@ class ArrayExtensions {
 		val T[] result = if(additional === null) {
 				arrayElementType.createGenericArray(2)
 			} else {
-				additional.forEach [ requireNonNull ]
+				additional.forEach [ requireNonNull("A given class is null") ]
 				arrayElementType.createGenericArray(additional.length + 2) => [
 					// fill result with elements from additional, leave spot 0 free for first.
 					System.arraycopy(additional,0,it,2,additional.length)

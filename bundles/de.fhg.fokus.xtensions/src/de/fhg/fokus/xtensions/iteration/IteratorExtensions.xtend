@@ -598,4 +598,80 @@ class IteratorExtensions {
 
 		new PartitionImpl(selected, rejected)
 	}
+	
+	/**
+	 * This method will add the elements provided by {@code iterator} to the {@code target} collection
+	 * and then return the {@code target} collection. The elements will be added to {@code target}
+	 * in the order that is provided by the {@code forEachRemaining} method defined on {@code iterator}.<br>
+	 * <em><b>Attention:</b></em> Even though this method looks functional it produces a side effect.
+	 * When the method is returning the {@code target} collection will include the elements provided by 
+	 * {@code iterator}. This is intentional and is beneficial if the the elements need to be used
+	 * in subsequent statement after calling this method.
+	 * <br><br>
+	 * This method is introduced for the common case of a single target collection.
+	 * The {@link IteratorExtensions#into(Iterator, Collection[]) vararg overload} will 
+	 * create may implicitly create an array instance. This is avoided with this 
+	 * overload.
+	 * 
+	 * @param iterator the source of elements to be added to {@code target}. Must not be {@code null}.
+	 * @param target the collection to which the elements of {@code iterator} are added to. This reference
+	 *  will also be returned by this method. Must not be {@code null}.
+	 * @return the {@code target} reference. The elements taken from {@code iterator} will have been added to it when
+	 *  being returned.
+	 * @param <X> Type of elements of {@code target}. Must be either {@code T} or a super class of {@code T}.
+	 * @param <T> Type of elements provided by {@code iterator}.
+	 * @throws NullPointerException if {@code iterator}, {@code selectedCollector}, or {@code target} is {@code null}
+	 * @see IteratorExtensions#into(Iterator, Collection[])
+	 * @since 1.1.0
+	 */
+	static def <X, T extends X> Collection<X> into(Iterator<T> iterator, Collection<X> target) {
+		target.requireNonNull("target")
+		iterator.requireNonNull("iterator").forEachRemaining [
+			// We do not use forEach here to avoid creating a capturing lambda instance
+			target.add(it)
+		]
+		target
+	}
+	
+	/**
+	 * This method will add the elements provided by {@code iterator} to the all of the collection in {@code targets}
+	 * and then return all those collections in an array. The elements will be added to the {@code targets} collections
+	 * in the order that is provided by the {@code forEach} method defined on {@code iterator}.<br>
+	 * <em><b>Attention:</b></em> Even though this method looks functional it produces a side effect.
+	 * When the method is returning the {@code targets} collections will include the elements provided by 
+	 * {@code iterator}. This is intentional and is beneficial if the the elements need to be used
+	 * in subsequent statement after calling this method.
+	 * 
+	 * @param iterator the source of elements to be added to the collections in {@code targets}. Must not be {@code null}.
+	 * @param targets the collections to which the elements of {@code iterator} are added to. An array of the same collections
+	 *  will also be returned by this method. Must not be {@code null} and no contained collection reference must be {@code null}.
+	 * @return the collections from {@code targets}. The elements from {@code iterator} will have been added to each of the contained 
+	 *  collections when being returned.
+	 * @param <X> Type of elements of collections in {@code targets}. Must be either {@code T} or a super class of {@code T}.
+	 * @param <T> Type of elements provided by {@code iterator}.
+	 * @throws NullPointerException if {@code iterator}, {@code selectedCollector}, or {@code targets}, or a 
+	 *  collection in {@code targets} is {@code null}.
+	 * @see IteratorExtensions#into(Iterator, Collection)
+	 * @since 1.1.0
+	 */
+	static def <X, T extends X> Collection<X>[] into(Iterator<T> iterator, Collection<X>... targets) {
+		iterator.requireNonNull("iterator")
+		targets.requireNonNull("target").forEach [
+			it.requireNonNull("element in target")
+		]
+		// Defensive copy of array
+		val internalTarget = targets.clone
+		val length = internalTarget.length
+		
+		if(length == 0) {
+			return internalTarget
+		}
+		iterator.forEachRemaining [
+			// We do not use forEach here to avoid creating a capturing lambda instance
+			for(var i = 0; i < length; i++) {
+				internalTarget.get(i).add(it)
+			}
+		]
+		internalTarget
+	}
 }

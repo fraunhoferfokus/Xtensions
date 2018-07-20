@@ -26,5 +26,5 @@ static `stream` methods that can be used as extension methods to create Java 8 s
 ====
 Related JavaDocs:
 
-* https://javadoc.io/page/com.github.fraunhoferfokus.xtensions/de.fhg.fokus.xtensions/latest/de/fhg/fokus/xtensions/iteration/PrimitiveArrayExtensions.html[PairExtensions]
+* https://javadoc.io/page/com.github.fraunhoferfokus.xtensions/de.fhg.fokus.xtensions/latest/de/fhg/fokus/xtensions/iteration/PrimitiveArrayExtensions.html[PrimitiveArrayExtensions]
 ====

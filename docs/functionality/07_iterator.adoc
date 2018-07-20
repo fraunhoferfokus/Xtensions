@@ -93,6 +93,24 @@ for `Partitions` having the same type for the selected and rejected part. The ot
 to wrap a `Map<Boolean,X>` into a `Partition<X,X>`.
 
 
+To add elements from an `Iterator` to one or more collections, the `into` extension method is provided by the class `IterableExtensions`.
+
+Example:
+
+[source,xtend]
+----
+val namesWithB = newArrayList("Barbara", "Bob", "Brian")
+val newNames = #["Justin", "Anna", "Bruce", "Chris", "Becky"]
+newNames.iterator
+	.filter[it.toFirstLower.startsWith("b")]
+	.into(namesWithB)
+
+namesWithB.forEach[
+	println(it)
+]
+----
+
+
 [TIP]
 ====
 Related JavaDocs:
