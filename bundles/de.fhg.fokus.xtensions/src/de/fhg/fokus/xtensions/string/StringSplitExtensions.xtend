@@ -37,7 +37,7 @@ class StringSplitExtensions {
 	 * so it is is suited well for finding tokens in a string and stop splitting
 	 * as soon as a particular element is found. This also reduces memory copying
 	 * to unused strings.
-	 * @param toSplit input string to split on {@code pattern}. Must not be null
+	 * @param toSplit input char sequence to split on {@code pattern}. Must not be null
 	 * @param pattern the pattern defining where to split the input string {@code toSplit}.
 	 * @param limit maximum amount of elements provided by the returned iterator.
 	 * @return iterator providing the split results
@@ -45,7 +45,7 @@ class StringSplitExtensions {
 	 * @throws java.util.regex.PatternSyntaxException if the {@code pattern}'s syntax is invalid
 	 * @see String#split(String,int)
 	 */
-	static def Iterator<String> splitIt(String toSplit, String pattern, int limit) {
+	static def Iterator<String> splitIt(CharSequence toSplit, String pattern, int limit) {
 		toSplit.splitIt(Pattern.compile(pattern), limit)
 	}
 	
