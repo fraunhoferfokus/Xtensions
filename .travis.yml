@@ -28,6 +28,7 @@ jobs:
     - "./mvnw clean deploy -DskipTests -Drelease --settings .travis/settings.xml"
     install: true
     deploy:
+      skip_cleanup: true
       provider: bintray
       on:
         tags: true
