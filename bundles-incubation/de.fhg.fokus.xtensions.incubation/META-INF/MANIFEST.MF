@@ -2,13 +2,13 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Xtensions Incubation
 Bundle-SymbolicName: de.fhg.fokus.xtensions.incubation
-Bundle-Version: 1.1.0.qualifier
+Bundle-Version: 1.2.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Require-Bundle: com.google.guava,
  org.eclipse.xtext.xbase.lib,
  org.eclipse.xtend.lib,
  org.eclipse.xtend.lib.macro,
  org.eclipse.jdt.annotation;bundle-version="2.1.0";resolution:=optional,
- de.fhg.fokus.xtensions;bundle-version="1.1.0"
+ de.fhg.fokus.xtensions;bundle-version="1.2.0"
 Bundle-Vendor: Fraunhofer FOKUS
 

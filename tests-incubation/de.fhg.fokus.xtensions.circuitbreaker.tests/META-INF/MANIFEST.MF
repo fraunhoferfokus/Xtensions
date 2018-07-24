@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Circuit Breaker Tests
 Bundle-SymbolicName: de.fhg.fokus.xtensions.circuitbreaker.tests
-Bundle-Version: 1.1.0.qualifier
+Bundle-Version: 1.2.0.qualifier
 Fragment-Host: de.fhg.fokus.xtensions.circuitbreaker
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Require-Bundle: org.junit;bundle-version="4.12.0"

@@ -3,6 +3,13 @@
 :toclevels: 1
 :toc-title: Version Overview:
 
+== Version 1.2.0 (unreleased)
+
+link:https://github.com/fraunhoferfokus/Xtensions/milestone/3?closed=1[Related GitHub issues]
+
+=== Added 
+
+Nothing as of now
 
 == Version 1.1.0 - 2018-07-23
 
