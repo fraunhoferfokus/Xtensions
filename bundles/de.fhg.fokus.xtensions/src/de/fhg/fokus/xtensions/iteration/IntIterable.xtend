@@ -51,6 +51,7 @@ interface IntIterable extends Iterable<Integer> {
 	 * this method with a more efficient implementation.<br>
 	 * Be aware that on inifinite iterables this method only returns when the {@code consumer} throws an exception or terminates the runtime.
 	 * @param consumer the action to be called for each element in the iterable.
+	 * @throws NullPointerException may be thrown if {@link IntIterable#iterator() iterator()} returns {@code null}.
 	 */
 	def void forEachInt(IntConsumer consumer) {
 		val OfInt iterator = iterator()
@@ -78,6 +79,7 @@ interface IntIterable extends Iterable<Integer> {
 	 * recommended for the implementations of this interface to provide an own
 	 * implementation of this method.
 	 * @return an IntStream to iterate over the elements of this iterable.
+	 * @throws NullPointerException may be thrown if {@link IntIterable#iterator() iterator()} returns {@code null}.
 	 */
 	def IntStream stream() {
 		val OfInt iterator = iterator()

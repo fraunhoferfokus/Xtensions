@@ -40,7 +40,7 @@ abstract class Focus<I, O> implements ((O)=>O)=>Optional<I> {
 	package new() {
 	}
 
-	public static def <I, O> Focus<I, O> create(O wrapped, (O)=>I updater) {
+	static def <I, O> Focus<I, O> create(O wrapped, (O)=>I updater) {
 		if (wrapped === null) {
 			EMPTY_FOCUS as Focus<I, O>
 		} else {
@@ -80,9 +80,8 @@ abstract class Focus<I, O> implements ((O)=>O)=>Optional<I> {
 
 package final class ValueFocus<I, O> extends Focus<I, O> {
 
-	private val (O)=>I updater
-	private val O value // must be not null
-
+	val (O)=>I updater
+	val O value
 	package new((O)=>I updater, O wrapped) {
 		this.updater = updater
 		this.value = wrapped

@@ -60,7 +60,7 @@
     <link rel="next" href="../CONTRIBUTING.html" />
     
     
-    <link rel="prev" href="functionality/14_scheduling_util.html" />
+    <link rel="prev" href="functionality/15_scheduling_util.html" />
     
 
     </head>
@@ -207,12 +207,12 @@
             
         </li>
     
-        <li class="chapter " data-level="1.3.7" data-path="functionality/07_primitive_iterators.html">
+        <li class="chapter " data-level="1.3.7" data-path="functionality/07_iterator.html">
             
-                <a href="functionality/07_primitive_iterators.html">
+                <a href="functionality/07_iterator.html">
             
                     
-                    Extensions to PrimitiveIterators
+                    Extensions to Iterator
             
                 </a>
             
@@ -233,9 +233,22 @@
             
         </li>
     
-        <li class="chapter " data-level="1.3.9" data-path="functionality/09_strings.html">
+        <li class="chapter " data-level="1.3.9" data-path="functionality/09_primitive_iterators.html">
             
-                <a href="functionality/09_strings.html">
+                <a href="functionality/09_primitive_iterators.html">
+            
+                    
+                    Extensions to PrimitiveIterators
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.10" data-path="functionality/10_strings.html">
+            
+                <a href="functionality/10_strings.html">
             
                     
                     Extensions to Strings
@@ -246,9 +259,9 @@
             
         </li>
     
-        <li class="chapter " data-level="1.3.10" data-path="functionality/10_duration.html">
+        <li class="chapter " data-level="1.3.11" data-path="functionality/11_duration.html">
             
-                <a href="functionality/10_duration.html">
+                <a href="functionality/11_duration.html">
             
                     
                     Extensions to Duration
@@ -259,9 +272,9 @@
             
         </li>
     
-        <li class="chapter " data-level="1.3.11" data-path="functionality/11_functions.html">
+        <li class="chapter " data-level="1.3.12" data-path="functionality/12_functions.html">
             
-                <a href="functionality/11_functions.html">
+                <a href="functionality/12_functions.html">
             
                     
                     Extensions to Functions
@@ -272,9 +285,9 @@
             
         </li>
     
-        <li class="chapter " data-level="1.3.12" data-path="functionality/12_completable_future.html">
+        <li class="chapter " data-level="1.3.13" data-path="functionality/13_completable_future.html">
             
-                <a href="functionality/12_completable_future.html">
+                <a href="functionality/13_completable_future.html">
             
                     
                     Extensions to CompletableFuture
@@ -285,9 +298,9 @@
             
         </li>
     
-        <li class="chapter " data-level="1.3.13" data-path="functionality/13_async_computations.html">
+        <li class="chapter " data-level="1.3.14" data-path="functionality/14_async_computations.html">
             
-                <a href="functionality/13_async_computations.html">
+                <a href="functionality/14_async_computations.html">
             
                     
                     Async Computations
@@ -298,9 +311,9 @@
             
         </li>
     
-        <li class="chapter " data-level="1.3.14" data-path="functionality/14_scheduling_util.html">
+        <li class="chapter " data-level="1.3.15" data-path="functionality/15_scheduling_util.html">
             
-                <a href="functionality/14_scheduling_util.html">
+                <a href="functionality/15_scheduling_util.html">
             
                     
                     Scheduling Util
@@ -442,8 +455,46 @@
                                 <h1 id="development-of-the-xtensions-library">Development of the Xtensions Library</h1>
 <div id="preamble">
 <div class="sectionbody">
+<div id="toc" class="toc">
+<div id="toctitle" class="title">Table of Contents</div>
+<ul class="sectlevel1">
+<li><a href="#_setting_up_the_ide">Setting up the IDE</a></li>
+<li><a href="#_build">Build</a>
+<ul class="sectlevel2">
+<li><a href="#_building_incubation_bundles">Building Incubation Bundles</a></li>
+<li><a href="#_code_coverage">Code Coverage</a></li>
+<li><a href="#_skipping_test_project_compilation">Skipping Test Project Compilation</a></li>
+<li><a href="#_documentation_build">Documentation Build</a></li>
+</ul>
+</li>
+<li><a href="#_external_contributions">External Contributions</a></li>
+<li><a href="#_performing_a_release">Performing a Release</a></li>
+</ul>
+</div>
 <div class="paragraph">
 <p>This chapter gives an overview over how to get stated on development of the Xtensions library.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_setting_up_the_ide">Setting up the IDE</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The repository contains the Eclipse Oomph setup file <a href="https://raw.githubusercontent.com/fraunhoferfokus/Xtensions/master/releng/de.fhg.fokus.xtensions.setup/Xtensions.setup" target="_blank">Xtensions.setup</a>
+for the Eclipse IDE.</p>
+</div>
+<div class="paragraph">
+<p>Start the Eclipse installer, then switch to advanced mode (hamburger menu in the top-right corner).
+Select the &quot;Eclipse IDE for Java Development&quot; and press &quot;Next &gt;&quot;. On the next page press the green
+plus button and select the catalog &quot;Github Projects&quot; and paste the URL of the setup file above
+into the &quot;Resource URIs&quot; text field. Then select the checkbox next to the &quot;Xtensions&quot; entry and
+press &quot;Next &gt;&quot;. Enter the installation details as preferred, press &quot;Next &gt;&quot;, then press &quot;Finish&quot;.
+The Eclipse IDE will be installed and configured. It may need to restart one ore more times.</p>
+</div>
+<div class="paragraph">
+<p>For the most relevant maven builds, run configurations are checked into the repositories,
+open the &quot;Run &gt; Run Configurations&quot; dialog from the main menu to browse and start a build.
+If you want to start a build from the command line, read the next chapter.</p>
 </div>
 </div>
 </div>
@@ -455,28 +506,99 @@
 On Linux and Mac you might need to call <code>chmod +x mvnw</code>.</p>
 </div>
 <div class="paragraph">
-<p>To build the libraries from source, simply drop into the root directory and call <code>./mvnw clean package</code>.
-The main library will be located in <code>bundles/de.fhg.fokus.xtensions/target</code></p>
+<p>To build the libraries from source, simply drop into the root directory and call</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">./mvnw clean package</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Afterwards, the main library will be located in <code>bundles/de.fhg.fokus.xtensions/target</code></p>
 </div>
 <div class="paragraph">
 <p>The p2 update site containing the library is located in directory <code>p2/de.fhg.fokus.xtensions.p2/target/repository</code>.</p>
 </div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_setting_up_the_development_environment">Setting up the Development Environment</h2>
-<div class="sectionbody">
 <div class="paragraph">
-<p>The repository contains the Oomph setup file <a href="https://raw.githubusercontent.com/fraunhoferfokus/Xtensions/master/releng/de.fhg.fokus.xtensions.setup/Xtensions.setup" target="_blank">Xtensions.setup</a>
-for the Eclipse IDE.</p>
+<p>Have a look at the <code>.travis.yml</code> file on how snapshot builds (on every commit) and release builds and deployments
+(when a tag is pushed to GitHub, see <a href="#_performing_a_release">Performing a Release</a>) are done.</p>
+</div>
+<div class="sect2">
+<h3 id="_building_incubation_bundles">Building Incubation Bundles</h3>
+<div class="paragraph">
+<p>To build incubation bundles, enable the maven profile &quot;incubation&quot;.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_code_coverage">Code Coverage</h3>
+<div class="paragraph">
+<p>To produce a Jacoco covarage report (how much library code is covered by the test cases)
+enable the maven profile  <code>coverage-report</code>.
+The result of the report is located in the directory
+<code>releng/de.fhg.fokus.xtensions.report/target/site/jacoco-aggregate/</code>.</p>
 </div>
 <div class="paragraph">
-<p>Start the Eclipse installer, then switch to advanced mode (hamburger menu in the top-right corner).
-Select the &quot;Eclipse IDE for Java Development&quot; and press &quot;Next &gt;&quot;. On the next page press the green
-plus button and select the catalog &quot;Github Projects&quot; and paste the URL of the setup file above
-into the &quot;Resource URIs&quot; text field. Then select the checkbox next to the &quot;Xtensions&quot; entry and
-press &quot;Next &gt;&quot;. Enter the installation details as preferred, press &quot;Next &gt;&quot;, then press &quot;Finish&quot;.
-The Eclipse IDE will be installed and configured. It may need to restart one ore more times.</p>
+<p>To push the results of the code coverage report to coveralls.io, define the system property
+<code>coveralls</code>, this will automatically enable profile <code>coverage-report</code> as well, it
+does not have to be activated separately. This can be done by passing parameter <code>-Dcoveralls</code> when invoking maven.</p>
+</div>
+<div class="paragraph">
+<p>Be aware that the coverage report misses all inlined Xtension library methods. This includes
+most of the methods of the class <code>de.fhg.fokus.xtensions.datetime.DurationExtensions</code>.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_skipping_test_project_compilation">Skipping Test Project Compilation</h3>
+<div class="paragraph">
+<p>To skip the compilation of the test project, pass the system property &quot;release&quot; to
+the maven build, e.g. passing parameter <code>-Drelease</code>. This does not actually trigger
+a release to bintray, it just skips compiling the test project. Have a look at the
+<code>.travis.yml</code> file to see how a release deployment is performed on Travis CI.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_documentation_build">Documentation Build</h3>
+<div class="paragraph">
+<p>The documentation is written in AsciiDoc and written in a way so HTML can be generated
+via <a href="https://toolchain.gitbook.com/" target="_blank">GitBook</a>.</p>
+</div>
+<div class="paragraph">
+<p>To use GitBook, first install <code>npm</code> your preferred way. To install the GitBook tooling call</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">npm install gitbook-cli -g</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>To prepare the build of the documentation, switch to the root directory of the repository
+and call</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">gitbook install</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>To actually generate the HTML, call the following command in the root repository location</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">gitbook build</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The result of the generation should then be located in the <code>_book</code> directory.</p>
+</div>
+<div class="paragraph">
+<p>To start a web server providing a view on the documentation that should update itself whenever
+the AsciiDoc sources change, call the following command in the root repository path.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">gitbook serve</code></pre>
+</div>
+</div>
 </div>
 </div>
 </div>
@@ -492,17 +614,23 @@ The Eclipse IDE will be installed and configured. It may need to restart one ore
 <h2 id="_performing_a_release">Performing a Release</h2>
 <div class="sectionbody">
 <div class="paragraph">
+<p>On every push to the GitHub repository a build is triggered and a snapshot is deployed to
+the JFrog Artifactory maven snapshot repository. This requires no process. However, performing
+a release of a stable version requires several steps.</p>
+</div>
+<div class="paragraph">
 <p>Releasing a new version of the Xtensions library is mostly automated. To trigger a
 release, a new tag has to be created in the GitHub project. This tag <strong>must</strong> be a
 valid sem-ver version number <code>major.minor.patch</code>.</p>
 </div>
 <div class="paragraph">
-<p>Here is a checklist of steps to perform (in this order):</p>
+<p>Here is a checklist of steps to perform (in this order).
+Ideally the first three steps are already done directly after a previous release.</p>
 </div>
 <div class="ulist checklist">
 <ul class="checklist">
 <li>
-<p>&#x274F; Update the version of root <code>pom.xml</code> (keep the <code>-SNAPSHOT</code> suffix, it will be removed during the build)</p>
+<p>&#x274F; Update the version of root <code>pom.xml</code> (keep the <code>-SNAPSHOT</code> suffix, it will be removed during the build).</p>
 </li>
 <li>
 <p>&#x274F; Update the version of every bundle and feature project (see folders <code>bundles</code>, <code>features</code>, <code>tests</code>, <code>bundles-incubation</code>, and <code>tests-incubation</code>)</p>
@@ -512,6 +640,9 @@ valid sem-ver version number <code>major.minor.patch</code>.</p>
 </li>
 <li>
 <p>&#x274F; Update the <code>README.adoc</code> file</p>
+</li>
+<li>
+<p>&#x274F; Update the <code>CHANGES.adoc</code> file (add release date)</p>
 </li>
 <li>
 <p>&#x274F; Create/push the tag of the new version number</p>
@@ -552,7 +683,7 @@ valid sem-ver version number <code>major.minor.patch</code>.</p>
 
             
                 
-                <a href="functionality/14_scheduling_util.html" class="navigation navigation-prev " aria-label="Previous page: Scheduling Util">
+                <a href="functionality/15_scheduling_util.html" class="navigation navigation-prev " aria-label="Previous page: Scheduling Util">
                     <i class="fa fa-angle-left"></i>
                 </a>
                 
@@ -568,7 +699,7 @@ valid sem-ver version number <code>major.minor.patch</code>.</p>
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"Development on Xtensions","level":"1.4","depth":1,"next":{"title":"Contributing","level":"1.4.1","depth":2,"path":"CONTRIBUTING.adoc","ref":"CONTRIBUTING.adoc","articles":[]},"previous":{"title":"Scheduling Util","level":"1.3.14","depth":2,"path":"docs/functionality/14_scheduling_util.adoc","ref":"./docs/functionality/14_scheduling_util.adoc","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["asciidoc-include@0.1.9"],"pluginsConfig":{"asciidoc-include":{"syntax":"gitbook"},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"docs/development.adoc","mtime":"2018-03-06T15:08:49.280Z","type":"asciidoc"},"gitbook":{"version":"3.2.3","time":"2018-03-06T15:10:09.736Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"Development on Xtensions","level":"1.4","depth":1,"next":{"title":"Contributing","level":"1.4.1","depth":2,"path":"CONTRIBUTING.adoc","ref":"CONTRIBUTING.adoc","articles":[]},"previous":{"title":"Scheduling Util","level":"1.3.15","depth":2,"path":"docs/functionality/15_scheduling_util.adoc","ref":"./docs/functionality/15_scheduling_util.adoc","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["asciidoc-include@0.1.9"],"pluginsConfig":{"asciidoc-include":{"syntax":"gitbook"},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"docs/development.adoc","mtime":"2018-07-24T08:13:34.679Z","type":"asciidoc"},"gitbook":{"version":"3.2.3","time":"2018-07-24T08:31:54.442Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>

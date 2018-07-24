@@ -4,7 +4,7 @@
     <head>
         <meta charset="UTF-8">
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
-        <title>Extensions to Functions · GitBook</title>
+        <title>Extensions to PrimitiveIterators · GitBook</title>
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="description" content="">
         <meta name="generator" content="GitBook 3.2.3">
@@ -57,10 +57,10 @@
     <link rel="shortcut icon" href="../../gitbook/images/favicon.ico" type="image/x-icon">
 
     
-    <link rel="next" href="12_completable_future.html" />
+    <link rel="next" href="10_strings.html" />
     
     
-    <link rel="prev" href="10_duration.html" />
+    <link rel="prev" href="08_primitive_iterables.html" />
     
 
     </head>
@@ -207,12 +207,12 @@
             
         </li>
     
-        <li class="chapter " data-level="1.3.7" data-path="07_primitive_iterators.html">
+        <li class="chapter " data-level="1.3.7" data-path="07_iterator.html">
             
-                <a href="07_primitive_iterators.html">
+                <a href="07_iterator.html">
             
                     
-                    Extensions to PrimitiveIterators
+                    Extensions to Iterator
             
                 </a>
             
@@ -233,9 +233,22 @@
             
         </li>
     
-        <li class="chapter " data-level="1.3.9" data-path="09_strings.html">
+        <li class="chapter active" data-level="1.3.9" data-path="09_primitive_iterators.html">
             
-                <a href="09_strings.html">
+                <a href="09_primitive_iterators.html">
+            
+                    
+                    Extensions to PrimitiveIterators
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.10" data-path="10_strings.html">
+            
+                <a href="10_strings.html">
             
                     
                     Extensions to Strings
@@ -246,9 +259,9 @@
             
         </li>
     
-        <li class="chapter " data-level="1.3.10" data-path="10_duration.html">
+        <li class="chapter " data-level="1.3.11" data-path="11_duration.html">
             
-                <a href="10_duration.html">
+                <a href="11_duration.html">
             
                     
                     Extensions to Duration
@@ -259,9 +272,9 @@
             
         </li>
     
-        <li class="chapter active" data-level="1.3.11" data-path="11_functions.html">
+        <li class="chapter " data-level="1.3.12" data-path="12_functions.html">
             
-                <a href="11_functions.html">
+                <a href="12_functions.html">
             
                     
                     Extensions to Functions
@@ -272,9 +285,9 @@
             
         </li>
     
-        <li class="chapter " data-level="1.3.12" data-path="12_completable_future.html">
+        <li class="chapter " data-level="1.3.13" data-path="13_completable_future.html">
             
-                <a href="12_completable_future.html">
+                <a href="13_completable_future.html">
             
                     
                     Extensions to CompletableFuture
@@ -285,9 +298,9 @@
             
         </li>
     
-        <li class="chapter " data-level="1.3.13" data-path="13_async_computations.html">
+        <li class="chapter " data-level="1.3.14" data-path="14_async_computations.html">
             
-                <a href="13_async_computations.html">
+                <a href="14_async_computations.html">
             
                     
                     Async Computations
@@ -298,9 +311,9 @@
             
         </li>
     
-        <li class="chapter " data-level="1.3.14" data-path="14_scheduling_util.html">
+        <li class="chapter " data-level="1.3.15" data-path="15_scheduling_util.html">
             
-                <a href="14_scheduling_util.html">
+                <a href="15_scheduling_util.html">
             
                     
                     Scheduling Util
@@ -424,7 +437,7 @@
     <!-- Title -->
     <h1>
         <i class="fa fa-circle-o-notch fa-spin"></i>
-        <a href="../.." >Extensions to Functions</a>
+        <a href="../.." >Extensions to PrimitiveIterators</a>
     </h1>
 </div>
 
@@ -440,133 +453,36 @@
                                 <section class="normal markdown-section">
                                 
                                 <div class="sect1">
-<h2 id="_extensions_to_functions">Extensions to Functions</h2>
+<h2 id="_extensions_to_primitiveiterators">Extensions to PrimitiveIterators</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Xtend provides own functional interfaces in the
-<a href="http://javadoc.io/page/org.eclipse.xtext/org.eclipse.xtext.xbase.lib/latest/org/eclipse/xtext/xbase/lib/Functions.html" target="_blank"><code>org.eclipse.xtext.xbase.lib.Functions</code></a>
-Interface. These are used all over the Xtend standard library and they allow a compact declaration syntax, e.g. the type
-<code>Function1&lt;? super String,? extends String&gt;</code> can be written as <code>(String)&#x21D2;String</code>.
-Extensions to Xtends functional interfaces are provided in <code>de.fhg.fokus.xtensions.function.FunctionExtensions</code>.</p>
+<p>The primitive iterators defined in the JDK as sub-interfaces of <code>java.util.PrimitiveIterator</code>
+do not provide combinators like the ones provided by Xtend. These combinators, however, do take some
+efforts to implement. Instread, this library provides the class
+<code>de.fhg.fokus.xtensions.iteration.PrimitiveIteratorExtensions</code> provides methods to
+create primitive streams (from <code>java.util.stream</code>) for the remaining elements of a given iterator via the
+extension methods <code>streamRemaining</code> or <code>parallelStreamRemaining</code>. Note that the method <code>streamRemaining</code>
+does <strong>not</strong> guarantee that the elements provided by the returned stream are actually taken from the originating
+iterator. If the underlying iterator implementation is known, the framework may construct a stream that may have
+better characteristics in some way. If elements should actually be removed from the originating iterator, the
+<code>streamRemainingExhaustive</code> method can be used.</p>
 </div>
 <div class="paragraph">
-<p>This library&#x2019;s <code>FunctionExtensions</code> provides another overload of the method <code>andThen</code> which allows composition of a
-<code>()&#x21D2;T</code> function with a <code>(T)&#x21D2;U</code> function, resulting in a composed <code>()&#x21D2;U</code> function.</p>
-</div>
-<div class="paragraph">
-<p>Example:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code class="language-xtend" data-lang="xtend">import static extension de.fhg.fokus.xtensions.function.FunctionExtensions.*
-import java.time.LocalDate
-// ...
-val ()=&gt;LocalDate inOneYear = [LocalDate.now.plusYears(1)]
-val (LocalDate)=&gt;String yearString = [it.year.toString]
-val ()=&gt;String nextYear = inOneYear.andThen(yearString)
-println(nextYear.apply)</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Inspired by the <code>|&gt;</code> operator of F# and Elixir, this library introduces the <code>&gt;&gt;&gt;</code> operator,
-which can be seen as a &quot;pipe through&quot; operator. It takes the value of the left hand side and
-calls the function on the right hand side with the value. This means that</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code class="language-xtend" data-lang="xtend">val (X)=&gt;Y f = ...
-val X x = ...
-x &gt;&gt;&gt; f
-// equal to
-f.apply(x)</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>This is especially handy when having to call several functions in a row,
-so <code>a.apply(b.apply(x))</code> can be written as <code>x &gt;&gt;&gt; b &gt;&gt;&gt; a</code>.
-It can also be useful to transforming transform the value returned by a method call
-before assigning it to a final variable without having to define a separate method.
-It can also be used like the <code>&#x21D2;</code> operator (to have a value as a context value <code>it</code>)
-just with a different return value.</p>
+<p>To create a summary object providing the minimum value, maximum value, average value, sum value, and count of elements,
+the <code>PrimitiveIteratorExtensions</code> class provides a <code>summarize</code> function for all three primitive iterators.</p>
 </div>
 <div class="paragraph">
 <p>Example:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-xtend" data-lang="xtend">import static extension de.fhg.fokus.xtensions.function.FunctionExtensions.*
-import java.nio.file.Paths
-// ...
-val path = System.getProperty(&quot;user.home&quot;) &gt;&gt;&gt; [Paths.get(it)]
-println(path.parent)</code></pre>
+<pre class="highlight"><code class="language-xtend" data-lang="xtend">val range = 1..100
+val summary = range.intIterator.summarize
+println(&apos;&apos;&apos;Sum of elements in range [&#xAB;range.start&#xBB;..&#xAB;range.end&#xBB;] is &#xAB;summary.sum&#xBB;&apos;&apos;&apos;)</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>The <code>&gt;&gt;&gt;</code> operator is overloaded to also destructure a <code>Pair</code> value into <code>key</code> and <code>value</code> on call.
-This means that the left hand side of the operator must be evaluated to a value of type Pair and the
-right hand side of the operator must be a function with two parameters of the types of key and value of
-the Pair <code>(K,V)&#x21D2;Y</code>.</p>
-</div>
-<div class="paragraph">
-<p>Example:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code class="language-xtend" data-lang="xtend">import static extension de.fhg.fokus.xtensions.function.FunctionExtensions.*
-// ...
-val list = #[&quot;foo&quot;, &quot;bar&quot;, &quot;foo&quot;, &quot;baz&quot;, &quot;foo&quot;, &quot;bar&quot;]
-list.splitHead
-	&gt;&gt;&gt; [head,tail| head -&gt; tail.toSet.size]
-	&gt;&gt;&gt; [head,remaining| &apos;&apos;&apos;Head: &quot;&#xAB;head&#xBB;&quot;, remaining: &#xAB;remaining&#xBB; unique elements&apos;&apos;&apos;]
-	&gt;&gt;&gt; [println(it)]
-
-// ...
-
-def &lt;T&gt; Pair&lt;T,Iterable&lt;T&gt;&gt; splitHead(Iterable&lt;T&gt; elements) {
-	elements.head -&gt; elements.tail
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>To compose functions, the shortcut operators <code>&gt;&gt;</code> for <code>andThen</code> and <code>&lt;&lt;</code> for <code>compose</code>
-were introduced.</p>
-</div>
-<div class="paragraph">
-<p>Example:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code class="language-xtend" data-lang="xtend">import static extension de.fhg.fokus.xtensions.function.FunctionExtensions.*
-import java.time.LocalDate
-// ...
-val (LocalDate)=&gt;LocalDate oneYearLater = [it.plusYears(1)]
-val (LocalDate)=&gt;String yearString = [it.year.toString]
-
-val (LocalDate)=&gt;String yearAfter = oneYearLater &gt;&gt; yearString
-
-LocalDate.now &gt;&gt;&gt; yearAfter &gt;&gt;&gt; [println(it)]</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>When working with the Xtend extension methods on <code>Iterator</code> and <code>Iterable</code> sometimes
-<code>(X)&#x21D2;Boolean</code> types are needed, e.g. for the <code>exists</code> and <code>filter</code> combinator.
-Unfortunately the Xtend boolean functions do not have the composition functions as the
-Java 8 <code>java.util.function.Predicate</code> interface. This library&#x2019;s <code>FunctionExtensions</code>
-class does provides the equivalent methods <code>and</code>, <code>or</code>, and <code>negate</code>.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code class="language-xtend" data-lang="xtend">import static extension de.fhg.fokus.xtensions.function.FunctionExtensions.*
-// ...
-val (String)=&gt;boolean notThere = [it.nullOrEmpty]
-val (String)=&gt;boolean tooShort = [it.length &lt; 3]
-val (String)=&gt;boolean valid = notThere.or(tooShort).negate
-#[&quot;ay&quot;, &quot;caramba&quot;, null, &quot;we&quot;, &quot;fools&quot;]
-	.filter(valid)
-	.forEach[
-		println(it)
-	]</code></pre>
-</div>
+<p>Tip: If you want to know more about the extension methods available on <code>IntegerRange</code>, have a look at chapter <a href="02_ranges.html">Extensions to IntegerRange</a></p>
 </div>
 <div class="admonitionblock tip">
 <table>
@@ -581,7 +497,7 @@ val (String)=&gt;boolean valid = notThere.or(tooShort).negate
 <div class="ulist">
 <ul>
 <li>
-<p><a href="https://javadoc.io/page/com.github.fraunhoferfokus.xtensions/de.fhg.fokus.xtensions/latest/de/fhg/fokus/xtensions/function/FunctionExtensions.html" target="_blank">FunctionExtensions</a></p>
+<p><a href="https://javadoc.io/page/com.github.fraunhoferfokus.xtensions/de.fhg.fokus.xtensions/latest/de/fhg/fokus/xtensions/iteration/PrimitiveIteratorExtensions.html" target="_blank">PrimitiveIteratorExtensions</a></p>
 </li>
 </ul>
 </div>
@@ -617,12 +533,12 @@ val (String)=&gt;boolean valid = notThere.or(tooShort).negate
 
             
                 
-                <a href="10_duration.html" class="navigation navigation-prev " aria-label="Previous page: Extensions to Duration">
+                <a href="08_primitive_iterables.html" class="navigation navigation-prev " aria-label="Previous page: Primitive Iterables">
                     <i class="fa fa-angle-left"></i>
                 </a>
                 
                 
-                <a href="12_completable_future.html" class="navigation navigation-next " aria-label="Next page: Extensions to CompletableFuture">
+                <a href="10_strings.html" class="navigation navigation-next " aria-label="Next page: Extensions to Strings">
                     <i class="fa fa-angle-right"></i>
                 </a>
                 
@@ -633,7 +549,7 @@ val (String)=&gt;boolean valid = notThere.or(tooShort).negate
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"Extensions to Functions","level":"1.3.11","depth":2,"next":{"title":"Extensions to CompletableFuture","level":"1.3.12","depth":2,"path":"docs/functionality/12_completable_future.adoc","ref":"./docs/functionality/12_completable_future.adoc","articles":[]},"previous":{"title":"Extensions to Duration","level":"1.3.10","depth":2,"path":"docs/functionality/10_duration.adoc","ref":"./docs/functionality/10_duration.adoc","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["asciidoc-include@0.1.9"],"pluginsConfig":{"asciidoc-include":{"syntax":"gitbook"},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"docs/functionality/11_functions.adoc","mtime":"2018-03-06T15:08:49.280Z","type":"asciidoc"},"gitbook":{"version":"3.2.3","time":"2018-03-06T15:10:09.736Z"},"basePath":"../..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"Extensions to PrimitiveIterators","level":"1.3.9","depth":2,"next":{"title":"Extensions to Strings","level":"1.3.10","depth":2,"path":"docs/functionality/10_strings.adoc","ref":"./docs/functionality/10_strings.adoc","articles":[]},"previous":{"title":"Primitive Iterables","level":"1.3.8","depth":2,"path":"docs/functionality/08_primitive_iterables.adoc","ref":"./docs/functionality/08_primitive_iterables.adoc","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["asciidoc-include@0.1.9"],"pluginsConfig":{"asciidoc-include":{"syntax":"gitbook"},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"docs/functionality/09_primitive_iterators.adoc","mtime":"2018-07-24T08:13:34.694Z","type":"asciidoc"},"gitbook":{"version":"3.2.3","time":"2018-07-24T08:31:54.442Z"},"basePath":"../..","book":{"language":""}});
         });
     </script>
 </div>

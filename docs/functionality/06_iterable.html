@@ -57,7 +57,7 @@
     <link rel="shortcut icon" href="../../gitbook/images/favicon.ico" type="image/x-icon">
 
     
-    <link rel="next" href="07_primitive_iterators.html" />
+    <link rel="next" href="07_iterator.html" />
     
     
     <link rel="prev" href="05_streams.html" />
@@ -207,12 +207,12 @@
             
         </li>
     
-        <li class="chapter " data-level="1.3.7" data-path="07_primitive_iterators.html">
+        <li class="chapter " data-level="1.3.7" data-path="07_iterator.html">
             
-                <a href="07_primitive_iterators.html">
+                <a href="07_iterator.html">
             
                     
-                    Extensions to PrimitiveIterators
+                    Extensions to Iterator
             
                 </a>
             
@@ -233,9 +233,22 @@
             
         </li>
     
-        <li class="chapter " data-level="1.3.9" data-path="09_strings.html">
+        <li class="chapter " data-level="1.3.9" data-path="09_primitive_iterators.html">
             
-                <a href="09_strings.html">
+                <a href="09_primitive_iterators.html">
+            
+                    
+                    Extensions to PrimitiveIterators
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.10" data-path="10_strings.html">
+            
+                <a href="10_strings.html">
             
                     
                     Extensions to Strings
@@ -246,9 +259,9 @@
             
         </li>
     
-        <li class="chapter " data-level="1.3.10" data-path="10_duration.html">
+        <li class="chapter " data-level="1.3.11" data-path="11_duration.html">
             
-                <a href="10_duration.html">
+                <a href="11_duration.html">
             
                     
                     Extensions to Duration
@@ -259,9 +272,9 @@
             
         </li>
     
-        <li class="chapter " data-level="1.3.11" data-path="11_functions.html">
+        <li class="chapter " data-level="1.3.12" data-path="12_functions.html">
             
-                <a href="11_functions.html">
+                <a href="12_functions.html">
             
                     
                     Extensions to Functions
@@ -272,9 +285,9 @@
             
         </li>
     
-        <li class="chapter " data-level="1.3.12" data-path="12_completable_future.html">
+        <li class="chapter " data-level="1.3.13" data-path="13_completable_future.html">
             
-                <a href="12_completable_future.html">
+                <a href="13_completable_future.html">
             
                     
                     Extensions to CompletableFuture
@@ -285,9 +298,9 @@
             
         </li>
     
-        <li class="chapter " data-level="1.3.13" data-path="13_async_computations.html">
+        <li class="chapter " data-level="1.3.14" data-path="14_async_computations.html">
             
-                <a href="13_async_computations.html">
+                <a href="14_async_computations.html">
             
                     
                     Async Computations
@@ -298,9 +311,9 @@
             
         </li>
     
-        <li class="chapter " data-level="1.3.14" data-path="14_scheduling_util.html">
+        <li class="chapter " data-level="1.3.15" data-path="15_scheduling_util.html">
             
-                <a href="14_scheduling_util.html">
+                <a href="15_scheduling_util.html">
             
                     
                     Scheduling Util
@@ -512,6 +525,143 @@ println(&quot;Average length: &quot; + summary.average)
 println(&quot;Max length: &quot; + summary.max)</code></pre>
 </div>
 </div>
+<div class="paragraph">
+<p>A fairly common task in Model-to-Model transformations is to find objects of one type that are not referenced by
+some other objects. This is usually done by navigation over all elements in a model, finding all elements of both
+types and then finding the elements that are actually not referenced. This is typically done by traversing the
+complete model twice to find the elements of both types. This can be an expensive operation if the input model
+is large. The solution is to traverse the model just once and group the elements according to their type.</p>
+</div>
+<div class="paragraph">
+<p>This library provides a method allowing exactly this. The method <code>groupIntoListBy</code> and <code>groupIntoSetBy</code>
+groups elements of an iterable by their type.</p>
+</div>
+<div class="paragraph">
+<p>Example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-xtend" data-lang="xtend">val foo = &quot;foo&quot;
+val bar = &quot;bar&quot;
+val baz = &quot;baz&quot;
+val traverseMe = #[foo, #[bar], baz, #[foo], bar]
+val groups = traverseMe.groupIntoSetBy(String, List)
+
+val Set&lt;String&gt; strings = groups.get(String)
+val Set&lt;List&gt; lists = groups.get(List)
+val inNoList = strings
+	.filter[str|
+		!lists.exists[it.contains(str)]
+	].toList
+println(&quot;Elements contained in no list: &quot; + inNoList)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>To exclude elements of one <code>Iterable</code> from another, the method <code>withoutAll</code> can be used.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-xtend" data-lang="xtend">val s = #[&quot;I&quot;, &quot;boo&quot;, &quot;pity&quot;, &quot;char&quot;, &quot;the&quot;, &quot;fool&quot;]
+	.withoutAll(#{&quot;boo&quot;, &quot;char&quot;})
+	.join(&quot; &quot;)
+println(s)</code></pre>
+</div>
+</div>
+<div class="admonitionblock caution">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Caution</div>
+</td>
+<td class="content">
+Performance of <code>withoutAll</code> is best when using an appropriate <code>java.util.Set</code>, such as <code>HashSet</code> for the elements to exclude.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>To partition the elements of an <code>Iterable</code> based on a predicate or the class (elements are tested to be instance of) into two parts:
+selected and rejected. The selected part will contain the elements for which the predicate evaluates to <code>true</code> or elements are instance
+of the given partitioning class. The rejected part will contain the other elements.</p>
+</div>
+<div class="paragraph">
+<p>Example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-xtend" data-lang="xtend">import static extension de.fhg.fokus.xtensions.iteration.IterableExtensions.*
+// ...
+val char[] chars = #[0x0020 as char, 0x0034 as char]
+val List&lt;CharSequence&gt; list = #[
+	&quot;Hello&quot;,
+	new StringBuilder().append(chars),
+	&quot;Xtend&quot;,
+	new StringBuilder().append(0x0032 as char)
+]
+list.partitionBy(String) =&gt; [
+	println(&apos;&apos;&apos;Selected: &quot;&#xAB;selected.join(&quot; &quot;)&#xBB;&quot;&apos;&apos;&apos;)
+	println(&apos;&apos;&apos;Rejected: &quot;&#xAB;rejected.join(&quot;&quot;)&#xBB;&quot;&apos;&apos;&apos;)
+]</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>For both versions of the <code>partitionBy</code> method there exist overloads that take instances of <a href="https://docs.oracle.com/javase/8/docs/api/java/util/stream/Collector.html" target="_blank"><code>Collector</code></a>.</p>
+</div>
+<div class="paragraph">
+<p>Example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-xtend" data-lang="xtend">import static extension de.fhg.fokus.xtensions.iteration.IterableExtensions.*
+import static java.util.stream.Collectors.*
+import java.util.Set
+import java.util.List
+// ...
+val list = #[&quot;foo&quot;, &quot;bla&quot;, &quot;foo&quot;, &quot;hui&quot;, &quot;fun&quot;]
+val partition = list.partitionBy([startsWith(&quot;f&quot;)], toSet, toList)
+val Set&lt;String&gt; selected = partition.selected
+val List&lt;String&gt; rejected = partition.rejected
+println(&quot;Unique words starting with &apos;f&apos; : &quot; + selected.join(&quot;, &quot;))
+println(&quot;Other words: &quot; + rejected.join(&quot;, &quot;))</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Note that the <a href="https://docs.oracle.com/javase/8/docs/api/java/util/stream/Collectors.html#partitioningBy-java.util.function.Predicate-" target="_blank"><code>Collectors#partitioningBy</code></a> Collector from the JDK aggregates into a <code>Map&lt;Boolean,List&lt;T&gt;&gt;</code> where <code>T</code> is the type of the elements in a collected stream. Another <a href="https://docs.oracle.com/javase/8/docs/api/java/util/stream/Collectors.html#partitioningBy-java.util.function.Predicate-java.util.stream.Collector-" target="_blank"><code>partitioningBy</code></a> overload from <code>Collectors</code> aggregates the map values and returns a <code>Map&lt;Boolean,D&gt;</code> where <code>D</code> is the aggregation of a &quot;downstream&quot; <code>Collector</code>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-xtend" data-lang="xtend">val list = #[&quot;foo&quot;, &quot;bla&quot;, &quot;foo&quot;, &quot;hui&quot;, &quot;fun&quot;]
+val partition = list.partitionBy([startsWith(&quot;f&quot;)], Collectors::toSet, Collectors::toList)
+val Set&lt;String&gt; selected = partition.selected
+val List&lt;String&gt; rejected = partition.rejected
+println(&quot;Unique words starting with &apos;f&apos; : &quot; + selected.join(&quot;, &quot;))
+println(&quot;Other words: &quot; + rejected.join(&quot;, &quot;))</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>To allow a similar workflow to the JDK version, for the <code>Partition</code> of this library a <code>asMap</code> extension method is provided
+for <code>Partitions</code> having the same type for the selected and rejected part. The other way around an extension method is provided
+to wrap a <code>Map&lt;Boolean,X&gt;</code> into a <code>Partition&lt;X,X&gt;</code>.</p>
+</div>
+<div class="paragraph">
+<p>To add elements from an <code>Iterable</code> to one or more collections, the <code>into</code> extension method is provided by the class <code>IterableExtensions</code>.</p>
+</div>
+<div class="paragraph">
+<p>Example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-xtend" data-lang="xtend">val namesWithB = newArrayList(&quot;Barbara&quot;, &quot;Bob&quot;, &quot;Brian&quot;)
+val newNames = #[&quot;Justin&quot;, &quot;Anna&quot;, &quot;Bruce&quot;, &quot;Chris&quot;, &quot;Becky&quot;]
+newNames
+	.filter[it.toFirstLower.startsWith(&quot;b&quot;)]
+	.into(namesWithB)
+
+namesWithB.forEach[
+	println(it)
+]</code></pre>
+</div>
+</div>
 <div class="admonitionblock tip">
 <table>
 <tr>
@@ -566,7 +716,7 @@ println(&quot;Max length: &quot; + summary.max)</code></pre>
                 </a>
                 
                 
-                <a href="07_primitive_iterators.html" class="navigation navigation-next " aria-label="Next page: Extensions to PrimitiveIterators">
+                <a href="07_iterator.html" class="navigation navigation-next " aria-label="Next page: Extensions to Iterator">
                     <i class="fa fa-angle-right"></i>
                 </a>
                 
@@ -577,7 +727,7 @@ println(&quot;Max length: &quot; + summary.max)</code></pre>
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"Extensions to Iterable","level":"1.3.6","depth":2,"next":{"title":"Extensions to PrimitiveIterators","level":"1.3.7","depth":2,"path":"docs/functionality/07_primitive_iterators.adoc","ref":"./docs/functionality/07_primitive_iterators.adoc","articles":[]},"previous":{"title":"Extensions to Streams","level":"1.3.5","depth":2,"path":"docs/functionality/05_streams.adoc","ref":"./docs/functionality/05_streams.adoc","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["asciidoc-include@0.1.9"],"pluginsConfig":{"asciidoc-include":{"syntax":"gitbook"},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"docs/functionality/06_iterable.adoc","mtime":"2018-03-06T15:08:49.280Z","type":"asciidoc"},"gitbook":{"version":"3.2.3","time":"2018-03-06T15:10:09.736Z"},"basePath":"../..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"Extensions to Iterable","level":"1.3.6","depth":2,"next":{"title":"Extensions to Iterator","level":"1.3.7","depth":2,"path":"docs/functionality/07_iterator.adoc","ref":"./docs/functionality/07_iterator.adoc","articles":[]},"previous":{"title":"Extensions to Streams","level":"1.3.5","depth":2,"path":"docs/functionality/05_streams.adoc","ref":"./docs/functionality/05_streams.adoc","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["asciidoc-include@0.1.9"],"pluginsConfig":{"asciidoc-include":{"syntax":"gitbook"},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"docs/functionality/06_iterable.adoc","mtime":"2018-07-24T08:13:34.690Z","type":"asciidoc"},"gitbook":{"version":"3.2.3","time":"2018-07-24T08:31:54.442Z"},"basePath":"../..","book":{"language":""}});
         });
     </script>
 </div>

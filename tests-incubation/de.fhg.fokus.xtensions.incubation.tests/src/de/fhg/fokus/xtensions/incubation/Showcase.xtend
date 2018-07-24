@@ -1,9 +1,19 @@
 package de.fhg.fokus.xtensions.incubation
 
-import static extension de.fhg.fokus.xtensions.incubation.iteration.Loop.*
-import static extension de.fhg.fokus.xtensions.incubation.iteration.IteratorExtensions.*
-import org.junit.Test
+import de.fhg.fokus.xtensions.incubation.exceptions.Try.Empty
+import de.fhg.fokus.xtensions.incubation.exceptions.Try.Failure
+import de.fhg.fokus.xtensions.incubation.exceptions.Try.Success
+import de.fhg.fokus.xtensions.incubation.function.Bounce
+import de.fhg.fokus.xtensions.incubation.function.Trampoline
 import de.fhg.fokus.xtensions.incubation.showcase.Person
+import java.math.BigInteger
+import org.junit.Test
+
+import static de.fhg.fokus.xtensions.incubation.exceptions.Try.*
+import static de.fhg.fokus.xtensions.incubation.function.Recursion.*
+import static de.fhg.fokus.xtensions.incubation.iteration.Loop.*
+
+import static extension de.fhg.fokus.xtensions.incubation.iteration.IteratorExtensions.*
 
 class Showcase {
 	
@@ -64,6 +74,66 @@ class Showcase {
 		println(julius.name)
 	}
 	
+	@Test 
+	def void demoRecursiveLambda() {
+		val (long)=>long factorial = recursive [it,n |
+			if(n == 0) {
+				1L
+			} else {
+				n * apply(n-1)
+			}
+		]
+		
+		val x = 5000L // try changing this to 5000: every now and then StackOverFlowException
+		println('''Factorial of «x» = «factorial.apply(x)»''')
+	}
+	
+	@Test
+	def void demoTailrecLambda() {
+		val factorialTailrec = tailrec [it, BigInteger n , BigInteger acc|
+			if(n == BigInteger.ZERO) {
+				result(acc)
+			} else {
+				apply(n - BigInteger.ONE, n * acc)
+			}
+		]
+		val factorial = [long n| factorialTailrec.apply(BigInteger.valueOf(n), BigInteger.ONE)]
+		
+		val x = 5000L
+	    val result = factorial.apply(x)
+	    val resultStr = String.format("%,d",result)
+		println('''Factorial of «x» = «resultStr»''')
+	}
+	
+	@Test
+	def void demoTrampoline() {
+		val first = 99
+		val firstResult = Trampoline.jump[even(first)]
+		println('''«first» is «firstResult»''')
+
+		val second = 104
+		val secondResult = Trampoline.jump[even(second)]
+		println('''«second» is «secondResult»''')
+	}
+	
+	enum Parity {EVEN, ODD}
+	
+	static def Bounce even(Trampoline<Parity> it, int value) {
+		if(value == 0) {
+			result(Parity.EVEN)
+		} else {
+			call[odd(value - 1)]
+		}
+	}
+	
+	static def Bounce odd(Trampoline<Parity> it, int value) {
+		if(value == 0) {
+			result(Parity.ODD)
+		} else {
+			call[even(value - 1)]
+		}
+	}
+	
 	@Test
 	def void demoLoop() {
 		
@@ -88,5 +158,33 @@ class Showcase {
 			else 
 				filter
 		].forEach [println(it)]
+	}
+	
+	@Test def void demoTry() {
+		val s = "123L"
+		val l = doTry [
+			Long.valueOf(s)
+		].recoverFailure(NullPointerException,NumberFormatException) [
+			it.printStackTrace;
+			-1L
+		].recover(0L)
+		println(l)
+		
+		
+		val String foo = System.getenv("Foo")
+		val t = doTry[
+			if(foo === null) {
+				null
+			} else {
+				foo.charAt(5)
+			}
+		]
+		val result = switch(t) {
+			Success<Character>: "Character 6 is " + t.get
+			Empty<Character>: "No input string"
+			Failure<Character> case t.is(IndexOutOfBoundsException): "Too few characters"
+			Failure<Character>: "Problem occurred: " + t.get.message
+		}
+		println(result)
 	}
 }

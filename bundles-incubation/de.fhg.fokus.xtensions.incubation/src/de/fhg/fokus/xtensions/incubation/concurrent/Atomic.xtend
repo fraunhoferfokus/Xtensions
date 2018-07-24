@@ -27,7 +27,7 @@ annotation AtomicAccessors {
 	AtomicUpdateOperations[] operations = #[GET_AND_SET, GET_AND_UPDATE, UPDATE_AND_GET, WEAK_COMPARE_AND_SET, COMPARE_AND_SET, LAZY_SET]
 }
 
-public enum AtomicUpdateOperations {
+enum AtomicUpdateOperations {
 	GET_AND_SET,
 	GET_AND_UPDATE,
 	UPDATE_AND_GET,
@@ -36,7 +36,7 @@ public enum AtomicUpdateOperations {
 	LAZY_SET
 }
 
-public class AtomicProcessor  implements TransformationParticipant<MutableMemberDeclaration> {
+class AtomicProcessor  implements TransformationParticipant<MutableMemberDeclaration> {
 	
 	override doTransform(List<? extends MutableMemberDeclaration> annotatedTargetElements, extension TransformationContext context) {
 		throw new UnsupportedOperationException("TODO: auto-generated method stub")

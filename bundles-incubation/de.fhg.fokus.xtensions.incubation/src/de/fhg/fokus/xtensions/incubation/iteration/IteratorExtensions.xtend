@@ -1,11 +1,7 @@
 package de.fhg.fokus.xtensions.incubation.iteration
 
-import java.util.stream.Stream
-import java.util.Iterator
-import java.util.stream.StreamSupport
-import java.util.Spliterator
-import java.util.Spliterators
 import com.google.common.collect.AbstractIterator
+import java.util.Iterator
 import java.util.function.Predicate
 
 /**
@@ -21,14 +17,6 @@ class IteratorExtensions {
 	// TODO filter2(Predicate<T>), exists2(Predicate<T>), dropWhile2(Predicate<T>), takeWhile2(Predicate<T>), Optional<T> findLast2(Predicate<T>), forall2(Predicate<T>)
 	// TODO all of the above for Iterable
 	// TODO mapInt, mapLong, mapDouble
-	
-	/**
-	 * Creates a Java 8 stream of all remaining elements provided by the {@code iterator}.
-	 */
-	public static def <T> Stream<T> streamRemaining(Iterator<T> iterator) {
-		val spliterator = Spliterators.spliteratorUnknownSize(iterator, Spliterator.ORDERED)
-		StreamSupport.stream(spliterator,false);
-	}
 	
 	// TODO create same for Iterable
 	/**
@@ -54,14 +42,15 @@ class IteratorExtensions {
 	 * @param filterMapper
 	 * @return
 	 */
-	public static def <T,U> Iterator<U> filterOrMap(Iterator<T> iterator, (FilterOrMap<T,U>)=>FilterOrMapResult<U> filterMapper) {
+	static def <T, U> Iterator<U> filterOrMap(Iterator<T> iterator,
+		(FilterOrMap<T, U>)=>FilterOrMapResult<U> filterMapper) {
 		val result = new AbstractIterator<U> {
 
-			val context = new FilterOrMap<T,U>
+			val context = new FilterOrMap<T, U>
 			val result = context.result
-			
+
 			override protected computeNext() {
-				while(iterator.hasNext) {
+				while (iterator.hasNext) {
 					// work on stack references
 					val context = this.context
 					// reset context for next filterMapper call
@@ -72,46 +61,34 @@ class IteratorExtensions {
 					]
 					var ret = filterMapper.apply(context)
 					// if element not filtered, provide mapped value as next element
-					if(!ret.filter) {
+					if (!ret.filter) {
 						return ret.mapped
 					} // else continue in loop with next element
 				}
 				endOfData
 			}
-			
+
 		}
 		result
 	}
 	
-	public static def <Y,T extends Y> Iterator<Y> mapIf(Iterator<T> iterator, Predicate<T> test, (T)=>Y mapper) {
+	static def <Y, T extends Y> Iterator<Y> mapIf(Iterator<T> iterator, Predicate<T> test, (T)=>Y mapper) {
 		new Iterator<Y>() {
-			
+
 			override hasNext() {
 				iterator.hasNext
 			}
-			
+
 			override next() {
 				val current = iterator.next
-				if(test.test(current)) {
+				if (test.test(current)) {
 					mapper.apply(current)
 				} else {
 					current
 				}
 			}
-			
-		}
-	}
 
-	private static def <T,U> Iterator<U> nextIterator(Iterator<T> iterator, (T)=>Iterator<U> mapper) {
-		while(iterator.hasNext) {
-			val nextEl = iterator.next
-			val nextIt = mapper.apply(nextEl)
-			if(nextIt !== null && nextIt.hasNext) {
-				return nextIt
-			}
 		}
-		// no further iterator found
-		null
 	}
 	
 	/**
@@ -121,15 +98,15 @@ class IteratorExtensions {
 	 * 	<li>{@link FilterOrMap#mapTo(Object)}</li>
 	 * </ul>
 	 */
-	public static class FilterOrMapResult<U> {
-		private var U mapped
-		private var filter = false
+	static class FilterOrMapResult<U> {
+		var U mapped
+		var filter = false
 		private new(){}
 	}
 	
-	public static class FilterOrMap<T,U> {
-		private var T current
-		private val result = new FilterOrMapResult<U>
+	 static class FilterOrMap<T,U> {
+		var T current
+		val result = new FilterOrMapResult<U>
 		private new(){}
 		
 		/**

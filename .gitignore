@@ -1,2 +1,5 @@
 target/
 bin/
+.polyglot.build.properties
+/_book
+/node_modules

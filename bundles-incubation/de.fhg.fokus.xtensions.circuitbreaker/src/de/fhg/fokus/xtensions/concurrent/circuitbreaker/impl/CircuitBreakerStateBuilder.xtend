@@ -43,7 +43,7 @@ final class CircuitBreakerStateBuilder implements Cloneable {
 	/**
 	 * Creates new new instance of CircuitBreakerStateBuilder.
 	 */
-	public static def create() {
+	static def create() {
 		new CircuitBreakerStateBuilder
 	}
 
@@ -56,7 +56,7 @@ final class CircuitBreakerStateBuilder implements Cloneable {
 	 *  will be selected
 	 * @return new CircuitBreakerStateBuilder with changed option
 	 */
-	public def CircuitBreakerStateBuilder name(String name) {
+	def CircuitBreakerStateBuilder name(String name) {
 		val result = this.clone
 		result.name = name
 		result
@@ -310,7 +310,7 @@ final class CircuitBreakerStateBuilder implements Cloneable {
  * registered to be notified about internal changes of a CircuitBreaker instance.
  * This can e.g. be used for logging purposes.
  */
-public interface CircuitBreakerStateSwitchListener {
+interface CircuitBreakerStateSwitchListener {
 
 	/**
 	 * Will be called on switch to open state, if registered on CircuitBreakerState (by setting on

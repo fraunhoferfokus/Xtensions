@@ -77,7 +77,7 @@ class ImmutableProcessor implements TransformationParticipant<MutableMemberDecla
 		}
 	}
 
-	public static class Util {
+	 static class Util {
 		extension TransformationContext context
 
 		new(TransformationContext context) {

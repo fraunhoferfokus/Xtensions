@@ -205,12 +205,12 @@
             
         </li>
     
-        <li class="chapter " data-level="1.3.7" data-path="07_primitive_iterators.html">
+        <li class="chapter " data-level="1.3.7" data-path="07_iterator.html">
             
-                <a href="07_primitive_iterators.html">
+                <a href="07_iterator.html">
             
                     
-                    Extensions to PrimitiveIterators
+                    Extensions to Iterator
             
                 </a>
             
@@ -231,9 +231,22 @@
             
         </li>
     
-        <li class="chapter " data-level="1.3.9" data-path="09_strings.html">
+        <li class="chapter " data-level="1.3.9" data-path="09_primitive_iterators.html">
             
-                <a href="09_strings.html">
+                <a href="09_primitive_iterators.html">
+            
+                    
+                    Extensions to PrimitiveIterators
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.10" data-path="10_strings.html">
+            
+                <a href="10_strings.html">
             
                     
                     Extensions to Strings
@@ -244,9 +257,9 @@
             
         </li>
     
-        <li class="chapter " data-level="1.3.10" data-path="10_duration.html">
+        <li class="chapter " data-level="1.3.11" data-path="11_duration.html">
             
-                <a href="10_duration.html">
+                <a href="11_duration.html">
             
                     
                     Extensions to Duration
@@ -257,9 +270,9 @@
             
         </li>
     
-        <li class="chapter " data-level="1.3.11" data-path="11_functions.html">
+        <li class="chapter " data-level="1.3.12" data-path="12_functions.html">
             
-                <a href="11_functions.html">
+                <a href="12_functions.html">
             
                     
                     Extensions to Functions
@@ -270,9 +283,9 @@
             
         </li>
     
-        <li class="chapter " data-level="1.3.12" data-path="12_completable_future.html">
+        <li class="chapter " data-level="1.3.13" data-path="13_completable_future.html">
             
-                <a href="12_completable_future.html">
+                <a href="13_completable_future.html">
             
                     
                     Extensions to CompletableFuture
@@ -283,9 +296,9 @@
             
         </li>
     
-        <li class="chapter " data-level="1.3.13" data-path="13_async_computations.html">
+        <li class="chapter " data-level="1.3.14" data-path="14_async_computations.html">
             
-                <a href="13_async_computations.html">
+                <a href="14_async_computations.html">
             
                     
                     Async Computations
@@ -296,9 +309,9 @@
             
         </li>
     
-        <li class="chapter " data-level="1.3.14" data-path="14_scheduling_util.html">
+        <li class="chapter " data-level="1.3.15" data-path="15_scheduling_util.html">
             
-                <a href="14_scheduling_util.html">
+                <a href="15_scheduling_util.html">
             
                     
                     Scheduling Util
@@ -474,7 +487,7 @@ test class:
 <li><a href="#_extensions_to_streams">Extensions to Streams</a></li>
 <li><a href="#_extensions_to_streams_of_strings">Extensions to Streams of Strings</a></li>
 <li><a href="#_extensions_to_iterable">Extensions to Iterable</a></li>
-<li><a href="#_extensions_to_primitiveiterators">Extensions to PrimitiveIterators</a></li>
+<li><a href="#_extensions_to_iterator">Extensions to Iterator</a></li>
 <li><a href="#_primitive_iterables">Primitive Iterables</a>
 <ul class="sectlevel2">
 <li><a href="#from-iterables">From Iterables</a></li>
@@ -484,6 +497,7 @@ test class:
 <li><a href="#_from_primitive_optionals">From Primitive Optionals</a></li>
 </ul>
 </li>
+<li><a href="#_extensions_to_primitiveiterators">Extensions to PrimitiveIterators</a></li>
 <li><a href="#_extensions_to_string">Extensions to String</a></li>
 <li><a href="#_extensions_to_duration">Extensions to Duration</a></li>
 <li><a href="#_extensions_to_functions">Extensions to Functions</a></li>
@@ -636,6 +650,10 @@ val OptionalInt lenOpt = yes.mapInt[length]
 val len = lenOpt.orElse(0)
 println(&quot;Length is &quot; + len)</code></pre>
 </div>
+</div>
+<div class="paragraph">
+<p>The call chain <code>map[&#x2026;&#x200B;].orElseGet[..]</code> is pretty common. As a shortcut the method <code>mapOrGet</code>
+is provided.</p>
 </div>
 <div class="paragraph">
 <p>Some methods on Optional introduced in Java 9 are available as retrofitted extension methods.
@@ -851,7 +869,7 @@ pair =&gt; [k,v|
 <div class="paragraph">
 <p>The <code>combine</code> extension method takes a function to which key and value of a Pair is passed to,
 to merge both objects. The result returned by the function will be returned by the <code>combine</code> method.
-The difference to the <code>&gt;&gt;&gt;</code> operator, provided by the <a href="11_functions.html">Extensions to Functions</a>
+The difference to the <code>&gt;&gt;&gt;</code> operator, provided by the <a href="12_functions.html">Extensions to Functions</a>
 is only that due to operator precedence calling further methods on the result needs further braces.</p>
 </div>
 <div class="paragraph">
@@ -938,7 +956,7 @@ static <code>stream</code> methods that can be used as extension methods to crea
 <div class="ulist">
 <ul>
 <li>
-<p><a href="https://javadoc.io/page/com.github.fraunhoferfokus.xtensions/de.fhg.fokus.xtensions/latest/de/fhg/fokus/xtensions/iteration/PrimitiveArrayExtensions.html" target="_blank">PairExtensions</a></p>
+<p><a href="https://javadoc.io/page/com.github.fraunhoferfokus.xtensions/de.fhg.fokus.xtensions/latest/de/fhg/fokus/xtensions/iteration/PrimitiveArrayExtensions.html" target="_blank">PrimitiveArrayExtensions</a></p>
 </li>
 </ul>
 </div>
@@ -982,7 +1000,7 @@ val s = Stream.of(42, &quot;Hello&quot;, Double.NaN, &quot;World&quot;)
 </td>
 <td class="content">
 Since joining Strings is a common operation, the <code>StringStreamExtensions</code> allow to call <code>join</code>
-directly on the Stream. Have a look at [Extensions to Streams of Strings].
+directly on the Stream. Have a look at <a href="#_extensions_to_streams_of_strings">Extensions to Streams of Strings</a>.
 </td>
 </tr>
 </table>
@@ -1337,6 +1355,143 @@ println(&quot;Average length: &quot; + summary.average)
 println(&quot;Max length: &quot; + summary.max)</code></pre>
 </div>
 </div>
+<div class="paragraph">
+<p>A fairly common task in Model-to-Model transformations is to find objects of one type that are not referenced by
+some other objects. This is usually done by navigation over all elements in a model, finding all elements of both
+types and then finding the elements that are actually not referenced. This is typically done by traversing the
+complete model twice to find the elements of both types. This can be an expensive operation if the input model
+is large. The solution is to traverse the model just once and group the elements according to their type.</p>
+</div>
+<div class="paragraph">
+<p>This library provides a method allowing exactly this. The method <code>groupIntoListBy</code> and <code>groupIntoSetBy</code>
+groups elements of an iterable by their type.</p>
+</div>
+<div class="paragraph">
+<p>Example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-xtend" data-lang="xtend">val foo = &quot;foo&quot;
+val bar = &quot;bar&quot;
+val baz = &quot;baz&quot;
+val traverseMe = #[foo, #[bar], baz, #[foo], bar]
+val groups = traverseMe.groupIntoSetBy(String, List)
+
+val Set&lt;String&gt; strings = groups.get(String)
+val Set&lt;List&gt; lists = groups.get(List)
+val inNoList = strings
+	.filter[str|
+		!lists.exists[it.contains(str)]
+	].toList
+println(&quot;Elements contained in no list: &quot; + inNoList)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>To exclude elements of one <code>Iterable</code> from another, the method <code>withoutAll</code> can be used.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-xtend" data-lang="xtend">val s = #[&quot;I&quot;, &quot;boo&quot;, &quot;pity&quot;, &quot;char&quot;, &quot;the&quot;, &quot;fool&quot;]
+	.withoutAll(#{&quot;boo&quot;, &quot;char&quot;})
+	.join(&quot; &quot;)
+println(s)</code></pre>
+</div>
+</div>
+<div class="admonitionblock caution">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Caution</div>
+</td>
+<td class="content">
+Performance of <code>withoutAll</code> is best when using an appropriate <code>java.util.Set</code>, such as <code>HashSet</code> for the elements to exclude.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>To partition the elements of an <code>Iterable</code> based on a predicate or the class (elements are tested to be instance of) into two parts:
+selected and rejected. The selected part will contain the elements for which the predicate evaluates to <code>true</code> or elements are instance
+of the given partitioning class. The rejected part will contain the other elements.</p>
+</div>
+<div class="paragraph">
+<p>Example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-xtend" data-lang="xtend">import static extension de.fhg.fokus.xtensions.iteration.IterableExtensions.*
+// ...
+val char[] chars = #[0x0020 as char, 0x0034 as char]
+val List&lt;CharSequence&gt; list = #[
+	&quot;Hello&quot;,
+	new StringBuilder().append(chars),
+	&quot;Xtend&quot;,
+	new StringBuilder().append(0x0032 as char)
+]
+list.partitionBy(String) =&gt; [
+	println(&apos;&apos;&apos;Selected: &quot;&#xAB;selected.join(&quot; &quot;)&#xBB;&quot;&apos;&apos;&apos;)
+	println(&apos;&apos;&apos;Rejected: &quot;&#xAB;rejected.join(&quot;&quot;)&#xBB;&quot;&apos;&apos;&apos;)
+]</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>For both versions of the <code>partitionBy</code> method there exist overloads that take instances of <a href="https://docs.oracle.com/javase/8/docs/api/java/util/stream/Collector.html" target="_blank"><code>Collector</code></a>.</p>
+</div>
+<div class="paragraph">
+<p>Example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-xtend" data-lang="xtend">import static extension de.fhg.fokus.xtensions.iteration.IterableExtensions.*
+import static java.util.stream.Collectors.*
+import java.util.Set
+import java.util.List
+// ...
+val list = #[&quot;foo&quot;, &quot;bla&quot;, &quot;foo&quot;, &quot;hui&quot;, &quot;fun&quot;]
+val partition = list.partitionBy([startsWith(&quot;f&quot;)], toSet, toList)
+val Set&lt;String&gt; selected = partition.selected
+val List&lt;String&gt; rejected = partition.rejected
+println(&quot;Unique words starting with &apos;f&apos; : &quot; + selected.join(&quot;, &quot;))
+println(&quot;Other words: &quot; + rejected.join(&quot;, &quot;))</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Note that the <a href="https://docs.oracle.com/javase/8/docs/api/java/util/stream/Collectors.html#partitioningBy-java.util.function.Predicate-" target="_blank"><code>Collectors#partitioningBy</code></a> Collector from the JDK aggregates into a <code>Map&lt;Boolean,List&lt;T&gt;&gt;</code> where <code>T</code> is the type of the elements in a collected stream. Another <a href="https://docs.oracle.com/javase/8/docs/api/java/util/stream/Collectors.html#partitioningBy-java.util.function.Predicate-java.util.stream.Collector-" target="_blank"><code>partitioningBy</code></a> overload from <code>Collectors</code> aggregates the map values and returns a <code>Map&lt;Boolean,D&gt;</code> where <code>D</code> is the aggregation of a &quot;downstream&quot; <code>Collector</code>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-xtend" data-lang="xtend">val list = #[&quot;foo&quot;, &quot;bla&quot;, &quot;foo&quot;, &quot;hui&quot;, &quot;fun&quot;]
+val partition = list.partitionBy([startsWith(&quot;f&quot;)], Collectors::toSet, Collectors::toList)
+val Set&lt;String&gt; selected = partition.selected
+val List&lt;String&gt; rejected = partition.rejected
+println(&quot;Unique words starting with &apos;f&apos; : &quot; + selected.join(&quot;, &quot;))
+println(&quot;Other words: &quot; + rejected.join(&quot;, &quot;))</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>To allow a similar workflow to the JDK version, for the <code>Partition</code> of this library a <code>asMap</code> extension method is provided
+for <code>Partitions</code> having the same type for the selected and rejected part. The other way around an extension method is provided
+to wrap a <code>Map&lt;Boolean,X&gt;</code> into a <code>Partition&lt;X,X&gt;</code>.</p>
+</div>
+<div class="paragraph">
+<p>To add elements from an <code>Iterable</code> to one or more collections, the <code>into</code> extension method is provided by the class <code>IterableExtensions</code>.</p>
+</div>
+<div class="paragraph">
+<p>Example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-xtend" data-lang="xtend">val namesWithB = newArrayList(&quot;Barbara&quot;, &quot;Bob&quot;, &quot;Brian&quot;)
+val newNames = #[&quot;Justin&quot;, &quot;Anna&quot;, &quot;Bruce&quot;, &quot;Chris&quot;, &quot;Becky&quot;]
+newNames
+	.filter[it.toFirstLower.startsWith(&quot;b&quot;)]
+	.into(namesWithB)
+
+namesWithB.forEach[
+	println(it)
+]</code></pre>
+</div>
+</div>
 <div class="admonitionblock tip">
 <table>
 <tr>
@@ -1361,15 +1516,140 @@ println(&quot;Max length: &quot; + summary.max)</code></pre>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_extensions_to_primitiveiterators">Extensions to PrimitiveIterators</h2>
+<h2 id="_extensions_to_iterator">Extensions to Iterator</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The primitive iterators defined in the JDK as sub-interfaces of <code>java.util.PrimitiveIterator</code>
-do not provide combinators like the ones provided by Xtend. These combinators, however, do take some
-efforts to implement. Instread, this library provides the class
-<code>de.fhg.fokus.xtensions.iteration.PrimitiveIteratorExtensions</code> provides methods to
-create primitive streams (from <code>java.util.stream</code>) for the remaining elements of a given iterator via the
-extension methods <code>streamRemaining</code> or <code>parallelStreamRemaining</code>.</p>
+<p>To map from an Iterator (over references) to a <a href="https://docs.oracle.com/javase/9/docs/api/java/util/PrimitiveIterator.html" target="_blank"><code>PrimitiveIterator</code>s</a>,
+the class <code>de.fhg.fokus.xtensions.iteration.IteratorExtensions</code> provides the methods <code>mapInt</code>, <code>mapLong</code> and <code>mapDouble</code>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-xtend" data-lang="xtend">import static java.util.stream.Collectors.*
+import static extension de.fhg.fokus.xtensions.iteration.IteratorExtensions.*
+// ...
+val Iterable&lt;String&gt; strings = #[&quot;fooooo&quot;, &quot;baar&quot;, &quot;baz&quot;]
+val summary = strings.iterator.mapInt[length].summarize
+println(&quot;Size of longest string is &quot; + summary.max)</code></pre>
+</div>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Tip</div>
+</td>
+<td class="content">
+See <a href="09_primitive_iterators.html">Primitive Iterators</a> for more information on the <code>summarize</code> extension function.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>To exclude elements of one <code>Iterable</code> from the sequence provided by an <code>Iterator</code>, the method <code>withoutAll</code> can be used.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-xtend" data-lang="xtend">val s = #[&quot;I&quot;, &quot;boo&quot;, &quot;pity&quot;, &quot;char&quot;, &quot;the&quot;, &quot;fool&quot;]
+	.iterator
+	.withoutAll(#{&quot;boo&quot;, &quot;char&quot;})
+	.join(&quot; &quot;)
+println(s)</code></pre>
+</div>
+</div>
+<div class="admonitionblock caution">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Caution</div>
+</td>
+<td class="content">
+Performance of <code>withoutAll</code> is best when using an appropriate <code>java.util.Set</code>, such as <code>HashSet</code> for the elements to exclude.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>To partition the elements provided by an iterator based on a predicate or the class (elements are tested to be instance of) into two parts:
+selected and rejected. The selected part will contain the elements for which the predicate evaluates to <code>true</code> or elements are instance
+of the given partitioning class. The rejected part will contain the other elements.</p>
+</div>
+<div class="paragraph">
+<p>Example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-xtend" data-lang="xtend">import static extension de.fhg.fokus.xtensions.iteration.IteratorExtensions.*
+// ...
+val char[] chars = #[0x0020 as char, 0x0034 as char]
+val List&lt;CharSequence&gt; list = #[
+	&quot;Hello&quot;,
+	new StringBuilder().append(chars),
+	&quot;Xtend&quot;,
+	new StringBuilder().append(0x0032 as char)
+]
+list.iterator.partitionBy(String) =&gt; [
+	println(&apos;&apos;&apos;Selected: &quot;&#xAB;selected.join(&quot; &quot;)&#xBB;&quot;&apos;&apos;&apos;)
+	println(&apos;&apos;&apos;Rejected: &quot;&#xAB;rejected.join(&quot;&quot;)&#xBB;&quot;&apos;&apos;&apos;)
+]</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>For both versions of the <code>partitionBy</code> method there exist overloads that take instances of <a href="https://docs.oracle.com/javase/8/docs/api/java/util/stream/Collector.html" target="_blank"><code>Collector</code></a>.</p>
+</div>
+<div class="paragraph">
+<p>Example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-xtend" data-lang="xtend">import static extension de.fhg.fokus.xtensions.iteration.IteratorExtensions.*
+import static java.util.stream.Collectors.*
+import java.util.Set
+import java.util.List
+// ...
+val list = #[&quot;foo&quot;, &quot;bla&quot;, &quot;foo&quot;, &quot;hui&quot;, &quot;fun&quot;]
+val partition = list.iterator.partitionBy([startsWith(&quot;f&quot;)], toSet, toList)
+val Set&lt;String&gt; selected = partition.selected
+val List&lt;String&gt; rejected = partition.rejected
+println(&quot;Unique words starting with &apos;f&apos; : &quot; + selected.join(&quot;, &quot;))
+println(&quot;Other words: &quot; + rejected.join(&quot;, &quot;))</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Note that the <a href="https://docs.oracle.com/javase/8/docs/api/java/util/stream/Collectors.html#partitioningBy-java.util.function.Predicate-" target="_blank"><code>Collectors#partitioningBy</code></a> Collector from the JDK aggregates into a <code>Map&lt;Boolean,List&lt;T&gt;&gt;</code> where <code>T</code> is the type of the elements in a collected stream. Another <a href="https://docs.oracle.com/javase/8/docs/api/java/util/stream/Collectors.html#partitioningBy-java.util.function.Predicate-java.util.stream.Collector-" target="_blank"><code>partitioningBy</code></a> overload from <code>Collectors</code> aggregates the map values and returns a <code>Map&lt;Boolean,D&gt;</code> where <code>D</code> is the aggregation of a &quot;downstream&quot; <code>Collector</code>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-xtend" data-lang="xtend">val list = #[&quot;foo&quot;, &quot;bla&quot;, &quot;foo&quot;, &quot;hui&quot;, &quot;fun&quot;]
+val partition = list.iterator.partitionBy([startsWith(&quot;f&quot;)], Collectors::toSet, Collectors::toList)
+val Set&lt;String&gt; selected = partition.selected
+val List&lt;String&gt; rejected = partition.rejected
+println(&quot;Unique words starting with &apos;f&apos; : &quot; + selected.join(&quot;, &quot;))
+println(&quot;Other words: &quot; + rejected.join(&quot;, &quot;))</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>To allow a similar workflow to the JDK version, for the <code>Partition</code> of this library a <code>asMap</code> extension method is provided
+for <code>Partitions</code> having the same type for the selected and rejected part. The other way around an extension method is provided
+to wrap a <code>Map&lt;Boolean,X&gt;</code> into a <code>Partition&lt;X,X&gt;</code>.</p>
+</div>
+<div class="paragraph">
+<p>To add elements from an <code>Iterator</code> to one or more collections, the <code>into</code> extension method is provided by the class <code>IterableExtensions</code>.</p>
+</div>
+<div class="paragraph">
+<p>Example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-xtend" data-lang="xtend">val namesWithB = newArrayList(&quot;Barbara&quot;, &quot;Bob&quot;, &quot;Brian&quot;)
+val newNames = #[&quot;Justin&quot;, &quot;Anna&quot;, &quot;Bruce&quot;, &quot;Chris&quot;, &quot;Becky&quot;]
+newNames.iterator
+	.filter[it.toFirstLower.startsWith(&quot;b&quot;)]
+	.into(namesWithB)
+
+namesWithB.forEach[
+	println(it)
+]</code></pre>
+</div>
 </div>
 <div class="admonitionblock tip">
 <table>
@@ -1384,7 +1664,7 @@ extension methods <code>streamRemaining</code> or <code>parallelStreamRemaining<
 <div class="ulist">
 <ul>
 <li>
-<p><a href="https://javadoc.io/page/com.github.fraunhoferfokus.xtensions/de.fhg.fokus.xtensions/latest/de/fhg/fokus/xtensions/iteration/PrimitiveIteratorExtensions.html" target="_blank">PrimitiveIteratorExtensions</a></p>
+<p><a href="https://javadoc.io/page/com.github.fraunhoferfokus.xtensions/de.fhg.fokus.xtensions/latest/de/fhg/fokus/xtensions/iteration/IteratorExtensions.html" target="_blank">IteratorExtensions</a></p>
 </li>
 </ul>
 </div>
@@ -1513,7 +1793,8 @@ var IntIterable ints = arr.asIntIterable(1, arr.length - 1)  // omit first and l
 <div class="sect2">
 <h3 id="_from_computations">From Computations</h3>
 <div class="paragraph">
-<p>Currently only available on IntIterable</p>
+<p>In following we are using IntIterable to show how to create computed primitive iterables,
+but respective factory methods are also available on LongIterable and DoubleIterable.</p>
 </div>
 <div class="paragraph">
 <p>To create an IntIterable representing an infinite number of int values the static <code>generate</code>
@@ -1569,33 +1850,6 @@ val IntIterable ints = IntIterable.iterate(0, [it&lt;=10], [it+2])
 // will provide values 0, 2, 4, 6, 8, and 10</code></pre>
 </div>
 </div>
-<div class="admonitionblock tip">
-<table>
-<tr>
-<td class="icon">
-<div class="title">Tip</div>
-</td>
-<td class="content">
-<div class="paragraph">
-<p>Related JavaDocs:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><a href="https://javadoc.io/page/com.github.fraunhoferfokus.xtensions/de.fhg.fokus.xtensions/latest/de/fhg/fokus/xtensions/iteration/DoubleIterable.html" target="_blank">DoubleIterable</a></p>
-</li>
-<li>
-<p><a href="https://javadoc.io/page/com.github.fraunhoferfokus.xtensions/de.fhg.fokus.xtensions/latest/de/fhg/fokus/xtensions/iteration/IntIterable.html" target="_blank">IntIterable</a></p>
-</li>
-<li>
-<p><a href="https://javadoc.io/page/com.github.fraunhoferfokus.xtensions/de.fhg.fokus.xtensions/latest/de/fhg/fokus/xtensions/iteration/LongIterable.html" target="_blank">LongIterable</a></p>
-</li>
-</ul>
-</div>
-</td>
-</tr>
-</table>
-</div>
 </div>
 <div class="sect2">
 <h3 id="_from_xtend_ranges">From Xtend Ranges</h3>
@@ -1634,6 +1888,88 @@ iteration over either one or no value, depending on the source Optional.</p>
 val IntItreable ints = some(42).asIterable</code></pre>
 </div>
 </div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Tip</div>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Related JavaDocs:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://javadoc.io/page/com.github.fraunhoferfokus.xtensions/de.fhg.fokus.xtensions/latest/de/fhg/fokus/xtensions/iteration/DoubleIterable.html" target="_blank">DoubleIterable</a></p>
+</li>
+<li>
+<p><a href="https://javadoc.io/page/com.github.fraunhoferfokus.xtensions/de.fhg.fokus.xtensions/latest/de/fhg/fokus/xtensions/iteration/IntIterable.html" target="_blank">IntIterable</a></p>
+</li>
+<li>
+<p><a href="https://javadoc.io/page/com.github.fraunhoferfokus.xtensions/de.fhg.fokus.xtensions/latest/de/fhg/fokus/xtensions/iteration/LongIterable.html" target="_blank">LongIterable</a></p>
+</li>
+</ul>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_extensions_to_primitiveiterators">Extensions to PrimitiveIterators</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The primitive iterators defined in the JDK as sub-interfaces of <code>java.util.PrimitiveIterator</code>
+do not provide combinators like the ones provided by Xtend. These combinators, however, do take some
+efforts to implement. Instread, this library provides the class
+<code>de.fhg.fokus.xtensions.iteration.PrimitiveIteratorExtensions</code> provides methods to
+create primitive streams (from <code>java.util.stream</code>) for the remaining elements of a given iterator via the
+extension methods <code>streamRemaining</code> or <code>parallelStreamRemaining</code>. Note that the method <code>streamRemaining</code>
+does <strong>not</strong> guarantee that the elements provided by the returned stream are actually taken from the originating
+iterator. If the underlying iterator implementation is known, the framework may construct a stream that may have
+better characteristics in some way. If elements should actually be removed from the originating iterator, the
+<code>streamRemainingExhaustive</code> method can be used.</p>
+</div>
+<div class="paragraph">
+<p>To create a summary object providing the minimum value, maximum value, average value, sum value, and count of elements,
+the <code>PrimitiveIteratorExtensions</code> class provides a <code>summarize</code> function for all three primitive iterators.</p>
+</div>
+<div class="paragraph">
+<p>Example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-xtend" data-lang="xtend">val range = 1..100
+val summary = range.intIterator.summarize
+println(&apos;&apos;&apos;Sum of elements in range [&#xAB;range.start&#xBB;..&#xAB;range.end&#xBB;] is &#xAB;summary.sum&#xBB;&apos;&apos;&apos;)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Tip: If you want to know more about the extension methods available on <code>IntegerRange</code>, have a look at chapter <a href="02_ranges.html">Extensions to IntegerRange</a></p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Tip</div>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Related JavaDocs:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://javadoc.io/page/com.github.fraunhoferfokus.xtensions/de.fhg.fokus.xtensions/latest/de/fhg/fokus/xtensions/iteration/PrimitiveIteratorExtensions.html" target="_blank">PrimitiveIteratorExtensions</a></p>
+</li>
+</ul>
+</div>
+</td>
+</tr>
+</table>
 </div>
 </div>
 </div>
@@ -2024,7 +2360,7 @@ val fut = CompletableFuture.supplyAsync([
 <td class="content">
 You may have noticed that the syntax for spawning a supplier via CompletableFuture#supplyAsync on a
 custom executor does not look elegant, since the pool parameter is the last one. So the lambda cannot be
-written behind the closing parenthesis of the parameter list. Have a look at the section <a href="13_async_computations.html">Async Computations</a>
+written behind the closing parenthesis of the parameter list. Have a look at the section <a href="14_async_computations.html">Async Computations</a>
 for a more Xtend style API.
 </td>
 </tr>
@@ -2307,7 +2643,7 @@ sleepy.cancel // may interrupt Thread.sleep</code></pre>
 <div class="colist arabic">
 <ol>
 <li>
-<p>Here an extension method described in <a href="13_async_computations.html">Async Computations</a> is used.</p>
+<p>Here an extension method described in <a href="14_async_computations.html">Async Computations</a> is used.</p>
 </li>
 </ol>
 </div>
@@ -2591,7 +2927,7 @@ delay(50.milliseconds) [
 <div class="colist arabic">
 <ol>
 <li>
-<p>This extension method is explained in <a href="12_completable_future.html">Extensions to CompletableFuture</a></p>
+<p>This extension method is explained in <a href="13_completable_future.html">Extensions to CompletableFuture</a></p>
 </li>
 </ol>
 </div>
@@ -2618,7 +2954,7 @@ waitFor(50.milliseconds) [
 </div>
 <div class="paragraph">
 <p>The same effect as shown here can be achieved with the <code>cancelOnTimeout</code> extension method on CompletableFuture,
-described in <a href="12_completable_future.html">Extensions to CompletableFuture</a>.</p>
+described in <a href="13_completable_future.html">Extensions to CompletableFuture</a>.</p>
 </div>
 <div class="admonitionblock tip">
 <table>
@@ -2681,7 +3017,7 @@ described in <a href="12_completable_future.html">Extensions to CompletableFutur
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"Provided Functionality (as Single Page)","level":"2.2","depth":1,"previous":{"title":"Changelog","level":"2.1","depth":1,"path":"CHANGES.adoc","ref":"CHANGES.adoc","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["asciidoc-include@0.1.9"],"pluginsConfig":{"asciidoc-include":{"syntax":"gitbook"},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"docs/functionality/XX_provided_functionality_one_page.adoc","mtime":"2018-03-06T15:08:49.280Z","type":"asciidoc"},"gitbook":{"version":"3.2.3","time":"2018-03-06T15:10:09.736Z"},"basePath":"../..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"Provided Functionality (as Single Page)","level":"2.2","depth":1,"previous":{"title":"Changelog","level":"2.1","depth":1,"path":"CHANGES.adoc","ref":"CHANGES.adoc","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["asciidoc-include@0.1.9"],"pluginsConfig":{"asciidoc-include":{"syntax":"gitbook"},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"docs/functionality/XX_provided_functionality_one_page.adoc","mtime":"2018-07-24T08:13:34.704Z","type":"asciidoc"},"gitbook":{"version":"3.2.3","time":"2018-07-24T08:31:54.442Z"},"basePath":"../..","book":{"language":""}});
         });
     </script>
 </div>

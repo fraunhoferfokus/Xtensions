@@ -10,8 +10,8 @@ class Primitives {
 	 * Unboxes and returns the {@code Integer i}, or if {@code i} is {@code null},
 	 * returns the value provided by {@code fallback}.
 	 */
-	public static def int onNull(Integer i, IntSupplier fallback) {
-		if(i !== null) {
+	static def int onNull(Integer i, IntSupplier fallback) {
+		if (i !== null) {
 			i.intValue
 		} else {
 			fallback.asInt
@@ -22,8 +22,8 @@ class Primitives {
 	 * Unboxes and returns the {@code Long l}, or if {@code l} is {@code null},
 	 * returns the value provided by {@code fallback}.
 	 */
-	public static def long onNull(Long l, LongSupplier fallback) {
-		if(l !== null) {
+	static def long onNull(Long l, LongSupplier fallback) {
+		if (l !== null) {
 			l.longValue
 		} else {
 			fallback.asLong
@@ -34,11 +34,11 @@ class Primitives {
 	 * Unboxes and returns the {@code Double d}, or if {@code l} is {@code null},
 	 * returns the value provided by {@code fallback}.
 	 */
-	public static def double onNull(Double d, DoubleSupplier fallback) {
-		if(d !== null) {
+	static def double onNull(Double d, DoubleSupplier fallback) {
+		if (d !== null) {
 			d.doubleValue
 		} else {
 			fallback.asDouble
 		}
-	}	
+	}
 }

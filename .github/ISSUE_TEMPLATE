@@ -1,2 +1,10 @@
-Thank you for opening a new issue.
-Please know that there are currently no preferred lables for issues.
+Thank you for opening a new issue!
+
+Please add the version of the Xtensions library you are using.
+
+Also, please use the following tags according to the description given here:
+
+* question: If no new or changed functionality is proposed, but a clarification is needed.
+* enhancement : If an existing feature (e.g. a class or interface) should be enriched/extended.
+* feature: If a new feature (e.g. a new extension method) should be added.
+* bug: if an existing feature violates its contract or shows unexpected behavior.

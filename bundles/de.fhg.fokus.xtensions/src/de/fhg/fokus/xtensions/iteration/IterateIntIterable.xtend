@@ -16,6 +16,7 @@ import java.util.function.IntConsumer
 import java.util.function.IntPredicate
 import java.util.NoSuchElementException
 import java.util.stream.IntStream
+import de.fhg.fokus.xtensions.iteration.internal.IntStreamable
 
 /**
  * Instances of this class should be provided using {@link IntIterable#iterate(int,IntUnaryOperator)}.<br>
@@ -55,7 +56,7 @@ package class IterateIntIterable implements IntIterable {
  * {@code OfInt} implementation of an infinite iterator based on a seed value
  * and a function mapping the current value to the next one.
  */
-package class IterateOfInt implements OfInt {
+package class IterateOfInt implements OfInt, IntStreamable {
 	
 	var int next
 	val IntUnaryOperator operator
@@ -88,6 +89,10 @@ package class IterateOfInt implements OfInt {
 		}
 	}
 	
+	override streamInts() {
+		IntStream.iterate(next, operator)
+	}
+	
 }
 
 package class IterateIntIterableLimited implements IntIterable {
@@ -115,6 +120,8 @@ package class IterateIntIterableLimited implements IntIterable {
 			next = nextOp.applyAsInt(next)
 		}
 	}
+	
+	// When setting minimum to Java 9, overwrite stream() method calling IntStream.iterate(seed, hasNext, next)
 	
 }
 

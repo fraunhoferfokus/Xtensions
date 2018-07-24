@@ -27,15 +27,8 @@ import static java.util.Objects.*;
  */
 public final class FunctionExtensions {
 
-	// TODO andThenDo Function -> Procedure returns procedure
-	// TODO Function1<T,R>#andThen(Procedure1<R>): (T)=>void // if no ambiguity
-	// TODO Function1<T,Pair<X,Y>>#andThen(Function2<X,Y,V>) -> Function1<T,V> // if
-	// no ambiguity introduced
-	// TODO Function0<Pair<X,Y>>#andThen(Function2<X,Y,V>) -> Function0<V> // if no
-	// ambiguity introduced
-	// TODO Function2<T,T> till Function6<T,...,T>#spread (Iterable<T>/T[]), throw
-	// if too little params. Non type save variant?
-	// TODO Predicate#on -> .then((U)=>U) : Function1<U,U> ???
+	// TODO public static def (T)=>void andThen((T)=>R function, R=>void action) // for more params as well
+	// TODO Predicate#elseSupply((U)=>U supply) : Function1<U,U> ???
 
 	private FunctionExtensions() {
 		throw new IllegalStateException("FunctionExtensions is not allowed to be instantiated");
@@ -54,6 +47,8 @@ public final class FunctionExtensions {
 	 *            parameter.
 	 * @param function
 	 *            Will be called with {@code value} Must not be {@code null}.
+	 * @param <T> input value type
+	 * @param <R> return value type
 	 * @return the result of calling {@code function} with {@code value}
 	 * @throws NullPointerException
 	 *             if {@code function} is null
@@ -74,6 +69,9 @@ public final class FunctionExtensions {
 	 * @param function
 	 *            the function to be invoked with the {@code key} and {@code value}
 	 *            of the given {@code value}.
+	 * @param <T> Type of {@code key} of the input pair
+	 * @param <V> Type of {@code value} of the input pair
+	 * @param <R> Type of the return value
 	 * @return the result from invoking {@code function}.
 	 * @throws NullPointerException
 	 *             if either {@code value} or {@code function} is null
@@ -87,13 +85,19 @@ public final class FunctionExtensions {
 	/**
 	 * Shortcut operator for
 	 * {@link org.eclipse.xtext.xbase.lib.FunctionExtensions#compose(org.eclipse.xtext.xbase.lib.Functions.Function1, org.eclipse.xtext.xbase.lib.Functions.Function1)
-	 * FunctionExtensions#compose((T)=>R, (V)=>T)}
+	 * FunctionExtensions#compose((T)=&gt;R, (V)=&gt;T)}
 	 * 
 	 * @param self
 	 *            function that will be composed with {@code before}.
 	 * @param before
 	 *            function to be invoked before {@code self}. The result of the
 	 *            invocation will be passed to {@code self}.
+	 * @param <T> 
+	 *            type of output value to {@code before} and input value of {@code self}
+	 * @param <V> 
+	 *            type of input value of {@code before} and input value to the returned composed function
+	 * @param <R> 
+	 *            type of output value of {@code self} and return type of the returned composed function
 	 * @return returns a composed operation of {@code before} and {@code self}.
 	 */
 	@Pure
@@ -106,12 +110,18 @@ public final class FunctionExtensions {
 	/**
 	 * Shortcut operator for
 	 * {@link org.eclipse.xtext.xbase.lib.FunctionExtensions#andThen(org.eclipse.xtext.xbase.lib.Functions.Function1, org.eclipse.xtext.xbase.lib.Functions.Function1)
-	 * FunctionExtensions#andThen((T)=>R, (R)=>V)}.
+	 * FunctionExtensions#andThen((T)=&gt;R, (R)=&gt;V)}.
 	 * 
 	 * @param self
 	 *            the function to apply before the {@code after} function is applied
 	 * @param after
 	 *            the function to apply after the {@code before} function is applied
+	 * @param <T>
+	 *            type of the input value of {@code self} and input type to the returned concatenated function
+	 * @param <V> 
+	 *            type of the return value of {@code after} and return type of the returned concatenated function
+	 * @param <R> 
+	 *            return type of {@code self} and type of input value of {@code after}
 	 * @return a composed function that first applies the {@code before} function
 	 *         and then applies the {@code self} function with the result of
 	 *         {@code before}
@@ -174,12 +184,13 @@ public final class FunctionExtensions {
 	 * 
 	 * @param test function to be composed with {@code test2}. Will be called on the left hand side of the {@code &&} operator.
 	 * @param test2 function to be composed with {@code test}. Will be called on the right hand side of the {@code &&} operator.
+	 * @param <T> input type to {@code test} and {@code test2}
 	 * @return composed function, combining the results of {@code test} and {@code test2} (called with its input value) with
 	 *  the {@code &&} operator.
 	 */
 	public static <T> Function1<T, Boolean> and(Function1<? super T, Boolean> test,
 			Function1<? super T, Boolean> test2) {
-		return (t) -> test.apply(t) && test2.apply(t);
+		return t -> test.apply(t) && test2.apply(t);
 	}
 
 	/**
@@ -193,12 +204,13 @@ public final class FunctionExtensions {
 	 * 
 	 * @param test function to be composed with {@code test2}. Will be called on the left hand side of the {@code ||} operator.
 	 * @param test2 function to be composed with {@code test}. Will be called on the right hand side of the {@code ||} operator.
+	 * @param <T> input type to {@code test} and {@code test2}
 	 * @return composed function, combining the results of {@code test} and {@code test2} (called with its input value) with
 	 *  the {@code ||} operator.
 	 */
 	public static <T> Function1<T, Boolean> or(Function1<? super T, Boolean> test,
 			Function1<? super T, Boolean> test2) {
-		return (t) -> test.apply(t) || test2.apply(t);
+		return t -> test.apply(t) || test2.apply(t);
 	}
 
 	/**
@@ -208,9 +220,10 @@ public final class FunctionExtensions {
 	 * will be thrown to the caller of the returned function.
 	 * 
 	 * @param test function to be wrapped by the returned function.
+	 * @param <T> input type of {@code test}
 	 * @return function that will call {@code test} and return the negated return value.
 	 */
 	public static <T> Function1<T, Boolean> negate(Function1<T, Boolean> test) {
-		return (t) -> !test.apply(t);
+		return t -> !test.apply(t);
 	}
 }

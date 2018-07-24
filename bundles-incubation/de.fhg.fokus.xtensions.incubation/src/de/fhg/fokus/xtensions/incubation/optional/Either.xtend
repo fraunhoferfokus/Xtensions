@@ -4,39 +4,62 @@ import java.math.BigInteger
 import java.util.Optional
 import java.util.function.Predicate
 
-public abstract class Either<L, R> {
+ abstract class Either<L, R> {
 	private new (){}
 	
-	public abstract def <X,Y> Either<X, Y> map((L)=>X leftMapper, (R)=>Y rightMapper)
-	public abstract def <Y> Either<L, Y> mapRight((R)=>Y mapper)
-	public abstract def <Y> Either<Y, R> mapLeft((L)=>Y mapper)
-	public abstract def <Y> Either<L, Y> flatMapRight((R)=>Either<? extends L, ? extends Y> mapper)
-	public abstract def <Y> Either<Y, R> flatMapLeft((L)=>Either<? extends Y,? extends R> mapper)
-	public abstract def Either<L, R> filterLeft(Predicate<L> test, (L)=>R rightProvider)
-	public abstract def Either<L, R> filterRight(Predicate<R> test, (R)=>L leftProvider)
-	public abstract def Optional<L> getLeft()
-	public abstract def Optional<L> getRight()
-	public abstract def Either<L, R> ifLeft((L)=>void leftConsumer)
-	public abstract def Either<L, R> ifRight((R)=>void rightConsumer)
-	public abstract def <X> MatchRight<R,X> caseLeft((L)=>X caseBranch)
-	public abstract def <X> MatchLeft<L,X> caseRight((R)=>X caseBranch)
-	public abstract def boolean isLeft()
-	public abstract def boolean isRight()
-	public abstract def L leftOr(L alternative)
-	public abstract def R rightOr(L alternative)
-	public abstract def L leftOrCompute((R)=>L alternative)
-	public abstract def R rightOrCompute((L)=>R alternative)
-	public abstract def <X extends Exception> R rightOrThrow((L)=>X exceptionProvider) throws X
-	public abstract def <X extends Exception> R leftOrThrow((R)=>X exceptionProvider) throws X
-	public abstract def <X> X transform((L)=>X leftTransform,(R)=>X rightTransform)
-	public abstract def <X> X consume((L)=>void leftConsumer,(R)=>void rightConsumer)
-	public abstract def Either<R,L> swap()
+	abstract def <X, Y> Either<X, Y> map((L)=>X leftMapper, (R)=>Y rightMapper)
+
+	abstract def <Y> Either<L, Y> mapRight((R)=>Y mapper)
+
+	abstract def <Y> Either<Y, R> mapLeft((L)=>Y mapper)
+
+	abstract def <Y> Either<L, Y> flatMapRight((R)=>Either<? extends L, ? extends Y> mapper)
+
+	abstract def <Y> Either<Y, R> flatMapLeft((L)=>Either<? extends Y, ? extends R> mapper)
+
+	abstract def Either<L, R> filterLeft(Predicate<L> test, (L)=>R rightProvider)
+
+	abstract def Either<L, R> filterRight(Predicate<R> test, (R)=>L leftProvider)
+
+	abstract def Optional<L> getLeft()
+
+	abstract def Optional<L> getRight()
+
+	abstract def Either<L, R> ifLeft((L)=>void leftConsumer)
+
+	abstract def Either<L, R> ifRight((R)=>void rightConsumer)
+
+	abstract def <X> MatchRight<R, X> caseLeft((L)=>X caseBranch)
+
+	abstract def <X> MatchLeft<L, X> caseRight((R)=>X caseBranch)
+
+	abstract def boolean isLeft()
+
+	abstract def boolean isRight()
+
+	abstract def L leftOr(L alternative)
+
+	abstract def R rightOr(R alternative)
+
+	abstract def L leftOrCompute((R)=>L alternative)
+
+	abstract def R rightOrCompute((L)=>R alternative)
+
+	abstract def <X extends Exception> R rightOrThrow((L)=>X exceptionProvider) throws X
+
+	abstract def <X extends Exception> R leftOrThrow((R)=>X exceptionProvider) throws X
+
+	abstract def <X> X transform((L)=>X leftTransform, (R)=>X rightTransform)
+
+	abstract def <X> X consume((L)=>void leftConsumer, (R)=>void rightConsumer)
+
+	abstract def Either<R, L> swap()
 	
-	public static interface MatchLeft<L,X> {
+	 static interface MatchLeft<L,X> {
 		def X caseLeft((L)=>X caseBranch)
 	}
 	
-	public static interface MatchRight<R,X> {
+	 static interface MatchRight<R,X> {
 		def X caseRight((R)=>X caseBranch)
 	}
 	
@@ -65,13 +88,12 @@ public abstract class Either<L, R> {
 //		def R get() {right}
 //		
 //	}
-	
-	public static def <L,R> Either<L,R> left(L l) {
+	static def <L, R> Either<L, R> left(L l) {
 //		new Left(l.requireNonNull)
 		throw new UnsupportedOperationException("Not implemented yet")
 	}
 	
-	public static def <L,R> Either<L,R> right(R r) {
+	static def <L, R> Either<L, R> right(R r) {
 //		new Right(r.requireNonNull)
 		throw new UnsupportedOperationException("Not implemented yet")
 	}
@@ -82,7 +104,7 @@ public abstract class Either<L, R> {
 		println(bar)
 	}
 	
-	public static def <T, L extends T, R extends T> T getAvailable(Either<L,R> either) {
+	static def <T, L extends T, R extends T> T getAvailable(Either<L, R> either) {
 //		// unfortunately the Xtend code gen is not good enough for a more concise expression
 //		var T result
 //		switch(either) {
@@ -95,7 +117,7 @@ public abstract class Either<L, R> {
 	}
 	
 	// safe since L and R values are only consumed
-	public static def <L,R> Either<L,R> upcast(Either<? extends L,? extends R> either) {
-		either as Either<L,R>
+	static def <L, R> Either<L, R> upcast(Either<? extends L, ? extends R> either) {
+		either as Either<L, R>
 	}
 }

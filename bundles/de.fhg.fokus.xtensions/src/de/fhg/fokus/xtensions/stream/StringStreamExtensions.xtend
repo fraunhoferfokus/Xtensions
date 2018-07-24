@@ -81,6 +81,7 @@ final class StringStreamExtensions {
 	 * by compiling the given {@code String pattern} to a {@link Pattern} object before the call.
 	 * @param stream stream to be filtered to only contain elements matching the given {@code pattern}
 	 * @param pattern the regex pattern to filter element in {@code stream} by.
+	 * @param <S> Type extending {@link CharSequence} elements in {@code stream} are instance of
 	 * @return {@code stream} filtered by the given {@code pattern}.
 	 */
 	static def <S extends CharSequence> Stream<S> matching(Stream<S> stream, String pattern) {
@@ -94,6 +95,7 @@ final class StringStreamExtensions {
 	 * Filtering the given {@code stream} by elements matching the given {@code pattern}.
 	 * @param stream stream to be filtered to only contain elements matching the given {@code pattern}
 	 * @param pattern the regex pattern to filter element in {@code stream} by.
+	 * @param <S> Type extending {@link CharSequence} elements in {@code stream} are instance of
 	 * @return {@code stream} filtered by the given {@code pattern}.
 	 */
 	static def <S extends CharSequence> Stream<S> matching(Stream<S> stream, Pattern pattern) {

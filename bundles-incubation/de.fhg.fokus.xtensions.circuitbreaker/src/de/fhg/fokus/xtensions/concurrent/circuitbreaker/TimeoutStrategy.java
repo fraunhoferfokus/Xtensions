@@ -46,7 +46,6 @@ public interface TimeoutStrategy {
 	 * @param previousTimeUnit time unit of the last timeout
 	 * @return Pair holding the next timeout time and time unit
 	 */
-	@SuppressWarnings("unchecked")
 	default Pair<Long,TimeUnit> next(long previousTimeout, TimeUnit previousTimeUnit) {
 		return next(previousTimeout, previousTimeUnit,(TimeFactory<Pair<Long,TimeUnit>>)Pair::new);
 	}

@@ -14,6 +14,9 @@ import java.util.PrimitiveIterator.OfDouble
 import java.util.function.DoubleConsumer
 import java.util.stream.DoubleStream
 import de.fhg.fokus.xtensions.iteration.PrimitiveIteratorExtensions
+import java.util.function.DoubleSupplier
+import java.util.function.DoubleUnaryOperator
+import java.util.function.DoublePredicate
 
 /** 
  * This interface is a specialized version of an {@code Iterable<Double>} providing a {@link OfDouble PrimitiveIterator.OfDouble} 
@@ -60,7 +63,48 @@ interface DoubleIterable extends Iterable<Double> {
 		PrimitiveIteratorExtensions.streamRemaining(iterator)
 	} 
 	
-	// TODO public static DoubleIterable generate(final DoubleSupplier s)
-	// TODO public static DoubleIterable iterate(final double seed, final DoubleUnaryOperator f)
-	// TODO public static DoubleIterable iterate(final double seed, DoublePredicate hasNext, final DoubleUnaryOperator next)
+	/**
+	 * Creates a new LongIterable that will produce an infinite {@link OfDouble} or {@link DoubleStream} based on the {@link DoubleSupplier} provided by supplier {@code s}.
+	 * @param s supplier, that provides an {@link DoubleSupplier} for each
+	 * iterator or stream created.
+	 * @return DoubleIterable based on the supplier {@code s}.
+	 * @since 1.1.0
+	 */
+	static def DoubleIterable generate(()=>DoubleSupplier s) {
+		new SupplierDoubleIterable(s)
+	}
+	
+	/** 
+	 * Creates {@link DoubleIterable} an infinite providing an infinite source of
+	 * numbers, starting with the given {@code seed} value and in every
+	 * subsequent step the result of the given {@code operator} applied on the
+	 * last step's value. So in the second step this would be{@code op.applyAsDouble(seed)} and so on.
+	 * @param seed first value to be provided and used as seed fed to {@code op} in second step.
+	 * @param op this operator must be side-effect free.
+	 * @return and {@link DoubleIterable} providing infinite source of numbers
+	 * based on {@code seed} and {@code op}.
+	 * @since 1.1.0
+	 */
+	static def DoubleIterable iterate(double seed, DoubleUnaryOperator op) {
+		new IterateDoubleIterable(seed, op)
+	}
+	
+	/** 
+	 * Creates {@link DoubleIterable} an which works similar to a traditional for-loop.
+	 * The first value provided by an iterator provided by the created iterable will be {@code seed} value. 
+	 * The iterator's {@code OfDouble#next()} method will return the
+	 * boolean value provided by {@code DoublePredicate} on the potentially next value.
+	 * This also means that if {@code DoublePredicate} does not hold for the first value 
+	 * the iterator will not provide any value. The next value provided after the initial
+	 * one is {@code next} applied to the initial value. All following values provided by
+	 * the iterator will be computed from the last value by applying {@code next}.
+	 * @param seed initial value to be provided by iterators
+	 * @param hasNext method to check if iterator should provide a next value
+	 * @param next value mapping previous value provided by iterator to next value provided
+	 * @return iterable, providing an iterator based on {@code seed}, {@code hasNext}, and {@code next}.
+	 * @since 1.1.0
+	 */
+	static def DoubleIterable iterate(double seed, DoublePredicate hasNext, DoubleUnaryOperator next) {
+		new IterateDoubleIterableLimited(seed, hasNext, next)
+	}
 }

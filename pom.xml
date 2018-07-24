@@ -10,7 +10,8 @@
 	    Max Bureck (Fraunhofer FOKUS) - initial config
 	    
 	    
-	* Enable profile "coverage-report" to push Jacoco coverage report to coveralls.io
+	* Enable profile "coverage-report" to create a Jacoco coverage
+	* To push the code coverage report to coveralls.io, pass parameter "coveralls". This automatically enables profile "coverage-report"
 	* To build incubation bundles, enable profile "incubation"
 	* On release pass property "release", e.g. passing parameter "-Drelease"
  -->
@@ -70,6 +71,11 @@
 			<layout>p2</layout>
 			<url>http://download.eclipse.org/releases/oxygen</url>
 		</repository>
+		<repository>
+			<id>xtext</id>
+			<layout>p2</layout>
+			<url>http://download.eclipse.org/modeling/tmf/xtext/updates/releases/2.13.0/</url>
+		</repository>
 	</repositories>
 
 	<modules>
@@ -110,6 +116,11 @@
 		
 		<profile>
 			<id>coverage-report</id>
+			<activation>
+				<property>
+					<name>coveralls</name>
+				</property>
+			</activation>
 			
 			<modules>
 				<module>releng/de.fhg.fokus.xtensions.report</module>
@@ -277,6 +288,14 @@
 				<groupId>org.eclipse.xtend</groupId>
 				<artifactId>xtend-maven-plugin</artifactId>
 				<version>${xtend-version}</version>
+				<!-- Workaround for code signing issue (https://github.com/eclipse/xtext/issues/1231) -->
+				<dependencies>
+					<dependency>
+						<groupId>org.eclipse.platform</groupId>
+						<artifactId>org.eclipse.equinox.common</artifactId>
+						<version>3.10.0</version>
+					</dependency>
+				</dependencies>
 				<executions>
 					<execution>
 						<goals>

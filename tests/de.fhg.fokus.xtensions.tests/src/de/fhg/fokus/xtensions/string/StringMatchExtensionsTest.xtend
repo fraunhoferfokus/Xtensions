@@ -144,7 +144,7 @@ class StringMatchExtensionsTest {
 
 	private static class IteratorContentMatcher<T> extends CustomTypeSafeMatcher<Iterator<T>> {
 
-		private val T[] content
+		val T[] content
 
 		new(String description, T[] content) {
 			super(description)

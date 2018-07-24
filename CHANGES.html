@@ -207,12 +207,12 @@
             
         </li>
     
-        <li class="chapter " data-level="1.3.7" data-path="docs/functionality/07_primitive_iterators.html">
+        <li class="chapter " data-level="1.3.7" data-path="docs/functionality/07_iterator.html">
             
-                <a href="docs/functionality/07_primitive_iterators.html">
+                <a href="docs/functionality/07_iterator.html">
             
                     
-                    Extensions to PrimitiveIterators
+                    Extensions to Iterator
             
                 </a>
             
@@ -233,9 +233,22 @@
             
         </li>
     
-        <li class="chapter " data-level="1.3.9" data-path="docs/functionality/09_strings.html">
+        <li class="chapter " data-level="1.3.9" data-path="docs/functionality/09_primitive_iterators.html">
             
-                <a href="docs/functionality/09_strings.html">
+                <a href="docs/functionality/09_primitive_iterators.html">
+            
+                    
+                    Extensions to PrimitiveIterators
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.10" data-path="docs/functionality/10_strings.html">
+            
+                <a href="docs/functionality/10_strings.html">
             
                     
                     Extensions to Strings
@@ -246,9 +259,9 @@
             
         </li>
     
-        <li class="chapter " data-level="1.3.10" data-path="docs/functionality/10_duration.html">
+        <li class="chapter " data-level="1.3.11" data-path="docs/functionality/11_duration.html">
             
-                <a href="docs/functionality/10_duration.html">
+                <a href="docs/functionality/11_duration.html">
             
                     
                     Extensions to Duration
@@ -259,9 +272,9 @@
             
         </li>
     
-        <li class="chapter " data-level="1.3.11" data-path="docs/functionality/11_functions.html">
+        <li class="chapter " data-level="1.3.12" data-path="docs/functionality/12_functions.html">
             
-                <a href="docs/functionality/11_functions.html">
+                <a href="docs/functionality/12_functions.html">
             
                     
                     Extensions to Functions
@@ -272,9 +285,9 @@
             
         </li>
     
-        <li class="chapter " data-level="1.3.12" data-path="docs/functionality/12_completable_future.html">
+        <li class="chapter " data-level="1.3.13" data-path="docs/functionality/13_completable_future.html">
             
-                <a href="docs/functionality/12_completable_future.html">
+                <a href="docs/functionality/13_completable_future.html">
             
                     
                     Extensions to CompletableFuture
@@ -285,9 +298,9 @@
             
         </li>
     
-        <li class="chapter " data-level="1.3.13" data-path="docs/functionality/13_async_computations.html">
+        <li class="chapter " data-level="1.3.14" data-path="docs/functionality/14_async_computations.html">
             
-                <a href="docs/functionality/13_async_computations.html">
+                <a href="docs/functionality/14_async_computations.html">
             
                     
                     Async Computations
@@ -298,9 +311,9 @@
             
         </li>
     
-        <li class="chapter " data-level="1.3.14" data-path="docs/functionality/14_scheduling_util.html">
+        <li class="chapter " data-level="1.3.15" data-path="docs/functionality/15_scheduling_util.html">
             
-                <a href="docs/functionality/14_scheduling_util.html">
+                <a href="docs/functionality/15_scheduling_util.html">
             
                     
                     Scheduling Util
@@ -440,17 +453,66 @@
                                 <section class="normal markdown-section">
                                 
                                 <h1 id="changes-to-xtensions">Changes to Xtensions</h1>
+<div id="toc" class="toc">
+<div id="toctitle">Version Overview:</div>
+<ul class="sectlevel1">
+<li><a href="#_version_1_1_0_2018_07_23">Version 1.1.0 - 2018-07-23</a></li>
+<li><a href="#_version_1_0_0_2018_03_02">Version 1.0.0 - 2018-03-02</a></li>
+</ul>
+</div>
 <div class="sect1">
-<h2 id="_verions_1_1_0">Verions 1.1.0</h2>
+<h2 id="_version_1_1_0_2018_07_23">Version 1.1.0 - 2018-07-23</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Nothing done yet.</p>
+<p><a href="https://github.com/fraunhoferfokus/Xtensions/milestone/2?closed=1" target="_blank">Related GitHub issues</a></p>
+</div>
+<div class="sect2">
+<h3 id="_added">Added</h3>
+<div class="ulist">
+<ul>
+<li>
+<p>Bumped Xtend minimum version to <code>2.13</code></p>
+</li>
+<li>
+<p>Added <code>combinations</code> and <code>combinationsWith</code> extension methods for <code>Iterator</code> and <code>Iterable</code> to generate cartesian products.</p>
+</li>
+<li>
+<p>Added <code>withoutAll</code> extension methods for <code>Iterable</code> and <code>Iterator</code> to filter elements from the source available in another <code>Iterable</code>.</p>
+</li>
+<li>
+<p>Added <code>partitionBy</code> extension methods for <code>Iterator</code> and <code>Iterable</code>, partitioning elements into two aggregates: selected and rejected.</p>
+</li>
+<li>
+<p>Added <code>Iterator</code>/<code>Iterable</code> extension methods <code>groupIntoListBy</code> and <code>groupIntoSetBy</code> to group elements by given classes.</p>
+</li>
+<li>
+<p>Added <code>into</code> extension methods to <code>Iterator</code>/<code>Iterable</code> to add elements to one or more <code>Collection</code>s.</p>
+</li>
+<li>
+<p>Added <code>summarize</code> extension methods for <code>PrimitiveIterator</code>s to compute count, min, max, average and sum of provided values.</p>
+</li>
+<li>
+<p>Added <code>streamRemainingExhaustive</code> extension method for <code>PrimitiveIterator</code>s that is guaranteed to pull elements from the originating iterator.</p>
+</li>
+<li>
+<p>Functional factory methods for and in <code>LongIterable</code> and <code>DoubleIterable</code>.</p>
+</li>
+<li>
+<p>Added <code>mapOrGet</code> extension method for <code>Optional</code>.</p>
+</li>
+<li>
+<p>Added <code>forEach</code> method for object arrays to iterate over elements without instantiation of an iterator.</p>
+</li>
+</ul>
+</div>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_verions_1_0_0">Verions 1.0.0</h2>
+<h2 id="_version_1_0_0_2018_03_02">Version 1.0.0 - 2018-03-02</h2>
 <div class="sectionbody">
+<div class="sect2">
+<h3 id="_added_2">Added</h3>
 <div class="paragraph">
 <p>Everything new &#x1F60A;</p>
 </div>
@@ -496,6 +558,7 @@
 </div>
 </div>
 </div>
+</div>
                                 
                                 </section>
                             
@@ -538,7 +601,7 @@
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"Changelog","level":"2.1","depth":1,"next":{"title":"Provided Functionality (as Single Page)","level":"2.2","depth":1,"path":"docs/functionality/XX_provided_functionality_one_page.adoc","ref":"./docs/functionality/XX_provided_functionality_one_page.adoc","articles":[]},"previous":{"title":"Code of Conduct","level":"1.4.2","depth":2,"path":"CODE_OF_CONDUCT.md","ref":"CODE_OF_CONDUCT.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["asciidoc-include@0.1.9"],"pluginsConfig":{"asciidoc-include":{"syntax":"gitbook"},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"CHANGES.adoc","mtime":"2018-03-06T15:08:49.240Z","type":"asciidoc"},"gitbook":{"version":"3.2.3","time":"2018-03-06T15:10:09.736Z"},"basePath":".","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"Changelog","level":"2.1","depth":1,"next":{"title":"Provided Functionality (as Single Page)","level":"2.2","depth":1,"path":"docs/functionality/XX_provided_functionality_one_page.adoc","ref":"./docs/functionality/XX_provided_functionality_one_page.adoc","articles":[]},"previous":{"title":"Code of Conduct","level":"1.4.2","depth":2,"path":"CODE_OF_CONDUCT.md","ref":"CODE_OF_CONDUCT.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["asciidoc-include@0.1.9"],"pluginsConfig":{"asciidoc-include":{"syntax":"gitbook"},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"CHANGES.adoc","mtime":"2018-07-24T08:13:34.308Z","type":"asciidoc"},"gitbook":{"version":"3.2.3","time":"2018-07-24T08:31:54.442Z"},"basePath":".","book":{"language":""}});
         });
     </script>
 </div>

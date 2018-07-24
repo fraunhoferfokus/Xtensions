@@ -43,11 +43,36 @@ final class SchedulingUtil {
 	 * 
 	 * @param <T> The type of the result value the future is wrapping
 	 */
-	public abstract static class ScheduledCompletableFuture<T> extends CompletableFuture<T> implements ScheduledFuture<T> {
+	abstract static class ScheduledCompletableFuture<T> extends CompletableFuture<T> implements ScheduledFuture<T> {
 
 		package new() {
 		}
 
+	}
+	
+	/**
+	 * This ScheduledCompletableFuture is wrapping around a {@code ScheduledFuture<?>}, forwarding the {@code getDelay}
+	 * and {@code compareTo} calls to the ones from the wrapped. The wrapped {@code ScheduledFuture<?>} is provided
+	 * by subclasses via the the abstract {@link #getScheduled()} method. Note that the wrapped future will be tried
+	 * to be cancelled, as soon as the wrapped future completes. 
+	 */
+	private abstract static class WrappingScheduledCompletableFuture<T> extends ScheduledCompletableFuture<T> {
+		
+		protected abstract def ScheduledFuture<?> getScheduled()
+		
+		new() {
+			this.whenComplete[
+				scheduled.cancel(false)
+			]
+		}
+
+		override long getDelay(TimeUnit unit) {
+			scheduled.getDelay(unit)
+		}
+
+		override int compareTo(Delayed o) {
+			scheduled.compareTo(o)
+		}
 	}
 
 	/**
@@ -57,12 +82,12 @@ final class SchedulingUtil {
 	 * 	<li>{@link SchedulingUtil#repeatEvery(long, TimeUnit)}</li>
 	 * 	<li>{@link SchedulingUtil#repeatEvery(ScheduledExecutorService, long, TimeUnit)}</li>
 	 * </ul>
-	 * When the {@link DelaySpecifier#withInitialDelay(long, org.eclipse.xtext.xbase.lib.Procedures.Procedure1) withInitialDelay(long initialDelay, (CompletableFuture<?>)=>void action)}
+	 * When the {@link DelaySpecifier#withInitialDelay(long, org.eclipse.xtext.xbase.lib.Procedures.Procedure1) withInitialDelay(long initialDelay, (CompletableFuture&lt;?&gt;)=&gt;void action)}
 	 * method is called the scheduling will be started, by scheduling the given action according to the scheduling 
 	 * information given to the function producing the DelaySpecifier and the given delay passed to withInitialDelay.<br>
 	 * This class is not intended to be sub-classed outside of the SchdulingExtensions.
 	 */
-	public abstract static class DelaySpecifier {
+	abstract static class DelaySpecifier {
 
 		private new() {
 		}
@@ -92,14 +117,14 @@ final class SchedulingUtil {
 	 * (no matter how), the {@code action} will be un-scheduled and not be called again.<br><br>
 	 * Be aware that the execution of {@code action} will be performed on a single Thread, so if the execution of {@code action}
 	 * takes longer than the specified {@code period}, following executions are delayed. Consider using 
-	 * {@link SchedulingUtil#repeatEvery(ScheduledExecutorService, Duration, org.eclipse.xtext.xbase.lib.Procedures.Procedure1) repeatEvery(ScheduledExecutorService, Duration, (CompletableFuture<?>)=>void)}
+	 * {@link SchedulingUtil#repeatEvery(ScheduledExecutorService, Duration, org.eclipse.xtext.xbase.lib.Procedures.Procedure1) repeatEvery(ScheduledExecutorService, Duration, (CompletableFuture&lt;?&gt;)=&gt;void)}
 	 * to specify an own {@code ScheduledExecutorService} which may provide more threads for execution.<br><br>
 	 * Note: The use of {@code Duration} may cause a loss in time precision, if the overall period exceeds Long.MAX_VALUE nanoseconds, 
 	 * which is roughly a duration of 292.5 years. At most at most 999,999,999 nanoseconds (less than one 
 	 * second) may be stripped. Alternatively you can call 
-	 * {@link SchedulingUtil#repeatEvery(long, TimeUnit, org.eclipse.xtext.xbase.lib.Procedures.Procedure1) repeatEvery(long, TimeUnit, (CompletableFuture<?>)=>void)} or 
+	 * {@link SchedulingUtil#repeatEvery(long, TimeUnit, org.eclipse.xtext.xbase.lib.Procedures.Procedure1) repeatEvery(long, TimeUnit, (CompletableFuture&lt;?&gt;)=&gt;void)} or 
 	 * {@link SchedulingUtil#repeatEvery(ScheduledExecutorService, long, TimeUnit, org.eclipse.xtext.xbase.lib.Procedures.Procedure1) 
-	 * repeatEvery(ScheduledExecutorService, long, TimeUnit, (CompletableFuture<?>)=>void)}
+	 * repeatEvery(ScheduledExecutorService, long, TimeUnit, (CompletableFuture&lt;?&gt;)=&gt;void)}
 	 * to specify the time without loss of precision.
 	 * 
 	 * @param period at which the given {@code action} should be called.
@@ -113,7 +138,7 @@ final class SchedulingUtil {
 	 * @throws java.lang.NullPointerException if {@code period} or {@code action} is {@code null}
 	 * @throws java.lang.IllegalArgumentException if {@code period} is a negative duration
 	 */
-	public static def ScheduledCompletableFuture<?> repeatEvery(Duration period,
+	static def ScheduledCompletableFuture<?> repeatEvery(Duration period,
 		(ScheduledCompletableFuture<?>)=>void action) {
 		action.requireNonNull
 		period.requireNonNull
@@ -133,8 +158,8 @@ final class SchedulingUtil {
 	 * Note: The use of {@code Duration} may cause a loss in time precision, if the overall period exceeds Long.MAX_VALUE nanoseconds, 
 	 * which is roughly a duration of 292.5 years. At most at most 999,999,999 nanoseconds (less than one 
 	 * second) may be stripped. Alternatively you can call 
-	 * {@link SchedulingUtil#repeatEvery(long, TimeUnit, org.eclipse.xtext.xbase.lib.Procedures.Procedure1) repeatEvery(long, TimeUnit, (CompletableFuture<?>)=>void)} or 
-	 * {@link SchedulingUtil#repeatEvery(ScheduledExecutorService, long, TimeUnit, org.eclipse.xtext.xbase.lib.Procedures.Procedure1) repeatEvery(ScheduledExecutorService, long, TimeUnit, (CompletableFuture<?>)=>void)}
+	 * {@link SchedulingUtil#repeatEvery(long, TimeUnit, org.eclipse.xtext.xbase.lib.Procedures.Procedure1) repeatEvery(long, TimeUnit, (CompletableFuture&lt;?&gt;)=&gt;void)} or 
+	 * {@link SchedulingUtil#repeatEvery(ScheduledExecutorService, long, TimeUnit, org.eclipse.xtext.xbase.lib.Procedures.Procedure1) repeatEvery(ScheduledExecutorService, long, TimeUnit, (CompletableFuture&lt;?&gt;)=&gt;void)}
 	 * to specify the time without loss of precision.<br>
 	 * 
 	 * @param scheduler the executor service used for scheduling the given {@code action}.
@@ -148,7 +173,7 @@ final class SchedulingUtil {
 	 * @throws java.lang.NullPointerException if {@code period}, {@code scheduler}, or {@code action} is {@code null}
 	 * @throws java.lang.IllegalArgumentException if {@code period} is a negative duration
 	 */
-	public static def ScheduledCompletableFuture<?> repeatEvery(ScheduledExecutorService scheduler, Duration period,
+	static def ScheduledCompletableFuture<?> repeatEvery(ScheduledExecutorService scheduler, Duration period,
 		(CompletableFuture<?>)=>void action) {
 		scheduler.requireNonNull
 		action.requireNonNull
@@ -167,7 +192,7 @@ final class SchedulingUtil {
 	 * (no matter how), the {@code action} will be un-scheduled and not be called again.<br><br>
 	 * Be aware that the execution of {@code action} will be performed on a single Thread, so if the execution of {@code action}
 	 * takes longer than the specified {@code period}, following executions are delayed. Consider using 
-	 * {@link SchedulingUtil#repeatEvery(ScheduledExecutorService, Duration, org.eclipse.xtext.xbase.lib.Procedures.Procedure1) repeatEvery(ScheduledExecutorService, Duration, (CompletableFuture<?>)=>void)}
+	 * {@link SchedulingUtil#repeatEvery(ScheduledExecutorService, Duration, org.eclipse.xtext.xbase.lib.Procedures.Procedure1) repeatEvery(ScheduledExecutorService, Duration, (CompletableFuture&lt;?&gt;)=&gt;void)}
 	 * to specify an own {@code ScheduledExecutorService} which may provide more threads for execution.
 	 * 
 	 * @param period duration in {@code unit} at which the given {@code action} should be called.
@@ -181,7 +206,7 @@ final class SchedulingUtil {
 	 * @throws NullPointerException if {@code action} or {@code unit} is {@code null}.
 	 * @throws IllegalArgumentException if {@code period} is {@code <= 0}
 	 */
-	public static def ScheduledCompletableFuture<?> repeatEvery(long period, TimeUnit unit,
+	static def ScheduledCompletableFuture<?> repeatEvery(long period, TimeUnit unit,
 		(ScheduledCompletableFuture<?>)=>void action) {
 		unit.requireNonNull
 		action.requireNonNull
@@ -211,8 +236,8 @@ final class SchedulingUtil {
 	 * @throws NullPointerException if {@code action} or {@code unit} is {@code null}.
 	 * @throws IllegalArgumentException if {@code period} is {@code <= 0}
 	 */
-	public static def ScheduledCompletableFuture<?> repeatEvery(ScheduledExecutorService scheduler, long period,
-		TimeUnit unit, (ScheduledCompletableFuture<?>)=>void action) {
+	static def ScheduledCompletableFuture<?> repeatEvery(ScheduledExecutorService scheduler, long period, TimeUnit unit,
+		(ScheduledCompletableFuture<?>)=>void action) {
 		scheduler.requireNonNull
 		unit.requireNonNull
 		action.requireNonNull
@@ -238,7 +263,7 @@ final class SchedulingUtil {
 	 * @throws NullPointerException if {@code unit} is {@code null}.
 	 * @throws IllegalArgumentException if {@code period} is {@code <= 0}
 	 */
-	public static def DelaySpecifier repeatEvery(long period, TimeUnit unit) {
+	static def DelaySpecifier repeatEvery(long period, TimeUnit unit) {
 		if (period <= 0) {
 			throw new IllegalArgumentException("period must be > 0")
 		}
@@ -273,7 +298,7 @@ final class SchedulingUtil {
 	 * @throws NullPointerException if {@code unit} or {@code scheduler} is {@code null}.
 	 * @throws IllegalArgumentException if {@code period} is {@code <= 0}
 	 */
-	public static def DelaySpecifier repeatEvery(ScheduledExecutorService scheduler, long period, TimeUnit unit) {
+	static def DelaySpecifier repeatEvery(ScheduledExecutorService scheduler, long period, TimeUnit unit) {
 		if (period <= 0) {
 			throw new IllegalArgumentException("period must be > 0")
 		}
@@ -311,7 +336,7 @@ final class SchedulingUtil {
 	private static def ScheduledCompletableFuture<?> scheduleAtFixedRate(ScheduledExecutorService scheduler,
 		long initialDelay, long rate, TimeUnit unit, (ScheduledCompletableFuture<?>)=>void action) {
 		action.requireNonNull
-		val result = new ScheduledCompletableFuture<Void>() {
+		val result = new WrappingScheduledCompletableFuture<Void>() {
 			val Runnable task = [
 				try {
 					action.apply(this)
@@ -320,16 +345,9 @@ final class SchedulingUtil {
 				}
 			]
 			val scheduled = scheduler.scheduleAtFixedRate(task, initialDelay, rate, unit);
-
-			@SuppressWarnings("unused") // we need to call whenCancelled in anonymous class
-			val afterCancel = this.whenComplete[scheduled.cancel(false)]
-
-			override getDelay(TimeUnit unit) {
-				scheduled.getDelay(unit)
-			}
-
-			override compareTo(Delayed o) {
-				scheduled.compareTo(o)
+			
+			override protected getScheduled() {
+				scheduled
 			}
 
 		}
@@ -338,21 +356,14 @@ final class SchedulingUtil {
 
 	private static def ScheduledCompletableFuture<Void> waitForInternal(long time, TimeUnit unit,
 		ScheduledExecutorService scheduler) {
-		val result = new ScheduledCompletableFuture<Void>() {
+		val result = new WrappingScheduledCompletableFuture<Void>() {
 			val Runnable task = [
 				this.complete(null)
 			]
 			val scheduled = scheduler.schedule(task, time, unit);
-
-			@SuppressWarnings("unused") // we need to call whenCancelled in anonymous class
-			val afterCancel = this.whenComplete[scheduled.cancel(false)]
-
-			override getDelay(TimeUnit unit) {
-				scheduled.getDelay(unit)
-			}
-
-			override compareTo(Delayed o) {
-				scheduled.compareTo(o)
+			
+			override protected getScheduled() {
+				scheduled
 			}
 
 		}
@@ -362,7 +373,7 @@ final class SchedulingUtil {
 	private static def ScheduledCompletableFuture<?> waitForInternal(long time, TimeUnit unit,
 		ScheduledExecutorService scheduler, (ScheduledCompletableFuture<?>)=>void then) {
 
-		val result = new ScheduledCompletableFuture<Void>() {
+		val result = new WrappingScheduledCompletableFuture<Void>() {
 			val Runnable task = [
 				try {
 					then.apply(this)
@@ -372,16 +383,9 @@ final class SchedulingUtil {
 				}
 			]
 			val scheduled = scheduler.schedule(task, time, unit);
-
-			@SuppressWarnings("unused") // we need to call whenCancelled in anonymous class
-			val afterCancel = this.whenComplete[scheduled.cancel(false)]
-
-			override getDelay(TimeUnit unit) {
-				scheduled.getDelay(unit)
-			}
-
-			override compareTo(Delayed o) {
-				scheduled.compareTo(o)
+			
+			override protected getScheduled() {
+				scheduled
 			}
 
 		}
@@ -395,14 +399,14 @@ final class SchedulingUtil {
 	 * specified by the parameters.<br>
 	 * The thread calling this method will not block.
 	 * @param time in {@code unit} after which the returned future will be completed with {@code null} value.
-	 *        The value of this parameter must be {> 0}.
+	 *        The value of this parameter must be {@code > 0}.
 	 * @param unit is the time unit of {@code time}
 	 * @return the future that can be used to check for delay till completion of the future or to cancel the completion
 	 * @throws NullPointerException if {@code unit} is {@code null}
 	 * @throws IllegalArgumentException if {@code time <= 0}
 	 */
 	// TODO version with scheduler
-	public static def ScheduledCompletableFuture<?> waitFor(long time, TimeUnit unit) {
+	static def ScheduledCompletableFuture<?> waitFor(long time, TimeUnit unit) {
 		Objects.requireNonNull(unit)
 		if (time <= 0) {
 			throw new IllegalArgumentException("time must be > 0, but was " + time);
@@ -423,13 +427,13 @@ final class SchedulingUtil {
 	 * which is roughly a duration of 292.5 years. At most at most 999,999,999 nanoseconds (less than one 
 	 * second) may be stripped.
 	 * @param duration is the time after which the returned future will be completed with {@code null} value.
-	 *        The value of this parameter must be {> 0}.
+	 *        The value of this parameter must be {@code > 0}.
 	 * @return the future that can be used to check for delay till completion of the future or to cancel the completion
 	 * @throws NullPointerException if {@code duration} is {@code null}
 	 * @throws IllegalArgumentException if {@code duration} value is {@code <= 0}
 	 */
 	// TODO version with scheduler
-	public static def ScheduledCompletableFuture<?> waitFor(Duration duration) {
+	static def ScheduledCompletableFuture<?> waitFor(Duration duration) {
 		Objects.requireNonNull(duration)
 		duration.requirePositive
 		var time = duration.toTime
@@ -473,7 +477,7 @@ final class SchedulingUtil {
 	 * @see #waitFor(long, TimeUnit, org.eclipse.xtext.xbase.lib.Procedures.Procedure1)
 	 */
 	// TODO version with scheduler
-	public static def ScheduledCompletableFuture<?> waitFor(Duration duration, (CompletableFuture<?>)=>void then) {
+	static def ScheduledCompletableFuture<?> waitFor(Duration duration, (CompletableFuture<?>)=>void then) {
 		duration.requirePositive
 		then.requireNonNull
 		val time = duration.toTime
@@ -507,8 +511,7 @@ final class SchedulingUtil {
 	 * @see #waitFor(ScheduledExecutorService, long, TimeUnit, org.eclipse.xtext.xbase.lib.Procedures.Procedure1)
 	 * @see #waitFor(Duration, org.eclipse.xtext.xbase.lib.Procedures.Procedure1)
 	 */
-	public static def ScheduledCompletableFuture<?> waitFor(long time, TimeUnit unit,
-		(CompletableFuture<?>)=>void then) {
+	static def ScheduledCompletableFuture<?> waitFor(long time, TimeUnit unit, (CompletableFuture<?>)=>void then) {
 		Objects.requireNonNull(unit)
 		Objects.requireNonNull(then)
 		if (time <= 0) {
@@ -548,8 +551,8 @@ final class SchedulingUtil {
 	 * @see #waitFor(long, TimeUnit, org.eclipse.xtext.xbase.lib.Procedures.Procedure1)
 	 * @see #waitFor(Duration, org.eclipse.xtext.xbase.lib.Procedures.Procedure1)
 	 */
-	public static def ScheduledCompletableFuture<?> waitFor(ScheduledExecutorService scheduler, long time,
-		TimeUnit unit, (CompletableFuture<?>)=>void then) {
+	static def ScheduledCompletableFuture<?> waitFor(ScheduledExecutorService scheduler, long time, TimeUnit unit,
+		(CompletableFuture<?>)=>void then) {
 		Objects.requireNonNull(scheduler)
 		Objects.requireNonNull(unit)
 		Objects.requireNonNull(then)
@@ -581,12 +584,13 @@ final class SchedulingUtil {
 	 *   Otherwise the future will be completed with the result value of the successful execution of {@code delayed}.
 	 *   If this future is completed by the caller of this method before {@code delayed} is started executing,
 	 *   the action will not be called.
+	 * @param <T> type of the object returned by the function {@code delayed} that will be provided by the returned future.
 	 * @throws NullPointerException if {@code delayed} or {@code delayUnit} is {@code null}
 	 * @throws IllegalArgumentException if {@code delayTime} value is {@code <= 0}
 	 * @see #delay(Duration, org.eclipse.xtext.xbase.lib.Functions.Function1)
 	 * @see #delay(ScheduledExecutorService, long, TimeUnit, org.eclipse.xtext.xbase.lib.Functions.Function1)
 	 */
-	public static def <T> ScheduledCompletableFuture<T> delay(long delayTime, TimeUnit delayUnit,
+	static def <T> ScheduledCompletableFuture<T> delay(long delayTime, TimeUnit delayUnit,
 		(ScheduledCompletableFuture<?>)=>T delayed) {
 		delayed.requireNonNull
 		delayUnit.requireNonNull
@@ -631,14 +635,14 @@ final class SchedulingUtil {
 	 *   Otherwise the future will be completed with the result value of the successful execution of {@code delayed}.
 	 *   If this future is completed by the caller of this method before {@code delayed} is started executing,
 	 *   the action will not be called.
+	 * @param <T> type of the object returned by the function {@code delayed} that will be provided by the returned future.
 	 * @throws NullPointerException if {@code delayed} or {@code delayUnit} is {@code null}
 	 * @throws IllegalArgumentException if {@code delayBy} time is {@code <= 0}
 	 * @see #delay(long, TimeUnit, org.eclipse.xtext.xbase.lib.Functions.Function1)
 	 * @see #delay(ScheduledExecutorService, long, TimeUnit, org.eclipse.xtext.xbase.lib.Functions.Function1)
 	 */
 	// TODO version with scheduler
-	public static def <T> ScheduledCompletableFuture<T> delay(Duration delayBy,
-		(ScheduledCompletableFuture<?>)=>T delayed) {
+	static def <T> ScheduledCompletableFuture<T> delay(Duration delayBy, (ScheduledCompletableFuture<?>)=>T delayed) {
 		delayBy.requireNonNull
 		delayBy.requirePositive
 		delayed.requireNonNull
@@ -665,6 +669,7 @@ final class SchedulingUtil {
 	 *   This function will be called on a new tread. If the function throws an exception, the returned
 	 *   future will be completed exceptionally with the thrown exception. Otherwise the future will
 	 *   be completed with the result value returned from successful execution of this function.
+	 * @param <T> type of the object returned by the function {@code delayed} that will be provided by the returned future.
 	 * @return future that will be completed exceptionally if {@code delayed} throws an exception. 
 	 *   Otherwise the future will be completed with the result value of the successful execution of {@code delayed}.
 	 *   If this future is completed by the caller of this method before {@code delayed} is started executing,
@@ -674,7 +679,7 @@ final class SchedulingUtil {
 	 * @see #delay(Duration, org.eclipse.xtext.xbase.lib.Functions.Function1)
 	 * @see #delay(long, TimeUnit, org.eclipse.xtext.xbase.lib.Functions.Function1)
 	 */
-	public static def <T> ScheduledCompletableFuture<T> delay(ScheduledExecutorService scheduler, long delayTime,
+	static def <T> ScheduledCompletableFuture<T> delay(ScheduledExecutorService scheduler, long delayTime,
 		TimeUnit delayUnit, (ScheduledCompletableFuture<?>)=>T delayed) {
 		scheduler.requireNonNull
 		delayed.requireNonNull

@@ -18,6 +18,9 @@ import java.util.function.LongConsumer
 import java.util.function.DoubleConsumer
 import java.util.Arrays
 import de.fhg.fokus.xtensions.iteration.internal.PrimitiveIterableUtil
+import de.fhg.fokus.xtensions.iteration.internal.IntStreamable
+import de.fhg.fokus.xtensions.iteration.internal.LongStreamable
+import de.fhg.fokus.xtensions.iteration.internal.DoubleStreamable
 
 /**
  * This class provides extension methods on arrays of the primitive types {@code int}, {@code long}, {@code float}, and {@code double}.
@@ -231,7 +234,7 @@ package class IntArrayIterable implements IntIterable {
 /**
  * This class is an implementation of {@link PrimitiveIterator.OfInt} for {@code int[]}.
  */
-package class IntegerArrayIterator implements PrimitiveIterator.OfInt {
+package class IntegerArrayIterator implements PrimitiveIterator.OfInt, IntStreamable {
 	val int[] arr
 	var int next
 	val int endExcluding
@@ -261,6 +264,10 @@ package class IntegerArrayIterator implements PrimitiveIterator.OfInt {
 		for (var i = next; i < end; next = (i=i+1)) {
 			action.accept(arr.get(i))
 		}
+	}
+	
+	override streamInts() {
+		Arrays.stream(arr, next, arr.length)
 	}
 
 }
@@ -312,7 +319,7 @@ package class LongArrayIterable implements LongIterable {
 /**
  * This class is an implementation of {@link PrimitiveIterator.OfInt} for {@code int[]}.
  */
-package class LongArrayIterator implements PrimitiveIterator.OfLong {
+package class LongArrayIterator implements PrimitiveIterator.OfLong, LongStreamable {
 	val long[] arr
 	var int next
 	val int endExcluding
@@ -342,6 +349,10 @@ package class LongArrayIterator implements PrimitiveIterator.OfLong {
 		for (var i = next; i < end; next = (i=i+1)) {
 			action.accept(arr.get(i))
 		}
+	}
+	
+	override streamLongs() {
+		Arrays.stream(arr, next, arr.length)
 	}
 
 }
@@ -394,7 +405,7 @@ package class DoubleArrayIterable implements DoubleIterable {
 /**
  * This class is an implementation of {@link PrimitiveIterator.OfInt} for {@code int[]}.
  */
-package class DoubleArrayIterator implements PrimitiveIterator.OfDouble {
+package class DoubleArrayIterator implements PrimitiveIterator.OfDouble, DoubleStreamable {
 	val double[] arr
 	var int next
 	val int endExcluding
@@ -424,6 +435,10 @@ package class DoubleArrayIterator implements PrimitiveIterator.OfDouble {
 		for (var i = next; i < end; next = (i=i+1)) {
 			action.accept(arr.get(i))
 		}
+	}
+	
+	override streamDoubles() {
+		Arrays.stream(arr, next, arr.length)
 	}
 
 }

@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v2.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v20.html
- *
+ * 
  * Contributors:
  *     Max Bureck (Fraunhofer FOKUS) - initial API and implementation
  *******************************************************************************/
@@ -47,12 +47,17 @@ final class PrimitiveIterableUtil {
 		}
 
 		override IntStream stream() {
-			IntStream.empty()
+			IntStream.empty
 		}
 	};
 
-	public static OfInt EMPTY_INTITERATOR = new OfInt() {
-
+	public static OfInt EMPTY_INTITERATOR = new EmptyOfInt
+	
+	/**
+	 * Empty {@code OfInt} iterator implementation
+	 */
+	private static final class EmptyOfInt implements OfInt, IntStreamable {
+		
 		override hasNext() {
 			false
 		}
@@ -62,6 +67,11 @@ final class PrimitiveIterableUtil {
 		}
 
 		override forEachRemaining(IntConsumer action) {}
+		
+		override streamInts() {
+			IntStream.empty
+		}
+		
 	}
 
 	public static final LongIterable EMPTY_LONGITERABLE = new LongIterable() {
@@ -77,12 +87,14 @@ final class PrimitiveIterableUtil {
 		}
 
 		override LongStream stream() {
-			LongStream.empty()
+			LongStream.empty
 		}
 	}
 
-	public static final OfLong EMPTY_LONGITERATOR = new OfLong() {
-
+	public static final OfLong EMPTY_LONGITERATOR = new EmptyOfLong
+	
+	private static final class EmptyOfLong implements OfLong, LongStreamable {
+		
 		override hasNext() {
 			false
 		}
@@ -92,9 +104,16 @@ final class PrimitiveIterableUtil {
 		}
 
 		override forEachRemaining(LongConsumer action) {}
-	};
+		
+		override streamLongs() {
+			LongStream.empty
+		}
+		
+	}
 
-	public static final OfDouble EMPTY_DOUBLEITERATOR = new OfDouble() {
+	public static final OfDouble EMPTY_DOUBLEITERATOR = new EmptyOfDouble
+	
+	private static final class EmptyOfDouble implements OfDouble, DoubleStreamable {
 
 		override hasNext() {
 			false
@@ -105,7 +124,12 @@ final class PrimitiveIterableUtil {
 		}
 
 		override forEachRemaining(DoubleConsumer action) {}
-	};
+		
+		override streamDoubles() {
+			DoubleStream.empty
+		}
+		
+	}
 
 	public static final DoubleIterable EMPTY_DOUBLEITERABLE = new DoubleIterable() {
 
@@ -118,7 +142,7 @@ final class PrimitiveIterableUtil {
 		override forEach(java.util.function.Consumer<? super Double> action) {}
 
 		override DoubleStream stream() {
-			DoubleStream.empty()
+			DoubleStream.empty
 		}
 	};
 }

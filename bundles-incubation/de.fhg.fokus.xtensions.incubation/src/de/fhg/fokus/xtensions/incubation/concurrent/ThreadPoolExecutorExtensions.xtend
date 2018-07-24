@@ -13,8 +13,8 @@ import org.eclipse.xtend.lib.annotations.Accessors
 
 class ThreadPoolExecutorExtensions {
 
-	public static class ThreadPoolExecutorParam {
-		private static val defaultPolicy = new AbortPolicy
+	 static class ThreadPoolExecutorParam {
+		static val defaultPolicy = new AbortPolicy
 
 		@Accessors var int corePoolSize = 0
 		@Accessors var int maximumPoolSize = Integer.MAX_VALUE
@@ -30,19 +30,12 @@ class ThreadPoolExecutorExtensions {
 	new() {
 	}
 
-	public def static create(Class<ThreadPoolExecutor> clazz, (ThreadPoolExecutorParam)=>void builder) {
+	def static create(Class<ThreadPoolExecutor> clazz, (ThreadPoolExecutorParam)=>void builder) {
 		val params = new ThreadPoolExecutorParam
 		builder.apply(params)
-		params >>> [			
-			new ThreadPoolExecutor(
-				corePoolSize, 
-				maximumPoolSize, 
-				keepAliveTime, 
-				unit, 
-				workQueue, 
-				threadFactory, 
+		params >>> [
+			new ThreadPoolExecutor(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue, threadFactory,
 				handler)
 		]
 	}
-
 }

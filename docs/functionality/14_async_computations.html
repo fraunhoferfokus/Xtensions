@@ -4,7 +4,7 @@
     <head>
         <meta charset="UTF-8">
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
-        <title>Scheduling Util · GitBook</title>
+        <title>Async Computations · GitBook</title>
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="description" content="">
         <meta name="generator" content="GitBook 3.2.3">
@@ -57,10 +57,10 @@
     <link rel="shortcut icon" href="../../gitbook/images/favicon.ico" type="image/x-icon">
 
     
-    <link rel="next" href="../development.html" />
+    <link rel="next" href="15_scheduling_util.html" />
     
     
-    <link rel="prev" href="13_async_computations.html" />
+    <link rel="prev" href="13_completable_future.html" />
     
 
     </head>
@@ -207,12 +207,12 @@
             
         </li>
     
-        <li class="chapter " data-level="1.3.7" data-path="07_primitive_iterators.html">
+        <li class="chapter " data-level="1.3.7" data-path="07_iterator.html">
             
-                <a href="07_primitive_iterators.html">
+                <a href="07_iterator.html">
             
                     
-                    Extensions to PrimitiveIterators
+                    Extensions to Iterator
             
                 </a>
             
@@ -233,9 +233,22 @@
             
         </li>
     
-        <li class="chapter " data-level="1.3.9" data-path="09_strings.html">
+        <li class="chapter " data-level="1.3.9" data-path="09_primitive_iterators.html">
             
-                <a href="09_strings.html">
+                <a href="09_primitive_iterators.html">
+            
+                    
+                    Extensions to PrimitiveIterators
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.10" data-path="10_strings.html">
+            
+                <a href="10_strings.html">
             
                     
                     Extensions to Strings
@@ -246,9 +259,9 @@
             
         </li>
     
-        <li class="chapter " data-level="1.3.10" data-path="10_duration.html">
+        <li class="chapter " data-level="1.3.11" data-path="11_duration.html">
             
-                <a href="10_duration.html">
+                <a href="11_duration.html">
             
                     
                     Extensions to Duration
@@ -259,9 +272,9 @@
             
         </li>
     
-        <li class="chapter " data-level="1.3.11" data-path="11_functions.html">
+        <li class="chapter " data-level="1.3.12" data-path="12_functions.html">
             
-                <a href="11_functions.html">
+                <a href="12_functions.html">
             
                     
                     Extensions to Functions
@@ -272,9 +285,9 @@
             
         </li>
     
-        <li class="chapter " data-level="1.3.12" data-path="12_completable_future.html">
+        <li class="chapter " data-level="1.3.13" data-path="13_completable_future.html">
             
-                <a href="12_completable_future.html">
+                <a href="13_completable_future.html">
             
                     
                     Extensions to CompletableFuture
@@ -285,9 +298,9 @@
             
         </li>
     
-        <li class="chapter " data-level="1.3.13" data-path="13_async_computations.html">
+        <li class="chapter active" data-level="1.3.14" data-path="14_async_computations.html">
             
-                <a href="13_async_computations.html">
+                <a href="14_async_computations.html">
             
                     
                     Async Computations
@@ -298,9 +311,9 @@
             
         </li>
     
-        <li class="chapter active" data-level="1.3.14" data-path="14_scheduling_util.html">
+        <li class="chapter " data-level="1.3.15" data-path="15_scheduling_util.html">
             
-                <a href="14_scheduling_util.html">
+                <a href="15_scheduling_util.html">
             
                     
                     Scheduling Util
@@ -424,7 +437,7 @@
     <!-- Title -->
     <h1>
         <i class="fa fa-circle-o-notch fa-spin"></i>
-        <a href="../.." >Scheduling Util</a>
+        <a href="../.." >Async Computations</a>
     </h1>
 </div>
 
@@ -440,134 +453,103 @@
                                 <section class="normal markdown-section">
                                 
                                 <div class="sect1">
-<h2 id="_scheduling_util">Scheduling Util</h2>
+<h2 id="_async_computations">Async Computations</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The class <code>de.fhg.fokus.xtensions.concurrent.SchedulingUtil</code> provides several static methods
-and static extension methods to easily schedule action for deferred or repeated execution.<br>
-All operations have overloaded variants taking a <code>java.util.concurrent.ScheduledExecutorService</code>
-as the first parameter, so these methods can be used as extension methods.</p>
+<p>Starting asynchronous computations and providing the result via a <code>CompletableFuture</code> is
+provided via the JDK methods <code>CompletableFuture#runAsync</code> and <code>CompletableFuture#suppyAsync</code>.</p>
 </div>
 <div class="paragraph">
-<p>To repeat an action with a given period of time (starting immediately) you can use one of the overloaded
-versions of the <code>repeatEvery</code> method.</p>
+<p>These methods have a few drawbacks. The first one is that in Xtend it is good practice to
+place the callback function as the last parameter in a parameter list to allow for more
+elegant and readable syntax, placing the lambda behind the closing parentheses. The JDK methods,
+however, have overloaded versions placing a executor for operation executor as last parameter.</p>
 </div>
 <div class="paragraph">
-<p>Example:</p>
+<p>The other drawback is that these methods need a further concept to allow cancellation of an operation
+from the caller side, e.g. when the user cancels an operation. This can e.g. be achieved via an
+additional <code>java.util.concurrent.atomic.AtomicBoolean</code> which is passed to the operation.
+This is unfortunate, since the <code>CompletableFuture</code> already knows the concept of cancellation.</p>
+</div>
+<div class="paragraph">
+<p>This library provides the class <code>de.fhg.fokus.xtensions.concurrent.AsyncCompute</code> introducing
+the methods <code>asyncRun</code> and <code>asyncSupply</code>. These methods allow asynchronous computations
+like the JDK methods, but with a shuffled parameter list and passing the created <code>CompletableFuture</code>
+into the operation to be computed asynchronously.</p>
+</div>
+<div class="paragraph">
+<p>Example using JDK classes:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-xtend" data-lang="xtend">import static extension de.fhg.fokus.xtensions.concurrent.SchedulingUtil.*
-import static extension de.fhg.fokus.xtensions.datetime.DurationExtensions.*
+<pre class="highlight"><code class="language-xtend" data-lang="xtend">import static java.util.concurrent.CompletableFuture.*
+import java.util.concurrent.Executors
 // ...
-val hundredMs = 100.milliseconds
-repeatEvery(hundredMs) [
-	println(currentTimeMillis)
-]</code></pre>
+val ex = Executors.newCachedThreadPool
+val isCancelled = new AtomicBoolean(false)
+runAsync([
+	if(isCancelled.get) {
+		println(&quot;Oh no, I&apos;ve been cancelled&quot;)
+	} else {
+		println(&quot;I&apos;m fine&quot;)
+	}
+], ex)
+isCancelled.set(true)</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>To repeat an action with a given period, starting with a delay instead of immediately, an overloaded
-version of the <code>repeatEvery</code> method can be used:</p>
-</div>
-<div class="paragraph">
-<p>Example:</p>
+<p>Same example using <code>AsyncCompute</code>:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-xtend" data-lang="xtend">import static extension de.fhg.fokus.xtensions.concurrent.SchedulingUtil.*
-import java.util.concurrent.TimeUnit
+<pre class="highlight"><code class="language-xtend" data-lang="xtend">import static extension de.fhg.fokus.xtensions.concurrent.AsyncCompute.*
+import java.util.concurrent.Executors
 // ...
-repeatEvery(100, TimeUnit.MILLISECONDS).withInitialDelay(200) [
-	println(&quot;Delayed start, repeated every 100 milis period&quot;)
-]</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Note that the action will stop being repeatedly called if the action throws an exception or the future
-returned by the <code>repeatEvery</code> method will be completed (e.g. by canceling it). This can either either
-be done by the action itself (the future will be passed to the action as parameter), or from the outside.<br>
-Since the future is both passed to the action and returned, this also allows the action to check e.g. for
-cancellation from the outside and aborting the action early.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code class="language-xtend" data-lang="xtend">import static extension de.fhg.fokus.xtensions.concurrent.SchedulingUtil.*
-import static extension de.fhg.fokus.xtensions.datetime.DurationExtensions.*
-// ...
-val hundredMs = 100.milliseconds
-val fut = repeatEvery(hundredMs) [
-	for(i : 0..Integer.MAX_VALUE) {
-		if(cancelled) {
-			println(&quot;I&apos;ve been cancelled at iteration &quot; + i)
-			return
-		}
+val pool = Executors.newCachedThreadPool
+val fut = pool.asyncRun [
+	if(cancelled) {
+		println(&quot;Oh no, I&apos;ve been cancelled&quot;)
+	} else {
+		println(&quot;I&apos;m fine&quot;)
 	}
 ]
 fut.cancel(false)</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>The method <code>delay</code> will defer the one-time execution of a given action by the given duration.
-The delayed execution can be aborted before being started by completing the future returned by
-the <code>delay</code> method.<br>
-The future returned by the <code>delay</code> method is also passed as a parameter to the deferred action.
-If the future is completed before the delay is expired, the action will not be executed. If the
-action is performed, it can check during execution if the future is completed, e.g. to return
-prematurely (abort the action early).</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code class="language-xtend" data-lang="xtend">import static extension de.fhg.fokus.xtensions.concurrent.SchedulingUtil.*
-import static extension de.fhg.fokus.xtensions.concurrent.CompletableFutureExtensions.*
-// ...
-
-val result = new CompletableFuture&lt;String&gt;
-result.thenAccept [
-	println(it)
-]
-
-Executors.newCachedThreadPool.submit [
-	Thread.sleep(100)
-	result.complete(&quot;late response&quot;)
-]
-
-delay(50.milliseconds) [
-	&quot;default value&quot;
-].forwardTo(result) (1)</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<ol>
-<li>
-<p>This extension method is explained in <a href="12_completable_future.html">Extensions to CompletableFuture</a></p>
-</li>
-</ol>
+<p>The <code>asyncRun</code> and <code>asyncSupply</code> methods have variants defining a timeout. If the provided actions
+do not complete in the defined timeout, the returned future will be completed with a <code>TimeoutException</code>.
+The action should then check for completion of the future passed into it, instead of for cancellation.</p>
 </div>
 <div class="paragraph">
-<p>The method <code>waitFor</code> will create a <code>CompletableFuture</code> that will be completed successfully
-with a <code>null</code> value when the given duration expires. An overloaded version of the <code>waitFor</code>
-method allows a deferred execution of a given callback, similar to the <code>delay</code> method, but
-the callback does not provide a return value. The returned future will be completed with a
-<code>null</code> value after successful execution.</p>
+<p>Example:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-xtend" data-lang="xtend">import static extension de.fhg.fokus.xtensions.concurrent.SchedulingUtil.*
-//...
+<pre class="highlight"><code class="language-xtend" data-lang="xtend">asyncSupply(10, TimeUnit.MILLISECONDS) [
+	// some poor integration approximation
+	val fx = [double x| x*x + 10 - (2*x)]
+	var sum = 0.0d;
+	for(i : 0..100_000) {
 
-val repeatingFut = repeatEvery(100, TimeUnit.MILLISECONDS).withInitialDelay(50) [
-	println(&quot;Delayed start, repeated every 100 milis period&quot;)
-]
-
-waitFor(50.milliseconds) [
-	repeatingFut.cancel(false)
+		// every now and then, check if we timed out
+		if(i % 100 == 0) {
+			if(done) {
+				return 0.0d;
+			}
+		}
+		// also using poor double accumulation
+		sum += fx.apply(i as double)
+	}
+	sum
+].whenComplete[result, error |
+	if(error !== null) {
+		println(&quot;Whoops, timeout&quot;)
+	} else {
+		println(&quot;result = &quot; + result)
+	}
 ]</code></pre>
 </div>
-</div>
-<div class="paragraph">
-<p>The same effect as shown here can be achieved with the <code>cancelOnTimeout</code> extension method on CompletableFuture,
-described in <a href="12_completable_future.html">Extensions to CompletableFuture</a>.</p>
 </div>
 <div class="admonitionblock tip">
 <table>
@@ -582,7 +564,7 @@ described in <a href="12_completable_future.html">Extensions to CompletableFutur
 <div class="ulist">
 <ul>
 <li>
-<p><a href="https://javadoc.io/page/com.github.fraunhoferfokus.xtensions/de.fhg.fokus.xtensions/latest/de/fhg/fokus/xtensions/concurrent/SchedulingUtil.html" target="_blank">SchedulingUtil</a></p>
+<p><a href="https://javadoc.io/page/com.github.fraunhoferfokus.xtensions/de.fhg.fokus.xtensions/latest/de/fhg/fokus/xtensions/concurrent/AsyncCompute.html" target="_blank">AsyncCompute</a></p>
 </li>
 </ul>
 </div>
@@ -618,12 +600,12 @@ described in <a href="12_completable_future.html">Extensions to CompletableFutur
 
             
                 
-                <a href="13_async_computations.html" class="navigation navigation-prev " aria-label="Previous page: Async Computations">
+                <a href="13_completable_future.html" class="navigation navigation-prev " aria-label="Previous page: Extensions to CompletableFuture">
                     <i class="fa fa-angle-left"></i>
                 </a>
                 
                 
-                <a href="../development.html" class="navigation navigation-next " aria-label="Next page: Development on Xtensions">
+                <a href="15_scheduling_util.html" class="navigation navigation-next " aria-label="Next page: Scheduling Util">
                     <i class="fa fa-angle-right"></i>
                 </a>
                 
@@ -634,7 +616,7 @@ described in <a href="12_completable_future.html">Extensions to CompletableFutur
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"Scheduling Util","level":"1.3.14","depth":2,"next":{"title":"Development on Xtensions","level":"1.4","depth":1,"path":"docs/development.adoc","ref":"./docs/development.adoc","articles":[{"title":"Contributing","level":"1.4.1","depth":2,"path":"CONTRIBUTING.adoc","ref":"CONTRIBUTING.adoc","articles":[]},{"title":"Code of Conduct","level":"1.4.2","depth":2,"path":"CODE_OF_CONDUCT.md","ref":"CODE_OF_CONDUCT.md","articles":[]}]},"previous":{"title":"Async Computations","level":"1.3.13","depth":2,"path":"docs/functionality/13_async_computations.adoc","ref":"./docs/functionality/13_async_computations.adoc","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["asciidoc-include@0.1.9"],"pluginsConfig":{"asciidoc-include":{"syntax":"gitbook"},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"docs/functionality/14_scheduling_util.adoc","mtime":"2018-03-06T15:08:49.280Z","type":"asciidoc"},"gitbook":{"version":"3.2.3","time":"2018-03-06T15:10:09.736Z"},"basePath":"../..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"Async Computations","level":"1.3.14","depth":2,"next":{"title":"Scheduling Util","level":"1.3.15","depth":2,"path":"docs/functionality/15_scheduling_util.adoc","ref":"./docs/functionality/15_scheduling_util.adoc","articles":[]},"previous":{"title":"Extensions to CompletableFuture","level":"1.3.13","depth":2,"path":"docs/functionality/13_completable_future.adoc","ref":"./docs/functionality/13_completable_future.adoc","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["asciidoc-include@0.1.9"],"pluginsConfig":{"asciidoc-include":{"syntax":"gitbook"},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"docs/functionality/14_async_computations.adoc","mtime":"2018-07-24T08:13:34.701Z","type":"asciidoc"},"gitbook":{"version":"3.2.3","time":"2018-07-24T08:31:54.442Z"},"basePath":"../..","book":{"language":""}});
         });
     </script>
 </div>

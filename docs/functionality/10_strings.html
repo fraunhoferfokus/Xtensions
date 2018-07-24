@@ -4,7 +4,7 @@
     <head>
         <meta charset="UTF-8">
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
-        <title>Async Computations · GitBook</title>
+        <title>Extensions to Strings · GitBook</title>
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="description" content="">
         <meta name="generator" content="GitBook 3.2.3">
@@ -57,10 +57,10 @@
     <link rel="shortcut icon" href="../../gitbook/images/favicon.ico" type="image/x-icon">
 
     
-    <link rel="next" href="14_scheduling_util.html" />
+    <link rel="next" href="11_duration.html" />
     
     
-    <link rel="prev" href="12_completable_future.html" />
+    <link rel="prev" href="09_primitive_iterators.html" />
     
 
     </head>
@@ -207,12 +207,12 @@
             
         </li>
     
-        <li class="chapter " data-level="1.3.7" data-path="07_primitive_iterators.html">
+        <li class="chapter " data-level="1.3.7" data-path="07_iterator.html">
             
-                <a href="07_primitive_iterators.html">
+                <a href="07_iterator.html">
             
                     
-                    Extensions to PrimitiveIterators
+                    Extensions to Iterator
             
                 </a>
             
@@ -233,9 +233,22 @@
             
         </li>
     
-        <li class="chapter " data-level="1.3.9" data-path="09_strings.html">
+        <li class="chapter " data-level="1.3.9" data-path="09_primitive_iterators.html">
             
-                <a href="09_strings.html">
+                <a href="09_primitive_iterators.html">
+            
+                    
+                    Extensions to PrimitiveIterators
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter active" data-level="1.3.10" data-path="10_strings.html">
+            
+                <a href="10_strings.html">
             
                     
                     Extensions to Strings
@@ -246,9 +259,9 @@
             
         </li>
     
-        <li class="chapter " data-level="1.3.10" data-path="10_duration.html">
+        <li class="chapter " data-level="1.3.11" data-path="11_duration.html">
             
-                <a href="10_duration.html">
+                <a href="11_duration.html">
             
                     
                     Extensions to Duration
@@ -259,9 +272,9 @@
             
         </li>
     
-        <li class="chapter " data-level="1.3.11" data-path="11_functions.html">
+        <li class="chapter " data-level="1.3.12" data-path="12_functions.html">
             
-                <a href="11_functions.html">
+                <a href="12_functions.html">
             
                     
                     Extensions to Functions
@@ -272,9 +285,9 @@
             
         </li>
     
-        <li class="chapter " data-level="1.3.12" data-path="12_completable_future.html">
+        <li class="chapter " data-level="1.3.13" data-path="13_completable_future.html">
             
-                <a href="12_completable_future.html">
+                <a href="13_completable_future.html">
             
                     
                     Extensions to CompletableFuture
@@ -285,9 +298,9 @@
             
         </li>
     
-        <li class="chapter active" data-level="1.3.13" data-path="13_async_computations.html">
+        <li class="chapter " data-level="1.3.14" data-path="14_async_computations.html">
             
-                <a href="13_async_computations.html">
+                <a href="14_async_computations.html">
             
                     
                     Async Computations
@@ -298,9 +311,9 @@
             
         </li>
     
-        <li class="chapter " data-level="1.3.14" data-path="14_scheduling_util.html">
+        <li class="chapter " data-level="1.3.15" data-path="15_scheduling_util.html">
             
-                <a href="14_scheduling_util.html">
+                <a href="15_scheduling_util.html">
             
                     
                     Scheduling Util
@@ -424,7 +437,7 @@
     <!-- Title -->
     <h1>
         <i class="fa fa-circle-o-notch fa-spin"></i>
-        <a href="../.." >Async Computations</a>
+        <a href="../.." >Extensions to Strings</a>
     </h1>
 </div>
 
@@ -440,103 +453,111 @@
                                 <section class="normal markdown-section">
                                 
                                 <div class="sect1">
-<h2 id="_async_computations">Async Computations</h2>
+<h2 id="_extensions_to_string">Extensions to String</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Starting asynchronous computations and providing the result via a <code>CompletableFuture</code> is
-provided via the JDK methods <code>CompletableFuture#runAsync</code> and <code>CompletableFuture#suppyAsync</code>.</p>
+<p>The class <code>de.fhg.fokus.xtensions.string.StringSplitExtensions</code> provides extension methods
+for <code>java.lang.String</code> allowing to lazily split a string value.</p>
 </div>
 <div class="paragraph">
-<p>These methods have a few drawbacks. The first one is that in Xtend it is good practice to
-place the callback function as the last parameter in a parameter list to allow for more
-elegant and readable syntax, placing the lambda behind the closing parentheses. The JDK methods,
-however, have overloaded versions placing a executor for operation executor as last parameter.</p>
-</div>
-<div class="paragraph">
-<p>The other drawback is that these methods need a further concept to allow cancellation of an operation
-from the caller side, e.g. when the user cancels an operation. This can e.g. be achieved via an
-additional <code>java.util.concurrent.atomic.AtomicBoolean</code> which is passed to the operation.
-This is unfortunate, since the <code>CompletableFuture</code> already knows the concept of cancellation.</p>
-</div>
-<div class="paragraph">
-<p>This library provides the class <code>de.fhg.fokus.xtensions.concurrent.AsyncCompute</code> introducing
-the methods <code>asyncRun</code> and <code>asyncSupply</code>. These methods allow asynchronous computations
-like the JDK methods, but with a shuffled parameter list and passing the created <code>CompletableFuture</code>
-into the operation to be computed asynchronously.</p>
-</div>
-<div class="paragraph">
-<p>Example using JDK classes:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code class="language-xtend" data-lang="xtend">import static java.util.concurrent.CompletableFuture.*
-import java.util.concurrent.Executors
-// ...
-val ex = Executors.newCachedThreadPool
-val isCancelled = new AtomicBoolean(false)
-runAsync([
-	if(isCancelled.get) {
-		println(&quot;Oh no, I&apos;ve been cancelled&quot;)
-	} else {
-		println(&quot;I&apos;m fine&quot;)
-	}
-], ex)
-isCancelled.set(true)</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Same example using <code>AsyncCompute</code>:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code class="language-xtend" data-lang="xtend">import static extension de.fhg.fokus.xtensions.concurrent.AsyncCompute.*
-import java.util.concurrent.Executors
-// ...
-val pool = Executors.newCachedThreadPool
-val fut = pool.asyncRun [
-	if(cancelled) {
-		println(&quot;Oh no, I&apos;ve been cancelled&quot;)
-	} else {
-		println(&quot;I&apos;m fine&quot;)
-	}
-]
-fut.cancel(false)</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>The <code>asyncRun</code> and <code>asyncSupply</code> methods have variants defining a timeout. If the provided actions
-do not complete in the defined timeout, the returned future will be completed with a <code>TimeoutException</code>.
-The action should then check for completion of the future passed into it, instead of for cancellation.</p>
+<p>The extension method <code>splitIt</code> returns an <code>Iterator</code> which lazily performs string split
+operations based on a regular expression (same <code>String#split(String)</code>) would do, but
+lazily. This allows the use of Iterator extension methods provided by Xtend and to stop splitting
+a string when a condition is met without splitting the complete input string beforehand.</p>
 </div>
 <div class="paragraph">
 <p>Example:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-xtend" data-lang="xtend">asyncSupply(10, TimeUnit.MILLISECONDS) [
-	// some poor integration approximation
-	val fx = [double x| x*x + 10 - (2*x)]
-	var sum = 0.0d;
-	for(i : 0..100_000) {
-
-		// every now and then, check if we timed out
-		if(i % 100 == 0) {
-			if(done) {
-				return 0.0d;
-			}
-		}
-		// also using poor double accumulation
-		sum += fx.apply(i as double)
-	}
-	sum
-].whenComplete[result, error |
-	if(error !== null) {
-		println(&quot;Whoops, timeout&quot;)
-	} else {
-		println(&quot;result = &quot; + result)
-	}
+<pre class="highlight"><code class="language-xtend" data-lang="xtend">import static extension de.fhg.fokus.xtensions.string.StringSplitExtensions.*
+// ...
+val Iterator&lt;String&gt; i = &quot;foozoobaar&quot;.splitIt(&quot;(?&lt;=oo)&quot;)
+i.takeWhile[!startsWith(&quot;b&quot;)].forEach[
+	println(it)
 ]</code></pre>
 </div>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Tip</div>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>If a split pattern is known in advance the following is possible with the JDK types to obtain a Stream of split elements:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-xtend" data-lang="xtend">import java.util.regex.Pattern
+// ...
+extension val pattern = Pattern.compile(&quot;mypattern&quot;)
+// ...
+&quot;tosplit&quot;.splitAsStream  // actually calls pattern.splitAsStream(&quot;tosplit&quot;)</code></pre>
+</div>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>If a pattern String has to be produced dynamically, the extension method <code>splitAsStream</code> is provided
+as a shortcut for the sequence of calls from above:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-xtend" data-lang="xtend">import static extension de.fhg.fokus.xtensions.string.StringSplitExtensions.*
+// ...
+val String patternStr = ... // dynamically created pattern
+&quot;tosplit&quot;.splitAsStream(patternStr)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The class <code>de.fhg.fokus.xtensions.string.SptringMatchExtensions</code> provides extension methods to
+<code>java.lang.String</code>, allowing to match regular expressions lazily via iterators.</p>
+</div>
+<div class="paragraph">
+<p>To manually get matches for a pattern from an input string with JDK classes the following sequence has to be used:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-xtend" data-lang="xtend">import java.util.regex.Pattern
+// ...
+val String input = &quot;foo bar boo&quot;
+val Pattern pattern = Pattern.compile(&quot;(\\woo)&quot;)
+val matcher = pattern.matcher(input)
+while(matcher.find) {
+	val match = input.subSequence(matcher.start, matcher.end)
+	// Do something with match
+	println(match)
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The extension method <code>matchIt</code> elegantly wraps this usage pattern into an Iterator, so the Xtend combinators
+can be used on them.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-xtend" data-lang="xtend">import static extension de.fhg.fokus.xtensions.string.StringMatchExtensions.*
+import java.util.regex.Pattern
+// ...
+val String input = &quot;foo bar boo&quot;
+val Pattern pattern = Pattern.compile(&quot;(\\woo)&quot;)
+input.matchIt(pattern).forEach [
+	println(it)
+]</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The method <code>matchIt</code> is overloaded to also take a string of the pattern, which internally compiles
+it to a pattern.</p>
+</div>
+<div class="paragraph">
+<p>Having a stream of <a href="http://docs.oracle.com/javase/9/docs/api/java/util/regex/MatchResult.html" target="_blank"><code>MatchResult</code></a>s
+for a pattern applied to a given input string can be achieved  with the <code>matchResultIt</code> extension method.
+This can be useful, if other group captures have to be accessed when handling matches.</p>
 </div>
 <div class="admonitionblock tip">
 <table>
@@ -551,7 +572,10 @@ The action should then check for completion of the future passed into it, instea
 <div class="ulist">
 <ul>
 <li>
-<p><a href="https://javadoc.io/page/com.github.fraunhoferfokus.xtensions/de.fhg.fokus.xtensions/latest/de/fhg/fokus/xtensions/concurrent/AsyncCompute.html" target="_blank">AsyncCompute</a></p>
+<p><a href="https://javadoc.io/page/com.github.fraunhoferfokus.xtensions/de.fhg.fokus.xtensions/latest/de/fhg/fokus/xtensions/string/StringSplitExtensions.html" target="_blank">StringSplitExtensions</a></p>
+</li>
+<li>
+<p><a href="https://javadoc.io/page/com.github.fraunhoferfokus.xtensions/de.fhg.fokus.xtensions/latest/de/fhg/fokus/xtensions/string/StringMatchExtensions.html" target="_blank">StringMatchExtensions</a></p>
 </li>
 </ul>
 </div>
@@ -587,12 +611,12 @@ The action should then check for completion of the future passed into it, instea
 
             
                 
-                <a href="12_completable_future.html" class="navigation navigation-prev " aria-label="Previous page: Extensions to CompletableFuture">
+                <a href="09_primitive_iterators.html" class="navigation navigation-prev " aria-label="Previous page: Extensions to PrimitiveIterators">
                     <i class="fa fa-angle-left"></i>
                 </a>
                 
                 
-                <a href="14_scheduling_util.html" class="navigation navigation-next " aria-label="Next page: Scheduling Util">
+                <a href="11_duration.html" class="navigation navigation-next " aria-label="Next page: Extensions to Duration">
                     <i class="fa fa-angle-right"></i>
                 </a>
                 
@@ -603,7 +627,7 @@ The action should then check for completion of the future passed into it, instea
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"Async Computations","level":"1.3.13","depth":2,"next":{"title":"Scheduling Util","level":"1.3.14","depth":2,"path":"docs/functionality/14_scheduling_util.adoc","ref":"./docs/functionality/14_scheduling_util.adoc","articles":[]},"previous":{"title":"Extensions to CompletableFuture","level":"1.3.12","depth":2,"path":"docs/functionality/12_completable_future.adoc","ref":"./docs/functionality/12_completable_future.adoc","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["asciidoc-include@0.1.9"],"pluginsConfig":{"asciidoc-include":{"syntax":"gitbook"},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"docs/functionality/13_async_computations.adoc","mtime":"2018-03-06T15:08:49.280Z","type":"asciidoc"},"gitbook":{"version":"3.2.3","time":"2018-03-06T15:10:09.736Z"},"basePath":"../..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"Extensions to Strings","level":"1.3.10","depth":2,"next":{"title":"Extensions to Duration","level":"1.3.11","depth":2,"path":"docs/functionality/11_duration.adoc","ref":"./docs/functionality/11_duration.adoc","articles":[]},"previous":{"title":"Extensions to PrimitiveIterators","level":"1.3.9","depth":2,"path":"docs/functionality/09_primitive_iterators.adoc","ref":"./docs/functionality/09_primitive_iterators.adoc","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["asciidoc-include@0.1.9"],"pluginsConfig":{"asciidoc-include":{"syntax":"gitbook"},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"docs/functionality/10_strings.adoc","mtime":"2018-07-24T08:13:34.696Z","type":"asciidoc"},"gitbook":{"version":"3.2.3","time":"2018-07-24T08:31:54.442Z"},"basePath":"../..","book":{"language":""}});
         });
     </script>
 </div>
