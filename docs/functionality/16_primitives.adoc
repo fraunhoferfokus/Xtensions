@@ -1,0 +1,54 @@
+
+== Primitives
+
+The class `de.fhg.fokus.xtensions.Primitives` provides a bunch of static extension methods 
+that are aimed to help handling primitive values at the end of null-safe navigation chains.
+
+
+=== Boxing Primitives
+
+Boxing the primitive value of a property at the end of a null-safe call chain.
+
+Example:
+
+[source,xtend]
+----
+import static extension de.fhg.fokus.xtensions.Primitives.*
+// ...
+val person = loadPerson("Mike")
+person?.lastName.box[isEmpty]
+
+----
+
+=== Testing Conditions
+
+Boxed boolean values (e.g. produced by functions described in <<Boxing Primitives>>) can be tested 
+directly with the `null`-aware extension methods `isTrue`, `isFalse`, `isNullOrTrue`, `isNullOrFalse`.
+
+
+Example:
+
+[source,xtend]
+----
+----
+
+To test un-boxed primitives, one of the `isTrue`, `isFalse`, `isNullOrTrue`, `isNullOrFalse` methods.
+
+
+Example:
+
+[source,xtend]
+----
+----
+
+
+=== Conversion to Optionals
+
+=== Default Values on `null` Boxes
+
+[TIP]
+====
+Related JavaDocs:
+
+* https://javadoc.io/page/com.github.fraunhoferfokus.xtensions/de.fhg.fokus.xtensions/latest/de/fhg/fokus/xtensions/Primitives.html[Primitives]
+====

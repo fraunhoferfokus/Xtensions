@@ -18,6 +18,7 @@
 .. link:./docs/functionality/13_completable_future.adoc[Extensions to CompletableFuture]
 .. link:./docs/functionality/14_async_computations.adoc[Async Computations]
 .. link:./docs/functionality/15_scheduling_util.adoc[Scheduling Util]
+.. link:./docs/functionality/16_primitives.adoc[Primitives]
 . link:./docs/development.adoc[Development on Xtensions]
 .. link:CONTRIBUTING.adoc[Contributing]
 .. link:CODE_OF_CONDUCT.md[Code of Conduct]

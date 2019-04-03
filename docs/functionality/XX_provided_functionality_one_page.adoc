@@ -42,3 +42,5 @@ toc::[]
 {% include "./14_async_computations.adoc" %}
 
 {% include "./15_scheduling_util.adoc" %}
+
+{% include "./16_primitives.adoc" %}

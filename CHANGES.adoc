@@ -9,7 +9,7 @@ link:https://github.com/fraunhoferfokus/Xtensions/milestone/3?closed=1[Related G
 
 === Added 
 
-Nothing as of now
+- Added helpers for handling primitive values at the end of null-safe navigation chains
 
 == Version 1.1.0 - 2018-07-23
 
