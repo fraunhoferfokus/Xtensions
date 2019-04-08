@@ -11,6 +11,10 @@ link:https://github.com/fraunhoferfokus/Xtensions/milestone/3?closed=1[Related G
 
 - Added helpers for handling primitive values at the end of null-safe navigation chains
 
+=== Changed
+
+- Increased minimum Xtend version to 2.15, mainly due to build issues
+
 == Version 1.1.0 - 2018-07-23
 
 link:https://github.com/fraunhoferfokus/Xtensions/milestone/2?closed=1[Related GitHub issues]
