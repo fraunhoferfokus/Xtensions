@@ -1,6 +1,6 @@
 language: java
 jdk:
-- oraclejdk8
+- openjdk8
 stages:
 - name: build
   if: NOT tag IS present

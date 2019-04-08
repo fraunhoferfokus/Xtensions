@@ -1,21 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- 
-	Copyright (c) 2017 Max Bureck (Fraunhofer FOKUS) and others.
-	All rights reserved. This program and the accompanying materials
-	are made available under the terms of the Eclipse Public License v2.0
-	which accompanies this distribution, and is available at
-	http://www.eclipse.org/legal/epl-v20.html
-	
-	Contributors:
-	    Max Bureck (Fraunhofer FOKUS) - initial config
-	    
-	    
-	* Enable profile "coverage-report" to create a Jacoco coverage
-	* To push the code coverage report to coveralls.io, pass parameter "coveralls". This automatically enables profile "coverage-report"
-	* To build incubation bundles, enable profile "incubation"
-	* On release pass property "release", e.g. passing parameter "-Drelease"
- -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<!-- Copyright (c) 2017 Max Bureck (Fraunhofer FOKUS) and others. All rights 
+	reserved. This program and the accompanying materials are made available 
+	under the terms of the Eclipse Public License v2.0 which accompanies this 
+	distribution, and is available at http://www.eclipse.org/legal/epl-v20.html 
+	Contributors: Max Bureck (Fraunhofer FOKUS) - initial config * Enable profile 
+	"coverage-report" to create a Jacoco coverage * To push the code coverage 
+	report to coveralls.io, pass parameter "coveralls". This automatically enables 
+	profile "coverage-report" * To build incubation bundles, enable profile "incubation" 
+	* On release pass property "release", e.g. passing parameter "-Drelease" -->
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.github.fraunhoferfokus.xtensions</groupId>
@@ -56,6 +50,10 @@
 		</developer>
 	</developers>
 
+	<prerequisites>
+		<maven>3.6.0</maven>
+	</prerequisites>
+
 	<properties>
 		<tycho-version>1.1.0</tycho-version>
 		<xtend-version>2.13.0</xtend-version>
@@ -82,15 +80,18 @@
 		<module>bundles/de.fhg.fokus.xtensions</module>
 		<module>features/de.fhg.fokus.xtensions.feature</module>
 		<module>p2/de.fhg.fokus.xtensions.p2</module>
-		<!-- bundles need to be in build to be deployed as maven project, so POM hierarchy is in deployed repo --> 
+		<!-- bundles need to be in build to be deployed as maven project, so POM 
+			hierarchy is in deployed repo -->
 		<module>bundles</module>
-		<!-- The following modules are only listed to allow easy version adjustment from this master -->
+		<!-- The following modules are only listed to allow easy version adjustment 
+			from this master -->
 		<module>features</module>
 	</modules>
 
 	<profiles>
 		<profile>
-			<!-- This profile is always active, and only de-activated if property "release" is set -->
+			<!-- This profile is always active, and only de-activated if property 
+				"release" is set -->
 			<id>nonRelease</id>
 			<activation>
 				<property>
@@ -102,7 +103,7 @@
 				<module>tests/de.fhg.fokus.xtensions.tests</module>
 			</modules>
 		</profile>
-		
+
 		<profile>
 			<id>incubation</id>
 			<modules>
@@ -113,7 +114,7 @@
 				<module>tests-incubation/de.fhg.fokus.xtensions.circuitbreaker.tests</module>
 			</modules>
 		</profile>
-		
+
 		<profile>
 			<id>coverage-report</id>
 			<activation>
@@ -121,11 +122,11 @@
 					<name>coveralls</name>
 				</property>
 			</activation>
-			
+
 			<modules>
 				<module>releng/de.fhg.fokus.xtensions.report</module>
 			</modules>
-			
+
 			<build>
 				<plugins>
 					<plugin>
@@ -155,7 +156,7 @@
 			</build>
 		</profile>
 	</profiles>
-	
+
 	<dependencies>
 		<dependency>
 			<groupId>junit</groupId>
@@ -163,14 +164,12 @@
 			<version>4.12</version>
 			<scope>test</scope>
 		</dependency>
-		<!-- 
-			Manually added dependency for xbase lib, so maven can resolve this, when not using 
-			p2 as source of the library
-		-->
+		<!-- Manually added dependency for xbase lib, so maven can resolve this, 
+			when not using p2 as source of the library -->
 		<dependency>
-		    <groupId>org.eclipse.xtext</groupId>
-		    <artifactId>org.eclipse.xtext.xbase.lib</artifactId>
-		    <version>2.13.0</version>
+			<groupId>org.eclipse.xtext</groupId>
+			<artifactId>org.eclipse.xtext.xbase.lib</artifactId>
+			<version>2.13.0</version>
 		</dependency>
 	</dependencies>
 
@@ -182,8 +181,8 @@
 		</repository>
 		<snapshotRepository>
 			<id>bintray-snapshots-xtensions-maven</id>
-	        <name>oss-jfrog-artifactory-snapshots</name>
-	        <url>http://oss.jfrog.org/artifactory/oss-snapshot-local</url>
+			<name>oss-jfrog-artifactory-snapshots</name>
+			<url>http://oss.jfrog.org/artifactory/oss-snapshot-local</url>
 		</snapshotRepository>
 	</distributionManagement>
 
@@ -250,7 +249,7 @@
 					</execution>
 				</executions>
 			</plugin>
-			
+
 			<!-- Needed for source feature -->
 			<plugin>
 				<groupId>org.eclipse.tycho</groupId>
@@ -274,7 +273,7 @@
 					</execution>
 				</executions>
 			</plugin>
-			
+
 			<plugin>
 				<groupId>org.eclipse.tycho</groupId>
 				<artifactId>tycho-p2-repository-plugin</artifactId>
@@ -365,7 +364,7 @@
 					</execution>
 				</executions>
 			</plugin>
-			
+
 			<!-- Needed for release on travis-ci -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -373,8 +372,12 @@
 				<version>2.5.3</version>
 				<configuration>
 					<pushChanges>false</pushChanges>
-					<preparationGoals>org.eclipse.tycho:tycho-versions-plugin:${tycho-version}:update-eclipse-metadata org.apache.maven.plugins:maven-scm-plugin:1.9.5:add org.apache.maven.plugins:maven-scm-plugin:1.9.5:checkin</preparationGoals>
-					<completionGoals>org.eclipse.tycho:tycho-versions-plugin:${tycho-version}:update-eclipse-metadata org.apache.maven.plugins:maven-scm-plugin:1.9.5:add org.apache.maven.plugins:maven-scm-plugin:1.9.5:checkin</completionGoals>
+					<preparationGoals>org.eclipse.tycho:tycho-versions-plugin:${tycho-version}:update-eclipse-metadata
+						org.apache.maven.plugins:maven-scm-plugin:1.9.5:add
+						org.apache.maven.plugins:maven-scm-plugin:1.9.5:checkin</preparationGoals>
+					<completionGoals>org.eclipse.tycho:tycho-versions-plugin:${tycho-version}:update-eclipse-metadata
+						org.apache.maven.plugins:maven-scm-plugin:1.9.5:add
+						org.apache.maven.plugins:maven-scm-plugin:1.9.5:checkin</completionGoals>
 				</configuration>
 			</plugin>
 
@@ -386,7 +389,7 @@
 					<types>sources</types>
 				</configuration>
 			</plugin>
-		
+
 		</plugins>
 
 		<!-- Set default versions for plugins used by sub-projects -->
