@@ -23,6 +23,10 @@ import java.util.function.ToDoubleFunction
  * considered as a code smell.<br><br>
  */
 final class Primitives {
+	
+	private new(){
+		throw new IllegalStateException(Primitives.name + " is not intended to be instantiated.")
+	}
 
 	/**
 	 * This function is intended to be used as an extension method on a {@code context} object to box a {@code boolean} property of 
@@ -313,41 +317,80 @@ final class Primitives {
 	}
 	
 	/**
+	 * This method is supposed to be used as an extension function on an object {@code t}
+	 * to wrap a primitive property into an {@link OptionalInt}, producing an empty optional
+	 * if the context object {@code t} is {@code null} and wrapping the primitive value if 
+	 * {@code t} is not {@code null}, e.g. {@code str.optionalInt[length]}.<br>
+	 * The main use case for this function is to use as the last step in a null-safe navigation
+	 * chain to avoid implicit default values for primitive value properties.<br><br>
 	 * <b>Important</b>: Do <em>not</em> call this method via null-safe navigation! 
 	 * This defeats the purpose of this method of providing an instance that safely can
 	 * be queried for a value.
+	 * @param context object to be tested for {@code null} and if not used to invoke {@code mapper} with
+	 * @param mapper function to map the given context object {@code context} to an {@code int} value. This 
+	 *  function is intended to return a primitive value property from {@code context}
+	 * @return empty {@code OptionalInt} if {@code context} is {@code null}, otherwise
+	 *  an optional wrapping the value returned by {@code mapper}
+	 * @throws NullPointerException if {@code mapper} is {@code null}
 	 */
-	static def <T> OptionalInt optionalInt(T t, ToIntFunction<T> mapper) {
-		if(t === null) {
+	static def <T> OptionalInt optionalInt(T context, ToIntFunction<T> mapper) {
+		Objects.requireNonNull(mapper, "mapper must not be null")
+		if(context === null) {
 			OptionalInt.empty
 		} else {
-			OptionalInt.of(mapper.applyAsInt(t))
+			OptionalInt.of(mapper.applyAsInt(context))
 		}
 	}
 	
 	/**
+	 * This method is supposed to be used as an extension function on an object {@code t}
+	 * to wrap a primitive property into an {@link OptionalLong}, producing an empty optional
+	 * if the context object {@code t} is {@code null} and wrapping the primitive value if 
+	 * {@code t} is not {@code null}, e.g. {@code str.optionalInt[length]}.<br>
+	 * The main use case for this function is to use as the last step in a null-safe navigation
+	 * chain to avoid implicit default values for primitive value properties.<br><br>
 	 * <b>Important</b>: Do <em>not</em> call this method via null-safe navigation! 
 	 * This defeats the purpose of this method of providing an instance that safely can
 	 * be queried for a value.
+	 * @param context object to be tested for {@code null} and if not used to invoke {@code mapper} with
+	 * @param mapper function to map the given context object {@code context} to an {@code long} value. This 
+	 *  function is intended to return a primitive value property from {@code context}
+	 * @return empty {@code OptionalLong} if {@code context} is {@code null}, otherwise
+	 *  an optional wrapping the value returned by {@code mapper}
+	 * @throws NullPointerException if {@code mapper} is {@code null}
 	 */
-	static def <T> OptionalLong optionalLong(T t, ToLongFunction<T> mapper) {
-		if(t === null) {
+	static def <T> OptionalLong optionalLong(T context, ToLongFunction<T> mapper) {
+		Objects.requireNonNull(mapper, "mapper must not be null")
+		if(context === null) {
 			OptionalLong.empty
 		} else {
-			OptionalLong.of(mapper.applyAsLong(t))
+			OptionalLong.of(mapper.applyAsLong(context))
 		}
 	}
 	
 	/**
+	 * This method is supposed to be used as an extension function on an object {@code t}
+	 * to wrap a primitive property into an {@link OptionalDouble}, producing an empty optional
+	 * if the context object {@code t} is {@code null} and wrapping the primitive value if 
+	 * {@code t} is not {@code null}, e.g. {@code str.optionalInt[length]}.<br>
+	 * The main use case for this function is to use as the last step in a null-safe navigation
+	 * chain to avoid implicit default values for primitive value properties.<br><br>
 	 * <b>Important</b>: Do <em>not</em> call this method via null-safe navigation! 
 	 * This defeats the purpose of this method of providing an instance that safely can
 	 * be queried for a value.
+	 * @param context object to be tested for {@code null} and if not used to invoke {@code mapper} with
+	 * @param mapper function to map the given context object {@code context} to an {@code double} value. This 
+	 *  function is intended to return a primitive value property from {@code context}
+	 * @return empty {@code OptionalDouble} if {@code context} is {@code null}, otherwise
+	 *  an optional wrapping the value returned by {@code mapper}
+	 * @throws NullPointerException if {@code mapper} is {@code null}
 	 */
-	static def <T> OptionalDouble optionalDouble(T t, ToDoubleFunction<T> mapper) {
-		if(t === null) {
+	static def <T> OptionalDouble optionalDouble(T context, ToDoubleFunction<T> mapper) {
+		Objects.requireNonNull(mapper, "mapper must not be null")
+		if(context === null) {
 			OptionalDouble.empty
 		} else {
-			OptionalDouble.of(mapper.applyAsDouble(t))
+			OptionalDouble.of(mapper.applyAsDouble(context))
 		}
 	}
 
@@ -355,11 +398,14 @@ final class Primitives {
 	 * Unboxes and returns the {@code Boolean b}, or if {@code b} is {@code null},
 	 * returns the value provided by {@code fallback}. This is similar to using the 
 	 * {@code ?:} operator, but allows lazy computation for the fallback value.
-	 * @param b
-	 * @param fallback
-	 * @return
+	 * @param b value to be unboxed if not {@code null}
+	 * @param fallback supplies value to be returned if {@code b} is {@code null}
+	 * @return the wrapped primitive of {@code b}, if {@code b} is not {@code null}, otherwise the 
+	 *  value provided by {@code fallback}
+	 * @throws NullPointerException if {@code fallback} is {@code null}.
 	 */
 	static def boolean onNull(Boolean b, BooleanSupplier fallback) {
+		Objects.requireNonNull(fallback, "fallback must not be null")
 		if (b !== null) {
 			b.booleanValue
 		} else {
@@ -371,11 +417,14 @@ final class Primitives {
 	 * Unboxes and returns the {@code Integer i}, or if {@code i} is {@code null},
 	 * returns the value provided by {@code fallback}. This is similar to using the 
 	 * {@code ?:} operator, but allows lazy computation for the fallback value.
-	 * @param i
-	 * @param fallback
-	 * @return
+	 * @param i value to be unboxed if not {@code null}
+	 * @param fallback supplies value to be returned if {@code i} is {@code null}
+	 * @return the wrapped primitive of {@code i}, if {@code i} is not {@code null}, otherwise the 
+	 *  value provided by {@code fallback}
+	 * @throws NullPointerException if {@code fallback} is {@code null}.
 	 */
 	static def int onNull(Integer i, IntSupplier fallback) {
+		Objects.requireNonNull(fallback, "fallback must not be null")
 		if (i !== null) {
 			i.intValue
 		} else {
@@ -387,11 +436,14 @@ final class Primitives {
 	 * Unboxes and returns the {@code Long l}, or if {@code l} is {@code null},
 	 * returns the value provided by {@code fallback}. This is similar to using the 
 	 * {@code ?:} operator, but allows lazy computation for the fallback value.
-	 * @param l
-	 * @param fallback
-	 * @return
+	 * @param l value to be unboxed if not {@code null}
+	 * @param fallback supplies value to be returned if {@code l} is {@code null}
+	 * @return the wrapped primitive of {@code l}, if {@code l} is not {@code null}, otherwise the 
+	 *  value provided by {@code fallback}
+	 * @throws NullPointerException if {@code fallback} is {@code null}.
 	 */
 	static def long onNull(Long l, LongSupplier fallback) {
+		Objects.requireNonNull(fallback, "fallback must not be null")
 		if (l !== null) {
 			l.longValue
 		} else {
@@ -403,11 +455,14 @@ final class Primitives {
 	 * Unboxes and returns the {@code Double d}, or if {@code l} is {@code null},
 	 * returns the value provided by {@code fallback}. This is similar to using the 
 	 * {@code ?:} operator, but allows lazy computation for the fallback value.
-	 * @param d
-	 * @param fallback
-	 * @return
+	 * @param d value to be unboxed if not {@code null}
+	 * @param fallback supplies value to be returned if {@code d} is {@code null}
+	 * @return the wrapped primitive of {@code d}, if {@code d} is not {@code null}, otherwise the 
+	 *  value provided by {@code fallback}
+	 * @throws NullPointerException if {@code fallback} is {@code null}.
 	 */
 	static def double onNull(Double d, DoubleSupplier fallback) {
+		Objects.requireNonNull(fallback, "fallback must not be null")
 		if (d !== null) {
 			d.doubleValue
 		} else {

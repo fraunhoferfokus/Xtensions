@@ -7,7 +7,10 @@ that are aimed to help handling primitive values at the end of null-safe navigat
 
 === Boxing Primitives
 
-Boxing the primitive value of a property at the end of a null-safe call chain.
+To box the primitive value of a property at the end of a null-safe call chain, the `Primitives`
+class provides the `box` and `boxNum` extension functions. These are intended to be used on 
+the object, that's primitive property should be boxed. The function passed to the box function
+is used to retrieve the primitive property.
 
 Example:
 
@@ -16,9 +19,10 @@ Example:
 import static extension de.fhg.fokus.xtensions.Primitives.*
 // ...
 val person = loadPerson("Mike")
-person?.lastName.box[isEmpty]
-
+person?.lastName.boxNum[length]
 ----
+In this example the last expression evaluates to an `Integer` which is `null` if `person` or `lastName`
+is `null`. Otherwise it will hold the length of the of the `lastName` string.
 
 === Testing Conditions
 
@@ -44,7 +48,27 @@ Example:
 
 === Conversion to Optionals
 
+Similar to the <<Boxing Primitives>> functions, the `optionalInt`, `optionalLong` and `optionalDouble`
+functions are supposed to box a primitive value property of a context object into a primitve optional value. 
+These extension functions however never return `null` . They return an empty optional if the the given context object is `null`. If the context object is not `null` the value returned by the given mapper function is wrapped into the returned optional.
+
+Example:
+
+[source,xtend]
+----
+----
+
 === Default Values on `null` Boxes
+
+The `onNull` extension functions for boxed primitives check if a given reference to a boxed primitive value
+and will compute a default value via a given supplier if the box reference is `null`, otherwise they return
+the unboxed primitive value.
+
+Example:
+
+[source,xtend]
+----
+----
 
 [TIP]
 ====

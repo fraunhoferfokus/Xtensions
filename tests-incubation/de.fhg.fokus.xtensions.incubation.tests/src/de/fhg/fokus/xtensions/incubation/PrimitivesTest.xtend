@@ -3,6 +3,9 @@ package de.fhg.fokus.xtensions.incubation
 import static extension de.fhg.fokus.xtensions.incubation.Primitives.*
 import static org.junit.Assert.*
 import org.junit.Test
+import java.util.OptionalInt
+import java.util.OptionalLong
+import java.util.OptionalDouble
 
 class PrimitivesTest {
 	
@@ -367,10 +370,205 @@ class PrimitivesTest {
 		val expected = 4711.0d
 		assertEquals(Double.valueOf(expected), context.boxNum[expected])
 	}
+
+	/////////////////////
+	// onNull(Integer) //
+	/////////////////////
+
+	@Test
+	def void testOnNullIntegerContextNull() {
+		val Integer i = null
+		val expected = 1
+		val int result = i.onNull[expected]
+		assertEquals(expected, result)
+	}
+
+	@Test
+	def void testOnNullIntegerContextValue() {
+		val expected = 42
+		val int result = expected.onNull[throw new IllegalStateException]
+		assertEquals(expected, result)
+	}
+
+	@Test(expected = NullPointerException)
+	def void testOnNullIntegerFallbackNull() {
+		50.onNull(null)
+	}
+
+	//////////////////
+	// onNull(Long) //
+	//////////////////
+
+	@Test
+	def void testOnNullLongContextNull() {
+		val Long l = null
+		val expected = 1
+		val long result = l.onNull[expected]
+		assertEquals(expected, result)
+	}
+
+	@Test
+	def void testOnNullLongContextValue() {
+		val expected = 42L
+		val long result = expected.onNull[throw new IllegalStateException]
+		assertEquals(expected, result)
+	}
+
+	@Test(expected = NullPointerException)
+	def void testOnNullLongFallbackNull() {
+		50L.onNull(null)
+	}
+
+	////////////////////
+	// onNull(Double) //
+	////////////////////
+
+	@Test
+	def void testOnNullDoubleContextNull() {
+		val Double d = null
+		val expected = 1
+		val double result = d.onNull[expected]
+		assertEquals(expected, result, 0.0d)
+	}
+
+	@Test
+	def void testOnNullDoubleContextValue() {
+		val expected = 42.0d
+		val double result = expected.onNull[throw new IllegalStateException]
+		assertEquals(expected, result, 0.0d)
+	}
+
+	@Test(expected = NullPointerException)
+	def void testOnNullDoubleFallbackNull() {
+		50.0d.onNull(null)
+	}
+
+	/////////////////////
+	// onNull(Boolean) //
+	/////////////////////
+
+	@Test
+	def void testOnNullBoolContextNull() {
+		val Boolean b = null
+		val expected = true
+		val boolean result = b.onNull[expected]
+		assertEquals(expected, result)
+	}
+
+	@Test
+	def void testOnNullBoolContextValue() {
+		val expected = true
+		val boolean result = expected.onNull[throw new IllegalStateException]
+		assertEquals(expected, result)
+	}
+
+	@Test(expected = NullPointerException)
+	def void testOnNullBoolFallbackNull() {
+		true.onNull(null)
+	}
 	
-	
-	// TODO onNull(Integer)
-	// TODO onNull(Long)
-	// TODO onNull(Double)
-	// TODO onNull(Boolean)
+	/////////////////
+	// optionalInt //
+	/////////////////
+
+	@Test(expected = NullPointerException)
+	def void testOptionalIntNullMapper() {
+		null.optionalInt(null)
+	}
+
+	@Test
+	def void testOptionalIntContextNull() {
+		val result = null.optionalInt[throw new IllegalStateException]
+		assertFalse(result.present)
+	}
+
+	@Test
+	def void testOptionalIntContextPassedToMapper() {
+		extension val sameCheck = new Object {
+			boolean result = false
+		}
+		val context = new Object
+		context.optionalInt[
+			result = (it === context)
+			0
+		]
+		assertTrue(result)
+	}
+
+	@Test
+	def void testOptionalIntContextValue() {
+		val expected = 42
+		val actual = expected.optionalInt[expected]
+		assertEquals(OptionalInt.of(expected), actual)
+	}
+
+	//////////////////
+	// optionalLong //
+	//////////////////
+
+	@Test(expected = NullPointerException)
+	def void testOptionalLongNullMapper() {
+		null.optionalLong(null)
+	}
+
+	@Test
+	def void testOptionalLongContextNull() {
+		val result = null.optionalLong[throw new IllegalStateException]
+		assertFalse(result.present)
+	}
+
+	@Test
+	def void testOptionalLongContextPassedToMapper() {
+		extension val sameCheck = new Object {
+			boolean result = false
+		}
+		val context = new Object
+		context.optionalLong[
+			result = (it === context)
+			0L
+		]
+		assertTrue(result)
+	}
+
+	@Test
+	def void testOptionalLongContextValue() {
+		val expected = 42L
+		val actual = expected.optionalLong[expected]
+		assertEquals(OptionalLong.of(expected), actual)
+	}
+
+	////////////////////
+	// optionalDouble //
+	////////////////////
+
+	@Test(expected = NullPointerException)
+	def void testOptionalDoubleNullMapper() {
+		null.optionalDouble(null)
+	}
+
+	@Test
+	def void testOptionalDoubleContextNull() {
+		val result = null.optionalDouble[throw new IllegalStateException]
+		assertFalse(result.present)
+	}
+
+	@Test
+	def void testOptionalDoubleContextPassedToMapper() {
+		extension val sameCheck = new Object {
+			boolean result = false
+		}
+		val context = new Object
+		context.optionalDouble[
+			result = (it === context)
+			0.0d
+		]
+		assertTrue(result)
+	}
+
+	@Test
+	def void testOptionalDoubleContextValue() {
+		val expected = 42.0d
+		val actual = expected.optionalDouble[expected]
+		assertEquals(OptionalDouble.of(expected), actual)
+	}
 }
