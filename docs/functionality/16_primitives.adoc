@@ -1,7 +1,7 @@
 
 == Primitives
 
-The class `de.fhg.fokus.xtensions.Primitives` provides a bunch of static extension methods 
+The class `de.fhg.fokus.xtensions.primitives.Primitives` provides a bunch of static extension methods 
 that are aimed to help handling primitive values at the end of null-safe navigation chains.
 
 
@@ -9,56 +9,85 @@ that are aimed to help handling primitive values at the end of null-safe navigat
 
 To box the primitive value of a property at the end of a null-safe call chain, the `Primitives`
 class provides the `box` and `boxNum` extension functions. These are intended to be used on 
-the object, that's primitive property should be boxed. The function passed to the box function
+a context object, that's primitive property should be boxed. The function passed to the box function
 is used to retrieve the primitive property.
 
 Example:
 
 [source,xtend]
 ----
-import static extension de.fhg.fokus.xtensions.Primitives.*
+import static extension de.fhg.fokus.xtensions.primitives.Primitives.*
 // ...
 val person = loadPerson("Mike")
-person?.lastName.boxNum[length]
+person?.address.boxNum[floor]
 ----
-In this example the last expression evaluates to an `Integer` which is `null` if `person` or `lastName`
-is `null`. Otherwise it will hold the length of the of the `lastName` string.
+In this example the last expression evaluates to an `Integer` which is `null` if `person` or `address`
+is `null`. Otherwise it will hold a boxed `Integer` wrapping the `int` value of the `floor` property of `address`. 
+These boxing functions can be used both directly or using null-safe navigation. Using `?.`, however will perform
+unnecessary null-checks.
 
-=== Testing Conditions
+It makes sense to call `onNull` functions subsequent to the boxing functions as described in <<Default Values on `null` Boxes>>.
+
+
+=== Testing Conditions on Primitive Values
 
 Boxed boolean values (e.g. produced by functions described in <<Boxing Primitives>>) can be tested 
 directly with the `null`-aware extension methods `isTrue`, `isFalse`, `isNullOrTrue`, `isNullOrFalse`.
-
-
-Example:
-
-[source,xtend]
-----
-----
-
-To test un-boxed primitives, one of the `isTrue`, `isFalse`, `isNullOrTrue`, `isNullOrFalse` methods.
-
+These functions have to be called directly, not with null-safe navigation.
 
 Example:
 
 [source,xtend]
 ----
+import static extension de.fhg.fokus.xtensions.primitives.Primitives.*
+// ...
+val person = loadPerson("Mike")
+person?.address.box[isValidated].isTrue
 ----
+In this example if `person` and `address` are not `null` the `box` function will
+return the boxed boolean value of attribute `isValidated`, otherwise `null`. The 
+call to `isTrue` will then check if the the boxed integer is not `null` and wraps the 
+value `true`. 
+
+
+To test if un-boxed primitives at the end of null-safe navigation chain adhere to a certain condition, 
+one of the extension methods `isTrue`, `isFalse`, `isNullOrTrue`, or `isNullOrFalse` taking
+a testing function can be used.
+
+Example:
+
+[source,xtend]
+----
+import static extension de.fhg.fokus.xtensions.primitives.Primitives.*
+// ...
+val person = loadPerson("Mike")
+person?.address.isTrue[floor > 3]
+----
+The example expression will return `true` if `person` and address are not `null` 
+and the `floor` property of `address` greater than `3`, otherwise it will return `false`.
 
 
 === Conversion to Optionals
 
 Similar to the <<Boxing Primitives>> functions, the `optionalInt`, `optionalLong` and `optionalDouble`
 functions are supposed to box a primitive value property of a context object into a primitve optional value. 
-These extension functions however never return `null` . They return an empty optional if the the given context object is `null`. If the context object is not `null` the value returned by the given mapper function is wrapped into the returned optional.
+These extension functions however never return `null` . They return an empty optional if the the given context object is `null`. 
+If the context object is not `null` the value returned by the given mapper function is wrapped into the returned optional.
 
 Example:
 
 [source,xtend]
 ----
+import static extension de.fhg.fokus.xtensions.primitives.Primitives.*
+// ...
+val person = loadPerson("Mike")
+val OptionalInt nameLen = person?.lastName.optionalInt[length]
 ----
+If `person` and `lastName` in this example are not `null` the optional `nameLen`
+will wrap the length of the `lastName` string. Otherwise `nameLen` will reference an
+empty optional.
 
-=== Default Values on `null` Boxes
+=== Default Values for `null` Boxes
 
 The `onNull` extension functions for boxed primitives check if a given reference to a boxed primitive value
 and will compute a default value via a given supplier if the box reference is `null`, otherwise they return
@@ -68,7 +97,16 @@ Example:
 
 [source,xtend]
 ----
+import static extension de.fhg.fokus.xtensions.primitives.Primitives.*
+// ...
+val person = loadPerson("Mike")
+person?.address.boxNum[floor].onNull[0]
 ----
+In this example the `onNull` call will return `0` if the given boxed `Integer` is `null`,
+otherwise it will unbox the wrapped `int` value and return it.
+The behavior of the example expression is equivalent to the behavior of the expression `person?.address?.floor`  
+which will result in a compiler warning, due to an implicit return of `0` if the navigation chain before `floor`
+evaluates to `null`.
 
 [TIP]
 ====

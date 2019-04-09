@@ -1,6 +1,6 @@
-package de.fhg.fokus.xtensions.incubation
+package de.fhg.fokus.xtensions.primitives
 
-import static extension de.fhg.fokus.xtensions.incubation.Primitives.*
+import static extension de.fhg.fokus.xtensions.primitives.Primitives.*
 import static org.junit.Assert.*
 import org.junit.Test
 import java.util.OptionalInt

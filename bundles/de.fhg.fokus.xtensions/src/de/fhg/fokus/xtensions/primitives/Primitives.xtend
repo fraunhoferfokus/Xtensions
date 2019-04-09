@@ -1,9 +1,9 @@
-package de.fhg.fokus.xtensions.incubation
+package de.fhg.fokus.xtensions.primitives
 
 import java.util.function.IntSupplier
 import java.util.function.LongSupplier
 import java.util.function.DoubleSupplier
-import static de.fhg.fokus.xtensions.incubation.Primitives.BoolUnaryOperator.*
+import static de.fhg.fokus.xtensions.primitives.Primitives.BoolUnaryOperator.*
 import java.util.Objects
 import java.util.function.BooleanSupplier
 import java.util.function.ToIntFunction
@@ -20,7 +20,7 @@ import java.util.function.ToDoubleFunction
  * second to last step will cause the chain to implicitly return of a primitive value specific default value. 
  * E.g. in the chain {@code foo?.bar?.baz?.someBool} will implicitly return {@code false}
  * if at {@code baz} the chain-expression is evaluated to {@code null}. This can be 
- * considered as a code smell.<br><br>
+ * considered as a code smell.
  */
 final class Primitives {
 	
@@ -37,6 +37,12 @@ final class Primitives {
 	 * at the end of the call chain. An advantage of this type of comparison is that the {@code box} method can
 	 * also be called with a null-safe navigation to have a uniform navigation pattern for the call 
 	 * chain.
+	 * @param context object that will be passed to {@code mapper} if not {@code null}
+	 * @param mapper function that {@code context} will be passed to and is supposed to return a boolean 
+	 *  property of {@code context}
+	 * @return will return {@code null} if {@code context} is {@code null}, otherwise will return the
+	 *  value returned from {@code mapper} applied to the {@code context} object
+	 * @throws NullPointerException if {@code mapper} is {@code null}
 	 */
 	static def <T> Boolean box(T context, (T)=>boolean mapper) {
 		Objects.requireNonNull(mapper, "mapper function is not allowed to be null")
@@ -57,6 +63,12 @@ final class Primitives {
 	 * at the end of the call chain. An advantage of this type of comparison is that the {@code box} method can
 	 * also be called with a null-safe navigation to have a uniform navigation pattern for the call 
 	 * chain.
+	 * @param context object that will be passed to {@code mapper} if not {@code null}
+	 * @param mapper function that {@code context} will be passed to and is supposed to return a primitive 
+	 *  number value property of {@code context}
+	 * @return will return {@code null} if {@code context} is {@code null}, otherwise will return the
+	 *  value returned from {@code mapper} applied to the {@code context} object
+	 * @throws NullPointerException if {@code mapper} is {@code null}
 	 */
 	static def <T, N extends Number> N boxNum(T context, (T)=>N mapper) {
 		Objects.requireNonNull(mapper, "mapper function is not allowed to be null")

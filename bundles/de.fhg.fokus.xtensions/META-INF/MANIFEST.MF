@@ -9,6 +9,7 @@ Export-Package: de.fhg.fokus.xtensions.concurrent,
  de.fhg.fokus.xtensions.iteration,
  de.fhg.fokus.xtensions.optional,
  de.fhg.fokus.xtensions.pair,
+ de.fhg.fokus.xtensions.primitives,
  de.fhg.fokus.xtensions.range,
  de.fhg.fokus.xtensions.stream,
  de.fhg.fokus.xtensions.string
