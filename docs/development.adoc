@@ -138,6 +138,9 @@ Ideally the first three steps are already done directly after a previous release
 - [ ] Adjust the `.travis/bintray-deploy.json` file declaring the new version
 - [ ] Update the `README.adoc` file
 - [ ] Update the `CHANGES.adoc` file (add release date)
+- [ ] Push commit of changes to branch `latest_release`
 - [ ] Create/push the tag of the new version number
 - [ ] Check if p2 deployment to bintray worked
 - [ ] Log into bintray to promote the release to maven central
+- [ ] If release is available on maven central and javadoc available via javadoc.io, push release commit to master
+- [ ] Upload jar, sources jar, javadoc jar, and zipped p2 to GitHub releases page
