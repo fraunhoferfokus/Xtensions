@@ -5,13 +5,15 @@
 
 == Version 1.3.0 (unreleased)
 
+link:https://github.com/fraunhoferfokus/Xtensions/milestone/4?closed=1[Related GitHub issues]
+
 === Added 
 
 Nothing so far
 
 == Version 1.2.0 - 2019-04-10
 
-link:https://github.com/fraunhoferfokus/Xtensions/milestone/4?closed=1[Related GitHub issues]
+link:https://github.com/fraunhoferfokus/Xtensions/milestone/3?closed=1[Related GitHub issues]
 
 === Added 
 
