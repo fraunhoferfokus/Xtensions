@@ -53,7 +53,7 @@ In the following, we will show how to add the Xtensions library to your build.
 === Current Release
 
 If you are using Eclipse or a Maven Tycho build, you can use the p2 repository 
-`https://dl.bintray.com/boereck/xtensions-p2/Xtensions/1.1.0/`. 
+`https://dl.bintray.com/boereck/xtensions-p2/Xtensions/1.2.0/`. 
 Here is the repository info you can add to your maven `pom.xml` file:
 
 [source,xml]
@@ -62,12 +62,12 @@ Here is the repository info you can add to your maven `pom.xml` file:
 	<repository>
 		<id>xtensions-p2</id>
 		<layout>p2</layout>
-		<url>https://dl.bintray.com/boereck/xtensions-p2/Xtensions/1.1.0/</url>
+		<url>https://dl.bintray.com/boereck/xtensions-p2/Xtensions/1.2.0/</url>
 	</repository>
 </repositories>
 ----
 
-The zipped update site / p2 repository, can be downloaded link:https://dl.bintray.com/boereck/xtensions-p2/de.fhg.fokus.xtensions.p2-1.1.0.zip[here].
+The zipped update site / p2 repository, can be downloaded link:https://dl.bintray.com/boereck/xtensions-p2/de.fhg.fokus.xtensions.p2-1.2.0.zip[here].
 
 If you use a regular Maven build, simply add the following dependency. The library was added
 to maven central.
@@ -78,7 +78,7 @@ to maven central.
 	<dependency>
 		<groupId>com.github.fraunhoferfokus.xtensions</groupId>
 		<artifactId>de.fhg.fokus.xtensions</artifactId>
-		<version>1.1.0</version>
+		<version>1.2.0</version>
 	</dependency>
 </dependencies>
 ----
@@ -87,7 +87,7 @@ If you are using gradle, add the following dependency:
 
 [source,gradle]
 ----
-compile 'com.github.fraunhoferfokus.xtensions:de.fhg.fokus.xtensions:1.1.0'
+compile 'com.github.fraunhoferfokus.xtensions:de.fhg.fokus.xtensions:1.2.0'
 ----
 
 === Using Snapshot Releases
