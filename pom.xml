@@ -73,7 +73,7 @@
 		<repository>
 			<id>xtext</id>
 			<layout>p2</layout>
-			<url>http://download.eclipse.org/modeling/tmf/xtext/updates/releases/2.15.0/</url>
+			<url>http://download.eclipse.org/modeling/tmf/xtext/updates/releases/${xtend-version}/</url>
 		</repository>
 	</repositories>
 
