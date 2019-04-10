@@ -26,7 +26,7 @@ is `null`. Otherwise it will hold a boxed `Integer` wrapping the `int` value of 
 These boxing functions can be used both directly or using null-safe navigation. Using `?.`, however will perform
 unnecessary null-checks.
 
-It makes sense to call `onNull` functions subsequent to the boxing functions as described in <<Default Values on `null` Boxes>>.
+It makes sense to call `onNull` functions subsequent to the boxing functions as described in <<Default Values for `null` Boxes>>.
 
 
 === Testing Conditions on Primitive Values
