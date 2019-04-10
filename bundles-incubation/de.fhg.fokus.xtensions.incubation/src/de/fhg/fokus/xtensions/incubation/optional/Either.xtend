@@ -72,7 +72,7 @@ import java.util.function.Predicate
 	
 //	public static class Left<L,R> extends Either<L,R> {
 //		private L left
-//		new(L left) {
+//		private new(L left) {
 //			this.left = left
 //		}
 //		// TODO implement methods 
@@ -81,7 +81,7 @@ import java.util.function.Predicate
 //
 //	public static class Right<L,R> extends Either<L,R> {
 //		private R right
-//		new(R right) {
+//		preivate new(R right) {
 //			this.right = right
 //		}
 //		// TODO implement methods 

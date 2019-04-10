@@ -121,7 +121,7 @@
       xsi:type="setup.p2:P2Task">
     <requirement
         name="org.eclipse.xtend.sdk.feature.group"
-        versionRange="[2.10.0,3.0.0)"/>
+        versionRange="[2.15.0,3.0.0)"/>
     <requirement
         name="org.eclipse.m2e.feature.feature.group"
         versionRange="[1.7.0,2.0.0)"/>
@@ -165,8 +165,8 @@
         name="${scope.project.label}"
         activeRepositoryList="${eclipse.target.platform}">
       <requirement
-          name="org.eclipse.xtend.feature.group"
-          versionRange="[2.2.0,3.0.0)"/>
+          name="org.eclipse.xtend.lib"
+          versionRange="[2.15.0,3.0.0)"/>
       <requirement
           name="org.eclipse.jdt.annotation"
           versionRange="[2.1.0,3.0.0)"/>
@@ -175,6 +175,13 @@
       <sourceLocator
           rootFolder="${git.clone.xtensions.location}"
           locateNestedProjects="true"/>
+      <repositoryList
+          name="2019-03">
+        <repository
+            url="https://download.eclipse.org/releases/2019-03/"/>
+        <repository
+            url="http://download.eclipse.org/modeling/tmf/xtext/updates/composite/releases/"/>
+      </repositoryList>
       <repositoryList
           name="Oxygen">
         <repository
@@ -195,6 +202,18 @@
         activeRepositoryList="${eclipse.target.platform}">
       <repositoryList
           name="None"/>
+      <repositoryList
+          name="2019-03">
+        <repository
+            url="http://download.eclipse.org/eclipse/updates/4.11"/>
+      </repositoryList>
+      <repositoryList
+          name="Photon">
+        <repository
+            url="http://download.eclipse.org/releases/photon"/>
+        <repository
+            url="http://download.eclipse.org/cbi/updates/license"/>
+      </repositoryList>
       <repositoryList
           name="Oxygen">
         <repository

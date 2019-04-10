@@ -322,6 +322,19 @@
             
         </li>
     
+        <li class="chapter " data-level="1.3.16" data-path="16_primitives.html">
+            
+                <a href="16_primitives.html">
+            
+                    
+                    Primitives
+            
+                </a>
+            
+
+            
+        </li>
+    
 
             </ul>
             
@@ -504,6 +517,14 @@ test class:
 <li><a href="#_extensions_to_completablefuture">Extensions to CompletableFuture</a></li>
 <li><a href="#_async_computations">Async Computations</a></li>
 <li><a href="#_scheduling_util">Scheduling Util</a></li>
+<li><a href="#_primitives">Primitives</a>
+<ul class="sectlevel2">
+<li><a href="#_boxing_primitives">Boxing Primitives</a></li>
+<li><a href="#_testing_conditions_on_primitive_values">Testing Conditions on Primitive Values</a></li>
+<li><a href="#_conversion_to_optionals">Conversion to Optionals</a></li>
+<li><a href="#_default_values_for_code_null_code_boxes">Default Values for <code>null</code> Boxes</a></li>
+</ul>
+</li>
 </ul>
 </div>
 </div>
@@ -2979,6 +3000,161 @@ described in <a href="13_completable_future.html">Extensions to CompletableFutur
 </div>
 </div>
 </div>
+<div class="sect1">
+<h2 id="_primitives">Primitives</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The class <code>de.fhg.fokus.xtensions.primitives.Primitives</code> provides a bunch of static extension methods
+that are aimed to help handling primitive values at the end of null-safe navigation chains.</p>
+</div>
+<div class="sect2">
+<h3 id="_boxing_primitives">Boxing Primitives</h3>
+<div class="paragraph">
+<p>To box the primitive value of a property at the end of a null-safe call chain, the <code>Primitives</code>
+class provides the <code>box</code> and <code>boxNum</code> extension functions. These are intended to be used on
+a context object, that&#x2019;s primitive property should be boxed. The function passed to the box function
+is used to retrieve the primitive property.</p>
+</div>
+<div class="paragraph">
+<p>Example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-xtend" data-lang="xtend">import static extension de.fhg.fokus.xtensions.primitives.Primitives.*
+// ...
+val person = loadPerson(&quot;Mike&quot;)
+person?.address.boxNum[floor]</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>In this example the last expression evaluates to an <code>Integer</code> which is <code>null</code> if <code>person</code> or <code>address</code>
+is <code>null</code>. Otherwise it will hold a boxed <code>Integer</code> wrapping the <code>int</code> value of the <code>floor</code> property of <code>address</code>.
+These boxing functions can be used both directly or using null-safe navigation. Using <code>?.</code>, however will perform
+unnecessary null-checks.</p>
+</div>
+<div class="paragraph">
+<p>It makes sense to call <code>onNull</code> functions subsequent to the boxing functions as described in <a href="#Default%20Values%20on%20%3Ccode%3Enull%3C/code%3E%20Boxes">[Default Values on <code>null</code> Boxes]</a>.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_testing_conditions_on_primitive_values">Testing Conditions on Primitive Values</h3>
+<div class="paragraph">
+<p>Boxed boolean values (e.g. produced by functions described in <a href="#_boxing_primitives">Boxing Primitives</a>) can be tested
+directly with the <code>null</code>-aware extension methods <code>isTrue</code>, <code>isFalse</code>, <code>isNullOrTrue</code>, <code>isNullOrFalse</code>.
+These functions have to be called directly, not with null-safe navigation.</p>
+</div>
+<div class="paragraph">
+<p>Example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-xtend" data-lang="xtend">import static extension de.fhg.fokus.xtensions.primitives.Primitives.*
+// ...
+val person = loadPerson(&quot;Mike&quot;)
+person?.address.box[isValidated].isTrue</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>In this example if <code>person</code> and <code>address</code> are not <code>null</code> the <code>box</code> function will
+return the boxed boolean value of attribute <code>isValidated</code>, otherwise <code>null</code>. The
+call to <code>isTrue</code> will then check if the the boxed integer is not <code>null</code> and wraps the
+value <code>true</code>.</p>
+</div>
+<div class="paragraph">
+<p>To test if un-boxed primitives at the end of null-safe navigation chain adhere to a certain condition,
+one of the extension methods <code>isTrue</code>, <code>isFalse</code>, <code>isNullOrTrue</code>, or <code>isNullOrFalse</code> taking
+a testing function can be used.</p>
+</div>
+<div class="paragraph">
+<p>Example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-xtend" data-lang="xtend">import static extension de.fhg.fokus.xtensions.primitives.Primitives.*
+// ...
+val person = loadPerson(&quot;Mike&quot;)
+person?.address.isTrue[floor &gt; 3]</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The example expression will return <code>true</code> if <code>person</code> and address are not <code>null</code>
+and the <code>floor</code> property of <code>address</code> greater than <code>3</code>, otherwise it will return <code>false</code>.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_conversion_to_optionals">Conversion to Optionals</h3>
+<div class="paragraph">
+<p>Similar to the <a href="#_boxing_primitives">Boxing Primitives</a> functions, the <code>optionalInt</code>, <code>optionalLong</code> and <code>optionalDouble</code>
+functions are supposed to box a primitive value property of a context object into a primitve optional value.
+These extension functions however never return <code>null</code> . They return an empty optional if the the given context object is <code>null</code>.
+If the context object is not <code>null</code> the value returned by the given mapper function is wrapped into the returned optional.</p>
+</div>
+<div class="paragraph">
+<p>Example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-xtend" data-lang="xtend">import static extension de.fhg.fokus.xtensions.primitives.Primitives.*
+// ...
+val person = loadPerson(&quot;Mike&quot;)
+val OptionalInt nameLen = person?.lastName.optionalInt[length]</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If <code>person</code> and <code>lastName</code> in this example are not <code>null</code> the optional <code>nameLen</code>
+will wrap the length of the <code>lastName</code> string. Otherwise <code>nameLen</code> will reference an
+empty optional.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_default_values_for_code_null_code_boxes">Default Values for <code>null</code> Boxes</h3>
+<div class="paragraph">
+<p>The <code>onNull</code> extension functions for boxed primitives check if a given reference to a boxed primitive value
+and will compute a default value via a given supplier if the box reference is <code>null</code>, otherwise they return
+the unboxed primitive value.</p>
+</div>
+<div class="paragraph">
+<p>Example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-xtend" data-lang="xtend">import static extension de.fhg.fokus.xtensions.primitives.Primitives.*
+// ...
+val person = loadPerson(&quot;Mike&quot;)
+person?.address.boxNum[floor].onNull[0]</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>In this example the <code>onNull</code> call will return <code>0</code> if the given boxed <code>Integer</code> is <code>null</code>,
+otherwise it will unbox the wrapped <code>int</code> value and return it.
+The behavior of the example expression is equivalent to the behavior of the expression <code>person?.address?.floor</code>
+which will result in a compiler warning, due to an implicit return of <code>0</code> if the navigation chain before <code>floor</code>
+evaluates to <code>null</code>.</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Tip</div>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Related JavaDocs:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://javadoc.io/page/com.github.fraunhoferfokus.xtensions/de.fhg.fokus.xtensions/latest/de/fhg/fokus/xtensions/Primitives.html" target="_blank">Primitives</a></p>
+</li>
+</ul>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
                                 
                                 </section>
                             
@@ -3017,7 +3193,7 @@ described in <a href="13_completable_future.html">Extensions to CompletableFutur
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"Provided Functionality (as Single Page)","level":"2.2","depth":1,"previous":{"title":"Changelog","level":"2.1","depth":1,"path":"CHANGES.adoc","ref":"CHANGES.adoc","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["asciidoc-include@0.1.9"],"pluginsConfig":{"asciidoc-include":{"syntax":"gitbook"},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"docs/functionality/XX_provided_functionality_one_page.adoc","mtime":"2018-07-24T08:13:34.704Z","type":"asciidoc"},"gitbook":{"version":"3.2.3","time":"2018-07-24T08:31:54.442Z"},"basePath":"../..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"Provided Functionality (as Single Page)","level":"2.2","depth":1,"previous":{"title":"Changelog","level":"2.1","depth":1,"path":"CHANGES.adoc","ref":"CHANGES.adoc","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["asciidoc-include@0.1.9"],"pluginsConfig":{"asciidoc-include":{"syntax":"gitbook"},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"docs/functionality/XX_provided_functionality_one_page.adoc","mtime":"2019-04-03T15:26:34.519Z","type":"asciidoc"},"gitbook":{"version":"3.2.3","time":"2019-04-10T08:29:50.274Z"},"basePath":"../..","book":{"language":""}});
         });
     </script>
 </div>
