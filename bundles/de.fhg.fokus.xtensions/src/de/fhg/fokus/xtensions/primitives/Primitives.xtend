@@ -21,9 +21,10 @@ import java.util.function.ToDoubleFunction
  * E.g. in the chain {@code foo?.bar?.baz?.someBool} will implicitly return {@code false}
  * if at {@code baz} the chain-expression is evaluated to {@code null}. This can be 
  * considered as a code smell.
+ * @since 1.2.0
  */
 final class Primitives {
-	
+
 	private new(){
 		throw new IllegalStateException(Primitives.name + " is not intended to be instantiated.")
 	}
@@ -40,9 +41,11 @@ final class Primitives {
 	 * @param context object that will be passed to {@code mapper} if not {@code null}
 	 * @param mapper function that {@code context} will be passed to and is supposed to return a boolean 
 	 *  property of {@code context}
+	 * @param <T> type of {@code context} object
 	 * @return will return {@code null} if {@code context} is {@code null}, otherwise will return the
 	 *  value returned from {@code mapper} applied to the {@code context} object
 	 * @throws NullPointerException if {@code mapper} is {@code null}
+	 * @since 1.2.0
 	 */
 	static def <T> Boolean box(T context, (T)=>boolean mapper) {
 		Objects.requireNonNull(mapper, "mapper function is not allowed to be null")
@@ -52,11 +55,11 @@ final class Primitives {
 			mapper.apply(context)
 		}
 	}
-	
+
 	/**
 	 * This function is intended to be used as an extension method on a {@code context} object to box a primitive {@code number} property of 
 	 * the {@code context} object into a boxed {@code Boolean} object. This can be handy if you want to box the last primitive value
-	 * of a null-safe navigation chain. This can be followed with a call to {@link Primitives#isTrue(Object, Function1) isTrue(T, (T)=>boolean)}
+	 * of a null-safe navigation chain. This can be followed with a call to {@link Primitives#isTrue(Object, Functions.Function1) isTrue(T, (T)=>boolean)}
 	 * to check if the numeric value adheres to a certain condition. Alternatively a call to {@code boxNum} may be followed by a call to
 	 * {@code onNull} to explicitly define a default value on {@code null}.
 	 * This circumvents having a primitive value with an implicit default value
@@ -66,9 +69,12 @@ final class Primitives {
 	 * @param context object that will be passed to {@code mapper} if not {@code null}
 	 * @param mapper function that {@code context} will be passed to and is supposed to return a primitive 
 	 *  number value property of {@code context}
+	 * @param <T> type of {@code context} object
+	 * @param <N> boxed number type to be mapped to
 	 * @return will return {@code null} if {@code context} is {@code null}, otherwise will return the
 	 *  value returned from {@code mapper} applied to the {@code context} object
 	 * @throws NullPointerException if {@code mapper} is {@code null}
+	 * @since 1.2.0
 	 */
 	static def <T, N extends Number> N boxNum(T context, (T)=>N mapper) {
 		Objects.requireNonNull(mapper, "mapper function is not allowed to be null")
@@ -89,7 +95,7 @@ final class Primitives {
 	 * <br><br>
 	 * Here is the logic table of the output of this method based on the inputs.
 	 * Note that {@code -} means that the value does not matter.
-	 * <table border="1">
+	 * <table border="1" summary="truth table">
 	 *   <tr>
 	 *     <th >context</th>
 	 *     <th >return of {@code mapper.apply(context)}</th>
@@ -121,9 +127,11 @@ final class Primitives {
 	 *  or the result of a call to {@code mapper} is {@code null}.
 	 * @param context the element on which the {@code mapper} function is applied.
 	 * @param mapper function that will be applied on the {@code context} value.
+	 * @param <T> type of {@code context} object
 	 * @return {@code true} if {@code context} is not {@code null} and the {@code mapper} 
 	 * 	function returns {@code true} when applied to the {@code context} value.
 	 * @throws NullPointerException if {@code mapper} is {@code null}
+	 * @since 1.2.0
 	 */
 	static def <T> boolean isTrue(T context, (T)=>boolean mapper) {
 		val onNull = false
@@ -133,7 +141,7 @@ final class Primitives {
 	/**
 	 * Here is the logic table of the output of this method based on the inputs.
 	 * Note that {@code -} means that the value does not matter.
-	 * <table border="1">
+	 * <table border="1" summary="truth table">
 	 *   <tr>
 	 *     <th >context</th>
 	 *     <th >return of {@code mapper.apply(context)}</th>
@@ -162,9 +170,11 @@ final class Primitives {
 	 * </table>
 	 * @param context the element on which the {@code mapper} function is applied.
 	 * @param mapper function that will be applied on the {@code context} value.
+	 * @param <T> type of {@code context} object
 	 * @return {@code true} if {@code context} is not {@code null} and the {@code mapper} 
 	 * 	function returns {@code false} when applied to the {@code context} value.
 	 * @throws NullPointerException if {@code mapper} is {@code null}
+	 * @since 1.2.0
 	 */
 	static def <T> boolean isFalse(T context, (T)=>boolean mapper) {
 		val onNull = false
@@ -174,7 +184,7 @@ final class Primitives {
 	/**
 	 * Here is the logic table of the output of this method based on the inputs.
 	 * Note that {@code -} means that the value does not matter.
-	 * <table border="1">
+	 * <table border="1" summary="truth table">
 	 *   <tr>
 	 *     <th >context</th>
 	 *     <th >return of {@code mapper.apply(context)}</th>
@@ -203,10 +213,12 @@ final class Primitives {
 	 * </table>
 	 * @param context the element on which the {@code mapper} function is applied.
 	 * @param mapper function that will be applied on the {@code context} value.
+	 * @param <T> type of {@code context} object
 	 * @return {@code true} if {@code context} is {@code null}, or the {@code mapper} 
 	 * 	function returns {@code null}, or the {@code mapper} function returns {@code true} 
 	 *  when applied to the {@code context} value.
 	 * @throws NullPointerException if {@code mapper} is {@code null}
+	 * @since 1.2.0
 	 */
 	static def <T> boolean isNullOrTrue(T context, (T)=>boolean mapper) {
 		val onNull = true
@@ -216,7 +228,7 @@ final class Primitives {
 	/**
 	 * Here is the logic table of the output of this method based on the inputs.
 	 * Note that {@code -} means that the value does not matter.
-	 * <table border="1">
+	 * <table border="1" summary="truth table">
 	 *   <tr>
 	 *     <th >context</th>
 	 *     <th >return of {@code mapper.apply(context)}</th>
@@ -245,10 +257,12 @@ final class Primitives {
 	 * </table>
 	 * @param context the element on which the {@code mapper} function is applied.
 	 * @param mapper function that will be applied on the {@code context} value.
+	 * @param <T> type of {@code context} object
 	 * @return {@code true} if {@code context} is {@code null}, or the {@code mapper} 
 	 * 	function returns {@code null}, or the {@code mapper} function returns {@code false} 
 	 *  when applied to the {@code context} value.
 	 * @throws NullPointerException if {@code mapper} is {@code null}
+	 * @since 1.2.0
 	 */
 	static def <T> boolean isNullOrFalse(T context, (T)=>boolean mapper) {
 		val onNull = true
@@ -259,6 +273,7 @@ final class Primitives {
 	 * Tests if the given {@code Boolean b} is not {@code null} and holds the value {@code true}.
 	 * @param b value to be tested
 	 * @return {@code true} if given value {@code b} is not {@code null} and wraps the primitive value {@code true}, otherwise returns {@code false}.
+	 * @since 1.2.0
 	 */
 	static def boolean isTrue(Boolean b) {
 		if (b !== null) {
@@ -272,6 +287,7 @@ final class Primitives {
 	 * Tests if the given {@code Boolean b} is not {@code null} and holds the value {@code false}.
 	 * @param b value to be tested
 	 * @return {@code true} if given value {@code b} is not {@code null} and wraps the primitive value {@code false}, otherwise returns {@code false}.
+	 * @since 1.2.0
 	 */
 	static def boolean isFalse(Boolean b) {
 		if (b !== null) {
@@ -285,6 +301,7 @@ final class Primitives {
 	 * Tests if the given {@code Boolean b} is either {@code null} or holds the value {@code true}.
 	 * @param b value to be tested
 	 * @return {@code true} if given value {@code b} either {@code null} or wraps the primitive value {@code true}, otherwise returns {@code false}.
+	 * @since 1.2.0
 	 */
 	static def boolean isNullOrTrue(Boolean b) {
 		if (b !== null) {
@@ -298,6 +315,7 @@ final class Primitives {
 	 * Tests if the given {@code Boolean b} is either {@code null} or holds the value {@code false}.
 	 * @param b value to be tested
 	 * @return {@code true} if given value {@code b} either {@code null} or wraps the primitive value {@code false}, otherwise returns {@code false}.
+	 * @since 1.2.0
 	 */
 	static def boolean isNullOrFalse(Boolean b) {
 		if (b !== null) {
@@ -327,7 +345,7 @@ final class Primitives {
 		val BoolUnaryOperator NOT = [!it]
 		val BoolUnaryOperator IDENTITY = [it]
 	}
-	
+
 	/**
 	 * This method is supposed to be used as an extension function on an object {@code t}
 	 * to wrap a primitive property into an {@link OptionalInt}, producing an empty optional
@@ -341,9 +359,11 @@ final class Primitives {
 	 * @param context object to be tested for {@code null} and if not used to invoke {@code mapper} with
 	 * @param mapper function to map the given context object {@code context} to an {@code int} value. This 
 	 *  function is intended to return a primitive value property from {@code context}
+	 * @param <T> type of {@code context} object
 	 * @return empty {@code OptionalInt} if {@code context} is {@code null}, otherwise
 	 *  an optional wrapping the value returned by {@code mapper}
 	 * @throws NullPointerException if {@code mapper} is {@code null}
+	 * @since 1.2.0
 	 */
 	static def <T> OptionalInt optionalInt(T context, ToIntFunction<T> mapper) {
 		Objects.requireNonNull(mapper, "mapper must not be null")
@@ -353,7 +373,7 @@ final class Primitives {
 			OptionalInt.of(mapper.applyAsInt(context))
 		}
 	}
-	
+
 	/**
 	 * This method is supposed to be used as an extension function on an object {@code t}
 	 * to wrap a primitive property into an {@link OptionalLong}, producing an empty optional
@@ -367,9 +387,11 @@ final class Primitives {
 	 * @param context object to be tested for {@code null} and if not used to invoke {@code mapper} with
 	 * @param mapper function to map the given context object {@code context} to an {@code long} value. This 
 	 *  function is intended to return a primitive value property from {@code context}
+	 * @param <T> type of {@code context} object
 	 * @return empty {@code OptionalLong} if {@code context} is {@code null}, otherwise
 	 *  an optional wrapping the value returned by {@code mapper}
 	 * @throws NullPointerException if {@code mapper} is {@code null}
+	 * @since 1.2.0
 	 */
 	static def <T> OptionalLong optionalLong(T context, ToLongFunction<T> mapper) {
 		Objects.requireNonNull(mapper, "mapper must not be null")
@@ -379,7 +401,7 @@ final class Primitives {
 			OptionalLong.of(mapper.applyAsLong(context))
 		}
 	}
-	
+
 	/**
 	 * This method is supposed to be used as an extension function on an object {@code t}
 	 * to wrap a primitive property into an {@link OptionalDouble}, producing an empty optional
@@ -393,9 +415,11 @@ final class Primitives {
 	 * @param context object to be tested for {@code null} and if not used to invoke {@code mapper} with
 	 * @param mapper function to map the given context object {@code context} to an {@code double} value. This 
 	 *  function is intended to return a primitive value property from {@code context}
+	 * @param <T> type of {@code context} object
 	 * @return empty {@code OptionalDouble} if {@code context} is {@code null}, otherwise
 	 *  an optional wrapping the value returned by {@code mapper}
 	 * @throws NullPointerException if {@code mapper} is {@code null}
+	 * @since 1.2.0
 	 */
 	static def <T> OptionalDouble optionalDouble(T context, ToDoubleFunction<T> mapper) {
 		Objects.requireNonNull(mapper, "mapper must not be null")
@@ -415,6 +439,7 @@ final class Primitives {
 	 * @return the wrapped primitive of {@code b}, if {@code b} is not {@code null}, otherwise the 
 	 *  value provided by {@code fallback}
 	 * @throws NullPointerException if {@code fallback} is {@code null}.
+	 * @since 1.2.0
 	 */
 	static def boolean onNull(Boolean b, BooleanSupplier fallback) {
 		Objects.requireNonNull(fallback, "fallback must not be null")
@@ -434,6 +459,7 @@ final class Primitives {
 	 * @return the wrapped primitive of {@code i}, if {@code i} is not {@code null}, otherwise the 
 	 *  value provided by {@code fallback}
 	 * @throws NullPointerException if {@code fallback} is {@code null}.
+	 * @since 1.2.0
 	 */
 	static def int onNull(Integer i, IntSupplier fallback) {
 		Objects.requireNonNull(fallback, "fallback must not be null")
@@ -453,6 +479,7 @@ final class Primitives {
 	 * @return the wrapped primitive of {@code l}, if {@code l} is not {@code null}, otherwise the 
 	 *  value provided by {@code fallback}
 	 * @throws NullPointerException if {@code fallback} is {@code null}.
+	 * @since 1.2.0
 	 */
 	static def long onNull(Long l, LongSupplier fallback) {
 		Objects.requireNonNull(fallback, "fallback must not be null")
@@ -472,6 +499,7 @@ final class Primitives {
 	 * @return the wrapped primitive of {@code d}, if {@code d} is not {@code null}, otherwise the 
 	 *  value provided by {@code fallback}
 	 * @throws NullPointerException if {@code fallback} is {@code null}.
+	 * @since 1.2.0
 	 */
 	static def double onNull(Double d, DoubleSupplier fallback) {
 		Objects.requireNonNull(fallback, "fallback must not be null")

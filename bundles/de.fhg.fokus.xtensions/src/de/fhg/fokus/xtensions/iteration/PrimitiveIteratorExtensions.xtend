@@ -55,7 +55,7 @@ final class PrimitiveIteratorExtensions {
 	 * may not pull elements from the {@code wrapped} iterator.
 	 * @param wrapped the iterator from which the returned stream is created from
 	 * @return stream providing the remaining elements from {@code wrapped}
-	 * @see PrimitiveIteratorExtensions#streamRemainingExhaustive(OfInt)
+	 * @see PrimitiveIteratorExtensions#streamRemainingExhaustive(PrimitiveIterator.OfInt)
 	 */
 	static def IntStream streamRemaining(PrimitiveIterator.OfInt wrapped) {
 		if (wrapped instanceof IntStreamable) {
@@ -75,7 +75,7 @@ final class PrimitiveIteratorExtensions {
 	 * a stream that may have better characteristics in some way.
 	 * @param wrapped the iterator from which the returned stream is created from
 	 * @return stream providing the remaining elements from {@code wrapped}
-	 * @see PrimitiveIteratorExtensions#streamRemaining(OfInt)
+	 * @see PrimitiveIteratorExtensions#streamRemaining(PrimitiveIterator.OfInt)
 	 * @since 1.1.0
 	 */
 	static def IntStream streamRemainingExhaustive(PrimitiveIterator.OfInt wrapped) {
@@ -135,7 +135,7 @@ final class PrimitiveIteratorExtensions {
 	 * a stream that may have better characteristics in some way.
 	 * @param wrapped the iterator from which the returned stream is created from
 	 * @return stream providing the remaining elements from {@code wrapped}
-	 * @see PrimitiveIteratorExtensions#streamRemainingExhaustive(OfLong)
+	 * @see PrimitiveIteratorExtensions#streamRemainingExhaustive(PrimitiveIterator.OfLong)
 	 */
 	static def LongStream streamRemaining(PrimitiveIterator.OfLong wrapped) {
 		if(wrapped instanceof LongStreamable) {
@@ -155,7 +155,7 @@ final class PrimitiveIteratorExtensions {
 	 * may not pull elements from the {@code wrapped} iterator.
 	 * @param wrapped the iterator from which the returned stream is created from
 	 * @return stream providing the remaining elements from {@code wrapped}
-	 * @see PrimitiveIteratorExtensions#streamRemaining(OfLong)
+	 * @see PrimitiveIteratorExtensions#streamRemaining(PrimitiveIterator.OfLong)
 	 * @since 1.1.0
 	 */
 	static def LongStream streamRemainingExhaustive(PrimitiveIterator.OfLong wrapped) {
@@ -212,7 +212,7 @@ final class PrimitiveIteratorExtensions {
 	 * a stream that may have better characteristics in some way.
 	 * @param wrapped the iterator from which the returned stream is created from
 	 * @return stream providing the remaining elements from {@code wrapped}
-	 * @see PrimitiveIteratorExtensions#streamRemainingExhaustive(OfDouble)
+	 * @see PrimitiveIteratorExtensions#streamRemainingExhaustive(PrimitiveIterator.OfDouble)
 	 */
 	static def DoubleStream streamRemaining(PrimitiveIterator.OfDouble wrapped) {
 		if (wrapped instanceof DoubleStreamable) {
@@ -231,7 +231,7 @@ final class PrimitiveIteratorExtensions {
 	 * iterator.
 	 * @param wrapped the iterator from which the returned stream is created from
 	 * @return stream providing the remaining elements from {@code wrapped}
-	 * @see PrimitiveIteratorExtensions#streamRemaining(OfDouble)
+	 * @see PrimitiveIteratorExtensions#streamRemaining(PrimitiveIterator.OfDouble)
 	 * @since 1.1.0
 	 */
 	static def DoubleStream streamRemainingExhaustive(PrimitiveIterator.OfDouble wrapped) {

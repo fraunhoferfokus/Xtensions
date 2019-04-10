@@ -112,7 +112,7 @@ Then add the following dependency:
 	<dependency>
 		<groupId>com.github.fraunhoferfokus.xtensions</groupId>
 		<artifactId>de.fhg.fokus.xtensions</artifactId>
-		<version>1.2.0-SNAPSHOT</version>
+		<version>1.3.0-SNAPSHOT</version>
 	</dependency>
 </dependencies> 
 ---- 
@@ -133,7 +133,7 @@ And add the following dependency:
 
 [source,gradle]
 ----
-compile 'com.github.fraunhoferfokus.xtensions:de.fhg.fokus.xtensions:1.2.0-SNAPSHOT'
+compile 'com.github.fraunhoferfokus.xtensions:de.fhg.fokus.xtensions:1.3.0-SNAPSHOT'
 ----
 
 
