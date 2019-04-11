@@ -47,8 +47,21 @@ person?.address.box[isValidated].isTrue
 In this example if `person` and `address` are not `null` the `box` function will
 return the boxed boolean value of attribute `isValidated`, otherwise `null`. The 
 call to `isTrue` will then check if the the boxed integer is not `null` and wraps the 
-value `true`. 
+value `true`.
 
+
+To check a `Boolean` for it's value in a `null`-aware manner and directly act on the test, 
+the methods `ifTrue` , `ifFalse`, `ifNullOrTrue`, and `ifNullOrFalse` can be used.
+
+[source,xtend]
+----
+import static extension de.fhg.fokus.xtensions.primitives.Primitives.*
+// ...
+val person = loadPerson("Mike")
+person?.address.box[isValidated].ifTrue [
+	println("Address validated")
+]
+----
 
 To test if un-boxed primitives at the end of null-safe navigation chain adhere to a certain condition, 
 one of the extension methods `isTrue`, `isFalse`, `isNullOrTrue`, or `isNullOrFalse` taking

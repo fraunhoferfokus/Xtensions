@@ -233,7 +233,7 @@ class PrimitivesTest {
 	}
 
 	/////////////////////
-	// isTrue(Boolean) //
+	// isFalse(Boolean) //
 	/////////////////////
 
 	@Test
@@ -290,6 +290,180 @@ class PrimitivesTest {
 	@Test
 	def void testIsNullOrFalseValueFalse() {
 		assertTrue( false.isNullOrFalse() )
+	}
+
+
+
+	/////////////////////////////
+	// ifTrue(Boolean, =>void) //
+	/////////////////////////////
+
+	@Test
+	def void testBoolIfTrueValueNull() {
+		extension val test = new Object() {
+			var result = true
+		}
+		val Boolean b = null
+		b.ifTrue [
+			result = false
+		]
+		assertTrue(result)
+	}
+
+	@Test
+	def void testBoolIfTrueValueFalse() {
+		extension val test = new Object() {
+			var result = true
+		}
+		false.ifTrue [
+			result = false
+		]
+		assertTrue(result)
+	}
+
+	@Test
+	def void testBoolIfTrueValueTrue() {
+		extension val test = new Object() {
+			var result = false
+		}
+		true.ifTrue [
+			result = true
+		]
+		assertTrue(result)
+	}
+
+	@Test(expected = NullPointerException)
+	def void testBoolIfTrueActionNull() {
+		false.ifTrue(null)
+	}
+
+	/////////////////////////////
+	// ifFalse(Boolean, =>void) //
+	/////////////////////////////
+
+	@Test
+	def void testBoolIfFalseValueNull() {
+		val Boolean b = null
+		extension val test = new Object() {
+			var result = true
+		}
+		b.ifFalse [
+			result = false
+		]
+		assertTrue(result)
+	}
+
+	@Test
+	def void testIfFalseValueFalse() {
+		extension val test = new Object() {
+			var result = false
+		}
+		false.isFalse [
+			result = true
+		]
+		assertTrue(result)
+	}
+
+	@Test
+	def void testBoolIfFalseValueTrue() {
+		extension val test = new Object() {
+			var result = true
+		}
+		true.ifFalse [
+			result = false
+		]
+		assertTrue(result)
+	}
+
+	@Test(expected = NullPointerException)
+	def void testIfFalseActionNull() {
+		true.ifFalse(null)
+	}
+
+	///////////////////////////////////
+	// ifNullOrTrue(Boolean, =>void) //
+	///////////////////////////////////
+
+	@Test
+	def void testIfNullOrTrueValueNull() {
+		extension val test = new Object() {
+			var result = false
+		}
+		val Boolean context = null
+		context.ifNullOrTrue [
+			result = true
+		]
+		assertTrue(result)
+	}
+
+	@Test
+	def void testIfNullOrTrueValueTrue() {
+		extension val test = new Object() {
+			var result = false
+		}
+		true.ifNullOrTrue [
+			result = true
+		]
+		assertTrue(result)
+	}
+
+	@Test
+	def void testIfNullOrTrueValueFalse() {
+		extension val test = new Object() {
+			var result = true
+		}
+		false.ifNullOrTrue [
+			result = false
+		]
+		assertTrue(result)
+	}
+
+	@Test(expected = NullPointerException)
+	def void testIfNullOrTrueActionNull() {
+		true.ifNullOrTrue(null)
+	}
+
+	////////////////////////////////////
+	// ifNullOrFalse(Boolean, =>void) //
+	////////////////////////////////////
+
+	@Test
+	def void testIfNullOrFalseValueNull() {
+		extension val test = new Object() {
+			var result = false
+		}
+		val Boolean context = null
+		context.ifNullOrFalse [
+			result = true
+		]
+		assertTrue(result)
+	}
+
+	@Test
+	def void testIfNullOrFalseValueTrue() {
+		extension val test = new Object() {
+			var result = true
+		}
+		true.isNullOrFalse [
+			result = true
+		]
+		assertTrue(result)
+	}
+
+	@Test
+	def void testIsfNullOrFalseValueFalse() {
+		extension val test = new Object() {
+			var result = false
+		}
+		false.isNullOrFalse[
+			result = true
+		]
+		assertTrue(result)
+	}
+
+	@Test(expected = NullPointerException)
+	def void testBoolIfNullOrFalseActionNull() {
+		true.ifNullOrFalse(null)
 	}
 
 

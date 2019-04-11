@@ -325,6 +325,66 @@ final class Primitives {
 		}
 	}
 
+	/**
+	 * If the given {@code Boolean b} is not {@code null} and holds the value {@code true} then this
+	 * method invokes the given {@code action}.
+	 * @param b value to be tested
+	 * @param action will be invoked if {@code b} is not {@code null} and holds the value {@code true}
+	 * @throws NullPointerException if {@code action} is {@code null}
+	 * @since 1.3.0
+	 */
+	static def void ifTrue(Boolean b, =>void action) {
+		Objects.requireNonNull(action, "action must not be null")
+		if(b.isTrue) {
+			action.apply
+		}
+	}
+
+	/**
+	 * If the given {@code Boolean b} is not {@code null} and holds the value {@code false} then this
+	 * method invokes the given {@code action}.
+	 * @param b value to be tested
+	 * @param action will be invoked if {@code b} is not {@code null} and holds the value {@code false}
+	 * @throws NullPointerException if {@code action} is {@code null}
+	 * @since 1.3.0
+	 */
+	static def void ifFalse(Boolean b, =>void action) {
+		Objects.requireNonNull(action, "action must not be null")
+		if(b.isFalse) {
+			action.apply
+		}
+	}
+
+	/**
+	 * If the given {@code Boolean b} is {@code null} or holds the value {@code true} then this
+	 * method invokes the given {@code action}.
+	 * @param b value to be tested
+	 * @param action will be invoked if {@code b} is {@code null} or holds the value {@code true}
+	 * @throws NullPointerException if {@code action} is {@code null}
+	 * @since 1.3.0
+	 */
+	static def void ifNullOrTrue(Boolean b, =>void action) {
+		Objects.requireNonNull(action, "action must not be null")
+		if(b.isNullOrTrue) {
+			action.apply
+		}
+	}
+
+	/**
+	 * If the given {@code Boolean b} is {@code null} or holds the value {@code false} then this
+	 * method invokes the given {@code action}.
+	 * @param b value to be tested
+	 * @param action will be invoked if {@code b} is {@code null} or holds the value {@code false}
+	 * @throws NullPointerException if {@code action} is {@code null}
+	 * @since 1.3.0
+	 */
+	static def void ifNullOrFalse(Boolean b, =>void action) {
+		Objects.requireNonNull(action, "action must not be null")
+		if(b.isNullOrFalse) {
+			action.apply
+		}
+	}
+
 	private static def <T> checkNullOr(T context, (T)=>boolean mapper, boolean onNull, BoolUnaryOperator endOp) {
 		Objects.requireNonNull(mapper, "mapper function is not allowed to be null")
 		if (context === null) {
