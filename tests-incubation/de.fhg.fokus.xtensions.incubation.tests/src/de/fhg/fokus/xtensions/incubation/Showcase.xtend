@@ -14,6 +14,10 @@ import static de.fhg.fokus.xtensions.incubation.function.Recursion.*
 import static de.fhg.fokus.xtensions.incubation.iteration.Loop.*
 
 import static extension de.fhg.fokus.xtensions.incubation.iteration.IteratorExtensions.*
+import de.fhg.fokus.xtensions.incubation.optional.Either
+import static extension de.fhg.fokus.xtensions.incubation.optional.Either.*
+import de.fhg.fokus.xtensions.incubation.optional.Either.Left
+import de.fhg.fokus.xtensions.incubation.optional.Either.Right
 
 class Showcase {
 	
@@ -186,5 +190,31 @@ class Showcase {
 			Failure<Character>: "Problem occurred: " + t.get.message
 		}
 		println(result)
+	}
+	
+	@Test
+	def void demoEither() {
+		val either = Either.<String,Integer>left("hello")
+		val available = either.available
+		println(available)
+		
+		switch(either) {
+			Left<String,Integer> : println("String: " + either.get)
+			Right<String,Integer> : println("Integer: " + either.get)
+		}
+		
+		val toPrint = either.caseLeft [
+			"The String: " + it
+		].caseRight [
+			"The Integer: " + it
+		]
+		println(toPrint)
+		
+		val e = Either.<Integer,String>right("bar")
+		e.ifType(String) [
+			println(it)
+		].ifType(Integer) [
+			println(it)
+		]
 	}
 }
