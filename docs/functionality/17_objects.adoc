@@ -1,0 +1,44 @@
+
+== Objects
+
+The class `de.fhg.fokus.xtensions.objects.Objects` provides a bunch of static extension methods 
+that can generally help with handling objects especially in null-safe navigation chains.
+
+=== Recovering from `null`
+
+
+
+Example:
+
+[source,xtend]
+----
+
+----
+
+=== Acting on non-null
+
+
+Example:
+
+[source,xtend]
+----
+
+----
+
+=== Cast or `null`
+
+
+Example:
+
+[source,xtend]
+----
+
+----
+
+
+[TIP]
+====
+Related JavaDocs:
+
+* https://javadoc.io/page/com.github.fraunhoferfokus.xtensions/de.fhg.fokus.xtensions/latest/de/fhg/fokus/xtensions/objects/Objects.html[Primitives]
+====
