@@ -6,35 +6,66 @@ that can generally help with handling objects especially in null-safe navigation
 
 === Recovering from `null`
 
+To check if an object is `null` and provide a fallback object if the tested object is `null`, 
+the `Objects` class provides the extension functions `recoverNull(T,T)` and `recoverNull(T,=>T)`.
 
+The Java 9 JDK provides functions the same functionality via the methods `java.util.Objects#requireNonNullElse​(T,T)` and 
+`java.util.Objects#requireNonNullElseGet​(T, Supplier<? extends T>)`. This library provides API compatible 
+aliases for the `recoverNull` functions, so that a migration to Java 9 and the built-in methods is smooth.
 
 Example:
 
 [source,xtend]
 ----
-
+import static extension de.fhg.fokus.xtensions.objects.Objects.*
+// ...
+val person = new Person(null, null)
+val first = person.getFirstName.recoverNull("John")
+val last = person.getLastName.recoverNull[if(first == "John") "Doe" else "Unknown"]
+println('''«first» «last»''')
 ----
+
+In this example we initialize a person with first and last name set to `null` in both cases the `recoverNull`
+functions have to provide a fallback object. Since first name defaults to "John" the last name will be evaluated 
+to "Doe".
 
 === Acting on non-null
 
+The extension function `ifNotNull` will check a context object on `null` and if it is not will pass
+the object to a consumer procedure. This can be handy at the end of null-safe navigation chains.
 
 Example:
 
 [source,xtend]
 ----
-
+import static extension de.fhg.fokus.xtensions.objects.Objects.*
+// ...
+val person = // ...
+preson?.getFirstName?.toFirstUpper.ifNotNull [
+	println(it)
+]
 ----
 
 === Cast or `null`
 
+The Xtend operator `as` tests if an object instance of a given class and casts the objec
+to this type if so. If not, the result of the operator will be `null`. Unfortunately this
+cannot be simply used in a (null-safe) navigation chain. The `asType` extension method 
+wraps the same semantics in a function that can be called as part of a call chain.
 
 Example:
 
 [source,xtend]
 ----
-
+val Vehicle v = // ...
+v.asType(Car)?.getMake.ifNotNull [
+	println("Make: " + it)
+]
 ----
 
+In the example the vehicle is casted to a Car and afterwards is either of type `Car` or `null`.
+Therefore subsequent calls are performed via null-safe navigation. Since the object can now be 
+used as a car, methods of that type, such as `getMake` can be accessed.
 
 [TIP]
 ====

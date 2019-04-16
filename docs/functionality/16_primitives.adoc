@@ -28,7 +28,7 @@ unnecessary null-checks.
 
 It makes sense to call `onNull` functions subsequent to the boxing functions as described in <<Default Values for `null` Boxes>>.
 
-
+[#testing-conditions-on-primitives]
 === Testing Conditions on Primitive Values
 
 Boxed boolean values (e.g. produced by functions described in <<Boxing Primitives>>) can be tested 

@@ -44,3 +44,5 @@ toc::[]
 {% include "./15_scheduling_util.adoc" %}
 
 {% include "./16_primitives.adoc" %}
+
+{% include "./17_objects.adoc" %}

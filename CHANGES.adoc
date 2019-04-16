@@ -9,7 +9,9 @@ link:https://github.com/fraunhoferfokus/Xtensions/milestone/4?closed=1[Related G
 
 === Added 
 
-Nothing so far
+- Extension methods `ifTrue`, `ifNullOrTrue`, `ifFalse` and `ifNullOrFalse` for the `Boolean` wrapper type (see book chapter <<./docs/functionality/16_primitives.adoc#testing-conditions-on-primitives,Testing Conditions on Primitive Values>>)
+- General extension methods `asType`, `ifNotNull`, `recoverNull`/`requireNonNullElse`, and `recoverNull`/`requireNonNullElseGet` for objects (see book chapter <<./docs/functionality/17_objects.adoc#,Objects>>)
+
 
 == Version 1.2.0 - 2019-04-10
 
@@ -23,13 +25,13 @@ link:https://github.com/fraunhoferfokus/Xtensions/milestone/3?closed=1[Related G
 
 - Increased minimum Xtend version to 2.15, mainly due to build issues
 
+
 == Version 1.1.0 - 2018-07-23
 
 link:https://github.com/fraunhoferfokus/Xtensions/milestone/2?closed=1[Related GitHub issues]
 
 === Added 
 
-- Bumped Xtend minimum version to `2.13`
 - Added `combinations` and `combinationsWith` extension methods for `Iterator` and `Iterable` to generate cartesian products.
 - Added `withoutAll` extension methods for `Iterable` and `Iterator` to filter elements from the source available in another `Iterable`.
 - Added `partitionBy` extension methods for `Iterator` and `Iterable`, partitioning elements into two aggregates: selected and rejected.
@@ -40,6 +42,9 @@ link:https://github.com/fraunhoferfokus/Xtensions/milestone/2?closed=1[Related G
 - Functional factory methods for and in `LongIterable` and `DoubleIterable`.
 - Added `mapOrGet` extension method for `Optional`.
 - Added `forEach` method for object arrays to iterate over elements without instantiation of an iterator.
+
+=== Changed
+- Bumped Xtend minimum version to `2.13`
 
 
 == Version 1.0.0 - 2018-03-02

@@ -64,6 +64,7 @@ import static extension de.fhg.fokus.xtensions.string.StringMatchExtensions.*
 import static extension de.fhg.fokus.xtensions.string.StringSplitExtensions.*
 import static extension java.util.Arrays.stream
 import java.util.stream.Collectors
+import static extension de.fhg.fokus.xtensions.objects.Objects.*
 
 @Ignore
 class Showcase {
@@ -818,6 +819,30 @@ class Showcase {
 		
 		namesWithB.forEach[
 			println(it)
+		]
+	}
+
+	@Test
+	def void recoverNullDemo() {
+		val person = new Person(null, null)
+		val first = person.getFirstName.recoverNull("John")
+		val last = person.getLastName.recoverNull[if(first == "John") "Doe" else "Unknown"]
+		println('''«first» «last»''')
+	}
+
+	@Test
+	def void ifNotNullDemo() {
+		val person = new Person("john", "doe")
+		person?.getFirstName?.toFirstUpper.ifNotNull [			
+			println(it)
+		]
+	}
+
+	@Test
+	def void asTypeDemo() {
+		val Vehicle v = new Car("Awesome Cars")
+		v.asType(Car)?.getMake.ifNotNull [
+			println("Make: " + it)
 		]
 	}
 }
