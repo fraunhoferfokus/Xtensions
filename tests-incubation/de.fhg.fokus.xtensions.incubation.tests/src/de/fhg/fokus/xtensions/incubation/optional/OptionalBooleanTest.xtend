@@ -3,9 +3,9 @@ package de.fhg.fokus.xtensions.incubation.optional
 import static org.junit.Assert.*
 import org.junit.Test
 import de.fhg.fokus.xtensions.incubation.optional.OptionalBoolean
-import de.fhg.fokus.xtensions.incubation.optional.OptionalBoolean.TrueOptional
-import de.fhg.fokus.xtensions.incubation.optional.OptionalBoolean.FalseOptional
-import de.fhg.fokus.xtensions.incubation.optional.OptionalBoolean.EmptyOptional
+import de.fhg.fokus.xtensions.incubation.optional.TrueOptional
+import de.fhg.fokus.xtensions.incubation.optional.FalseOptional
+import de.fhg.fokus.xtensions.incubation.optional.EmptyOptional
 import static extension de.fhg.fokus.xtensions.incubation.optional.OptionalBoolean.asOptional
 
 class OptionalBooleanTest {
