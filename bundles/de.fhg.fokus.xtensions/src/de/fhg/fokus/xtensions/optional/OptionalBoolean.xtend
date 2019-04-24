@@ -1,8 +1,18 @@
-package de.fhg.fokus.xtensions.incubation.optional
+/*******************************************************************************
+ * Copyright (c) 2017 Max Bureck (Fraunhofer FOKUS) and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v2.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v20.html
+ *
+ * Contributors:
+ *     Max Bureck (Fraunhofer FOKUS) - initial API and implementation
+ *******************************************************************************/
+package de.fhg.fokus.xtensions.optional
 
 import java.util.function.BooleanSupplier
 import java.util.function.Supplier
-import de.fhg.fokus.xtensions.incubation.util.BooleanConsumer
+import de.fhg.fokus.xtensions.util.BooleanConsumer
 import java.util.Optional
 import static extension java.util.Objects.*
 
@@ -12,9 +22,13 @@ import static extension java.util.Objects.*
  * Instances of this class can only created via the static factory methods
  * {@link OptionalBoolean#empty() empty()}, {@link OptionalBoolean#ofTrue() ofTrue()}, 
  * {@link OptionalBoolean#ofFalse() ofFalse()}, {@link OptionalBoolean#of(boolean) of(boolean)}, or
- * {@link OptionalBoolean#ofNullable(Boolean) ofNullable(Boolean)} / {@link OptionalBoolean#asOptional(Boolean) asOptional(Boolean)}
- * 
+ * {@link OptionalBoolean#ofNullable(Boolean) ofNullable(Boolean)} / {@link OptionalBoolean#asOptional(Boolean) asOptional(Boolean)}<br>
+ * Note that this optional does not have a {@code get} method which throws a runtime exception 
+ * if no value is present. Instead, use {@link OptionalBoolean#orElseThrow(Supplier) orElseThrow} instead,
+ * explicitly stating which exception to throw if no value is present. Alternatively, the methods with 
+ * prefix {@code is} can be used if the empty case can be mapped to either {@code true} or {@code false}.
  * @since 1.3.0
+ * @author Max Bureck
  */
 abstract class OptionalBoolean {
 
@@ -55,7 +69,7 @@ abstract class OptionalBoolean {
 	 * @see OptionalBoolean#ofNullable(Boolean)
 	 * @since 1.3.0
 	 */
-	@Inline("de.fhg.fokus.xtensions.incubation.optional.OptionalBoolean.ofNullable($1)")
+	@Inline("de.fhg.fokus.xtensions.optional.OptionalBoolean.ofNullable($1)")
 	static def OptionalBoolean asOptional(Boolean value) {
 		ofNullable(value)
 	}
@@ -121,7 +135,7 @@ abstract class OptionalBoolean {
 
 	/**
 	 * Determines if this optional is not empty and holds no {@code boolean} value. Returns the negation 
-	 * of {@link #isEnmpty()}.
+	 * of {@link #isEmpty()}.
 	 * @return {@code true} the optional it wraps a {@code boolean} value and is not empty.
 	 * @see OptionalBoolean#isEmpty()
 	 * @since 1.3.0
@@ -248,17 +262,18 @@ abstract class OptionalBoolean {
 	 * optional is empty.
 	 * @param exceptionSupplier supplies the exception to be thrown when the 
 	 *  optional is empty.
-	 * @param X type of exception to be thrown if optional is empty
+	 * @param <X> type of exception to be thrown if optional is empty
 	 * @return {@code boolean} value held by the optional if it is not empty
 	 * @throws X if the optional is empty; exception will be provided by {@code exceptionSupplier}
 	 * @throws NullPointerException if {@code exceptionSupplier} is {@code null}
 	 * @since 1.3.0
 	 */
-	def <X extends Throwable> boolean orElseThrow(Supplier<? extends X> exceptionSupplier);
+	def <X extends Throwable> boolean orElseThrow(Supplier<? extends X> exceptionSupplier) throws X;
 
 	/**
 	 * Returns either the value of the optional boxed into a {@code Boolean}, if the optional
 	 * holds a value, or {@code null} if the optional is empty.
+	 * @return an empty optional if this optional is empty, otherwise the 
 	 * @since 1.3.0
 	 */
 	def Optional<Boolean> boxed();
@@ -455,7 +470,7 @@ package final class EmptyOptional extends OptionalBoolean {
 	}
 
 	override isTrueOrEmpty() {
-		false
+		true
 	}
 
 	override isFalse() {

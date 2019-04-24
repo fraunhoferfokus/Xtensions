@@ -13,7 +13,7 @@ package de.fhg.fokus.xtensions.optional
 import org.junit.Test
 import java.util.Optional
 import static extension de.fhg.fokus.xtensions.optional.OptionalExtensions.*
-import static org.junit.Assert.*
+import static extension org.junit.Assert.*
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.function.Supplier
 import java.util.Iterator
@@ -22,6 +22,7 @@ import java.util.Set
 import java.util.List
 import java.util.stream.StreamSupport
 import static de.fhg.fokus.xtensions.Util.*
+import static org.hamcrest.core.IsInstanceOf.*
 
 class OptionalExtensionsTest {
 	
@@ -923,6 +924,54 @@ class OptionalExtensionsTest {
 		assertTrue(called.get)
 	}
 	
+	//////////
+	// test //
+	//////////
+
+	@Test def void testTestEmpty() {
+		val empty = Optional.empty
+		extension val test = new Object() {
+			var result = true
+		}
+		empty.test [
+			result = false
+			throw new IllegalStateException
+		]
+		result.assertTrue
+	}
+
+	@Test(expected = NullPointerException) 
+	def void testTestLampdaNull() {
+		val o = Optional.of("")
+		o.test(null)
+	}
+
+	@Test def void testTestLampdaParameter() {
+		val expected = "foo"
+		val o = Optional.of(expected)
+		extension val test = new Object() {
+			var actual = null
+		}
+		o.test [
+			actual = it
+			false
+		]
+		expected.assertSame(actual)
+	}
+
+	@Test def void testTestTrue() {
+		val o = Optional.of("foo")
+		val result = o.test[true]
+		result.assertThat(instanceOf(TrueOptional))
+	}
+
+	@Test def void testTestFalse() {
+		val o = Optional.of("foo")
+		val result = o.test[false]
+		result.assertThat(instanceOf(FalseOptional))
+	}
+
+
 //	@Test def void getOrReturn() {
 //		val test = callGetOrReturnNoReturn("foo")
 //		assertEquals("Some foo", test.get())

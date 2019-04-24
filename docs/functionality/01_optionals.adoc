@@ -186,6 +186,30 @@ if(someOf(42) === someOf(42)) {
 Stunningly, the primitive versions of Optional do not provide `map` and `filter` methods. These 
 are provided as extension methods by this library.
 
+== OptionalBoolean
+
+=== Creation
+
+TODO: Content
+
+=== Testing for Content
+
+TODO: Content
+
+=== Extracting Values
+
+TODO: Content
+
+
+Example:
+
+
+[source,xtend]
+----
+// TODO: some example
+----
+Foo
+
 [TIP]
 ====
 Related JavaDocs:
@@ -193,4 +217,6 @@ Related JavaDocs:
 * https://javadoc.io/page/com.github.fraunhoferfokus.xtensions/de.fhg.fokus.xtensions/latest/de/fhg/fokus/xtensions/optional/OptionalIntExtensions.html[OptionalIntExtensions]
 * https://javadoc.io/page/com.github.fraunhoferfokus.xtensions/de.fhg.fokus.xtensions/latest/de/fhg/fokus/xtensions/optional/OptionalLongExtensions.html[OptionalLongExtensions]
 * https://javadoc.io/page/com.github.fraunhoferfokus.xtensions/de.fhg.fokus.xtensions/latest/de/fhg/fokus/xtensions/optional/OptionalDoubleExtensions.html[OptionalDoubleExtensions]
+* https://javadoc.io/page/com.github.fraunhoferfokus.xtensions/de.fhg.fokus.xtensions/latest/de/fhg/fokus/xtensions/optional/OptionalBoolean.html[OptionalBoolean]
+
 ====

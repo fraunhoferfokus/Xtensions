@@ -24,6 +24,7 @@ import java.util.Spliterator;
 import java.util.Spliterators;
 import java.util.function.Consumer;
 import java.util.function.IntConsumer;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.function.ToDoubleFunction;
 import java.util.function.ToIntFunction;
@@ -423,7 +424,7 @@ public final class OptionalExtensions {
 	 *            present
 	 * @param <T>
 	 *            type of the value that might be wrapped in optional {@code self}
-	 * @return optional holding the value of {@code self}, mapped to int using
+	 * @return optional holding the value of {@code self}, mapped to {@code int} using
 	 *         {@code mapFunc} if value present. Empty optional otherwise.
 	 */
 	public static <T> @NonNull OptionalInt mapInt(@NonNull Optional<T> self, @NonNull ToIntFunction<T> mapFunc) {
@@ -433,7 +434,7 @@ public final class OptionalExtensions {
 	/**
 	 * Maps the value of {@code self} to a {@code long} value wrapped into an
 	 * {@code OptionalLong}, if {@code self} holds a value. Returns an empty
-	 * {@code OptionalInt} otherwise.
+	 * {@code OptionalLong} otherwise.
 	 * 
 	 * @param self
 	 *            optional, that's held value will be mapped with {@code mapFunc},
@@ -453,7 +454,7 @@ public final class OptionalExtensions {
 	/**
 	 * Maps the value of {@code self} to a {@code double} value wrapped into an
 	 * {@code OptionalDouble}, if {@code self} holds a value. Returns an empty
-	 * {@code OptionalInt} otherwise.
+	 * {@code OptionalDouble} otherwise.
 	 * 
 	 * @param self
 	 *            optional, that's held value will be mapped with {@code mapFunc},
@@ -463,12 +464,34 @@ public final class OptionalExtensions {
 	 *            present
 	 * @param <T>
 	 *            type of the value that might be wrapped in optional {@code self}
-	 * @return optional holding the value of {@code self}, mapped to {@code long}
+	 * @return optional holding the value of {@code self}, mapped to {@code double}
 	 *         using {@code mapFunc} if value present. Empty optional otherwise.
 	 */
 	public static <T> @NonNull OptionalDouble mapDouble(@NonNull Optional<T> self,
 			@NonNull ToDoubleFunction<T> mapFunc) {
 		return self.isPresent() ? OptionalDouble.of(mapFunc.applyAsDouble(self.get())) : OptionalDouble.empty();
+	}
+	
+	/**
+	 * Tests the value of {@code self} with the given {@code predicate} and returns 
+	 * an {@link OptionalBoolean} with the result of the test, if {@code self} holds a value. 
+	 * Returns an empty {@code OptionalBoolean} otherwise.
+	 * 
+	 * @param self
+	 *            optional, that's held value will be tested with {@code predicate},
+	 *            if present
+	 * @param predicate
+	 *            testing function which will be invoked if {@code self} is not empty
+	 *            with the value wrapped in {@code self}
+	 * @param <T>
+	 *            type of the value that might be wrapped in optional {@code self}
+	 * @return optional holding the value of {@code self}, tested via the {@code predicate} if value present. 
+	 *            Empty optional otherwise.
+	 * @since 1.3.0
+	 */
+	public static <T> @NonNull OptionalBoolean test(@NonNull Optional<T> self,
+			@NonNull Predicate<T> predicate) {
+		return self.isPresent() ? OptionalBoolean.of(predicate.test(self.get())) : OptionalBoolean.empty();
 	}
 
 	/**

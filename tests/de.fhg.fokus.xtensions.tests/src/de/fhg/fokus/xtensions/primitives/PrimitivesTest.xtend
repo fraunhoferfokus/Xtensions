@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2017 Max Bureck (Fraunhofer FOKUS) and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v2.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v20.html
+ *
+ * Contributors:
+ *     Max Bureck (Fraunhofer FOKUS) - initial API and implementation
+ *******************************************************************************/
 package de.fhg.fokus.xtensions.primitives
 
 import static extension de.fhg.fokus.xtensions.primitives.Primitives.*
@@ -744,5 +754,41 @@ class PrimitivesTest {
 		val expected = 42.0d
 		val actual = expected.optionalDouble[expected]
 		assertEquals(OptionalDouble.of(expected), actual)
+	}
+	
+	//////////////////
+	// optionalBool //
+	//////////////////
+
+	@Test(expected = NullPointerException)
+	def void testOptionalBoolNullMapper() {
+		null.optionalBool(null)
+	}
+
+	@Test
+	def void testOptionalBoolContextNull() {
+		val result = null.optionalBool[throw new IllegalStateException]
+		assertFalse(result.present)
+	}
+
+	@Test
+	def void testOptionalBoolContextPassedToMapper() {
+		extension val sameCheck = new Object {
+			boolean result = false
+		}
+		val context = new Object
+		context.optionalBool[
+			result = (it === context)
+			false
+		]
+		assertTrue(result)
+	}
+
+	@Test
+	def void testOptionalBoolContextValue() {
+		val expected = true
+		val actual = expected.optionalBool[expected]
+		assertTrue(actual.isPresent)
+		assertTrue(actual.isTrue)
 	}
 }

@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2017 Max Bureck (Fraunhofer FOKUS) and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v2.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v20.html
+ *
+ * Contributors:
+ *     Max Bureck (Fraunhofer FOKUS) - initial API and implementation
+ *******************************************************************************/
 package de.fhg.fokus.xtensions.primitives
 
 import java.util.function.IntSupplier
@@ -12,6 +22,8 @@ import java.util.function.ToLongFunction
 import java.util.OptionalLong
 import java.util.OptionalDouble
 import java.util.function.ToDoubleFunction
+import java.util.function.Predicate
+import de.fhg.fokus.xtensions.optional.OptionalBoolean
 
 /**
  * This class mostly provides static functions to be used as extension functions at the end 
@@ -445,7 +457,7 @@ final class Primitives {
 	 * This defeats the purpose of this method of providing an instance that safely can
 	 * be queried for a value.
 	 * @param context object to be tested for {@code null} and if not used to invoke {@code mapper} with
-	 * @param mapper function to map the given context object {@code context} to an {@code long} value. This 
+	 * @param mapper function to map the given context object {@code context} to a {@code long} value. This 
 	 *  function is intended to return a primitive value property from {@code context}
 	 * @param <T> type of {@code context} object
 	 * @return empty {@code OptionalLong} if {@code context} is {@code null}, otherwise
@@ -473,7 +485,7 @@ final class Primitives {
 	 * This defeats the purpose of this method of providing an instance that safely can
 	 * be queried for a value.
 	 * @param context object to be tested for {@code null} and if not used to invoke {@code mapper} with
-	 * @param mapper function to map the given context object {@code context} to an {@code double} value. This 
+	 * @param mapper function to map the given context object {@code context} to a {@code double} value. This 
 	 *  function is intended to return a primitive value property from {@code context}
 	 * @param <T> type of {@code context} object
 	 * @return empty {@code OptionalDouble} if {@code context} is {@code null}, otherwise
@@ -487,6 +499,34 @@ final class Primitives {
 			OptionalDouble.empty
 		} else {
 			OptionalDouble.of(mapper.applyAsDouble(context))
+		}
+	}
+
+	// TODO doku
+	/**
+	 * This method is supposed to be used as an extension function on an object {@code t}
+	 * to wrap a primitive property into an {@link OptionalBoolean}, producing an empty optional
+	 * if the context object {@code t} is {@code null} and wrapping the primitive value if 
+	 * {@code t} is not {@code null}, e.g. {@code str.optionalBool[isEmpty]}.<br>
+	 * The main use case for this function is to use as the last step in a null-safe navigation
+	 * chain to avoid implicit default values for primitive value properties.<br><br>
+	 * <b>Important</b>: Do <em>not</em> call this method via null-safe navigation! 
+	 * This defeats the purpose of this method of providing an instance that safely can
+	 * be queried for a value.
+	 * @param context object to be tested for {@code null} and if not used to invoke {@code predicate} with
+	 * @param predicate function to map the given context object {@code context} to a {@code boolean} value. This 
+	 *  function is intended to return a primitive value property from {@code context}
+	 * @param <T> type of {@code context} object
+	 * @return empty {@code OptionalDouble} if {@code context} is {@code null}, otherwise
+	 *  an optional wrapping the value returned by {@code predicate}
+	 * @throws NullPointerException if {@code predicate} is {@code null}
+	 * @since 1.3.0
+	 */
+	static def <T> OptionalBoolean optionalBool(T context, Predicate<T> predicate) {
+		if(context === null) {
+			OptionalBoolean.empty
+		} else {
+			OptionalBoolean.of(predicate.test(context))
 		}
 	}
 
