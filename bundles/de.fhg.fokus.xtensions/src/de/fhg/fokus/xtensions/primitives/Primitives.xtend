@@ -523,6 +523,7 @@ final class Primitives {
 	 * @since 1.3.0
 	 */
 	static def <T> OptionalBoolean optionalBool(T context, Predicate<T> predicate) {
+		Objects.requireNonNull(predicate, "predicate must not be null")
 		if(context === null) {
 			OptionalBoolean.empty
 		} else {
