@@ -82,8 +82,8 @@ and the `floor` property of `address` greater than `3`, otherwise it will return
 
 === Conversion to Optionals
 
-Similar to the <<Boxing Primitives>> functions, the `optionalInt`, `optionalLong` and `optionalDouble`
-functions are supposed to box a primitive value property of a context object into a primitve optional value. 
+Similar to the <<Boxing Primitives>> functions, the `optionalInt`, `optionalLong`, `optionalDouble` and
+`optionalBool` functions are supposed to box a primitive value property of a context object into a primitive optional value. 
 These extension functions however never return `null` . They return an empty optional if the the given context object is `null`. 
 If the context object is not `null` the value returned by the given mapper function is wrapped into the returned optional.
 

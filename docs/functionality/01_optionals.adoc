@@ -115,7 +115,9 @@ The `Optional` class has a `map` method that can map the value present in the op
 to a value of another type. Unfortunately there is no method to map to a primitive type
 returning a primitive optional, such as `OptionalInt`. The extension methods `mapInt`,
 `mapLong`, and `mapDouble` allow mapping to primitive options without having to
-box the resulting value.
+box the resulting value. To map to a `boolean` value the method `test` can be used,
+which returns an <<OptionalBoolean>>. This extension method is mostly intended to check 
+a property on a value wrapped in an `Optional`.
 
 Example:
 
@@ -188,18 +190,57 @@ are provided as extension methods by this library.
 
 == OptionalBoolean
 
+This class represents a `boolean` value that may be absent. As with other optional types,
+references to objects of this type should _never_ be `null`! It is mostly intended to be 
+used as a return value from methods to allow for fluent call chains.
+
 === Creation
 
-TODO: Content
+The static factory method `empty` creates an `OptionalBoolean` not holding a value.
+Creating an `OptionalBoolean` from a `Boolean` that may be `null`, the `ofNullable`
+factory method can be used; an alias meant to be used as an extension method is the `asOptional`
+factory method. To create an `OptionalBoolean` from a `boolean` value, definitely holding 
+a value, the static `of` factory method can be used. The static methods `ofTrue` and `ofFalse`
+provide `OptionalBoolean` wrapping `true` or `false`. 
 
 === Testing for Content
 
-TODO: Content
+To check if an `OptionalBoolean` is either empty, wrap `true` or wrap `false`, the class
+provides several methods:
+
+* `boolean isEmpty()`
+* `boolean isPresent()`
+* `boolean isTrue()`
+* `boolean isTrueOrEmpty()`
+* `boolean isFalse()`
+* `boolean isFalseOrEmpty()`
+
+Note that `isTrue` and `isFalse` return `false` if the `OptionalBoolean` is empty.
+
+Analogous to the methods mentioned above there are methods that test for a value and execute a
+given callback if the condition applies. These methods have the `if` prefix, e.g. `void ifTrue(()=>void then)`.
+Additional the `void ifPresentOrElse(BooleanConsumer action, Runnable emptyAction)` method
+takes two callbacks, one for the case of an optional with value, and one that is invoked if the optional is empty.
+
+[source,xtend]
+----
+// TODO: some example
+----
+
 
 === Extracting Values
 
-TODO: Content
+There are several methods that allow to extract a wrapped value, and handle the case of an 
+empty optional in different ways.
 
+* `orElse(boolean fallback)` returns a given default value on empty, 
+* `orElseGet(BooleanSupplier fallback)` computes a default value (via `fallback`) on empty
+* `<X extends Throwable> boolean orElseThrow(Supplier<? extends X> exceptionSupplier) throws X` throws an exception provided by `exceptionSupplier` on empty
+
+
+Note that the `OptionalBoolean` does not have a simple `get` method which throws an
+`NoSuchElementException` as other optionals have. However the method `getNullable`
+returns a `Boolean` which is `null` if the optional is empty.
 
 Example:
 
