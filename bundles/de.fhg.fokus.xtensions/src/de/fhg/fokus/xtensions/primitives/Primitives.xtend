@@ -502,7 +502,6 @@ final class Primitives {
 		}
 	}
 
-	// TODO doku
 	/**
 	 * This method is supposed to be used as an extension function on an object {@code t}
 	 * to wrap a primitive property into an {@link OptionalBoolean}, producing an empty optional
@@ -517,7 +516,7 @@ final class Primitives {
 	 * @param predicate function to map the given context object {@code context} to a {@code boolean} value. This 
 	 *  function is intended to return a primitive value property from {@code context}
 	 * @param <T> type of {@code context} object
-	 * @return empty {@code OptionalDouble} if {@code context} is {@code null}, otherwise
+	 * @return empty {@code OptionalBoolean} if {@code context} is {@code null}, otherwise
 	 *  an optional wrapping the value returned by {@code predicate}
 	 * @throws NullPointerException if {@code predicate} is {@code null}
 	 * @since 1.3.0
