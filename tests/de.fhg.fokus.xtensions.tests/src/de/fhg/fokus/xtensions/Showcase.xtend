@@ -63,6 +63,7 @@ import static extension de.fhg.fokus.xtensions.stream.StringStreamExtensions.*
 import static extension de.fhg.fokus.xtensions.string.StringMatchExtensions.*
 import static extension de.fhg.fokus.xtensions.string.StringSplitExtensions.*
 import static extension java.util.Arrays.stream
+import de.fhg.fokus.xtensions.optional.OptionalBoolean
 import java.util.stream.Collectors
 import static extension de.fhg.fokus.xtensions.objects.Objects.*
 
@@ -844,5 +845,34 @@ class Showcase {
 		v.asType(Car)?.getMake.ifNotNull [
 			println("Make: " + it)
 		]
+	}
+	
+	@Test
+	def void optionalBooleanDemo() {
+		val random = new Random()
+		val randomBool = if (random.nextBoolean) {
+				OptionalBoolean.empty
+			} else {
+				OptionalBoolean.of(random.nextBoolean)
+			}
+		
+		// will not print on empty optional
+		randomBool.ifTrue [
+			println("Yippie! A random true!")
+		]
+		
+		
+		val names = #["Mike", "Joe", "Christian"]
+		val longNameWithC = names.stream
+			.filter[length > 4]
+			.findFirst
+			.test[startsWith("C")]
+			.orElse(false)
+		
+		if(longNameWithC) {
+			println("The long name starts with 'C'")
+		}
+		
+		
 	}
 }

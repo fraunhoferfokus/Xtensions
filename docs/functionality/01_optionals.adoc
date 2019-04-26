@@ -11,7 +11,7 @@ Examples:
 [source,xtend]
 ----
 import java.util.Optional
-import static extension de.fhg.fokus.xtensions.optional.OptionalIntExtensions.*
+import static extension de.fhg.fokus.xtensions.optional.OptionalExtensions.*
 // ...
 val Optional<String> no = none
 val Optional<String> yes = some("yesss!")
@@ -35,7 +35,7 @@ Example:
 [source,xtend]
 ----
 import java.util.Optional
-import static extension de.fhg.fokus.xtensions.optional.OptionalIntExtensions.*
+import static extension de.fhg.fokus.xtensions.optional.OptionalExtensions.*
 // ...
 val Optional<Object> optObj = some("Hi there!")
 val Optional<String> optStr = optObj.filter(String)
@@ -71,7 +71,7 @@ Example:
 [source,xtend]
 ----
 import java.util.Optional
-import static extension de.fhg.fokus.xtensions.optional.OptionalIntExtensions.*
+import static extension de.fhg.fokus.xtensions.optional.OptionalExtensions.*
 // ...
 val noVal = Optional.empty
 noVal.whenPresent [
@@ -94,7 +94,7 @@ Example:
 [source,xtend]
 ----
 import java.util.Optional
-import static extension de.fhg.fokus.xtensions.optional.OptionalIntExtensions.*
+import static extension de.fhg.fokus.xtensions.optional.OptionalExtensions.*
 // ...
 val captureMe = "no value"
 val noVal = Optional.empty
@@ -124,7 +124,7 @@ Example:
 [source,xtend]
 ----
 import java.util.Optional
-import static extension de.fhg.fokus.xtensions.optional.OptionalIntExtensions.*
+import static extension de.fhg.fokus.xtensions.optional.OptionalExtensions.*
 // ...
 val Optional<String> yes = some("yesss!")
 val OptionalInt lenOpt = yes.mapInt[length]
@@ -190,7 +190,8 @@ are provided as extension methods by this library.
 
 == OptionalBoolean
 
-This class represents a `boolean` value that may be absent. As with other optional types,
+The class `de.fhg.fokus.xtensions.optional.OptionalBoolean` represents a 
+`boolean` value that may be absent. As with other optional types,
 references to objects of this type should _never_ be `null`! It is mostly intended to be 
 used as a return value from methods to allow for fluent call chains.
 
@@ -224,7 +225,19 @@ takes two callbacks, one for the case of an optional with value, and one that is
 
 [source,xtend]
 ----
-// TODO: some example
+import de.fhg.fokus.xtensions.optional.OptionalBoolean
+// ...
+val random = new Random()
+val randomBool = if (random.nextBoolean) {
+		OptionalBoolean.empty
+	} else {
+		OptionalBoolean.of(random.nextBoolean)
+	}
+
+// will not print on empty optional
+randomBool.ifTrue [
+	println("Yippie! A random true!")
+]
 ----
 
 
@@ -247,9 +260,23 @@ Example:
 
 [source,xtend]
 ----
-// TODO: some example
+import de.fhg.fokus.xtensions.optional.OptionalBoolean
+import static extension de.fhg.fokus.xtensions.optional.OptionalExtensions.*
+// ...
+val names = #["Mike", "Joe", "Christian"]
+val longNameWithC = names.stream
+	.filter[length > 4]
+	.findFirst
+	.test[startsWith("C")]
+	.orElse(false)
+
+if(longNameWithC) {
+	println("The long name starts with 'C'")
+}
 ----
-Foo
+
+Note that the `test` method is an extension method on `Optional` provided by `OptionalExtensions`
+returning an `OptionalBoolean`.
 
 [TIP]
 ====
