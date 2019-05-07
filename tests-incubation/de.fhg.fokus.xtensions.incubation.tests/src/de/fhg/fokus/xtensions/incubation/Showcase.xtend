@@ -18,6 +18,13 @@ import de.fhg.fokus.xtensions.incubation.optional.Either
 import static extension de.fhg.fokus.xtensions.incubation.optional.Either.*
 import de.fhg.fokus.xtensions.incubation.optional.Either.Left
 import de.fhg.fokus.xtensions.incubation.optional.Either.Right
+import java.util.Set
+import java.util.List
+import javax.xml.ws.http.HTTPException
+import javax.xml.ws.soap.SOAPFaultException
+import java.awt.FontFormatException
+import java.awt.AWTException
+import java.awt.HeadlessException
 
 class Showcase {
 	
@@ -168,12 +175,18 @@ class Showcase {
 		val s = "123L"
 		val l = doTry [
 			Long.valueOf(s)
-		].recoverFailure(NullPointerException,NumberFormatException) [
+		].tryRecoverFailure(ArrayIndexOutOfBoundsException, IllegalStateException) [
 			it.printStackTrace;
 			-1L
 		].recover(0L)
 		println(l)
 		
+		doTry [
+			Long.valueOf(s)
+		].tryRecoverFailure(ArrayIndexOutOfBoundsException, IllegalStateException, IllegalArgumentException).with [
+			println(it);
+			null
+		]
 		
 		val String foo = System.getenv("Foo")
 		val t = doTry[

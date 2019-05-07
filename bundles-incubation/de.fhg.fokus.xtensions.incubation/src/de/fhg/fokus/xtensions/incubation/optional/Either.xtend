@@ -4,7 +4,14 @@ import java.util.Optional
 import java.util.function.Predicate
 import de.fhg.fokus.xtensions.incubation.optional.Either.LeftConsumer
 import de.fhg.fokus.xtensions.incubation.optional.Either.RightConsumer
+import org.eclipse.xtext.xbase.lib.Procedures.Procedure1
 
+/**
+ * This type is a container type either holding one element of type {@code L}
+ * or an element of type {@code R}. The main use case is to use this class for
+ * returning one of two possible types from a method, basically as a workaround 
+ * for not having union types as e.g. known from Type Script.
+ */
 abstract class Either<L, R> {
 	private new() {
 	}
@@ -31,8 +38,16 @@ abstract class Either<L, R> {
 
 	abstract def Either<L, R> ifRight((R)=>void rightConsumer)
 
+	/**
+	 * Same semantics as {@link #ifLeft(Procedure1) ifLeft} but with an explicit mention of the 
+	 * left type, so it is easy to see what the consumed value is instance of.
+	 */
 	abstract def Either<L, R> ifType(Class<L> type, LeftConsumer<? extends L> consumer)
 
+	/**
+	 * Same semantics as {@link #ifRight(Procedure1) ifRight} but with an explicit mention of the 
+	 * right type, so it is easy to see what the consumed value is instance of.
+	 */
 	abstract def Either<L, R> ifType(Class<R> type, RightConsumer<? extends R> consumer)
 
 	abstract def <X> MatchRight<R, X> caseLeft((L)=>X caseBranch)
@@ -57,10 +72,13 @@ abstract class Either<L, R> {
 
 	abstract def <X> X transform((L)=>X leftTransform, (R)=>X rightTransform)
 
-	abstract def <X> X consume((L)=>void leftConsumer, (R)=>void rightConsumer)
+	abstract def void consume((L)=>void leftConsumer, (R)=>void rightConsumer)
 
 	abstract def Either<R, L> swap()
 
+	/**
+	 * @see 
+	 */
 	static interface MatchLeft<L, X> {
 		def X caseLeft((L)=>X caseBranch)
 	}
@@ -180,7 +198,7 @@ abstract class Either<L, R> {
 			throw new UnsupportedOperationException("TODO: auto-generated method stub")
 		}
 
-		override <X> consume((L)=>void leftConsumer, (R)=>void rightConsumer) {
+		override consume((L)=>void leftConsumer, (R)=>void rightConsumer) {
 			throw new UnsupportedOperationException("TODO: auto-generated method stub")
 		}
 
@@ -215,11 +233,11 @@ abstract class Either<L, R> {
 			throw new UnsupportedOperationException("TODO: auto-generated method stub")
 		}
 
-		override <Y> mapRight((R)=>Y mapper) {
+		override <Y> Right<L,Y> mapRight((R)=>Y mapper) {
 			throw new UnsupportedOperationException("TODO: auto-generated method stub")
 		}
 
-		override <Y> mapLeft((L)=>Y mapper) {
+		override <Y> Right<Y, R> mapLeft((L)=>Y mapper) {
 			throw new UnsupportedOperationException("TODO: auto-generated method stub")
 		}
 
@@ -227,11 +245,11 @@ abstract class Either<L, R> {
 			throw new UnsupportedOperationException("TODO: auto-generated method stub")
 		}
 
-		override <Y> flatMapLeft((L)=>Either<? extends Y, ? extends R> mapper) {
+		override <Y> Right<Y, R> flatMapLeft((L)=>Either<? extends Y, ? extends R> mapper) {
 			throw new UnsupportedOperationException("TODO: auto-generated method stub")
 		}
 
-		override filterLeft(Predicate<? extends L> test, (L)=>R rightProvider) {
+		override Right<L,R> filterLeft(Predicate<? extends L> test, (L)=>R rightProvider) {
 			throw new UnsupportedOperationException("TODO: auto-generated method stub")
 		}
 
@@ -299,7 +317,7 @@ abstract class Either<L, R> {
 			throw new UnsupportedOperationException("TODO: auto-generated method stub")
 		}
 
-		override <X> consume((L)=>void leftConsumer, (R)=>void rightConsumer) {
+		override consume((L)=>void leftConsumer, (R)=>void rightConsumer) {
 			throw new UnsupportedOperationException("TODO: auto-generated method stub")
 		}
 
@@ -318,13 +336,11 @@ abstract class Either<L, R> {
 	}
 
 	@FunctionalInterface
-	static interface LeftConsumer<L> {
-		def void consume(L value)
+	static interface LeftConsumer<L> extends Procedure1<L> {
 	}
 
 	@FunctionalInterface
-	static interface RightConsumer<L> {
-		def void consume(L value)
+	static interface RightConsumer<R> extends Procedure1<R> {
 	}
 
 	static def <L, R> Either<L, R> left(L l) {
