@@ -5,8 +5,14 @@ import de.fhg.fokus.xtensions.incubation.exceptions.Try
 import static de.fhg.fokus.xtensions.incubation.exceptions.Try.*
 import org.junit.Test
 import static extension de.fhg.fokus.xtensions.incubation.Util.*
+import java.util.Optional
+import java.util.NoSuchElementException
 
 class TryTest {
+
+	///////////////
+	// completed //
+	///////////////
 
 	@Test
 	def void testCompletedElement() {
@@ -22,6 +28,11 @@ class TryTest {
 		result.assertIsInstanceOf(Try.Empty)
 	}
 
+	
+	///////////////////////////
+	// completedSuccessfully //
+	///////////////////////////
+
 	@Test(expected = NullPointerException)
 	def void testCompletedSuccessfullyNull() {
 		Try.completedSuccessfully(null)
@@ -35,10 +46,21 @@ class TryTest {
 		expected.assertSame(succ.get)
 	}
 
+
+	
+	////////////////////
+	// completedEmpty //
+	////////////////////
+
 	@Test
 	def void testCompletedEmpty() {
 		Try.completedEmpty.assertIsInstanceOf(Try.Empty)
 	}
+
+	
+	////////////////////////////
+	// completedExceptionally //
+	////////////////////////////
 
 	@Test(expected = NullPointerException)
 	def void testCompletedExceptionallyNull() {
@@ -53,32 +75,452 @@ class TryTest {
 		failure.get.assertSame(e)
 	}
 
-	@Test
-	def void testDoTryMethodNull() {
-		Try.doTry(null)
+	///////////
+	// tryCall //
+	///////////
+
+	@Test(expected = NullPointerException)
+	def void testTryCallMethodNull() {
+		Try.tryCall(null)
 	}
 
 	@Test
-	def void testDoTryMethodProvidesNull() {
-		val result = Try.doTry[null]
+	def void testTryCallMethodProvidesNull() {
+		val result = Try.tryCall[null]
 		result.assertIsInstanceOf(Try.Empty)
 	}
 
 	@Test
-	def void testDoTryMethodProvidesElement() {
+	def void testTryCallMethodProvidesElement() {
 		val expected = new Object
-		val result = Try.doTry[expected]
+		val result = Try.tryCall[expected]
 		val succ = result.assertIsInstanceOf(Try.Success)
 		succ.get.assertSame(expected)
 	}
 
 	@Test
-	def void testDoTryMethodThrows() {
+	def void testTryCallMethodThrows() {
 		val expected = new IllegalStateException
-		val result = Try.doTry[
+		val result = Try.tryCall[
 			throw expected
 		]
 		val fail = result.assertIsInstanceOf(Try.Failure)
 		fail.get.assertSame(expected)
+	}
+
+
+	/////////////
+	// tryWith //
+	/////////////
+
+	@Test(expected = NullPointerException)
+	def void testTryWithResourceProviderNull() {
+		tryWith(null)[]
+	}
+
+	@Test(expected = NullPointerException)
+	def void testTryWithProviderNull() {
+		tryWith([], null)
+	}
+
+	@Test
+	def void testTryWithProviderNullResource() {
+		extension val verdict = new Object() {
+			var resourceProviderCalled = false
+			var resourceIsNull = false
+			var providerCalled = false
+		}
+		tryWith([resourceProviderCalled = true; null]) [
+			providerCalled = true
+			resourceIsNull = (it === null)
+		]
+		resourceProviderCalled.assertTrue
+		resourceIsNull.assertTrue
+		providerCalled.assertTrue
+	}
+
+	@Test
+	def void testTryWithProviderResourceClosedOnSuccess() {
+		val resource = new AutoCloseable() {
+			var closed = false
+			var closeCount = 0
+			
+			override close() throws Exception {
+				closed = true
+				closeCount++
+			}
+		}
+		extension val verdict = new Object() {
+			var sameResource = false
+		}
+		tryWith([resource]) [
+			sameResource = (it === resource)
+		]
+		resource.closed.assertTrue
+		resource.closeCount.assertEquals(1)
+		sameResource.assertTrue
+	}
+
+	@Test
+	def void testTryWithResourceProviderThrowing() {
+		extension val verdict = new Object() {
+			var providerNotCalled = true
+		}
+		val expectedException = new IllegalArgumentException
+		val result = tryWith([throw expectedException]) [
+			providerNotCalled = false
+		]
+		val fail = result.assertIsInstanceOf(Try.Failure)
+		fail.get.assertSame(expectedException)
+		providerNotCalled.assertTrue
+	}
+
+	@Test
+	def void testTryWithProviderResourceClosedOnThrow() {
+		val resource = new AutoCloseable() {
+			var closed = false
+			var closeCount = 0
+			
+			override close() throws Exception {
+				closed = true
+				closeCount++
+			}
+		}
+		val expectedException = new IllegalArgumentException
+		val result = tryWith([resource]) [
+			throw expectedException
+		]
+		val fail = result.assertIsInstanceOf(Try.Failure)
+		fail.get.assertSame(expectedException)
+		resource.closed.assertTrue
+		resource.closeCount.assertEquals(1)
+	}
+
+	@Test
+	def void testTryWithSuccess() {
+		
+		val resource = new AutoCloseable() {
+			override close() throws Exception {
+			}
+		}
+		val expected = new Object
+		val result = tryWith([resource]) [
+			expected
+		]
+		val succ = result.assertIsInstanceOf(Try.Success)
+		succ.get.assertSame(expected)
+	}
+
+	/////////////
+	// tryFlat //
+	/////////////
+
+	@Test(expected = NullPointerException)
+	def void testTryFlatProviderNull() {
+		tryFlat(null)
+	}
+
+	@Test
+	def void testTryFlatProvidingSuccess() {
+		val expected = completedSuccessfully("some result")
+		val result = tryFlat [expected]
+		result.assertSame(expected)
+	}
+
+	@Test
+	def void testTryFlatProvidingEmpty() {
+		val expected = completedEmpty
+		val result = tryFlat [expected]
+		result.assertSame(expected)
+	}
+
+	@Test
+	def void testTryFlatProvidingFailure() {
+		val expected = completedExceptionally(new IllegalArgumentException)
+		val result = tryFlat [expected]
+		result.assertSame(expected)
+	}
+
+	@Test
+	def void testTryFlatThrowing() {
+		val expected = new ArrayIndexOutOfBoundsException
+		val result = tryFlat [ throw expected ]
+		val fail = result.assertIsInstanceOf(Try.Failure)
+		fail.get.assertSame(expected)
+	}
+
+
+	/////////////////
+	// tryOptional //
+	/////////////////
+
+	@Test(expected = NullPointerException)
+	def void testTryOptionalProviderNull() {
+		tryOptional(null)
+	}
+
+	@Test
+	def void testTryOptionalProvidingNull() {
+		val result = tryOptional [null]
+		result.assertIsInstanceOf(Try.Empty)
+	}
+
+	@Test
+	def void testTryOptionalProvidingEmpty() {
+		val result = tryOptional [Optional.empty]
+		result.assertIsInstanceOf(Try.Empty)
+	}
+
+	@Test
+	def void testTryOptionalProvidingValue() {
+		val expected = "foo"
+		val result = tryOptional [Optional.of(expected)]
+		val succ = result.assertIsInstanceOf(Try.Success)
+		succ.get.assertSame(expected)
+	}
+
+	@Test
+	def void testTryOptionalThrowing() {
+		val expected = new IllegalArgumentException
+		val result = tryOptional [ throw expected ]
+		val succ = result.assertIsInstanceOf(Try.Failure)
+		succ.get.assertSame(expected)
+	}
+
+	///////////////////
+	// tryCall input //
+	///////////////////
+
+	@Test(expected = NullPointerException)
+	def void testTryCallInputProviderNull() {
+		tryCall(new Object, null)
+	}
+
+	@Test
+	def void testTryCallInputTestInputPassedOn() {
+		val expected = new Object
+		extension val verdict = new Object {
+			var actual = null
+		}
+		tryCall(expected) [
+			actual = it
+			null
+		]
+		expected.assertSame(actual)
+	}
+
+	@Test
+	def void testTryCallInputProvidingNull() {
+		val result = tryCall(null) [
+			null
+		]
+		result.assertIsInstanceOf(Try.Empty)
+	}
+
+	@Test
+	def void testTryCallInputProvidingValue() {
+		val expected = new Object
+		val result = tryCall(null) [
+			expected
+		]
+		result.assertIsInstanceOf(Try.Success).get.assertSame(expected)
+	}
+
+	@Test
+	def void testTryCallInputThrowing() {
+		val expected = new NoSuchElementException
+		val result = tryCall(null) [
+			throw expected
+		]
+		result.assertIsInstanceOf(Try.Failure).get.assertSame(expected)
+	}
+	
+	/////////////////
+	// upcast(Try) //
+	/////////////////
+	
+	@Test
+	def void testUpcastTryNull() {
+		val Try<String> t = null
+		val Try<CharSequence> result = upcast(t)
+		result.assertNull
+	}
+
+	@Test
+	def void testUpcastTrySuccess() {
+		val Try<String> expected = completedSuccessfully("foo")
+		val Try<CharSequence> result = upcast(expected)
+		expected.assertSame(result)
+	}
+
+	@Test
+	def void testUpcastTryFailure() {
+		val Try<StringBuffer> expected = completedExceptionally(new Exception)
+		val Try<CharSequence> result = upcast(expected)
+		expected.assertSame(result)
+	}
+
+	@Test
+	def void testUpcastTryEmpty() {
+		val Try<Integer> expected = completedEmpty
+		val Try<Number> result = upcast(expected)
+		expected.assertSame(result)
+	}
+
+	/////////////////////
+	// upcast(Success) //
+	/////////////////////
+
+	@Test
+	def void testUpcastSuccessNull() {
+		val Try.Success<String> t = null
+		val Try.Success<CharSequence> result = upcast(t)
+		result.assertNull
+	}
+
+	@Test
+	def void testUpcastSuccessSuccess() {
+		val Try.Success<String> expected = completedSuccessfully("foo")
+		val Try.Success<CharSequence> result = upcast(expected)
+		expected.assertSame(result)
+	}
+
+	///////////////////
+	// upcast(Empty) //
+	///////////////////
+
+	@Test
+	def void testUpcastEmptyNull() {
+		val Try.Empty<String> t = null
+		val Try.Empty<CharSequence> result = upcast(t)
+		result.assertNull
+	}
+
+	@Test
+	def void testUpcastEmptySuccess() {
+		val Try.Empty<String> expected = completedEmpty
+		val Try.Empty<CharSequence> result = upcast(expected)
+		expected.assertSame(result)
+	}
+
+	/////////////////////
+	// upcast(Failure) //
+	/////////////////////
+
+	@Test
+	def void testUpcastFailureNull() {
+		val Try.Failure<String> t = null
+		val Try.Failure<CharSequence> result = upcast(t)
+		result.assertNull
+	}
+
+	@Test
+	def void testUpcastFailureSuccess() {
+		val Try.Failure<String> expected = completedExceptionally(new RuntimeException)
+		val Try.Failure<CharSequence> result = upcast(expected)
+		expected.assertSame(result)
+	}
+
+	//////////////////
+	// ifInstanceOf //
+	//////////////////
+
+	@Test
+	def void testIsClass() {
+		val expected = "Foo"
+		val Try.Success<Comparable<?>> succ = completedSuccessfully(expected)
+		extension val verdict = new Object {
+			var result = false
+		}
+		succ.ifInstanceOf(String) [
+			result = (expected === it)
+		]
+	}
+
+	@Test
+	def void testIsClassNot() {
+		val Try.Success<Comparable<?>> succ = completedSuccessfully("Foo")
+		succ.is(Boolean).assertFalse
+	}
+
+	///////////////
+	// getOrNull //
+	///////////////
+
+	@Test
+	def void testOrNullEmpty() {
+		val t = Try.completedEmpty
+		val result = t.orNull
+		result.assertNull
+	}
+
+	@Test
+	def void testOrNullFailure() {
+		val t = Try.completedExceptionally(new Exception)
+		val result = t.orNull
+		result.assertNull
+	}
+
+	@Test
+	def void testOrNullSuccess() {
+		val expected = "foo"
+		val t = Try.completedSuccessfully(expected)
+		val result = t.orNull
+		result.assertSame(expected)
+	}
+
+	///////////////
+	// getOrThrow //
+	///////////////
+
+	@Test(expected = NoSuchElementException)
+	def void testOrThrowEmpty() {
+		val t = Try.completedEmpty
+		t.orThrow
+	}
+
+	@Test(expected = ArrayIndexOutOfBoundsException)
+	def void testOrThrowFailure() {
+		val t = Try.completedExceptionally(new ArrayIndexOutOfBoundsException)
+		 t.orThrow
+	}
+
+	@Test
+	def void testOrThrowSuccess() {
+		val expected = "foo"
+		val t = Try.completedSuccessfully(expected)
+		val result = t.orThrow
+		result.assertSame(expected)
+	}
+
+	//////////////////////
+	// getOrThrow (=>E) //
+	//////////////////////
+
+	@Test(expected = NullPointerException)
+	def void testOrThrowProviderSuccessLamdaNull() {
+		val expected = "foo"
+		val t = Try.completedSuccessfully(expected)
+		t.getOrThrow(null)
+	}
+
+	@Test(expected = IllegalStateException)
+	def void testOrThrowProviderEmpty() {
+		val t = Try.completedEmpty
+		t.getOrThrow[new IllegalStateException]
+	}
+
+	@Test(expected = ArrayIndexOutOfBoundsException)
+	def void testOrThrowProviderFailure() {
+		val t = Try.completedExceptionally(new ArrayIndexOutOfBoundsException)
+		 t.getOrThrow[new IllegalArgumentException]
+	}
+
+	@Test
+	def void testOrThrowProviderSuccess() {
+		val expected = "foo"
+		val t = Try.completedSuccessfully(expected)
+		val result = t.getOrThrow
+		result.assertSame(expected)
 	}
 }

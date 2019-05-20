@@ -8,6 +8,7 @@ import static extension java.util.Objects.*
 import java.util.stream.Stream
 import com.google.common.collect.Iterators
 import java.util.Collections
+import org.eclipse.xtend.lib.annotations.Accessors
 
 /**
  * Try is a result type of a computation that may either hold a result value (from a successful computation),
@@ -19,10 +20,10 @@ import java.util.Collections
  * of exception types.<br>
  * To construct a Try value, use one of the factory methods:
  * <ul>
- * 	<li>{@link #doTry(Function0) doTry(()=&gt;R)</li>
- * 	<li>{@link #doTry(Object, Function1) doTry(I, (I)=&gt;R)}</li>
+ * 	<li>{@link #tryCall(Function0) tryCall(()=&gt;R)</li>
+ * 	<li>{@link #tryCall(Object, Function1) tryCall(I, (I)=&gt;R)}</li>
  * 	<li>{@link #tryWith(Function0, Function1) tryWith(()=&gt;I, (I)=&gt;R)}</li>
- * 	<li>{@link #flatTry(Function0) flatTry(()=>Try&lt;R&gt;)}</li>
+ * 	<li>{@link #tryFlat(Function0) flatTry(=&gtTry&lt;R&gt;)}</li>
  * 	<li>{@link #completed(Object) completed(R)}</li>
  * 	<li>{@link #completedSuccessfully(Object) completedSuccessfully(R)}</li>
  * 	<li>{@link #completedExceptionally(Throwable)}</li>
@@ -39,14 +40,6 @@ abstract class Try<R> implements Iterable<R> {
 
 	private new() {
 	}
-	
-	
-	// TODO: maybe def static <C, I extends AutoCloseable, R> tryWith(C context, ()=>I resourceProvider, (C,I)=>R provider)
-	// TODO: test if the following only returning Empty or Failure make sense: 
-	//     * static def Try<Void> doTry(()=>void action)
-	//     * static def <I> Try<Void> doTry(I input, (I)=>void provider)
-	//     * static def <I extends AutoCloseable> Try<Void> tryWith(()=>I resourceProvider, (I)=>void provider)
-	// TODO  static <I extends AutoCloseable, R> Try<R> flatTryWith(()=>I resourceProvider, (I)=>Try<R> provider) 
 
 	/**
 	 * Returns an instance of {@link Empty} if {@code result === null},
@@ -87,7 +80,7 @@ abstract class Try<R> implements Iterable<R> {
 	/**
 	 * Returns an instance of {@link Failure} wrapping around the {@code Throwable t} 
 	 * which is the cause of failure.
-	 * @param t error that is wrapped into the returned {@link Failure}.
+	 * @param t error that is wrapped into the returned {@link Failure}. Must not be {@code null}.
 	 * @return instance of {@link Failure} wrapping around parameter {@code t} 
 	 * @throws NullPointerException if {@code t} is {@code null}
 	 */
@@ -96,11 +89,124 @@ abstract class Try<R> implements Iterable<R> {
 	}
 
 	/**
-	 * @param resourceProvider 
-	 * @param provider 
-	 * @return 
+	 * Executes the given {@code provider}, if it throws an exception it will be wrapped
+	 * into a {@code Try.Failure}. If it computes normally and returns {@code null} a {@code Try.Empty}
+	 * will be returned, otherwise a {@code Try.Success} will be returned wrapping the result value.
+	 * 
+	 * @param provider function to be called, and that's return value or thrown exception will be wrapped
+	 *  and returned. Must not be {@code null}.
+	 * @return {@code Try.Failure} if {@code provider} throws an exception which will be wrapped into the failure; {@code Try.Empty} if {@code provider}
+	 * 	returns {@code null}; {@code Try.Success} if provider returns {@code provider} returns a value {@code !== null} which will
+	 * 	be wrapped into the success.
+	 * @throws NullPointerException if {@code provider} is {@code null}
 	 */
-	def static <I extends AutoCloseable, R> Try<R> tryWith(=>I resourceProvider, (I)=>R provider) {
+	def static <R> Try<R> tryCall(=>R provider) throws NullPointerException {
+		provider.requireNonNull("provider must not be null")
+		try {
+			val result = provider.apply
+			completed(result)
+		} catch (Throwable e) {
+			completedExceptionally(e)
+		}
+	}
+
+	/**
+	 * This method is a version of {@link #tryCall(Function0) tryCall(=>R)} allowing to
+	 * pass a context object into the {@code provider}, which can be used to get more
+	 * performance, avoiding capturing lambdas. But it can also be used similar to the 
+	 * {@code =>} operator to group calls to a single context object.
+	 * 
+	 * @param input element that will be passed to {@code provider}
+	 * @param provider function to be called with {@code input}, the result
+	 *  of this function will be wrapped in a {@code Try} and returned.
+	 * @return {@code Try.Failure} if {@code provider} throws an exception which will be wrapped into the failure; {@code Try.Empty} if {@code provider}
+	 * 	returns {@code null}; {@code Try.Success} if provider returns {@code provider} returns a value {@code !== null} which will
+	 * 	be wrapped into the success.
+	 * @see #tryCall(Function0)
+	 * @throws NullPointerException if {@code provider} is {@code null}
+	 */
+	def static <I, R> Try<R> tryCall(I input, (I)=>R provider) {
+		provider.requireNonNull("provider must not be null")
+		try {
+			val result = provider.apply(input)
+			completed(result)
+		} catch (Throwable e) {
+			completedExceptionally(e)
+		}
+	}
+
+	/**
+	 * Executes the given {@code provider}, if it throws an exception it will be wrapped
+	 * into a {@code Try.Failure}. If it computes normally and the returned {@code Optional} has
+	 * a value present, this value will be wrapped into a {@code Try.Success} and returned, otherwise
+	 * returns a {@code Try.Empty}.
+	 * 
+	 * @param provider function to be invoked, and that's result will be wrapped into a {@code Try}. Must not be {@code null}.
+	 * @return {@code Try.Failure} if {@code provider} throws an exception which will be wrapped into the failure; {@code Try.Success} 
+	 * if {@code provider} returns an {@code Optional} with a value present, the returned value will wrap around the value held by the 
+	 * {@code Optional}; {@code Try.Empty} otherwise.
+	 * @throws NullPointerException if {@code provider} is {@code null}
+	 */
+	def static <R> Try<R> tryOptional(=>Optional<R> provider) {
+		provider.requireNonNull("provider must not be null")
+		try {
+			val result = provider.apply
+			if (result !== null && result.present) {
+				completed(result.get)
+			} else {
+				completedEmpty
+			}
+		} catch (Throwable e) {
+			completedExceptionally(e)
+		}
+	}
+
+	/**
+	 * Executes the given {@code provider}, if it throws an exception it will be wrapped
+	 * into a {@code Try.Failure}. If it computes normally, the result of the call to 
+	 * {@code provider} will be returned.
+	 * 
+	 * @param provider function to be invoked, and that's result will be returned. If it throws an exception,
+	 *  it will be caught, wrapped into a {@code Try.Failure} and returned. {@code provider} must not be {@code null}.
+	 * @return result of call to {@code provider}. If {@code provider} throws, a {@code Try.Failure} wrapping the 
+	 *  caught {@code Throwable}.
+	 * @throws NullPointerException if {@code provider} is {@code null}
+	 */
+	def static <R> Try<R> tryFlat(=>Try<R> provider) {
+		provider.requireNonNull("provider must not be null")
+		try {
+			provider.apply
+		} catch (Throwable e) {
+			completedExceptionally(e)
+		}
+	}
+
+	/**
+	 * This method calls the provided {@code provider} with the {@code AutoCloseable} resource 
+	 * provided by {@code resourceProvider}.<br> 
+	 * If the {@code resourceProvider} throws an exception,
+	 * the returned {@code Try} will be a failure wrapping the exception. In case it provides a non-{@code null}
+	 * reference, the resource will be closed before this method ends. If the {@code provider}
+	 * returns a non-{@code null} reference, this method will return a {@code Try.Success} wrapping
+	 * the result. If the {@code provider} returns a {@code null}, this method returns a {@code Try.Empty}.
+	 * If the {@code provider} throws an exception, this method will return a {@code Try.Failure} wrapping
+	 * the thrown exception.
+	 * 
+	 * @param resourceProvider provides a resource to be passed to {@code provider}. The provided resource
+	 *  will be closed after calling {@code provider}, if {@code resourceProvider} does not throw an 
+	 *  exception and returns a non-{@code null} reference. Must not be {@code null}.
+	 * @param provider will be called by this method with the resource provided by {@code resourceProvider}.
+	 *  The outcome of the call to {@code provider} will be wrapped into a {@code Try} and returned by this method.
+	 *  Must not be {@code null}.
+	 * @return {@code Try.Failure} if {@code resourceProvider} or {@code provider} throws an exception;
+	 *  {@code Try.Empty} if {@code provider} returns a [@code null} reference; otherwise a {@code Try.Success}
+	 *  is returned wrapping the result of {@code provider}
+	 * @throws NullPointerException if {@code resourceProvider} or {@code provider} is {@code null}
+	 */
+	def static <I extends AutoCloseable, R> Try<R> tryWith(=>I resourceProvider,
+		(I)=>R provider) throws NullPointerException {
+		resourceProvider.requireNonNull("resourceProvider must not be null")
+		provider.requireNonNull("provider must not be null")
 		try {
 			val resource = resourceProvider.apply
 			try {
@@ -117,89 +223,23 @@ abstract class Try<R> implements Iterable<R> {
 	}
 
 	/**
-	 * Executes the given {@code provider}, if it throws an exception it will be wrapped
-	 * into a {@code Try.Failure}. If it computes normally and returns {@code null} a {@code Try.Empty}
-	 * will be returned, otherwise a {@code Try.Success} will be returned wrapping the result value.
-	 * 
-	 * @param provider function to be called, and that's return value or thrown exception will be wrapped
-	 *  and returned. Must not be {@code null}.
-	 * @return {@code Try.Failure} if {@code provider} throws an exception wich wll be wrapped into the failure; {@code Try.Empty} if {@code provider}
-	 * 	returns {@code null}; {@code Try.Success} if provider returns {@code provider} returns a value {@code !== null} which will
-	 * 	be wrapped into the success.
-	 * @throws NullPointerException if {@code provider} is {@code null}
-	 */
-	def static <R> Try<R> doTry(()=>R provider) throws NullPointerException {
-		try {
-			val result = provider.apply
-			completed(result)
-		} catch (Throwable e) {
-			completedExceptionally(e)
-		}
-	}
-
-	/**
-	 * @param provider
-	 * @return 
-	 * @throws NullPointerException if {@code provider} is {@code null}
-	 */
-	def static <R> Try<R> tryOptional(()=>Optional<R> provider) {
-		try {
-			val result = provider.apply
-			if (result.present) {
-				completed(result.get)
-			} else {
-				completedEmpty
-			}
-		} catch (Throwable e) {
-			completedExceptionally(e)
-		}
-	}
-
-	/**
-	 * This method is a version of {@link #doTry(Function0) doTry(()=>R)} allowing to
-	 * pass a context object into the {@code provider}, which can be used to get more
-	 * performance, avoiding capturing lambdas. But it can also be used similar to the 
-	 * {@code =>} operator to group calls to a single context object.
-	 * 
-	 * @param input
-	 * @param provider
-	 * @return 
-	 */
-	def static <I, R> Try<R> doTry(I input, (I)=>R provider) {
-		try {
-			val result = provider.apply(input)
-			completed(result)
-		} catch (Throwable e) {
-			completedExceptionally(e)
-		}
-	}
-
-	def static <R> Try<R> flatTry(()=>Try<R> provider) {
-		try {
-			provider.apply
-		} catch (Throwable e) {
-			completedExceptionally(e)
-		}
-	}
-	
-
-	/**
 	 * Recovers exceptions of class {@code E}. If recovery fails with
 	 * exception the returned Try will hold the exception
 	 */
 	abstract def <E extends Throwable> Try<R> tryRecoverFailure(Class<E> exceptionType, (E)=>R recovery)
 
-	abstract def <E extends Throwable> Try<R> tryRecoverFailure(Class<? extends E> exceptionType, Class<? extends E> exceptionType2,
-		(E)=>R recovery)
-		
-	abstract def <E extends Throwable, Exception> RecoveryStarter<E,R> tryRecoverFailure(Class<? extends E>... exceptionType)
+	abstract def <E extends Throwable> Try<R> tryRecoverFailure(Class<? extends E> exceptionType,
+		Class<? extends E> exceptionType2, (E)=>R recovery)
+
+	abstract def <E extends Throwable, Exception> RecoveryStarter<E, R> tryRecoverFailure(
+		Class<? extends E>... exceptionType)
 
 	/**
 	 * Recovers exceptions
 	 */
 	abstract def Try<R> tryRecoverFailure((Throwable)=>R recovery)
 
-	abstract def Try<R> tryRecoverEmpty(()=>R recovery)
+	abstract def Try<R> tryRecoverEmpty(=>R recovery)
 
 	abstract def Try<R> recoverEmpty(R recovery)
 
@@ -207,25 +247,12 @@ abstract class Try<R> implements Iterable<R> {
 	 * Recovers exceptions or {@code null} result values with value {@code recovery}.
 	 * If recovery fails with an exception a failed {@code Try} is returned.
 	 */
-	abstract def Try<R> tryRecover(()=>R recovery)
+	abstract def Try<R> tryRecover(=>R recovery)
 
 	/**
 	 * Recovers exceptions or {@code null} result values with value {@code recovery}.
 	 */
 	abstract def R recover(R recovery)
-
-	// TODO flatRecover functions providing Try<R>
-	/**
-	 * Provides exception of type {@code E} to {@code handler} if this {@code Try} failed with
-	 * an exception of type {@code E}. Returns this {@code Try} unchanged. This can e.g. be handy for
-	 * logging an exception.
-	 * @return same instance as {@code this}.
-	 */
-	abstract def <E extends Throwable> Try<R> ifFailure(Class<E> exceptionType, (E)=>void handler)
-
-	abstract def <E extends Throwable> Try<R> ifFailure(Class<? extends E> exceptionType, Class<? extends E> exceptionType2, (E)=>void handler)
-	
-	abstract def <E extends Throwable> FailureHandlerStarter<E,R> ifFailure(Class<? extends E>... exceptionTypes)
 
 	/**
 	 * Provides exception to {@code handler} if this {@code Try} failed with
@@ -236,6 +263,19 @@ abstract class Try<R> implements Iterable<R> {
 	abstract def Try<R> ifFailure((Throwable)=>void handler)
 
 	/**
+	 * Provides exception of type {@code E} to {@code handler} if this {@code Try} failed with
+	 * an exception of type {@code E}. Returns this {@code Try} unchanged. This can e.g. be handy for
+	 * logging an exception.
+	 * @return same instance as {@code this}.
+	 */
+	abstract def <E extends Throwable> Try<R> ifFailure(Class<E> exceptionType, (E)=>void handler)
+
+	abstract def <E extends Throwable> Try<R> ifFailure(Class<? extends E> exceptionType,
+		Class<? extends E> exceptionType2, (E)=>void handler)
+
+	abstract def <E extends Throwable> FailureHandlerStarter<E, R> ifFailure(Class<? extends E>... exceptionTypes)
+
+	/**
 	 * Calls the given {@code handler} with the result value if the Try 
 	 * completed with a non {@code null} result value.
 	 */
@@ -244,7 +284,7 @@ abstract class Try<R> implements Iterable<R> {
 	/**
 	 * If operation was successful but returned {@code null} value.
 	 */
-	abstract def Try<R> ifEmpty(()=>void handler)
+	abstract def Try<R> ifEmpty(=>void handler)
 
 	/**
 	 * Calls {@code action} with the result of this try, if the Try
@@ -260,9 +300,7 @@ abstract class Try<R> implements Iterable<R> {
 
 	abstract def <U, I extends AutoCloseable> Try<U> thenTryWith(()=>I resourceProducer, (I, R)=>U action)
 
-	// TODO: abstract def <U, I extends AutoCloseable> Try<U> thenFlatTryWith(()=>I resourceProducer, (I,R)=>Try<U> action) ??
-
-	abstract def <U> Try<U> thenFlatTry((R)=>Try<U> action)
+	abstract def <U> Try<U> thenTryFlat((R)=>Try<U> action)
 
 	/**
 	 * Returns {@code true} if the {@code Try} is empty (instance of {@link Empty}) and {@code false} otherwise.
@@ -282,6 +320,11 @@ abstract class Try<R> implements Iterable<R> {
 	 */
 	abstract def boolean isSuccessful()
 
+	/**
+	 * Should mapper throw an exception, the returned {@code Try} will be a failure
+	 * wrapping a {@link MapExceptionFailure}, which holds the thrown exception as 
+	 * the cause and provides a reference to the exception to be mapped by {@code mapper}.
+	 */
 	abstract def Try<R> mapException((Throwable)=>Throwable mapper)
 
 	abstract def Try<R> filterSuccess(Predicate<R> test)
@@ -307,6 +350,8 @@ abstract class Try<R> implements Iterable<R> {
 	/**
 	 * Returns result value on successful computation (even when the result
 	 * value was {@code null}) or {@code null} if an exception was thrown.
+	 * @return {@code null} if the result is no success, otherwise the value
+	 *  wrapped in the {@link Try.Success}.
 	 */
 	abstract def R getOrNull()
 
@@ -315,6 +360,8 @@ abstract class Try<R> implements Iterable<R> {
 	 * not {@code null}. If the the operation failed with an exception, this exception
 	 * will be re-thrown. If the result was {@code null} a {@link NoSuchElementException}
 	 * will be thrown.
+	 * @return the value wrapped in the {@link Try.Success}.
+	 * @throws NoSuchElementException if this object is instance of {@link Try.Empty} 
 	 */
 	abstract def R getOrThrow() throws NoSuchElementException
 
@@ -323,8 +370,12 @@ abstract class Try<R> implements Iterable<R> {
 	 * not {@code null}. If the the operation failed with an exception, this exception
 	 * will be re-thrown. If the result was {@code null} a the exception provided
 	 * by {@code exceptionProvider} will be thrown.
+	 * @param exceptionProvider provides the exception to be thrown if this element is no {@link Try.Success}.
+	 * @param <E> Type of exception to be thrown if this is a {@link Try.Empty}
+	 * @return the value wrapped in the {@link Try.Success}.
+	 * @throws E if this Try is empty
 	 */
-	abstract def <E extends Exception> R getOrThrow(()=>E exceptionProvider) throws E
+	abstract def <E extends Exception> R getOrThrow(=>E exceptionProvider) throws E
 
 	abstract def Optional<Throwable> getException()
 
@@ -368,7 +419,7 @@ abstract class Try<R> implements Iterable<R> {
 		t as Failure<?> as Failure<U>
 	}
 
-	 final static class Success<R> extends Try<R> {
+	final static class Success<R> extends Try<R> {
 
 		val R result
 
@@ -376,17 +427,36 @@ abstract class Try<R> implements Iterable<R> {
 			this.result = result
 		}
 
+		/**
+		 * Tests if the wrapped value is instance of the given class {@code clazz}.
+		 * @param clazz the class used to test if the value is instance of.
+		 * @param <U> type the wrapped value is tested to be instance of
+		 * @return {@code true} if the wrapped value is instance of {@code clazz}
+		 */
 		def <U> boolean is(Class<U> clazz) {
 			clazz.isInstance(result)
 		}
 
+		/**
+		 * Calls the given {@code consumer} if the wrapped value is instance of 
+		 * the given Class {@code clazz}.
+		 * @param clazz 
+		 * @param consumer 
+		 * @param <U> 
+		 * @return 
+		 * 
+		 */
 		def <U> Success<R> ifInstanceOf(Class<U> clazz, (U)=>void consumer) {
-			if(clazz.isInstance(result)) {
+			if (clazz.isInstance(result)) {
 				consumer.apply(clazz.cast(result))
 			}
 			this
 		}
 
+		/**
+		 * Returns the success value wrapped into this {@code Try.Success} instance.
+		 * @return returns the wrapped success value
+		 */
 		def R get() {
 			result
 		}
@@ -395,12 +465,12 @@ abstract class Try<R> implements Iterable<R> {
 			this
 		}
 
-		override <E extends Throwable> tryRecoverFailure(Class<? extends E> exceptionType, Class<? extends E> exceptionType2,
-			(E)=>R recovery) {
+		override <E extends Throwable> tryRecoverFailure(Class<? extends E> exceptionType,
+			Class<? extends E> exceptionType2, (E)=>R recovery) {
 			this
 		}
 
-		override <E extends Throwable,Exception> tryRecoverFailure(Class<? extends E>... exceptionType) {
+		override <E extends Throwable, Exception> tryRecoverFailure(Class<? extends E>... exceptionType) {
 			val result = this;
 			[result]
 		}
@@ -430,7 +500,8 @@ abstract class Try<R> implements Iterable<R> {
 			this
 		}
 
-		override <E extends Throwable> ifFailure(Class<? extends E> exceptionType, Class<? extends E> exceptionType2, (E)=>void handler) {
+		override <E extends Throwable> ifFailure(Class<? extends E> exceptionType, Class<? extends E> exceptionType2,
+			(E)=>void handler) {
 			// no exception to handle
 			this
 		}
@@ -455,7 +526,7 @@ abstract class Try<R> implements Iterable<R> {
 		}
 
 		override <U> thenTry((R)=>U action) {
-			doTry [
+			tryCall [
 				action.apply(result)
 			]
 		}
@@ -466,8 +537,8 @@ abstract class Try<R> implements Iterable<R> {
 			]
 		}
 
-		override <U> thenFlatTry((R)=>Try<U> action) {
-			flatTry [
+		override <U> thenTryFlat((R)=>Try<U> action) {
+			tryFlat [
 				action.apply(result)
 			]
 		}
@@ -525,8 +596,9 @@ abstract class Try<R> implements Iterable<R> {
 			result
 		}
 
-		override <E extends Exception> getOrThrow(()=>E exceptionProvider) throws E {
-			result	
+		override <E extends Exception> getOrThrow(=>E exceptionProvider) throws E {
+			exceptionProvider.requireNonNull
+			result
 		}
 
 		override getException() {
@@ -543,7 +615,7 @@ abstract class Try<R> implements Iterable<R> {
 
 	}
 
-	 final static class Empty<R> extends Try<R> {
+	final static class Empty<R> extends Try<R> {
 		static val Empty<?> INSTANCE = new Empty
 
 		private def <U> Empty<U> cast() {
@@ -555,12 +627,12 @@ abstract class Try<R> implements Iterable<R> {
 			this
 		}
 
-		override <E extends Throwable> Empty<R> tryRecoverFailure(Class<? extends E> exceptionType, Class<? extends E> exceptionType2,
-			(E)=>R recovery) {
+		override <E extends Throwable> Empty<R> tryRecoverFailure(Class<? extends E> exceptionType,
+			Class<? extends E> exceptionType2, (E)=>R recovery) {
 			this
 		}
 
-		override <E extends Throwable,Exception> tryRecoverFailure(Class<? extends E>... exceptionType) {
+		override <E extends Throwable, Exception> tryRecoverFailure(Class<? extends E>... exceptionType) {
 			val result = this;
 			[result]
 		}
@@ -571,7 +643,7 @@ abstract class Try<R> implements Iterable<R> {
 		}
 
 		override Try<R> tryRecoverEmpty(()=>R recovery) {
-			doTry(recovery)
+			tryCall(recovery)
 		}
 
 		override Try<R> recoverEmpty(R recovery) {
@@ -579,7 +651,7 @@ abstract class Try<R> implements Iterable<R> {
 		}
 
 		override Try<R> tryRecover(()=>R recovery) {
-			doTry(recovery)
+			tryCall(recovery)
 		}
 
 		override R recover(R recovery) {
@@ -591,10 +663,10 @@ abstract class Try<R> implements Iterable<R> {
 			this
 		}
 
-		override <E extends Throwable> Empty<R> ifFailure(Class<? extends E> exceptionType, Class<? extends E> exceptionType2, (E)=>void handler) {
+		override <E extends Throwable> Empty<R> ifFailure(Class<? extends E> exceptionType,
+			Class<? extends E> exceptionType2, (E)=>void handler) {
 			this
 		}
-		
 
 		override <E extends Throwable> ifFailure(Class<? extends E>... exceptionTypes) {
 			[this]
@@ -623,7 +695,7 @@ abstract class Try<R> implements Iterable<R> {
 			cast
 		}
 
-		override <U> Empty<U> thenFlatTry((R)=>Try<U> action) {
+		override <U> Empty<U> thenTryFlat((R)=>Try<U> action) {
 			cast
 		}
 
@@ -689,7 +761,7 @@ abstract class Try<R> implements Iterable<R> {
 
 	}
 
-	 final static class Failure<R> extends Try<R> {
+	final static class Failure<R> extends Try<R> {
 		val Throwable e
 
 		private new(Throwable e) {
@@ -703,14 +775,14 @@ abstract class Try<R> implements Iterable<R> {
 		def Throwable get() {
 			e
 		}
-		
+
 		def boolean is(Class<? extends Throwable> exceptionType) {
 			exceptionType.isInstance(e)
 		}
 
 		override <E extends Throwable> tryRecoverFailure(Class<E> exceptionType, (E)=>R recovery) {
 			if (exceptionType.isInstance(e)) {
-				doTry [
+				tryCall [
 					recovery.apply(e as E)
 				]
 			} else {
@@ -718,10 +790,10 @@ abstract class Try<R> implements Iterable<R> {
 			}
 		}
 
-		override <E extends Throwable> tryRecoverFailure(Class<? extends E> exceptionType, Class<? extends E> exceptionType2,
-			(E)=>R recovery) {
+		override <E extends Throwable> tryRecoverFailure(Class<? extends E> exceptionType,
+			Class<? extends E> exceptionType2, (E)=>R recovery) {
 			if (exceptionType.isInstance(e) || exceptionType2.isInstance(e)) {
-				doTry [
+				tryCall [
 					recovery.apply(e as E)
 				]
 			} else {
@@ -730,15 +802,15 @@ abstract class Try<R> implements Iterable<R> {
 		}
 
 		override tryRecoverFailure((Throwable)=>R recovery) {
-			doTry [
+			tryCall [
 				recovery.apply(e)
 			]
 		}
-		
-		override <E extends Throwable,Exception> tryRecoverFailure(Class<? extends E>... exceptionType) {
+
+		override <E extends Throwable, Exception> tryRecoverFailure(Class<? extends E>... exceptionType) {
 			[ recoveryFunc |
-				if( exceptionType.exists[isInstance(e)] ) {
-					Try.doTry[					
+				if (exceptionType.exists[isInstance(e)]) {
+					Try.tryCall [
 						recoveryFunc.apply(e as E)
 					]
 				}
@@ -751,20 +823,20 @@ abstract class Try<R> implements Iterable<R> {
 			}
 			this
 		}
-		
-		override <E extends Throwable> Failure<R> ifFailure(Class<? extends E> exceptionType, Class<? extends E> exceptionType2, (E)=>void handler) {
+
+		override <E extends Throwable> Failure<R> ifFailure(Class<? extends E> exceptionType,
+			Class<? extends E> exceptionType2, (E)=>void handler) {
 			if (exceptionType.isInstance(e) || exceptionType2.isInstance(e)) {
 				handler.apply(e as E)
 			}
 			this
 		}
-		
 
 		override <E extends Throwable> ifFailure(Class<? extends E>... exceptionTypes) {
 			exceptionTypes.requireNonNull("exceptionTypes must not be null");
 			[
-				for(clazz : exceptionTypes) {
-					if(clazz.isInstance(e)) {
+				for (clazz : exceptionTypes) {
+					if (clazz.isInstance(e)) {
 						it.apply(e as E)
 						// Xtend does not feature a "break" keyword
 						return this
@@ -799,7 +871,7 @@ abstract class Try<R> implements Iterable<R> {
 			cast
 		}
 
-		override <U> Failure<U> thenFlatTry((R)=>Try<U> action) {
+		override <U> Failure<U> thenTryFlat((R)=>Try<U> action) {
 			// no result
 			cast
 		}
@@ -848,7 +920,7 @@ abstract class Try<R> implements Iterable<R> {
 			throw e
 		}
 
-		override <E extends Exception> getOrThrow(()=>E exceptionProvider) throws E {
+		override <E extends Exception> getOrThrow(=>E exceptionProvider) throws E {
 			throw e
 		}
 
@@ -865,7 +937,7 @@ abstract class Try<R> implements Iterable<R> {
 		}
 
 		override tryRecover(()=>R recovery) {
-			doTry(recovery)
+			tryCall(recovery)
 		}
 
 		override recover(R recovery) {
@@ -875,15 +947,36 @@ abstract class Try<R> implements Iterable<R> {
 		override <U> thenTryOptional((R)=>Optional<U> action) {
 			cast
 		}
-		
+
 		override iterator() {
 			Collections.emptyIterator
 		}
-		
-	}
 
-// TODO makes sense? 
-//	def Either<R,Exception> asEither() //mapps empty to NoSuchElementException
+	}
+}
+
+/**
+ * For performance reasons this Exception does not have a stack trace.
+ * The stack trace of the of the {@link MapExceptionFailure#getCause() cause}
+ * should be more meaningful anyway. 
+ */
+@Accessors(PUBLIC_GETTER)
+class MapExceptionFailure extends Exception {
+	val Throwable toBeMapped
+
+	/**
+	 * @param rootCause
+	 * @param toBeMapped
+	 */
+	new(Throwable rootCause, Throwable toBeMapped) {
+		super(
+			"Failure during mapping exceptions in Try",
+			rootCause,
+			true, // enableSuppression
+			false // writableStackTrace
+		)
+		this.toBeMapped = toBeMapped
+	}
 }
 
 @FunctionalInterface
@@ -892,6 +985,6 @@ interface FailureHandlerStarter<E extends Throwable, T> {
 }
 
 @FunctionalInterface
-interface RecoveryStarter<E extends Throwable,R> {
+interface RecoveryStarter<E extends Throwable, R> {
 	def Try<R> with((E)=>R recovery)
 }
