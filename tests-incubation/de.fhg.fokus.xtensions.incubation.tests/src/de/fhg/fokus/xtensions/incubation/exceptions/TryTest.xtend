@@ -7,6 +7,7 @@ import org.junit.Test
 import static extension de.fhg.fokus.xtensions.incubation.Util.*
 import java.util.Optional
 import java.util.NoSuchElementException
+import java.util.function.Predicate
 
 class TryTest {
 
@@ -499,8 +500,19 @@ class TryTest {
 
 	@Test(expected = NullPointerException)
 	def void testOrThrowProviderSuccessLamdaNull() {
-		val expected = "foo"
-		val t = Try.completedSuccessfully(expected)
+		val t = Try.completedSuccessfully("foo")
+		t.getOrThrow(null)
+	}
+
+	@Test(expected = NullPointerException)
+	def void testOrThrowProviderEmptyLamdaNull() {
+		val t = Try.completedEmpty
+		t.getOrThrow(null)
+	}
+
+	@Test(expected = NullPointerException)
+	def void testOrThrowProviderFaildLamdaNull() {
+		val t = Try.completedExceptionally(new NoSuchElementException)
 		t.getOrThrow(null)
 	}
 
@@ -522,5 +534,217 @@ class TryTest {
 		val t = Try.completedSuccessfully(expected)
 		val result = t.getOrThrow
 		result.assertSame(expected)
+	}
+
+	///////////////
+	// getResult //
+	///////////////
+
+	@Test
+	def void testGetResultSuccess() {
+		val expected = "foo"
+		val t = Try.completedSuccessfully(expected)
+		val result = t.getResult()
+		result.assertNotNull
+		result.get.assertSame(expected)
+	}
+
+	@Test
+	def void testGetResultEmpty() {
+		val t = Try.completedEmpty
+		val result = t.getResult()
+		result.assertNotNull
+		result.isPresent.assertFalse
+	}
+
+	@Test
+	def void testGetResultFailure() {
+		val t = Try.completedExceptionally(new ArrayIndexOutOfBoundsException)
+		val result = t.getResult()
+		result.assertNotNull
+		result.isPresent.assertFalse
+	}
+
+	//////////////////
+	// getException //
+	//////////////////
+
+	@Test
+	def void testGetExceptionSuccess() {
+		val expected = "foo"
+		val t = Try.completedSuccessfully(expected)
+		val result = t.exception
+		result.assertNotNull
+		result.isPresent.assertFalse
+	}
+
+	@Test
+	def void testGetExceptionEmpty() {
+		val t = Try.completedEmpty
+		val result = t.exception
+		result.assertNotNull
+		result.isPresent.assertFalse
+	}
+
+	@Test
+	def void testGetExceptionFailure() {
+		val expected = new ArrayIndexOutOfBoundsException
+		val t = Try.completedExceptionally(expected)
+		val result = t.exception
+		result.assertNotNull
+		result.get.assertSame(expected)
+	}
+
+	///////////////
+	// isFailure //
+	///////////////
+
+	@Test
+	def void testIsFailureEmpty() {
+		val t = Try.completedEmpty
+		t.isFailure.assertFalse
+	}
+
+	@Test
+	def void testIsFailureSuccess() {
+		val t = Try.completedSuccessfully("foo")
+		t.isFailure.assertFalse
+	}
+
+	@Test
+	def void testIsFailureFailure() {
+		val t = Try.completedExceptionally(new IllegalStateException)
+		t.isFailure.assertTrue
+	}
+
+	///////////////
+	// isSuccess //
+	///////////////
+
+	@Test
+	def void testIsSuccessfulEmpty() {
+		val t = Try.completedEmpty
+		t.isSuccessful.assertFalse
+	}
+
+	@Test
+	def void testIsSuccessfulSuccess() {
+		val t = Try.completedSuccessfully("foo")
+		t.isSuccessful.assertTrue
+	}
+
+	@Test
+	def void testIsSuccessfulFailure() {
+		val t = Try.completedExceptionally(new IllegalStateException)
+		t.isSuccessful.assertFalse
+	}
+
+	/////////////
+	// isEmpty //
+	/////////////
+
+	@Test
+	def void testIsEmptyEmpty() {
+		val t = Try.completedEmpty
+		t.isEmpty.assertTrue
+	}
+
+	@Test
+	def void testIsEmptySuccess() {
+		val t = Try.completedSuccessfully("foo")
+		t.isEmpty.assertFalse
+	}
+
+	@Test
+	def void testIsEmptyFailure() {
+		val t = Try.completedExceptionally(new IllegalStateException)
+		t.isEmpty.assertFalse
+	}
+
+	////////////////////////////
+	// filterSuccessPredicate //
+	////////////////////////////
+
+	@Test(expected = NullPointerException)
+	def void testFilterSuccessPredicateOnEmptyPredicateNullEmpty() {
+		val t = Try.completedEmpty
+		val Predicate<Object> predicate = null
+		t.filterSuccess(predicate)
+	}
+
+	@Test(expected = NullPointerException)
+	def void testFilterSuccessPredicateOnSuccessPredicateNullEmpty() {
+		val t = Try.completedSuccessfully("foo")
+		val Predicate<String> predicate = null
+		t.filterSuccess(predicate)
+	}
+
+	@Test(expected = NullPointerException)
+	def void testFilterSuccessPredicateOnFailurePredicateNullEmpty() {
+		val t = Try.completedExceptionally(new RuntimeException)
+		val Predicate<String> predicate = null
+		t.filterSuccess(predicate)
+	}
+
+	@Test
+	def void testFilterSuccessPredicateOnEmpty() {
+		val t = Try.completedEmpty
+		extension val context = new Object() {
+			var notCalled = true
+		} 
+		val result = t.filterSuccess [
+			notCalled = false
+			throw new IllegalStateException
+		]
+		t.assertSame(result)
+		notCalled.assertTrue
+	}
+
+	@Test
+	def void testFilterSuccessPredicateOnFailure() {
+		val t = Try.completedExceptionally(new ArrayIndexOutOfBoundsException)
+		extension val context = new Object() {
+			var notCalled = true
+		} 
+		val result = t.filterSuccess [
+			notCalled = false
+			throw new IllegalStateException
+		]
+		t.assertSame(result)
+		notCalled.assertTrue
+	}
+
+	@Test
+	def void testFilterSuccessPredicateOnSuccessContextCorrect() {
+		val expected = "foo"
+		val t = Try.completedSuccessfully(expected)
+		extension val context = new Object() {
+			var contextCorrect = false
+		} 
+		t.filterSuccess [
+			contextCorrect = (expected === it)
+			true
+		]
+		contextCorrect.assertTrue
+	}
+
+	@Test
+	def void testFilterSuccessPredicateOnSuccessPredicateTrue() {
+		val expected = "foo"
+		val t = Try.completedSuccessfully(expected)
+		val result = t.filterSuccess [
+			true
+		]
+		result.assertSame(t)
+	}
+
+	@Test
+	def void testFilterSuccessPredicateOnSuccessPredicateFalse() {
+		val expected = "foo"
+		val t = Try.completedSuccessfully(expected)
+		val result = t.filterSuccess [
+			false
+		]
+		result.assertIsInstanceOf(Try.Empty)
 	}
 }

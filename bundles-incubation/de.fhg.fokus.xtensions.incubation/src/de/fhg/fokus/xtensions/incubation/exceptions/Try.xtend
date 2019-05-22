@@ -327,6 +327,19 @@ abstract class Try<R> implements Iterable<R> {
 	 */
 	abstract def Try<R> mapException((Throwable)=>Throwable mapper)
 
+	/**
+	 * If this {@code Try} is a {@link Try.Success} the contained value
+	 * will be passed to {@code test}. If the predicate returns {@code true}
+	 * this {@code Try} will be returned unchanged. If the predicate returns
+	 * {@code false}, an instance of {@code Try.Empty} will be returned.
+	 * If this {@code Try} is not a {@link Try.Success}, it will be returned
+	 * unchanged.
+	 * 
+	 * @param test Must not be {@code null}.
+	 * @return the filtered version of this {@code Try} if it is a {@link Try.Success}
+	 *  otherwise returns this {@code Try}.
+	 * @throws NullPointerException if {@code test} is {@code null}.
+	 */
 	abstract def Try<R> filterSuccess(Predicate<R> test)
 
 	abstract def <U> Try<U> filterSuccess(Class<U> clazz)
@@ -337,6 +350,9 @@ abstract class Try<R> implements Iterable<R> {
 	 * Returns empty optional if Try completed exceptionally or with a
 	 * {@code null} value. Otherwise returns an optional with the computed
 	 * result value present.
+	 * @return an {@code Optional} holding the captured success value, if this 
+	 *  {@code Try} is a {@link Try.Success}, or an empty {@code Optional}
+	 *  if this {@code Try} is no {@code Try.Success}.
 	 */
 	abstract def Optional<R> getResult()
 
@@ -377,6 +393,14 @@ abstract class Try<R> implements Iterable<R> {
 	 */
 	abstract def <E extends Exception> R getOrThrow(=>E exceptionProvider) throws E
 
+	/**
+	 * Returns empty optional if Try completed successfully (holding a result) or with a
+	 * {@code null} value. Otherwise returns an optional with the exception captured
+	 * in this exceptionally completed {@code Try}.
+	 * @return an {@code Optional} holding the captured exception, if this 
+	 *  {@code Try} is a {@link Try.Failure}, or an empty {@code Optional}
+	 *  if this {@code Try} is no {@code Try.Failure}.
+	 */
 	abstract def Optional<Throwable> getException()
 
 	/**
@@ -561,6 +585,7 @@ abstract class Try<R> implements Iterable<R> {
 		}
 
 		override filterSuccess(Predicate<R> test) {
+			test.requireNonNull("test must not be null")
 			if (test.test(result)) {
 				this
 			} else {
@@ -716,6 +741,7 @@ abstract class Try<R> implements Iterable<R> {
 		}
 
 		override Empty<R> filterSuccess(Predicate<R> test) {
+			test.requireNonNull("predicate must not be null")
 			this
 		}
 
@@ -893,6 +919,7 @@ abstract class Try<R> implements Iterable<R> {
 		}
 
 		override Failure<R> filterSuccess(Predicate<R> test) {
+			test.requireNonNull("test must not be null")
 			this
 		}
 
@@ -921,6 +948,7 @@ abstract class Try<R> implements Iterable<R> {
 		}
 
 		override <E extends Exception> getOrThrow(=>E exceptionProvider) throws E {
+			exceptionProvider.requireNonNull("exceptionProvider must not be null")
 			throw e
 		}
 
