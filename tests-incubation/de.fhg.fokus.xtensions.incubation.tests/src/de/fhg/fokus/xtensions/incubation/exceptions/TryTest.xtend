@@ -747,4 +747,186 @@ class TryTest {
 		]
 		result.assertIsInstanceOf(Try.Empty)
 	}
+
+	////////////////////////
+	// filterSuccessClass //
+	////////////////////////
+
+	@Test(expected = NullPointerException)
+	def void testFilterSuccessClassSuccessClassNull() {
+		val expected = "foo"
+		val t = Try.completedSuccessfully(expected)
+		val Class<?> clazz = null
+		t.filterSuccess(clazz)
+	}
+
+	@Test(expected = NullPointerException)
+	def void testFilterSuccessClassEmptyClassNull() {
+		val t = Try.completedEmpty
+		val Class<?> clazz = null
+		t.filterSuccess(clazz)
+	}
+
+	@Test(expected = NullPointerException)
+	def void testFilterSuccessClassFailureClassNull() {
+		val t = Try.completedExceptionally(new ClassCastException)
+		val Class<?> clazz = null
+		t.filterSuccess(clazz)
+	}
+
+	@Test
+	def void testFilterSuccessClassEmpty() {
+		val t = Try.completedEmpty
+		val result = t.filterSuccess(String)
+		result.assertSame(t)
+	}
+
+	@Test
+	def void testFilterSuccessClassFailure() {
+		val t = Try.completedExceptionally(new NullPointerException)
+		val result = t.filterSuccess(String)
+		result.assertSame(t)
+	}
+
+	@Test
+	def void testFilterSuccessClassSuccessIsInstance() {
+		val Try<CharSequence> t = Try.<CharSequence>completedSuccessfully("f00")
+		val Try<String> result = t.filterSuccess(String)
+		result.assertSame(t)
+	}
+
+	@Test
+	def void testFilterSuccessClassSuccessNotInstance() {
+		val Try<CharSequence> t = Try.<CharSequence>completedSuccessfully("f00")
+		val Try<Integer> result = t.filterSuccess(Integer)
+		result.assertIsInstanceOf(Try.Empty)
+	}
+
+	////////////
+	// stream //
+	////////////
+
+	@Test
+	def void testStreamSuccess() {
+		val expected = "the result"
+		val t = Try.completedSuccessfully(expected)
+		t.stream.toArray.assertArrayEquals(#[expected])
+	}
+
+	@Test
+	def void testStreamFailure() {
+		val t = Try.completedExceptionally(new IllegalArgumentException)
+		t.stream.count.assertEquals(0l)
+	}
+
+	@Test
+	def void testStreamEmpty() {
+		val t = Try.completedEmpty
+		t.stream.count.assertEquals(0l)
+	}
+
+	//////////////
+	// iterator //
+	//////////////
+
+	@Test
+	def void testIteratorEmpty() {
+		val t = Try.completedEmpty
+		t.iterator.assertEmptyIterator
+	}
+
+	@Test
+	def void testIteratorFailure() {
+		val t = Try.completedExceptionally(new NoSuchElementException)
+		t.iterator.assertEmptyIterator
+	}
+
+	@Test
+	def void testIteratorSuccess() {
+		val expected = new Object
+		val t = Try.completedSuccessfully(expected)
+		val iterator = t.iterator
+		iterator.hasNext.assertTrue
+		iterator.next.assertSame(expected)
+		iterator.assertEmptyIterator
+	}
+
+	/////////////
+	// recover //
+	/////////////
+
+	@Test
+	def void testRecoverSuccess() {
+		val expected = "the result"
+		val recovery = "not the result"
+		val t = Try.completedSuccessfully(expected)
+		val result = t.recover(recovery)
+		result.assertSame(expected)
+	}
+
+	@Test
+	def void testRecoverEmpty() {
+		val expected = "the result"
+		val t = Try.completedEmpty
+		val result = t.recover(expected)
+		result.assertSame(expected)
+	}
+
+	@Test
+	def void testRecoverFailure() {
+		val expected = "the result"
+		val t = Try.completedExceptionally(new IllegalStateException)
+		val result = t.recover(expected)
+		result.assertSame(expected)
+	}
+
+	@Test
+	def void testRecoverEmptyWithNull() {
+		val t = Try.completedEmpty
+		val result = t.recover(null)
+		result.assertNull
+	}
+
+	@Test
+	def void testRecoverFailureWithNull() {
+		val t = Try.completedExceptionally(new IllegalStateException)
+		val result = t.recover(null)
+		result.assertNull
+	}
+
+	//////////////////
+	// recoverEmpty //
+	//////////////////
+
+	@Test
+	def void testRecoverEmptySuccess() {
+		val expected = "the result"
+		val recovery = "not the result"
+		val t = Try.completedSuccessfully(expected)
+		val result = t.recoverEmpty(recovery)
+		result.assertSame(t)
+	}
+
+	@Test
+	def void testRecoverEmptyEmpty() {
+		val expected = "the result"
+		val t = Try.completedEmpty
+		val result = t.recoverEmpty(expected)
+		result.assertIsInstanceOf(Try.Success).get.assertSame(expected)
+	}
+
+	@Test
+	def void testRecoverEmptyFailure() {
+		val expected = "the result"
+		val t = Try.completedExceptionally(new IllegalStateException)
+		val result = t.recoverEmpty(expected)
+		result.assertSame(t)
+	}
+
+	@Test
+	def void testRecoverEmptyEmptyWithNull() {
+		val t = Try.completedEmpty
+		val result = t.recoverEmpty(null)
+		result.assertIsInstanceOf(Try.Empty)
+	}
 }

@@ -9,6 +9,7 @@ import java.util.stream.Stream
 import com.google.common.collect.Iterators
 import java.util.Collections
 import org.eclipse.xtend.lib.annotations.Accessors
+import java.util.Iterator
 
 /**
  * Try is a result type of a computation that may either hold a result value (from a successful computation),
@@ -20,9 +21,9 @@ import org.eclipse.xtend.lib.annotations.Accessors
  * of exception types.<br>
  * To construct a Try value, use one of the factory methods:
  * <ul>
- * 	<li>{@link #tryCall(Function0) tryCall(()=&gt;R)</li>
+ * 	<li>{@link #tryCall(Function0) tryCall(=&gt;R)</li>
  * 	<li>{@link #tryCall(Object, Function1) tryCall(I, (I)=&gt;R)}</li>
- * 	<li>{@link #tryWith(Function0, Function1) tryWith(()=&gt;I, (I)=&gt;R)}</li>
+ * 	<li>{@link #tryWith(Function0, Function1) tryWith(=&gt;I, (I)=&gt;R)}</li>
  * 	<li>{@link #tryFlat(Function0) flatTry(=&gtTry&lt;R&gt;)}</li>
  * 	<li>{@link #completed(Object) completed(R)}</li>
  * 	<li>{@link #completedSuccessfully(Object) completedSuccessfully(R)}</li>
@@ -241,16 +242,33 @@ abstract class Try<R> implements Iterable<R> {
 
 	abstract def Try<R> tryRecoverEmpty(=>R recovery)
 
+	/**
+	 * If invoked on a {@link Try.Empty} will return a {@code Try} wrapping
+	 * the given {@code recovery}. Note that if {@code recovery} is {@code null}
+	 * returns an {@code Try.Empty}, if not a {@code Try.Success} wrapping the
+	 * given {@code recovery}. If invoked on a failure or success, this method 
+	 * returns the instance the method was invoked on.
+	 * @param recovery the element to be wrapped in the returned {@code Try}
+	 *  if this {@code Try} is empty.
+	 * @return this {@code Try} if it is success or failure. If this {@code Try}
+	 *  is empty it will return a {@code Try} wrapping the given {@code recovery}
+	 *  value. Note that if {@code recovery} is {@code null} a {@code Try.Empty} 
+	 *  will be returned, otherwise a {@code Try.Succes} will be returned wrapping
+	 *  {@code recovery}
+	 */
 	abstract def Try<R> recoverEmpty(R recovery)
 
 	/**
 	 * Recovers exceptions or {@code null} result values with value {@code recovery}.
 	 * If recovery fails with an exception a failed {@code Try} is returned.
+	 * @param recovery
 	 */
 	abstract def Try<R> tryRecover(=>R recovery)
 
 	/**
 	 * Recovers exceptions or {@code null} result values with value {@code recovery}.
+	 * @return if this is a {@code Try.Success} returns the wrapped value, otherwise
+	 *  returns the given {@code recovery}
 	 */
 	abstract def R recover(R recovery)
 
@@ -258,6 +276,7 @@ abstract class Try<R> implements Iterable<R> {
 	 * Provides exception to {@code handler} if this {@code Try} failed with
 	 * an exception. Returns this {@code Try} unchanged. This can e.g. be handy for
 	 * logging an exception.
+	 * @param handler
 	 * @return same instance as {@code this}.
 	 */
 	abstract def Try<R> ifFailure((Throwable)=>void handler)
@@ -335,13 +354,28 @@ abstract class Try<R> implements Iterable<R> {
 	 * If this {@code Try} is not a {@link Try.Success}, it will be returned
 	 * unchanged.
 	 * 
-	 * @param test Must not be {@code null}.
+	 * @param test the predicate used to filter this {@code Try} if this is a {@link Try.Success}.
+	 *  Must not be {@code null}.
 	 * @return the filtered version of this {@code Try} if it is a {@link Try.Success}
 	 *  otherwise returns this {@code Try}.
 	 * @throws NullPointerException if {@code test} is {@code null}.
 	 */
 	abstract def Try<R> filterSuccess(Predicate<R> test)
 
+	/**
+	 * If this {@code Try} is a {@link Try.Success} the contained value
+	 * will be checked to be instance of {@code clazz}. If the value is instance of {@code clazz}
+	 * this {@code Try} will be returned as a {@code Try<U>}. If not, 
+	 * an instance of {@code Try.Empty} will be returned.
+	 * If this {@code Try} is not a {@link Try.Success}, it will be returned
+	 * unchanged.
+	 * 
+	 * @param clazz The wrapped value of {@code Try.Success} instances will be filtered 
+	 *  by checking if it is instance of {@code clazz}. Must not be {@code null}.
+	 * @return the filtered version of this {@code Try} if it is a {@link Try.Success}
+	 *  otherwise returns this {@code Try}.
+	 * @throws NullPointerException if {@code test} is {@code null}.
+	 */
 	abstract def <U> Try<U> filterSuccess(Class<U> clazz)
 
 	abstract def <U> U transform((R)=>U resultTransformer, (Throwable)=>U exceptionTranformer, =>U emptyTransformer)
@@ -360,8 +394,18 @@ abstract class Try<R> implements Iterable<R> {
 	 * Returns an empty stream if Try completed exceptionally or with 
 	 * a {@code null} value. Otherwise returns a stream with the completed
 	 * result value.
+	 * @return an empty stream if this is empty or a failure, if this {@code Try}
+	 * is a success, the returned stream provides the wrapped success element.
 	 */
 	abstract def Stream<R> stream();
+
+	/**
+	 * Returns an iterator that holds an element, if this {@code Try} was completed
+	 * successfully, otherwise returns an empty iterator.
+	 * @return iterator that holds an element, if this is a {@code Try.Success}, 
+	 *  otherwise an empty iterator.
+	 */
+	override Iterator<R> iterator();
 
 	/**
 	 * Returns result value on successful computation (even when the result
@@ -746,6 +790,7 @@ abstract class Try<R> implements Iterable<R> {
 		}
 
 		override <U> Empty<U> filterSuccess(Class<U> clazz) {
+			clazz.requireNonNull("clazz must not be null")
 			cast
 		}
 
@@ -924,6 +969,7 @@ abstract class Try<R> implements Iterable<R> {
 		}
 
 		override <U> Failure<U> filterSuccess(Class<U> clazz) {
+			clazz.requireNonNull("clazz must not be null")
 			cast
 		}
 
