@@ -929,4 +929,476 @@ class TryTest {
 		val result = t.recoverEmpty(null)
 		result.assertIsInstanceOf(Try.Empty)
 	}
+
+	/////////////
+	// ifEmpty //
+	/////////////
+
+	@Test(expected = NullPointerException)
+	def void testIfEmptyEmptyNullHandler() {
+		val t = Try.completedEmpty
+		t.ifEmpty(null)
+	}
+
+	@Test(expected = NullPointerException)
+	def void testIfEmptySuccessNullHandler() {
+		val t = Try.completedSuccessfully("woo")
+		t.ifEmpty(null)
+	}
+
+	@Test(expected = NullPointerException)
+	def void testIfEmptyFailureNullHandler() {
+		val t = Try.completedExceptionally(new ArrayIndexOutOfBoundsException)
+		t.ifEmpty(null)
+	}
+
+	@Test
+	def void testIfEmptyEmpty() {
+		extension val verdict = new Object {
+			var isCalled = false
+		}
+
+		val t = Try.completedEmpty
+		t.ifEmpty [
+			isCalled = true
+		]
+		isCalled.assertTrue
+	}
+
+	@Test
+	def void testIfEmptySuccess() {
+		extension val verdict = new Object {
+			var isNotCalled = true
+		}
+
+		val t = Try.completedSuccessfully(new Object)
+		t.ifEmpty [
+			isNotCalled = false
+		]
+		isNotCalled.assertTrue
+	}
+
+	@Test
+	def void testIfEmptyFailure() {
+		extension val verdict = new Object {
+			var isNotCalled = true
+		}
+
+		val t = Try.completedExceptionally(new Exception)
+		t.ifEmpty [
+			isNotCalled = false
+		]
+		isNotCalled.assertTrue
+	}
+
+	///////////////
+	// ifSuccess //
+	///////////////
+
+	@Test(expected = NullPointerException)
+	def void testIfSuccessEmptyNullHandler() {
+		val t = Try.completedEmpty
+		t.ifSuccess(null)
+	}
+
+	@Test(expected = NullPointerException)
+	def void testIfSuccessSuccessNullHandler() {
+		val t = Try.completedSuccessfully("woo")
+		t.ifSuccess(null)
+	}
+
+	@Test(expected = NullPointerException)
+	def void testIfSuccessFailureNullHandler() {
+		val t = Try.completedExceptionally(new ArrayIndexOutOfBoundsException)
+		t.ifSuccess(null)
+	}
+
+	@Test
+	def void testIfSuccessEmpty() {
+		extension val verdict = new Object {
+			var isNotCalled = true
+		}
+
+		val t = Try.completedEmpty
+		t.ifSuccess [
+			isNotCalled = false
+		]
+		isNotCalled.assertTrue
+	}
+
+	@Test
+	def void testIfSuccessSuccess() {
+		extension val verdict = new Object {
+			var isCalled = false
+			var actual = null
+		}
+
+		val expected = new Object
+		val t = Try.completedSuccessfully(expected)
+		t.ifSuccess [
+			isCalled = true
+			actual = it 
+		]
+		isCalled.assertTrue
+		actual.assertSame(expected)
+	}
+
+	@Test
+	def void testIfSuccessFailure() {
+		extension val verdict = new Object {
+			var isNotCalled = true
+		}
+
+		val t = Try.completedExceptionally(new Exception)
+		t.ifSuccess [
+			isNotCalled = false
+		]
+		isNotCalled.assertTrue
+	}
+
+	///////////////
+	// ifFailure //
+	///////////////
+
+	@Test(expected = NullPointerException)
+	def void testIfFailureEmptyNullHandler() {
+		val t = Try.completedEmpty
+		val (Throwable)=>void handler = null
+		t.ifFailure(handler)
+	}
+
+	@Test(expected = NullPointerException)
+	def void testIfFailureSuccessNullHandler() {
+		val t = Try.completedSuccessfully("woo")
+		val (Throwable)=>void handler = null
+		t.ifFailure(handler)
+	}
+
+	@Test(expected = NullPointerException)
+	def void testIfFailureFailureNullHandler() {
+		val t = Try.completedExceptionally(new ArrayIndexOutOfBoundsException)
+		val (Throwable)=>void handler = null
+		t.ifFailure(handler)
+	}
+
+	@Test
+	def void testIfFailureEmpty() {
+		extension val verdict = new Object {
+			var isNotCalled = true
+		}
+
+		val t = Try.completedEmpty
+		t.ifFailure [
+			isNotCalled = false
+		]
+		isNotCalled.assertTrue
+	}
+
+	@Test
+	def void testIfFailureFailure() {
+		extension val verdict = new Object {
+			var isCalled = false
+			var actual = null
+		}
+
+		val expected = new IllegalStateException
+		val t = Try.completedExceptionally(expected)
+		t.ifFailure [
+			isCalled = true
+			actual = it 
+		]
+		isCalled.assertTrue
+		actual.assertSame(expected)
+	}
+
+	@Test
+	def void testIfFailureSuccess() {
+		extension val verdict = new Object {
+			var isNotCalled = true
+		}
+
+		val t = Try.completedSuccessfully("foo")
+		t.ifFailure [
+			isNotCalled = false
+		]
+		isNotCalled.assertTrue
+	}
+
+	//////////////////////
+	// ifFailure(Class) //
+	//////////////////////
+
+	@Test(expected = NullPointerException)
+	def void testIfFailureClassEmptyNullHandler() {
+		val t = Try.completedEmpty
+		val (Throwable)=>void handler = null
+		t.ifFailure(Throwable,handler)
+	}
+
+	@Test(expected = NullPointerException)
+	def void testIfFailureClassEmptyNullClass() {
+		val t = Try.completedEmpty
+		val Class<Throwable> clazz = null
+		t.ifFailure(clazz)[]
+	}
+
+	@Test(expected = NullPointerException)
+	def void testIfFailureClassSuccessNullHandler() {
+		val t = Try.completedSuccessfully("woo")
+		val (Throwable)=>void handler = null
+		t.ifFailure(Throwable,handler)
+	}
+
+	@Test(expected = NullPointerException)
+	def void testIfFailureClassSuccessNullClass() {
+		val t = Try.completedSuccessfully("daaaamn")
+		val Class<Throwable> clazz = null
+		t.ifFailure(clazz)[]
+	}
+
+	@Test(expected = NullPointerException)
+	def void testIfFailureClassFailureNullHandler() {
+		val t = Try.completedExceptionally(new ArrayIndexOutOfBoundsException)
+		val (Throwable)=>void handler = null
+		t.ifFailure(Throwable,handler)
+	}
+
+	@Test(expected = NullPointerException)
+	def void testIfFailureClassFailureNullClass() {
+		val t = Try.completedExceptionally(new ArrayIndexOutOfBoundsException)
+		val Class<Throwable> clazz = null
+		t.ifFailure(clazz)[]
+	}
+
+	@Test
+	def void testIfFailureClassEmpty() {
+		extension val verdict = new Object {
+			var isNotCalled = true
+		}
+
+		val t = Try.completedEmpty
+		t.ifFailure(Throwable) [
+			isNotCalled = false
+		]
+		isNotCalled.assertTrue
+	}
+
+	@Test
+	def void testIfFailureClassFailureMatching() {
+		extension val verdict = new Object {
+			var isCalled = false
+			var actual = null
+		}
+
+		val expected = new IllegalStateException
+		val t = Try.completedExceptionally(expected)
+		t.ifFailure(RuntimeException) [
+			isCalled = true
+			actual = it 
+		]
+		isCalled.assertTrue
+		actual.assertSame(expected)
+	}
+
+	@Test
+	def void testIfFailureClassFailureSame() {
+		extension val verdict = new Object {
+			var isCalled = false
+			var actual = null
+		}
+
+		val expected = new NoSuchElementException
+		val t = Try.completedExceptionally(expected)
+		t.ifFailure(NoSuchElementException) [
+			isCalled = true
+			actual = it 
+		]
+		isCalled.assertTrue
+		actual.assertSame(expected)
+	}
+
+	@Test
+	def void testIfFailureClassFailureNotMatching() {
+		extension val verdict = new Object {
+			var isNotCalled = true
+		}
+
+		val expected = new IllegalStateException
+		val t = Try.completedExceptionally(expected)
+		t.ifFailure(NullPointerException) [
+			isNotCalled = false
+		]
+		isNotCalled.assertTrue
+	}
+
+	@Test
+	def void testIfFailureClassSuccess() {
+		extension val verdict = new Object {
+			var isNotCalled = true
+		}
+
+		val t = Try.completedSuccessfully("foo")
+		t.ifFailure(Throwable) [
+			isNotCalled = false
+		]
+		isNotCalled.assertTrue
+	}
+
+	////////////////////////////
+	// ifFailure(Class,Class) //
+	////////////////////////////
+
+	@Test(expected = NullPointerException)
+	def void testIfFailureClassClassEmptyNullHandler() {
+		val t = Try.completedEmpty
+		val (Throwable)=>void handler = null
+		t.ifFailure(Throwable, Exception, handler)
+	}
+
+	@Test(expected = NullPointerException)
+	def void testIfFailureClassClassEmptyNullClass() {
+		val t = Try.completedEmpty
+		val Class<Throwable> clazz = null
+		t.ifFailure(clazz, Throwable)[]
+	}
+
+	@Test(expected = NullPointerException)
+	def void testIfFailureClassClassEmptyNullClass2() {
+		val t = Try.completedEmpty
+		val Class<Throwable> clazz = null
+		t.ifFailure(Throwable, clazz)[]
+	}
+
+	@Test(expected = NullPointerException)
+	def void testIfFailureClassClassSuccessNullHandler() {
+		val t = Try.completedSuccessfully("woo")
+		val (Throwable)=>void handler = null
+		t.ifFailure(Throwable, Exception, handler)
+	}
+
+	@Test(expected = NullPointerException)
+	def void testIfFailureClassClassSuccessNullClass() {
+		val t = Try.completedSuccessfully("daaaamn")
+		val Class<Throwable> clazz = null
+		t.ifFailure(clazz, Throwable)[]
+	}
+
+	@Test(expected = NullPointerException)
+	def void testIfFailureClassClassSuccessNullClass2() {
+		val t = Try.completedSuccessfully("daaaamn")
+		val Class<Throwable> clazz = null
+		t.ifFailure(Throwable, clazz)[]
+	}
+
+	@Test(expected = NullPointerException)
+	def void testIfFailureClassClassFailureNullHandler() {
+		val t = Try.completedExceptionally(new ArrayIndexOutOfBoundsException)
+		val (Throwable)=>void handler = null
+		t.ifFailure(Throwable, Exception, handler)
+	}
+
+	@Test(expected = NullPointerException)
+	def void testIfFailureClassClassFailureNullClass() {
+		val t = Try.completedExceptionally(new ArrayIndexOutOfBoundsException)
+		val Class<Throwable> clazz = null
+		t.ifFailure(clazz, Throwable)[]
+	}
+
+	@Test(expected = NullPointerException)
+	def void testIfFailureClassClassFailureNullClass2() {
+		val t = Try.completedExceptionally(new ArrayIndexOutOfBoundsException)
+		val Class<Throwable> clazz = null
+		t.ifFailure(Throwable, clazz)[]
+	}
+
+	@Test
+	def void testIfFailureClassClassEmpty() {
+		extension val verdict = new Object {
+			var isNotCalled = true
+		}
+
+		val t = Try.completedEmpty
+		t.ifFailure(Throwable, Exception) [
+			isNotCalled = false
+		]
+		isNotCalled.assertTrue
+	}
+
+	@Test
+	def void testIfFailureClassClassFailureMatching() {
+		extension val verdict = new Object {
+			var isCalled = false
+			var actual = null
+		}
+
+		val expected = new IllegalStateException
+		val t = Try.completedExceptionally(expected)
+		t.ifFailure(RuntimeException, Exception) [
+			isCalled = true
+			actual = it 
+		]
+		isCalled.assertTrue
+		actual.assertSame(expected)
+	}
+
+	@Test
+	def void testIfFailureClassClassFailureOneMatching() {
+		extension val verdict = new Object {
+			var isCalled = false
+			var actual = null
+		}
+
+		val expected = new IllegalStateException
+		val t = Try.completedExceptionally(expected)
+		t.ifFailure(RuntimeException, IllegalArgumentException) [
+			isCalled = true
+			actual = it 
+		]
+		isCalled.assertTrue
+		actual.assertSame(expected)
+	}
+
+	@Test
+	def void testIfFailureClassClassFailureSame() {
+		extension val verdict = new Object {
+			var isCalled = false
+			var actual = null
+		}
+
+		val expected = new NoSuchElementException
+		val t = Try.completedExceptionally(expected)
+		t.ifFailure(NoSuchElementException, NoSuchElementException) [
+			isCalled = true
+			actual = it 
+		]
+		isCalled.assertTrue
+		actual.assertSame(expected)
+	}
+
+	@Test
+	def void testIfFailureClassClassFailureNotMatching() {
+		extension val verdict = new Object {
+			var isNotCalled = true
+		}
+
+		val expected = new IllegalStateException
+		val t = Try.completedExceptionally(expected)
+		t.ifFailure(NullPointerException, ArrayIndexOutOfBoundsException) [
+			isNotCalled = false
+		]
+		isNotCalled.assertTrue
+	}
+
+	@Test
+	def void testIfFailureClassClassSuccess() {
+		extension val verdict = new Object {
+			var isNotCalled = true
+		}
+
+		val t = Try.completedSuccessfully("foo")
+		t.ifFailure(Throwable, Exception) [
+			isNotCalled = false
+		]
+		isNotCalled.assertTrue
+	}
 }

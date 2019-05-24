@@ -276,32 +276,68 @@ abstract class Try<R> implements Iterable<R> {
 	 * Provides exception to {@code handler} if this {@code Try} failed with
 	 * an exception. Returns this {@code Try} unchanged. This can e.g. be handy for
 	 * logging an exception.
-	 * @param handler
+	 * @param handler the callback to be invoked with the wrapped exception if this {@code Try}
+	 *  is a {@link Try.Failure}.
 	 * @return same instance as {@code this}.
+	 * @throws NullPointerException if {@code handler} is {@code null}
 	 */
 	abstract def Try<R> ifFailure((Throwable)=>void handler)
 
 	/**
 	 * Provides exception of type {@code E} to {@code handler} if this {@code Try} failed with
-	 * an exception of type {@code E}. Returns this {@code Try} unchanged. This can e.g. be handy for
-	 * logging an exception.
+	 * an exception of type {@code E} and the exception is instance of {@code exceptionType}. 
+	 * Returns this {@code Try} unchanged. This can e.g. be handy for logging an exception.
+	 * @param exceptionType type the wrapped exception is tested to be instance of
+	 * @param handler the callback to be invoked with the wrapped exception if this {@code Try}
+	 *  is a {@link Try.Failure} and the exception is instance of {@code exceptionType}
 	 * @return same instance as {@code this}.
+	 * @throws NullPointerException if {@code exceptionType} or {@code handler} is {@code null}
 	 */
 	abstract def <E extends Throwable> Try<R> ifFailure(Class<E> exceptionType, (E)=>void handler)
 
+	/**
+	 * Provides exception of type {@code E} to {@code handler} if this {@code Try} failed with
+	 * an exception of type {@code E} and the exception is instance of {@code exceptionType} or {@code exceptionType2}.
+	 * Returns this {@code Try} unchanged. This can e.g. be handy for logging an exception.
+	 * @param exceptionType type the wrapped exception is tested to be instance of
+	 * @param exceptionType2 type the wrapped exception is tested to be instance of
+	 * @param handler the callback to be invoked with the wrapped exception if this {@code Try}
+	 *  is a {@link Try.Failure} and the exception is instance of {@code exceptionType} or instance
+	 *  of {@code exceptionType2}
+	 * @return same instance as {@code this}.
+	 * @throws NullPointerException if {@code exceptionType}, {@code exceptionType2} or {@code handler} is {@code null}
+	 */
 	abstract def <E extends Throwable> Try<R> ifFailure(Class<? extends E> exceptionType,
 		Class<? extends E> exceptionType2, (E)=>void handler)
 
+	/**
+	 * Provides exception of type {@code E} to {@code handler} if this {@code Try} failed with
+	 * an exception of type {@code E} and the exception is instance of any exception in {@code exceptionTypes}.
+	 * Returns this {@code Try} unchanged. This can e.g. be handy for logging an exception.
+	 * @param exceptionTypes types the wrapped exception is tested to be instance of
+	 * @param handler the callback to be invoked with the wrapped exception if this {@code Try}
+	 *  is a {@link Try.Failure} and the exception is instance of any type in {@code exceptionTypes}
+	 * @return same instance as {@code this}.
+	 * @throws NullPointerException if {@code exceptionTypes}, any value in {@code exceptionTypes}, or {@code handler} is {@code null}
+	 */
 	abstract def <E extends Throwable> FailureHandlerStarter<E, R> ifFailure(Class<? extends E>... exceptionTypes)
 
 	/**
 	 * Calls the given {@code handler} with the result value if the Try 
 	 * completed with a non {@code null} result value.
+	 * @param handler the callback to be called if this is an instance of {@code Try.Success}
+	 *  with the wrapped successful value as the parameter
+	 * @return same instance as {@code this}
+	 * @throws NullPointerException if {@code handler} is {@code null}
 	 */
 	abstract def Try<R> ifSuccess((R)=>void handler)
 
 	/**
-	 * If operation was successful but returned {@code null} value.
+	 * If operation was successful but returned {@code null} value, the given 
+	 * {@code handler} will be called, otherwise the {@code handler} will not be called.
+	 * @param handler the callback to be called if this is an instance of {@code Try.Empty}
+	 * @return same instance as {@code this}
+	 * @throws NullPointerException if {@code handler} is {@code null}
 	 */
 	abstract def Try<R> ifEmpty(=>void handler)
 
@@ -564,12 +600,17 @@ abstract class Try<R> implements Iterable<R> {
 		}
 
 		override <E extends Throwable> ifFailure(Class<E> exceptionType, (E)=>void handler) {
+			exceptionType.requireNonNull("exceptionType must not be null")
+			handler.requireNonNull("handler must not be null")
 			// no exception to handle
 			this
 		}
 
 		override <E extends Throwable> ifFailure(Class<? extends E> exceptionType, Class<? extends E> exceptionType2,
 			(E)=>void handler) {
+			exceptionType.requireNonNull("exceptionType must not be null")
+			exceptionType2.requireNonNull("exceptionType2 must not be null")
+			handler.requireNonNull("handler must not be null")
 			// no exception to handle
 			this
 		}
@@ -579,16 +620,19 @@ abstract class Try<R> implements Iterable<R> {
 		}
 
 		override ifFailure((Throwable)=>void handler) {
+			handler.requireNonNull("handler must not be null")
 			// no exception to handle
 			this
 		}
 
 		override ifSuccess((R)=>void handler) {
+			handler.requireNonNull("handler must not be null")
 			handler.apply(result)
 			this
 		}
 
 		override ifEmpty(()=>void handler) {
+			handler.requireNonNull("handler must not be null")
 			// not empty
 			this
 		}
@@ -728,12 +772,17 @@ abstract class Try<R> implements Iterable<R> {
 		}
 
 		override <E extends Throwable> Empty<R> ifFailure(Class<E> exceptionType, (E)=>void handler) {
+			exceptionType.requireNonNull("exceptionType must not be null")
+			handler.requireNonNull("handler must not be null")
 			// no exception
 			this
 		}
 
 		override <E extends Throwable> Empty<R> ifFailure(Class<? extends E> exceptionType,
 			Class<? extends E> exceptionType2, (E)=>void handler) {
+			exceptionType.requireNonNull("exceptionType must not be null")
+			exceptionType2.requireNonNull("exceptionType2 must not be null")
+			handler.requireNonNull("handler must not be null")
 			this
 		}
 
@@ -742,16 +791,19 @@ abstract class Try<R> implements Iterable<R> {
 		}
 
 		override Empty<R> ifFailure((Throwable)=>void handler) {
+			handler.requireNonNull("handler must not be null")
 			// no exception
 			this
 		}
 
 		override Empty<R> ifSuccess((R)=>void handler) {
+			handler.requireNonNull("handler must not be null")
 			// no result
 			this
 		}
 
 		override Empty<R> ifEmpty(()=>void handler) {
+			handler.requireNonNull("handler must not be null")
 			handler.apply
 			this
 		}
@@ -889,6 +941,8 @@ abstract class Try<R> implements Iterable<R> {
 		}
 
 		override <E extends Throwable> Failure<R> ifFailure(Class<E> exceptionType, (E)=>void handler) {
+			exceptionType.requireNonNull("exceptionType must not be null")
+			handler.requireNonNull("handler must not be null")
 			if (exceptionType.isInstance(e)) {
 				handler.apply(e as E)
 			}
@@ -897,6 +951,9 @@ abstract class Try<R> implements Iterable<R> {
 
 		override <E extends Throwable> Failure<R> ifFailure(Class<? extends E> exceptionType,
 			Class<? extends E> exceptionType2, (E)=>void handler) {
+			exceptionType.requireNonNull("exceptionType must not be null")
+			exceptionType2.requireNonNull("exceptionType2 must not be null")
+			handler.requireNonNull("handler must not be null")
 			if (exceptionType.isInstance(e) || exceptionType2.isInstance(e)) {
 				handler.apply(e as E)
 			}
@@ -918,16 +975,19 @@ abstract class Try<R> implements Iterable<R> {
 		}
 
 		override Failure<R> ifFailure((Throwable)=>void handler) {
+			handler.requireNonNull("handler must not be null")
 			handler.apply(e)
 			this
 		}
 
 		override Failure<R> ifEmpty(()=>void handler) {
+			handler.requireNonNull("handler must not be null")
 			// not empty result
 			this
 		}
 
 		override Failure<R> ifSuccess((R)=>void handler) {
+			handler.requireNonNull("handler must not be null")
 			// no result
 			this
 		}
