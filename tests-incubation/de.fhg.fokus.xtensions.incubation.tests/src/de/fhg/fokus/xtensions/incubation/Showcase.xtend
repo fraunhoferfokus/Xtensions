@@ -173,7 +173,7 @@ class Showcase {
 	
 	@Test def void demoTry() {
 		val s = "123L"
-		val l = doTry [
+		val l = tryCall [
 			Long.valueOf(s)
 		].tryRecoverFailure(ArrayIndexOutOfBoundsException, IllegalStateException) [
 			it.printStackTrace;
@@ -181,7 +181,7 @@ class Showcase {
 		].recover(0L)
 		println(l)
 		
-		doTry [
+		tryCall [
 			Long.valueOf(s)
 		].tryRecoverFailure(ArrayIndexOutOfBoundsException, IllegalStateException, IllegalArgumentException).with [
 			println(it);
@@ -189,7 +189,7 @@ class Showcase {
 		]
 		
 		val String foo = System.getenv("Foo")
-		val t = doTry[
+		val t = tryCall [
 			if(foo === null) {
 				null
 			} else {

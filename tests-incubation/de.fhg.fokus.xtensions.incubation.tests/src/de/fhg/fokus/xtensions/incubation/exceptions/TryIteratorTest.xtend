@@ -4,8 +4,6 @@ import org.junit.Test
 import static extension org.junit.Assert.*
 import static extension de.fhg.fokus.xtensions.incubation.exceptions.TryIterator.*
 import static extension de.fhg.fokus.xtensions.incubation.Util.*
-import java.util.NoSuchElementException
-import java.util.List
 
 class TryIteratorTest {
 	

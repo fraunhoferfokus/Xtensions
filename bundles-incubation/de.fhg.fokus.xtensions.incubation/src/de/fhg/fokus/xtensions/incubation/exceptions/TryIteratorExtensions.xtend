@@ -80,7 +80,7 @@ class TryIteratorExtensions {
 		val result = newArrayList
 		while(context.hasNext) {
 			if(context.computeNext()) {
-				return Try.completedExceptionally(context.failureResult)
+				return Try.completedFailed(context.failureResult)
 			} else {
 				val current = context.successfulResult
 				if(current !== null) {

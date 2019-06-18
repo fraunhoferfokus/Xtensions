@@ -67,11 +67,11 @@ abstract class TryIterator<T> implements Iterator<Try<T>> {
 		ON_FAILURE_RETHROW
 	}
 
-	final override next() {
+	final override Try<T> next() {
 		if(computeNext()) {
 			Try.completed(successfulResult)
 		} else {
-			Try.completedExceptionally(failureResult)
+			Try.completedFailed(failureResult)
 		}
 	}
 
