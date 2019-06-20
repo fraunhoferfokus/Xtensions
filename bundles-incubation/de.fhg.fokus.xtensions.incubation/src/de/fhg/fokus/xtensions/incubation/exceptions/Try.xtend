@@ -269,12 +269,14 @@ abstract class Try<R> implements Iterable<R> {
 	 * be returned from this method. If {@code recovery} throws an exception, and this try is 
 	 * empty the thrown exception will be wrapped in a {@code Try.Failure} and returned from
 	 * this method. If this method was called on a failed {@code Try} and {@code recovery}
-	 * throws an exception, a {@code Try.Failure} will be returned wrapping a {@code MapExceptionFailure}
+	 * throws an exception, a {@code Try.Failure} will be returned wrapping a {@code FailureOperationException}
 	 * holding the thrown exception as cause and the exception held by the {@code Try} on the 
-	 * {@link MapExceptionFailure#getToBeMapped toBeMapped} field.
+	 * {@link FailureOperationException#getWrappedException wrappedException} field.
 	 * 
 	 * @param recovery function providing a recovery value wrapped in the resulting {@code Try}.
-	 * @return 
+	 * @return If recovery succeeds a {@code Try.Success} with the recovered value. If the recovered 
+	 * value is {@code null} returns an {@code Try.Empty}. If recovery fails for some reason
+	 * a {@code Try.Failure} will be retured.
 	 */
 	abstract def Try<R> tryRecover(=>R recovery)
 
@@ -393,19 +395,19 @@ abstract class Try<R> implements Iterable<R> {
 	 * on a {@code Try.Failure} the {@code mapper} will not be called and this {@code Try}
 	 * will be returned from this method.<br><br>
 	 * Should mapper throw an exception, the returned {@code Try} will be a failure
-	 * wrapping a {@link MapExceptionFailure}, which holds the thrown exception as 
+	 * wrapping a {@link FailureOperationException}, which holds the thrown exception as 
 	 * the cause and provides a reference to the exception to be mapped by {@code mapper}.<br>
 	 * If {@code mapper} is {@code null} or returns {@code null} the returned {@code Try.failure}
-	 * will wrap a {@code MapExceptionFailure}, holding a {@code NullPointerException} as the cause.
+	 * will wrap a {@code FailureOperationException}, holding a {@code NullPointerException} as the cause.
 	 * 
 	 * @param mapper method mapping an exception to a new exception. May throw an exception
-	 *  (will be wrapped in a {@link MapExceptionFailure} and returned in a {@code Try.Failure}).
+	 *  (will be wrapped in a {@link FailureOperationException} and returned in a {@code Try.Failure}).
 	 *  If {@code mapper} is {@code null} or returns {@code null} returns a failed try completed with a 
 	 *  {@code NullPointerException}.
 	 * @return If this {@code Try} is not failed returns the reference to this.
 	 *  If {@code mapper} is {@code null} or returns {@code null} returns a 
-	 * {@code Try.Failure} completed with {@link MapExceptionFailure} where the cause
-	 * will be a {@code NullPointerException}. Will  contain a  {@link MapExceptionFailure} 
+	 * {@code Try.Failure} completed with {@link FailureOperationException} where the cause
+	 * will be a {@code NullPointerException}. Will  contain a  {@link FailureOperationException} 
 	 * if {@code mapper} throws an exception, where the cause is the thrown exception.
 	 * If {@code mapper} returns properly, the returned exception will be wrapped
 	 * in a {@code Try.Failure}.
@@ -927,7 +929,7 @@ abstract class Try<R> implements Iterable<R> {
 			throw new NoSuchElementException("Empty result has no result value.")
 		}
 
-		override <E extends Exception> getOrThrow(()=>E exceptionProvider) throws E {
+		override <E extends Exception> getOrThrow(=>E exceptionProvider) throws E {
 			throw exceptionProvider.apply
 		}
 
@@ -1089,13 +1091,13 @@ abstract class Try<R> implements Iterable<R> {
 					val newException = mapper.apply(e)
 					if (newException === null) {
 						val npe = new NullPointerException("mapped exception must not be null")
-						completedFailed(new MapExceptionFailure(npe, e))
+						completedFailed(new FailureOperationException(npe, e))
 					} else {
 						completedFailed(newException)
 					}
 				}
 			} catch (Exception mappingException) {
-				completedFailed(new MapExceptionFailure(mappingException, e))
+				completedFailed(new FailureOperationException(mappingException, e))
 			}
 		}
 
@@ -1150,7 +1152,11 @@ abstract class Try<R> implements Iterable<R> {
 			if(recovery === null) {
 				completedFailed(new NullPointerException("recovery must not be null"))
 			} else {
-				tryCall(recovery)
+				try{
+					completed(recovery.apply)
+				} catch(Throwable t) {
+					completedFailed(new FailureOperationException(t, this.e))
+				}
 			}
 		}
 
@@ -1170,26 +1176,30 @@ abstract class Try<R> implements Iterable<R> {
 }
 
 /**
- * For performance reasons this Exception does not have a stack trace.
- * The stack trace of the of the {@link MapExceptionFailure#getCause() cause}
+ * This exception is created when a lambda passed to an operation of {@link Try.Failure} 
+ * is throwing an exception. The original exception wrapped by the {@code Try} is available 
+ * via the {@link FailureOperationException#getWrappedException getWrappedException} method. 
+ * The exception thrown by the lambda will be registered as the cause of this exception.<br>
+ * For performance reasons this exception does not have a stack trace.
+ * The stack trace of the of the {@link FailureOperationException#getCause() cause}
  * should be more meaningful anyway. 
  */
 @Accessors(PUBLIC_GETTER)
-class MapExceptionFailure extends Exception {
-	val Throwable toBeMapped
+class FailureOperationException extends Exception {
+	val Throwable wrappedException
 
 	/**
 	 * @param rootCause
-	 * @param toBeMapped
+	 * @param wrappedException
 	 */
-	new(Throwable rootCause, Throwable toBeMapped) {
+	new(Throwable rootCause, Throwable wrappedException) {
 		super(
 			"Failure during mapping exceptions in Try",
 			rootCause,
 			true, // enableSuppression
 			false // writableStackTrace
 		)
-		this.toBeMapped = toBeMapped
+		this.wrappedException = wrappedException
 	}
 }
 
