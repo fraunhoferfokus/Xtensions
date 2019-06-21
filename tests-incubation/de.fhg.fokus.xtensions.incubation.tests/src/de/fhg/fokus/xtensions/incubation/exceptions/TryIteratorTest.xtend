@@ -511,6 +511,23 @@ class TryIteratorTest {
 		iterator.assertEmptyIterator
 		result.assertTrue
 	}
+
+	//TODO: findFirstSuccess
+	//TODO: findFirstSuccess(FailureStrategy)
+	//TODO: filterOutFailure
+	//TODO: filterOutEmpty
+	//TODO: tryRecoverFailure((Throwable)=>T)
+	//TODO: tryRecoverFailure(Class<X>,(X)=>T)
+	//TODO: filterSuccess(Class<X>)
+	//TODO: tryFilterSuccess(Predicate<X>)
+	//TODO: tryMapSuccess((T)=>Y)
+	//TODO: tryFlatMapSuccess
+	//TODO: tryMapNullable
+	//TODO: toListSkipEmpty
+	//TODO: toSetSkipEmpty
+	//TODO: collectSuccess
+	//TODO: forEachSuccess
+	//TODO: forEach
 	
 
 	//////////

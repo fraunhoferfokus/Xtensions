@@ -605,7 +605,11 @@ abstract class Try<R> implements Iterable<R> {
 		}
 
 		override <E extends Throwable> tryRecoverFailure(Class<E> exceptionType, (E)=>R recovery) {
-			this
+			if(recovery === null) {
+				completedFailed(new NullPointerException("recovery must not be null"))
+			} else {
+				this
+			}
 		}
 
 		override <E extends Throwable> tryRecoverFailure(Class<? extends E> exceptionType,
@@ -619,11 +623,19 @@ abstract class Try<R> implements Iterable<R> {
 		}
 
 		override tryRecoverFailure((Throwable)=>R recovery) {
-			this
+			if (recovery === null) {
+				completedFailed(new NullPointerException("recovery must not be null"))
+			} else {
+				this
+			}
 		}
 
 		override Try<R> tryRecoverEmpty(()=>R recovery) {
-			this
+			if (recovery === null) {
+				completedFailed(new NullPointerException("recovery must not be null"))
+			} else {
+				this
+			}
 		}
 
 		override Try<R> recoverEmpty(R recovery) {
@@ -631,7 +643,7 @@ abstract class Try<R> implements Iterable<R> {
 		}
 
 		override tryRecover(()=>R recovery) {
-			if(recovery === null) {
+			if (recovery === null) {
 				completedFailed(new NullPointerException("recovery must not be null"))
 			} else {
 				this
@@ -786,9 +798,13 @@ abstract class Try<R> implements Iterable<R> {
 			this as Empty as Empty<U>
 		}
 
-		override <E extends Throwable> Empty<R> tryRecoverFailure(Class<E> exceptionType, (E)=>R recovery) {
-			// No exception to recover from
-			this
+		override <E extends Throwable> Try<R> tryRecoverFailure(Class<E> exceptionType, (E)=>R recovery) {
+			if(recovery === null) {
+				completedFailed(new NullPointerException("recovery must not be null"))
+			} else {
+				// No exception to recover from
+				this
+			}
 		}
 
 		override <E extends Throwable> Empty<R> tryRecoverFailure(Class<? extends E> exceptionType,
@@ -801,13 +817,21 @@ abstract class Try<R> implements Iterable<R> {
 			[result]
 		}
 
-		override Empty<R> tryRecoverFailure((Throwable)=>R recovery) {
-			// No exception to recover from
-			this
+		override Try<R> tryRecoverFailure((Throwable)=>R recovery) {
+			if (recovery === null) {
+				completedFailed(new NullPointerException("recovery must not be null"))
+			} else {
+				// No exception to recover from
+				this
+			}
 		}
 
 		override Try<R> tryRecoverEmpty(()=>R recovery) {
-			tryCall(recovery)
+			if (recovery === null) {
+				completedFailed(new NullPointerException("recovery must not be null"))
+			} else {
+				tryCall(recovery)
+			}
 		}
 
 		override Try<R> recoverEmpty(R recovery) {
@@ -815,10 +839,10 @@ abstract class Try<R> implements Iterable<R> {
 		}
 
 		override Try<R> tryRecover(()=>R recovery) {
-			if(recovery === null) {
+			if (recovery === null) {
 				completedFailed(new NullPointerException("recovery must not be null"))
 			} else {
-				tryCall(recovery)	
+				tryCall(recovery)
 			}
 		}
 
@@ -967,6 +991,9 @@ abstract class Try<R> implements Iterable<R> {
 		}
 
 		override <E extends Throwable> tryRecoverFailure(Class<E> exceptionType, (E)=>R recovery) {
+			if(recovery === null) {
+				return completedFailed(new NullPointerException("recovery must not be null"))
+			}
 			if (exceptionType.isInstance(e)) {
 				tryCall [
 					recovery.apply(e as E)
@@ -988,9 +1015,16 @@ abstract class Try<R> implements Iterable<R> {
 		}
 
 		override tryRecoverFailure((Throwable)=>R recovery) {
-			tryCall [
-				recovery.apply(e)
-			]
+			if (recovery === null) {
+				completedFailed(new NullPointerException("recovery must not be null"))
+			} else {
+				try {
+					val recovered = recovery.apply(e)
+					completed(recovered)
+				} catch (Throwable t) {
+					completedFailed(new FailureOperationException(t, e))
+				}
+			}
 		}
 
 		override <E extends Throwable, Exception> tryRecoverFailure(Class<? extends E>... exceptionType) {
@@ -1141,7 +1175,11 @@ abstract class Try<R> implements Iterable<R> {
 		}
 
 		override Failure<R> tryRecoverEmpty(()=>R recovery) {
-			this
+			if (recovery === null) {
+				completedFailed(new NullPointerException("recovery must not be null"))
+			} else {
+				this
+			}
 		}
 
 		override Failure<R> recoverEmpty(R recovery) {
@@ -1149,12 +1187,12 @@ abstract class Try<R> implements Iterable<R> {
 		}
 
 		override tryRecover(()=>R recovery) {
-			if(recovery === null) {
+			if (recovery === null) {
 				completedFailed(new NullPointerException("recovery must not be null"))
 			} else {
-				try{
+				try {
 					completed(recovery.apply)
-				} catch(Throwable t) {
+				} catch (Throwable t) {
 					completedFailed(new FailureOperationException(t, this.e))
 				}
 			}
