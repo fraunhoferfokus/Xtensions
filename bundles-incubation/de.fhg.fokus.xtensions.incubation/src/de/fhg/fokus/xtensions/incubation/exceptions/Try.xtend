@@ -605,10 +605,13 @@ abstract class Try<R> implements Iterable<R> {
 		}
 
 		override <E extends Throwable> tryRecoverFailure(Class<E> exceptionType, (E)=>R recovery) {
-			if(recovery === null) {
-				completedFailed(new NullPointerException("recovery must not be null"))
-			} else {
-				this
+			switch recovery {
+				case (recovery === null): 
+					completedFailed(new NullPointerException("recovery must not be null"))
+				case exceptionType === null:
+					completedFailed(new NullPointerException("exceptionType must not be null"))
+				default: 
+					this
 			}
 		}
 
@@ -799,11 +802,14 @@ abstract class Try<R> implements Iterable<R> {
 		}
 
 		override <E extends Throwable> Try<R> tryRecoverFailure(Class<E> exceptionType, (E)=>R recovery) {
-			if(recovery === null) {
-				completedFailed(new NullPointerException("recovery must not be null"))
-			} else {
-				// No exception to recover from
-				this
+			switch (recovery){
+				case recovery === null: 
+					completedFailed(new NullPointerException("recovery must not be null"))
+				case exceptionType === null: 
+					completedFailed(new NullPointerException("exceptionType must not be null"))
+				default:
+					// No exception to recover from
+					this
 			}
 		}
 
@@ -991,15 +997,17 @@ abstract class Try<R> implements Iterable<R> {
 		}
 
 		override <E extends Throwable> tryRecoverFailure(Class<E> exceptionType, (E)=>R recovery) {
-			if(recovery === null) {
-				return completedFailed(new NullPointerException("recovery must not be null"))
-			}
-			if (exceptionType.isInstance(e)) {
-				tryCall [
-					recovery.apply(e as E)
-				]
-			} else {
-				this
+			switch(recovery) {
+				case recovery === null:
+					completedFailed(new NullPointerException("recovery must not be null"))
+				case exceptionType === null:
+					completedFailed(new NullPointerException("exceptionType must not be null"))
+				case exceptionType.isInstance(e):
+					tryCall [
+						recovery.apply(e as E)
+					]
+				default:
+					this
 			}
 		}
 

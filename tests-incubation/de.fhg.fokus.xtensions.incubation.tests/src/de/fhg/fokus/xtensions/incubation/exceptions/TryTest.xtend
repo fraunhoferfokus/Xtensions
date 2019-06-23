@@ -2022,6 +2022,37 @@ class TryTest {
 		fail.get.assertIsInstanceOf(NullPointerException)
 	}
 
+
+	@Test
+	def void testTryRecoverFailureClassEmptyClassNull() {
+		val t = Try.completedEmpty
+		val result = t.tryRecoverFailure(null) [
+			"foo"
+		]
+		val fail = result.assertIsInstanceOf(Try.Failure)
+		fail.get.assertIsInstanceOf(NullPointerException)
+	}
+
+	@Test
+	def void testTryRecoverFailureClassSuccessfullClassNull() {
+		val t = Try.completedSuccessfully("bar")
+		val result = t.tryRecoverFailure(null) [
+			"foo"
+		]
+		val fail = result.assertIsInstanceOf(Try.Failure)
+		fail.get.assertIsInstanceOf(NullPointerException)
+	}
+
+	@Test
+	def void testTryRecoverFailureClassFailureClassNull() {
+		val t = Try.completedFailed(new IllegalArgumentException)
+		val result = t.tryRecoverFailure(null) [
+			"foo"
+		]
+		val fail = result.assertIsInstanceOf(Try.Failure)
+		fail.get.assertIsInstanceOf(NullPointerException)
+	}
+
 	// TODO: class is null
 //
 //	@Test
