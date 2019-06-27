@@ -808,6 +808,14 @@ class Showcase {
 		val List<String> rejected = partition.rejected
 		println("Unique words starting with 'f' : " + selected.join(", "))
 		println("Other words: " + rejected.join(", "))
+		
+		// JDK group by
+		val list2 = #["foo", "bla", "foo", "hui", "fun"]
+		val partition2 = list2.stream.collect(Collectors::partitioningBy([startsWith("f")], Collectors::toSet))
+		val Set<String> selected2 = partition2.get(true)
+		val Set<String> rejected2 = partition2.get(false)
+		println("Unique words starting with 'f' : " + selected2.join(", "))
+		println("Other words: " + rejected2.join(", "))
 	}
 	
 	@Test

@@ -41,6 +41,43 @@ class ArrayExtensions {
 			action.apply(array.get(i))
 		}
 	}
+
+	/**
+	 * This interface can be used to consume an element with its index in an 
+	 * array, collection or similar data structure that allows access to contained
+	 * elements by index.
+	 * @see ArrayExtensions#forEach(Object[], ElementAndIndexConsumer)
+	 */
+	 @FunctionalInterface
+	interface ElementAndIndexConsumer<T>{
+		
+		/**
+		 * Invoked to consume an element with its index.
+		 * @param element the element to be consumed
+		 * @param index the index of {@code element} to be consumed
+		 */
+		def void accept(T element, int index)
+	}
+
+	/**
+	 * Allows iteration over elements of the given {@code array} with its index and 
+	 * invoking a given {@code action} for every element and index combination without 
+	 * allocating an {@code Iterable} and {@code Iterator} (as done when
+	 * using the built in version of Xtend).
+	 * 
+	 * @param array the array to be iterated over.
+	 * @param action the action being applied to every element and its index in {@code array}.
+	 * @param <T> Element type of {@code array}
+	 * @throws NullPointerException if {@code array} or {@code action} is {@code null}.
+	 * @since 1.3.0
+	 */
+	static def <T> void forEach(T[] array, ElementAndIndexConsumer<T> action) {
+		array.requireNonNull("array")
+		action.requireNonNull("action")
+		for(var i=0;i<array.length;i++) {
+			action.accept(array.get(i),i)
+		}
+	}
 	
 	package static def <T> T[] copyIntoNewArray(Class<T> arrayElementType, T first, T second, T... additional) {
 		arrayElementType.requireNonNull

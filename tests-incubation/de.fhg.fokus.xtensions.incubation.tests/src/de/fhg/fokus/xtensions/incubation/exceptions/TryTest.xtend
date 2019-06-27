@@ -80,9 +80,10 @@ class TryTest {
 	// tryCall //
 	///////////
 
-	@Test(expected = NullPointerException)
+	@Test
 	def void testTryCallMethodNull() {
-		Try.tryCall(null)
+		val result = Try.tryCall(null)
+		result.assertFailedWithNPE
 	}
 
 	@Test
@@ -114,14 +115,16 @@ class TryTest {
 	// tryWith //
 	/////////////
 
-	@Test(expected = NullPointerException)
+	@Test
 	def void testTryWithResourceProviderNull() {
-		tryWith(null)[]
+		val result = tryWith(null)[]
+		result.assertFailedWithNPE
 	}
 
-	@Test(expected = NullPointerException)
+	@Test
 	def void testTryWithProviderNull() {
-		tryWith([], null)
+		val result = tryWith([], null)
+		result.assertFailedWithNPE
 	}
 
 	@Test
@@ -216,9 +219,18 @@ class TryTest {
 	// tryFlat //
 	/////////////
 
-	@Test(expected = NullPointerException)
+	@Test
 	def void testTryFlatProviderNull() {
-		tryFlat(null)
+		val result = tryFlat(null)
+		result.assertFailedWithNPE
+	}
+
+	@Test
+	def void testTryFlatProviderReturnsNull() {
+		val result = tryFlat [
+			null
+		]
+		result.assertFailedWithNPE
 	}
 
 	@Test
@@ -263,7 +275,7 @@ class TryTest {
 	@Test
 	def void testTryOptionalProvidingNull() {
 		val result = tryOptional [null]
-		result.assertIsInstanceOf(Try.Empty)
+		result.assertFailedWithNPE
 	}
 
 	@Test
@@ -292,9 +304,10 @@ class TryTest {
 	// tryCall input //
 	///////////////////
 
-	@Test(expected = NullPointerException)
+	@Test
 	def void testTryCallInputProviderNull() {
-		tryCall(new Object, null)
+		val result = tryCall(new Object, null)
+		result.assertFailedWithNPE
 	}
 
 	@Test
@@ -1343,7 +1356,7 @@ class TryTest {
 	}
 
 	@Test
-	def void testIfFailureClassClassFailureOneMatching() {
+	def void testIfFailureClassClassFailureMatchingFirst() {
 		extension val verdict = new Object {
 			var isCalled = false
 			var actual = null
@@ -1352,6 +1365,23 @@ class TryTest {
 		val expected = new IllegalStateException
 		val t = Try.completedFailed(expected)
 		t.ifFailure(RuntimeException, IllegalArgumentException) [
+			isCalled = true
+			actual = it 
+		]
+		isCalled.assertTrue
+		actual.assertSame(expected)
+	}
+
+	@Test
+	def void testIfFailureClassClassFailureMatchingSecond() {
+		extension val verdict = new Object {
+			var isCalled = false
+			var actual = null
+		}
+
+		val expected = new IllegalStateException
+		val t = Try.completedFailed(expected)
+		t.ifFailure(NullPointerException, RuntimeException) [
 			isCalled = true
 			actual = it 
 		]
@@ -1611,8 +1641,9 @@ class TryTest {
 
 	@Test
 	def void testMapExceptionFailureLambdaNull() {
-		val t = Try.completedFailed(new NoSuchElementException)
-		t.assertMapExceptionLambdaNull
+		val wrapped = new NoSuchElementException
+		val t = Try.completedFailed(wrapped)
+		t.assertMapExceptionLambdaNull.suppressed.assertArrayEquals(#[wrapped])
 	}
 
 	@Test
@@ -1645,10 +1676,8 @@ class TryTest {
 		val toBeMapped = new NoSuchElementException
 		val t = Try.completedFailed(toBeMapped)
 		val result = t.tryMapException[throw expected]
-		result.get.assertIsInstanceOf(FailureOperationException) => [
-			cause.assertSame(expected)
-			wrappedException.assertSame(toBeMapped)
-		]
+		result.get.assertSame(expected)
+		expected.suppressed.assertArrayEquals(#[toBeMapped])
 	}
 
 	@Test
@@ -1656,10 +1685,8 @@ class TryTest {
 		val toBeMapped = new NoSuchElementException
 		val t = Try.completedFailed(toBeMapped)
 		val result = t.tryMapException[null]
-		result.get.assertIsInstanceOf(FailureOperationException) => [
-			cause.assertIsInstanceOf(NullPointerException)
-			wrappedException.assertSame(toBeMapped)
-		]
+		result.get.assertIsInstanceOf(NullPointerException)
+			.suppressed.assertArrayEquals(#[toBeMapped])
 	}
 
 	def void assertMapExceptionLambdaNotCalled(Try<String> t) {
@@ -1673,9 +1700,9 @@ class TryTest {
 		notCalled.assertTrue
 	}
 
-	def void assertMapExceptionLambdaNull(Try<String> t) {
+	def NullPointerException assertMapExceptionLambdaNull(Try<String> t) {
 		val result = t.tryMapException(null)
-		result.assertIsInstanceOf(Try.Failure).get.assertIsInstanceOf(NullPointerException)
+		result.assertFailedWithNPE
 	}
 
 	////////////////
@@ -1686,24 +1713,23 @@ class TryTest {
 	def void testTryRecoverSuccessfullRecoveryNull() {
 		val t = Try.completedSuccessfully("bar")
 		val result = t.tryRecover(null)
-		val fail = result.assertIsInstanceOf(Try.Failure)
-		fail.get.assertIsInstanceOf(NullPointerException)
+		result.assertFailedWithNPE
 	}
 
 	@Test
 	def void testTryRecoverEmptyRecoveryNull() {
 		val t = Try.completedEmpty
 		val result = t.tryRecover(null)
-		val fail = result.assertIsInstanceOf(Try.Failure)
-		fail.get.assertIsInstanceOf(NullPointerException)
+		result.assertFailedWithNPE
 	}
 
 	@Test
 	def void testTryRecoverFailureRecoveryNull() {
-		val t = Try.completedFailed(new IllegalArgumentException)
+		val wrapped = new IllegalArgumentException
+		val t = Try.completedFailed(wrapped)
 		val result = t.tryRecover(null)
-		val fail = result.assertIsInstanceOf(Try.Failure)
-		fail.get.assertIsInstanceOf(NullPointerException)
+		val ex = result.assertFailedWithNPE
+		ex.suppressed.assertArrayEquals(#[wrapped])
 	}
 
 	@Test
@@ -1747,9 +1773,9 @@ class TryTest {
 		val expected = new NoSuchElementException
 		val result = t.tryRecover[throw expected]
 		val fail = result.assertIsInstanceOf(Try.Failure)
-		val ex = fail.get().assertIsInstanceOf(FailureOperationException)
-		ex.cause.assertSame(expected)
-		ex.wrappedException.assertSame(wrapped)
+		val ex = fail.get()
+		ex.assertSame(expected)
+		ex.suppressed.assertArrayEquals(#[wrapped])
 	}
 
 	@Test
@@ -1761,18 +1787,21 @@ class TryTest {
 		fail.get().assertSame(expected)
 	}
 
+	@Test
 	def void testTryRecoverSuccessNullRecovery() {
 		val t = Try.completedSuccessfully("foo")
 		val result = t.tryRecover[null]
 		result.assertSame(t)
 	}
 
+	@Test
 	def void testTryRecoverEmptyNullRecovery() {
 		val t = Try.completedEmpty
 		val result = t.tryRecover[null]
 		result.assertIsInstanceOf(Try.Empty)
 	}
 
+	@Test
 	def void testTryRecoverFailureNullRecovery() {
 		val t = Try.completedFailed(new IllegalStateException)
 		val result = t.tryRecover[null]
@@ -1787,24 +1816,23 @@ class TryTest {
 	def void testTryRecoverEmptySuccessfullRecoveryNull() {
 		val t = Try.completedSuccessfully("bar")
 		val result = t.tryRecoverEmpty(null)
-		val fail = result.assertIsInstanceOf(Try.Failure)
-		fail.get.assertIsInstanceOf(NullPointerException)
+		result.assertFailedWithNPE
 	}
 
 	@Test
 	def void testTryRecoverEmptyEmptyRecoveryNull() {
 		val t = Try.completedEmpty
 		val result = t.tryRecoverEmpty(null)
-		val fail = result.assertIsInstanceOf(Try.Failure)
-		fail.get.assertIsInstanceOf(NullPointerException)
+		result.assertFailedWithNPE
 	}
 
 	@Test
 	def void testTryRecoverEmptyFailureRecoveryNull() {
-		val t = Try.completedFailed(new IllegalArgumentException)
+		val wrapped = new IllegalArgumentException
+		val t = Try.completedFailed(wrapped)
 		val result = t.tryRecoverEmpty(null)
-		val fail = result.assertIsInstanceOf(Try.Failure)
-		fail.get.assertIsInstanceOf(NullPointerException)
+		val ex = result.assertFailedWithNPE
+		ex.suppressed.assertArrayEquals(#[wrapped])
 	}
 
 	@Test
@@ -1858,22 +1886,25 @@ class TryTest {
 		fail.get().assertSame(expected)
 	}
 
+	@Test
 	def void testTryRecoverEmptySuccessNullRecovery() {
 		val t = Try.completedSuccessfully("foo")
 		val result = t.tryRecoverEmpty[null]
 		result.assertSame(t)
 	}
 
+	@Test
 	def void testTryRecoverEmptyEmptyNullRecovery() {
 		val t = Try.completedEmpty
 		val result = t.tryRecover[null]
 		result.assertIsInstanceOf(Try.Empty)
 	}
 
+	@Test
 	def void testTryRecoverEmptyFailureNullRecovery() {
 		val t = Try.completedFailed(new IllegalStateException)
 		val result = t.tryRecover[null]
-		result.assertSame(t)
+		result.assertIsInstanceOf(Try.Empty)
 	}
 
 	///////////////////////
@@ -1885,8 +1916,7 @@ class TryTest {
 		val t = Try.completedSuccessfully("bar")
 		val (Throwable)=>String mapper = null
 		val result = t.tryRecoverFailure(mapper)
-		val fail = result.assertIsInstanceOf(Try.Failure)
-		fail.get.assertIsInstanceOf(NullPointerException)
+		result.assertFailedWithNPE
 	}
 
 	@Test
@@ -1894,8 +1924,7 @@ class TryTest {
 		val t = Try.completedEmpty
 		val (Throwable)=>Object mapper = null
 		val result = t.tryRecoverFailure(mapper)
-		val fail = result.assertIsInstanceOf(Try.Failure)
-		fail.get.assertIsInstanceOf(NullPointerException)
+		result.assertFailedWithNPE
 	}
 
 	@Test
@@ -1903,8 +1932,7 @@ class TryTest {
 		val t = Try.completedFailed(new IllegalArgumentException)
 		val (Throwable)=>Object mapper = null
 		val result = t.tryRecoverFailure(mapper)
-		val fail = result.assertIsInstanceOf(Try.Failure)
-		fail.get.assertIsInstanceOf(NullPointerException)
+		result.assertFailedWithNPE
 	}
 
 	@Test
@@ -1960,9 +1988,9 @@ class TryTest {
 		val expected = new NoSuchElementException
 		val result = t.tryRecoverFailure[throw expected]
 		val fail = result.assertIsInstanceOf(Try.Failure)
-		val ex = fail.get().assertIsInstanceOf(FailureOperationException)
-		ex.cause.assertSame(expected)
-		ex.wrappedException.assertSame(wrapped)
+		val ex = fail.get()
+		ex.assertSame(expected)
+		ex.suppressed.assertArrayEquals(#[wrapped])
 	}
 
 	@Test
@@ -1972,21 +2000,24 @@ class TryTest {
 		result.assertSame(t)
 	}
 
+	@Test
 	def void testTryRecoverFailureSuccessNullRecovery() {
 		val t = Try.completedSuccessfully("foo")
-		val result = t.tryRecoverEmpty[null]
+		val result = t.tryRecoverFailure[null]
 		result.assertSame(t)
 	}
 
-	def void testTryRecoverFailureEmptyNullRecovery() {
+	@Test
+	def void testTryRecoverClassFailureEmptyNullRecovery() {
 		val t = Try.completedEmpty
-		val result = t.tryRecover[null]
+		val result = t.tryRecoverFailure(IllegalArgumentException)[null]
 		result.assertSame(t)
 	}
 
+	@Test
 	def void testTryRecoverFailureFailureNullRecovery() {
 		val t = Try.completedFailed(new IllegalStateException)
-		val result = t.tryRecover[null]
+		val result = t.tryRecoverFailure[null]
 		result.assertIsInstanceOf(Try.Empty)
 	}
 
@@ -2000,8 +2031,7 @@ class TryTest {
 		val t = Try.completedSuccessfully("bar")
 		val (Throwable)=>String mapper = null
 		val result = t.tryRecoverFailure(NullPointerException, mapper)
-		val fail = result.assertIsInstanceOf(Try.Failure)
-		fail.get.assertIsInstanceOf(NullPointerException)
+		result.assertFailedWithNPE
 	}
 
 	@Test
@@ -2009,17 +2039,17 @@ class TryTest {
 		val t = Try.completedEmpty
 		val (Throwable)=>Object mapper = null
 		val result = t.tryRecoverFailure(NullPointerException, mapper)
-		val fail = result.assertIsInstanceOf(Try.Failure)
-		fail.get.assertIsInstanceOf(NullPointerException)
+		result.assertFailedWithNPE
 	}
 
 	@Test
 	def void testTryRecoverFailureClassFailureRecoveryNull() {
-		val t = Try.completedFailed(new IllegalArgumentException)
+		val wrapped = new IllegalArgumentException
+		val t = Try.completedFailed(wrapped)
 		val (Throwable)=>Object mapper = null
 		val result = t.tryRecoverFailure(NullPointerException, mapper)
-		val fail = result.assertIsInstanceOf(Try.Failure)
-		fail.get.assertIsInstanceOf(NullPointerException)
+		val ex = result.assertFailedWithNPE
+		ex.suppressed.assertArrayEquals(#[wrapped])
 	}
 
 
@@ -2029,8 +2059,7 @@ class TryTest {
 		val result = t.tryRecoverFailure(null) [
 			"foo"
 		]
-		val fail = result.assertIsInstanceOf(Try.Failure)
-		fail.get.assertIsInstanceOf(NullPointerException)
+		result.assertFailedWithNPE
 	}
 
 	@Test
@@ -2039,114 +2068,909 @@ class TryTest {
 		val result = t.tryRecoverFailure(null) [
 			"foo"
 		]
-		val fail = result.assertIsInstanceOf(Try.Failure)
-		fail.get.assertIsInstanceOf(NullPointerException)
+		result.assertFailedWithNPE
 	}
 
 	@Test
 	def void testTryRecoverFailureClassFailureClassNull() {
-		val t = Try.completedFailed(new IllegalArgumentException)
+		val wrapped = new IllegalArgumentException
+		val t = Try.completedFailed(wrapped)
 		val result = t.tryRecoverFailure(null) [
+			"foo"
+		]
+		val ex = result.assertFailedWithNPE
+		ex.suppressed.assertArrayEquals(#[wrapped])
+	}
+
+
+	@Test
+	def void testTryRecoverFailureClassSuccess() {
+		val t = Try.completedSuccessfully("bar")
+		val result = t.tryRecoverFailure(NullPointerException)["foo"]
+		result.assertSame(t)
+	}
+
+	@Test
+	def void testTryRecoverFailureClassFailureMatching() {
+		val t = Try.completedFailed(new ArrayIndexOutOfBoundsException)
+		val expected = "bar"
+		val result = t.tryRecoverFailure(ArrayIndexOutOfBoundsException)[expected]
+		val succ = result.assertIsInstanceOf(Try.Success)
+		succ.get.assertSame(expected)
+	}
+
+	@Test
+	def void testTryRecoverFailureClassFailureSuperType() {
+		val t = Try.completedFailed(new ArrayIndexOutOfBoundsException)
+		val expected = "bar"
+		val result = t.tryRecoverFailure(RuntimeException)[expected]
+		val succ = result.assertIsInstanceOf(Try.Success)
+		succ.get.assertSame(expected)
+	}
+
+	@Test
+	def void testTryRecoverFailureClassFailureNotMatching() {
+		val t = Try.completedFailed(new ArrayIndexOutOfBoundsException)
+		val expected = "bar"
+		val result = t.tryRecoverFailure(NoSuchElementException)[expected]
+		result.assertSame(t)
+	}
+
+	@Test
+	def void testTryRecoverFailureClassFailureExceptionPassedToLambda() {
+		extension val result = new Object() {
+			var actualException = null
+		}
+		val expected = new ArrayIndexOutOfBoundsException
+		val t = Try.completedFailed(expected)
+		t.tryRecoverFailure(ArrayIndexOutOfBoundsException)[
+			actualException = it
+		]
+		actualException.assertSame(expected)
+	}
+
+	@Test
+	def void testTryRecoverFailureClassEmpty() {
+		val t = Try.completedEmpty
+		val expected = "bar"
+		val result = t.tryRecoverFailure(ArrayIndexOutOfBoundsException)[expected]
+		result.assertSame(t)
+	}
+
+
+	@Test
+	def void testTryRecoverFailureClassSuccessThrowException() {
+		val t = Try.completedSuccessfully("bar")
+		val expected = new NoSuchElementException
+		val result = t.tryRecoverFailure(Throwable)[throw expected]
+		result.assertSame(t)
+	}
+
+	@Test
+	def void testTryRecoverFailureClassFailureThrowException() {
+		val wrapped = new IllegalArgumentException
+		val t = Try.completedFailed(wrapped)
+		val expected = new NoSuchElementException
+		val result = t.tryRecoverFailure(IllegalArgumentException)[throw expected]
+		val fail = result.assertIsInstanceOf(Try.Failure);
+		val ex = fail.get()
+		ex.assertSame(expected)
+		ex.suppressed.assertArrayEquals(#[wrapped])
+	}
+
+
+	@Test
+	def void testTryRecoverFailureClassFailureThrowExceptionClassNotMatching() {
+		val t = Try.completedFailed(new IllegalArgumentException)
+		val result = t.tryRecoverFailure(IllegalStateException)[new NoSuchElementException]
+		result.assertSame(t)
+	}
+
+	@Test
+	def void testTryRecoverFailureClassEmptyThrowException() {
+		val t = Try.completedEmpty
+		val result = t.tryRecoverFailure(Exception)[new NoSuchElementException]
+		result.assertSame(t)
+	}
+
+	@Test
+	def void testTryRecoverFailureClassSuccessNullRecovery() {
+		val t = Try.completedSuccessfully("foo")
+		val result = t.tryRecoverFailure(NoSuchElementException)[null]
+		result.assertSame(t)
+	}
+
+	@Test
+	def void testTryRecoverFailureEmptyNullRecovery() {
+		val t = Try.completedEmpty
+		val result = t.tryRecoverFailure(NoSuchElementException)[null]
+		result.assertSame(t)
+	}
+
+	@Test
+	def void testTryRecoverFailureClassFailureNullRecovery() {
+		val t = Try.completedFailed(new IllegalStateException)
+		val result = t.tryRecoverFailure(RuntimeException)[null]
+		result.assertIsInstanceOf(Try.Empty)
+	}
+
+	///////////////////////////////////////////////////////////////////////
+	// tryRecoverFailure(Class<? extends E>, Class<? extends E>, (E)=>R) //
+	///////////////////////////////////////////////////////////////////////
+
+	@Test
+	def void testTryRecoverFailureClassClassSuccessfullRecoveryNull() {
+		val t = Try.completedSuccessfully("bar")
+		val (Throwable)=>String mapper = null
+		val result = t.tryRecoverFailure(NullPointerException, IllegalStateException, mapper)
+		result.assertFailedWithNPE
+	}
+
+	@Test
+	def void testTryRecoverFailureClassClassEmptyRecoveryNull() {
+		val t = Try.completedEmpty
+		val (Throwable)=>Object mapper = null
+		val result = t.tryRecoverFailure(NullPointerException, IllegalStateException, mapper)
+		result.assertFailedWithNPE
+	}
+
+	@Test
+	def void testTryRecoverFailureClassClassFailureRecoveryNull() {
+		val wrapped = new IllegalArgumentException
+		val t = Try.completedFailed(wrapped)
+		val (Throwable)=>Object mapper = null
+		val result = t.tryRecoverFailure(NullPointerException, IllegalStateException, mapper)
+		val ex = result.assertFailedWithNPE
+		ex.suppressed.assertArrayEquals(#[wrapped])
+	}
+
+	@Test
+	def void testTryRecoverFailureClassClassEmptyFirstClassNull() {
+		val t = Try.completedEmpty
+		val result = t.tryRecoverFailure(null, NullPointerException) [
+			"foo"
+		]
+		result.assertFailedWithNPE
+	}
+
+	@Test
+	def void testTryRecoverFailureClassClassEmptySecondClassNull() {
+		val t = Try.completedEmpty
+		val result = t.tryRecoverFailure(NullPointerException, null) [
+			"foo"
+		]
+		result.assertFailedWithNPE
+	}
+
+	@Test
+	def void testTryRecoverFailureClassClassSuccessfullFirstClassNull() {
+		val t = Try.completedSuccessfully("bar")
+		val result = t.tryRecoverFailure(null, NoSuchElementException) [
+			"foo"
+		]
+		result.assertFailedWithNPE
+	}
+
+	@Test
+	def void testTryRecoverFailureClassClassSuccessfullSecondClassNull() {
+		val t = Try.completedSuccessfully("bar")
+		val result = t.tryRecoverFailure(NoSuchElementException, null) [
 			"foo"
 		]
 		val fail = result.assertIsInstanceOf(Try.Failure)
 		fail.get.assertIsInstanceOf(NullPointerException)
 	}
 
-	// TODO: class is null
-//
-//	@Test
-//	def void testTryRecoverFailureSuccess() {
-//		val t = Try.completedSuccessfully("bar")
-//		val result = t.tryRecoverFailure["foo"]
-//		result.assertSame(t)
-//	}
-//
-//	@Test
-//	def void testTryRecoverFailureFailure() {
-//		val t = Try.completedFailed(new ArrayIndexOutOfBoundsException)
-//		val expected = "bar"
-//		val result = t.tryRecoverFailure[expected]
-//		val succ = result.assertIsInstanceOf(Try.Success)
-//		succ.get.assertSame(expected)
-//	}
-// TODO: test non matching excpetion class
-//
-//	@Test
-//	def void testTryRecoverFailureFailureExceptionPassedToLambda() {
-//		extension val result = new Object() {
-//			var actualException = null
-//		}
-//		val expected = new ArrayIndexOutOfBoundsException
-//		val t = Try.completedFailed(expected)
-//		t.tryRecoverFailure[
-//			actualException = it
-//		]
-//		actualException.assertSame(expected)
-//	}
-//
-//	@Test
-//	def void testTryRecoverFailureEmpty() {
-//		val t = Try.completedEmpty
-//		val expected = "bar"
-//		val result = t.tryRecoverFailure[expected]
-//		result.assertSame(t)
-//	}
-//
-//
-//	@Test
-//	def void testTryRecoverFailureSuccessThrowException() {
-//		val t = Try.completedSuccessfully("bar")
-//		val expected = new NoSuchElementException
-//		val result = t.tryRecoverFailure[throw expected]
-//		result.assertSame(t)
-//	}
-//
-//	@Test
-//	def void testTryRecoverFailureFailureThrowException() {
-//		val wrapped = new IllegalArgumentException
-//		val t = Try.completedFailed(wrapped)
-//		val expected = new NoSuchElementException
-//		val result = t.tryRecoverFailure[throw expected]
-//		val fail = result.assertIsInstanceOf(Try.Failure)
-//		val ex = fail.get().assertIsInstanceOf(FailureOperationException)
-//		ex.cause.assertSame(expected)
-//		ex.wrappedException.assertSame(wrapped)
-//	}
-//
-//	@Test
-//	def void testTryRecoverFailureEmptyThrowException() {
-//		val t = Try.completedEmpty
-//		val result = t.tryRecoverFailure[new NoSuchElementException]
-//		result.assertSame(t)
-//	}
-//
-//	def void testTryRecoverFailureSuccessNullRecovery() {
-//		val t = Try.completedSuccessfully("foo")
-//		val result = t.tryRecoverEmpty[null]
-//		result.assertSame(t)
-//	}
-//
-//	def void testTryRecoverFailureEmptyNullRecovery() {
-//		val t = Try.completedEmpty
-//		val result = t.tryRecover[null]
-//		result.assertSame(t)
-//	}
-//
-//	def void testTryRecoverFailureFailureNullRecovery() {
-//		val t = Try.completedFailed(new IllegalStateException)
-//		val result = t.tryRecover[null]
-//		result.assertIsInstanceOf(Try.Empty)
-//	}
+	@Test
+	def void testTryRecoverFailureClassClassFailureFirstClassNull() {
+		val wrapped = new IllegalArgumentException
+		val t = Try.completedFailed(wrapped)
+		val result = t.tryRecoverFailure(null, NoSuchElementException) [
+			"foo"
+		]
+		val ex = result.assertFailedWithNPE
+		ex.suppressed.assertArrayEquals(#[wrapped])
+	}
 
-	//TODO: tryRecoverFailure(Class<? extends E> exceptionType, Class<? extends E> exceptionType2, (E)=>R recovery)
-	//TODO: tryRecoverFailure(Class<? extends E>... exceptionType)
-	//TODO: transform
-	//TODO: thenTry
-	//TODO: thenTryOptional
+	@Test
+	def void testTryRecoverFailureClassClassFailureSecondClassNull() {
+		val wrapped = new IllegalArgumentException
+		val t = Try.completedFailed(wrapped)
+		val result = t.tryRecoverFailure(NoSuchElementException, null) [
+			"foo"
+		]
+		val ex = result.assertFailedWithNPE
+		ex.suppressed.assertArrayEquals(#[wrapped])
+	}
+
+	@Test
+	def void testTryRecoverFailureClassClassSuccess() {
+		val t = Try.completedSuccessfully("bar")
+		val result = t.tryRecoverFailure(NullPointerException, NoSuchElementException)["foo"]
+		result.assertSame(t)
+	}
+
+	@Test
+	def void testTryRecoverFailureClassClassFailureFirstMatching() {
+		val t = Try.completedFailed(new ArrayIndexOutOfBoundsException)
+		val expected = "bar"
+		val result = t.tryRecoverFailure(ArrayIndexOutOfBoundsException, NoSuchElementException)[expected]
+		val succ = result.assertIsInstanceOf(Try.Success)
+		succ.get.assertSame(expected)
+	}
+
+	@Test
+	def void testTryRecoverFailureClassClassFailureSecondMatching() {
+		val t = Try.completedFailed(new ArrayIndexOutOfBoundsException)
+		val expected = "bar"
+		val result = t.tryRecoverFailure(NoSuchElementException, ArrayIndexOutOfBoundsException)[expected]
+		val succ = result.assertIsInstanceOf(Try.Success)
+		succ.get.assertSame(expected)
+	}
+
+	@Test
+	def void testTryRecoverFailureClassFailureFirstSuperType() {
+		val t = Try.completedFailed(new ArrayIndexOutOfBoundsException)
+		val expected = "bar"
+		val result = t.tryRecoverFailure(RuntimeException, NoSuchElementException)[expected]
+		val succ = result.assertIsInstanceOf(Try.Success)
+		succ.get.assertSame(expected)
+	}
+
+	@Test
+	def void testTryRecoverFailureClassClassFailureSecondSuperType() {
+		val t = Try.completedFailed(new ArrayIndexOutOfBoundsException)
+		val expected = "bar"
+		val result = t.tryRecoverFailure(NoSuchElementException, RuntimeException)[expected]
+		val succ = result.assertIsInstanceOf(Try.Success)
+		succ.get.assertSame(expected)
+	}
+
+	@Test
+	def void testTryRecoverFailureClassClassFailureNotMatching() {
+		val t = Try.completedFailed(new ArrayIndexOutOfBoundsException)
+		val result = t.tryRecoverFailure(NoSuchElementException, IllegalArgumentException)["bar"]
+		result.assertSame(t)
+	}
+
+	@Test
+	def void testTryRecoverFailureClassClassFailureExceptionPassedToLambda() {
+		extension val result = new Object() {
+			var actualException = null
+		}
+		val expected = new ArrayIndexOutOfBoundsException
+		val t = Try.completedFailed(expected)
+		t.tryRecoverFailure(ArrayIndexOutOfBoundsException, RuntimeException)[
+			actualException = it
+		]
+		actualException.assertSame(expected)
+	}
+
+	@Test
+	def void testTryRecoverFailureClassClassEmpty() {
+		val t = Try.completedEmpty
+		val result = t.tryRecoverFailure(ArrayIndexOutOfBoundsException, RuntimeException)["bar"]
+		result.assertSame(t)
+	}
+
+
+	@Test
+	def void testTryRecoverFailureClassClassSuccessThrowException() {
+		val t = Try.completedSuccessfully("bar")
+		val expected = new NoSuchElementException
+		val result = t.tryRecoverFailure(Throwable, NoSuchElementException)[throw expected]
+		result.assertSame(t)
+	}
+
+	@Test
+	def void testTryRecoverFailureClassClassFailureThrowException() {
+		val wrapped = new IllegalArgumentException
+		val t = Try.completedFailed(wrapped)
+		val expected = new NoSuchElementException
+		val result = t.tryRecoverFailure(RuntimeException, IllegalArgumentException)[throw expected]
+		val fail = result.assertIsInstanceOf(Try.Failure);
+		val ex = fail.get()
+		ex.assertSame(expected)
+		ex.suppressed.assertArrayEquals(#[wrapped])
+	}
+
+	@Test
+	def void testTryRecoverFailureClassClassFailureThrowExceptionClassNotMatching() {
+		val t = Try.completedFailed(new IllegalArgumentException)
+		val result = t.tryRecoverFailure(IllegalStateException, NoSuchElementException)[new NoSuchElementException]
+		result.assertSame(t)
+	}
+
+	@Test
+	def void testTryRecoverFailureClassClassEmptyThrowException() {
+		val t = Try.completedEmpty
+		val result = t.tryRecoverFailure(Exception, Throwable)[new NoSuchElementException]
+		result.assertSame(t)
+	}
+
+	@Test
+	def void testTryRecoverFailureClassClassSuccessNullRecovery() {
+		val t = Try.completedSuccessfully("foo")
+		val result = t.tryRecoverFailure(NoSuchElementException, Throwable)[null]
+		result.assertSame(t)
+	}
+
+	@Test
+	def void testTryRecoverFailureClassClassEmptyNullRecovery() {
+		val t = Try.completedEmpty
+		val result = t.tryRecoverFailure(NoSuchElementException, Exception)[null]
+		result.assertSame(t)
+	}
+
+	@Test
+	def void testTryRecoverFailureClassClassFailureNullRecovery() {
+		val t = Try.completedFailed(new IllegalStateException)
+		val result = t.tryRecoverFailure(RuntimeException, IllegalStateException)[null]
+		result.assertIsInstanceOf(Try.Empty)
+	}
+
+	//////////////////////////////////////////////
+	// tryRecoverFailure(Class<? extends E>...) //
+	//////////////////////////////////////////////
+
+	@Test
+	def void testTryRecoverFailureClassArraySuccessArrayNull() {
+		val t = Try.completedSuccessfully("bar")
+		val result = t.tryRecoverFailure(null as Class<Throwable>[]).with[]
+		result.assertFailedWithNPE
+	}
+
+	@Test
+	def void testTryRecoverFailureClassArrayEmptyArrayNull() {
+		val t = Try.completedEmpty
+		val result = t.tryRecoverFailure(null as Class<Throwable>[]).with[]
+		result.assertFailedWithNPE
+	}
+
+	@Test
+	def void testTryRecoverFailureClassArrayFailedArrayNull() {
+		val expectedSuppressed = new NoSuchElementException
+		val t = Try.completedFailed(expectedSuppressed)
+		val result = t.tryRecoverFailure(null as Class<Throwable>[]).with[]
+		val ex = result.assertFailedWithNPE
+		ex.suppressed.assertArrayEquals(#[expectedSuppressed])
+	}
+
+	@Test
+	def void testTryRecoverFailureClassArraySuccessfullRecoveryNull() {
+		val t = Try.completedSuccessfully("bar")
+		val (Throwable)=>String mapper = null
+		val result = t.tryRecoverFailure(NullPointerException, IllegalStateException, NoSuchElementException).with(mapper)
+		result.assertFailedWithNPE
+	}
+
+	@Test
+	def void testTryRecoverFailureClassArrayEmptyRecoveryNull() {
+		val t = Try.completedEmpty
+		val (Throwable)=>Object mapper = null
+		val result = t.tryRecoverFailure(NullPointerException, IllegalStateException, NoSuchElementException).with(mapper)
+		result.assertFailedWithNPE
+	}
+
+	@Test
+	def void testTryRecoverFailureClassArrayFailureRecoveryNull() {
+		val wrapped = new IllegalArgumentException
+		val t = Try.completedFailed(wrapped)
+		val (Throwable)=>Object mapper = null
+		val result = t.tryRecoverFailure(NullPointerException, IllegalStateException, NoSuchElementException).with(mapper)
+		val ex = result.assertFailedWithNPE
+		ex.suppressed.assertArrayEquals(#[wrapped])
+	}
+
+	@Test
+	def void testTryRecoverFailureClassArrayEmptyFirstClassNull() {
+		val t = Try.completedEmpty
+		val result = t.tryRecoverFailure(null, NullPointerException, NoSuchElementException).with [
+			"foo"
+		]
+		result.assertFailedWithNPE
+	}
+
+	@Test
+	def void testTryRecoverFailureClassArrayEmptyThirdClassNull() {
+		val t = Try.completedEmpty
+		val result = t.tryRecoverFailure(NullPointerException, NoSuchElementException, null as Class<Throwable>).with [
+			"foo"
+		]
+		result.assertFailedWithNPE
+	}
+
+	@Test
+	def void testTryRecoverFailureClassArrayEmptySecondClassNull() {
+		val t = Try.completedEmpty
+		val result = t.tryRecoverFailure(NullPointerException, null, NoSuchElementException).with [
+			"foo"
+		]
+		result.assertFailedWithNPE
+	}
+
+	@Test
+	def void testTryRecoverFailureClassArraySuccessfullFirstClassNull() {
+		val t = Try.completedSuccessfully("bar")
+		val result = t.tryRecoverFailure(null, NoSuchElementException, NullPointerException).with [
+			"foo"
+		]
+		val fail = result.assertIsInstanceOf(Try.Failure)
+		fail.get.assertIsInstanceOf(NullPointerException)
+	}
+
+	@Test
+	def void testTryRecoverFailureClassArraySuccessfullSecondClassNull() {
+		val t = Try.completedSuccessfully("bar")
+		val result = t.tryRecoverFailure(NoSuchElementException, null, NullPointerException).with [
+			"foo"
+		]
+		result.assertFailedWithNPE
+	}
+
+	@Test
+	def void testTryRecoverFailureClassArraySuccessfullThirdClassNull() {
+		val t = Try.completedSuccessfully("bar")
+		val result = t.tryRecoverFailure(NoSuchElementException, NullPointerException, null as Class<Throwable>).with [
+			"foo"
+		]
+		result.assertFailedWithNPE
+	}
+
+	@Test
+	def void testTryRecoverFailureClassArrayFailureFirstClassNull() {
+		val wrapped = new IllegalArgumentException
+		val t = Try.completedFailed(wrapped)
+		val result = t.tryRecoverFailure(null, NoSuchElementException, NullPointerException).with [
+			"foo"
+		]
+		val ex = result.assertFailedWithNPE
+		ex.suppressed.assertArrayEquals(#[wrapped])
+	}
+
+	@Test
+	def void testTryRecoverFailureClassArrayFailureSecondClassNull() {
+		val wrapped = new IllegalArgumentException
+		val t = Try.completedFailed(wrapped)
+		val result = t.tryRecoverFailure(NoSuchElementException, null, NullPointerException).with [
+			"foo"
+		]
+		val ex = result.assertFailedWithNPE
+		ex.suppressed.assertArrayEquals(#[wrapped])
+	}
+
+	@Test
+	def void testTryRecoverFailureClassArrayFailureThirdClassNull() {
+		val wrapped = new IllegalArgumentException
+		val t = Try.completedFailed(wrapped)
+		val result = t.tryRecoverFailure(NoSuchElementException, NullPointerException, null as Class<Throwable>).with [
+			"foo"
+		]
+		val ex = result.assertFailedWithNPE
+		ex.suppressed.assertArrayEquals(#[wrapped])
+	}
+
+	@Test
+	def void testTryRecoverFailureClassArraySuccess() {
+		val t = Try.completedSuccessfully("bar")
+		val result = t.tryRecoverFailure(NullPointerException, NoSuchElementException, IllegalArgumentException).with ["foo"]
+		result.assertSame(t)
+	}
+
+	@Test
+	def void testTryRecoverFailureClassArrayFailureFirstMatching() {
+		val t = Try.completedFailed(new ArrayIndexOutOfBoundsException)
+		val expected = "bar"
+		val result = t.tryRecoverFailure(ArrayIndexOutOfBoundsException, NoSuchElementException, IllegalArgumentException).with [expected]
+		val succ = result.assertIsInstanceOf(Try.Success)
+		succ.get.assertSame(expected)
+	}
+
+	@Test
+	def void testTryRecoverFailureClassArrayFailureSecondMatching() {
+		val t = Try.completedFailed(new ArrayIndexOutOfBoundsException)
+		val expected = "bar"
+		val result = t.tryRecoverFailure(NoSuchElementException, ArrayIndexOutOfBoundsException, IllegalArgumentException).with [expected]
+		val succ = result.assertIsInstanceOf(Try.Success)
+		succ.get.assertSame(expected)
+	}
+
+
+	@Test
+	def void testTryRecoverFailureClassArrayFailureThirdMatching() {
+		val t = Try.completedFailed(new ArrayIndexOutOfBoundsException)
+		val expected = "bar"
+		val result = t.tryRecoverFailure(NoSuchElementException, IllegalArgumentException, ArrayIndexOutOfBoundsException).with [expected]
+		val succ = result.assertIsInstanceOf(Try.Success)
+		succ.get.assertSame(expected)
+	}
+
+	@Test
+	def void testTryRecoverFailureClassArrayFailureFirstSuperType() {
+		val t = Try.completedFailed(new ArrayIndexOutOfBoundsException)
+		val expected = "bar"
+		val result = t.tryRecoverFailure(RuntimeException, NoSuchElementException, NullPointerException).with [expected]
+		val succ = result.assertIsInstanceOf(Try.Success)
+		succ.get.assertSame(expected)
+	}
+
+	@Test
+	def void testTryRecoverFailureClassArrayFailureSecondSuperType() {
+		val t = Try.completedFailed(new ArrayIndexOutOfBoundsException)
+		val expected = "bar"
+		val result = t.tryRecoverFailure(NoSuchElementException, RuntimeException, NullPointerException).with [expected]
+		val succ = result.assertIsInstanceOf(Try.Success)
+		succ.get.assertSame(expected)
+	}
+
+	@Test
+	def void testTryRecoverFailureClassArrayFailureThirdSuperType() {
+		val t = Try.completedFailed(new ArrayIndexOutOfBoundsException)
+		val expected = "bar"
+		val result = t.tryRecoverFailure(NoSuchElementException, NullPointerException, RuntimeException).with [expected]
+		val succ = result.assertIsInstanceOf(Try.Success)
+		succ.get.assertSame(expected)
+	}
+
+	@Test
+	def void testTryRecoverFailureClassArrayFailureNotMatching() {
+		val t = Try.completedFailed(new ArrayIndexOutOfBoundsException)
+		val result = t.tryRecoverFailure(NoSuchElementException, IllegalArgumentException, NullPointerException).with ["bar"]
+		result.assertSame(t)
+	}
+
+	@Test
+	def void testTryRecoverFailureClassArrayFailureExceptionPassedToLambda() {
+		extension val result = new Object() {
+			var actualException = null
+		}
+		val expected = new ArrayIndexOutOfBoundsException
+		val t = Try.completedFailed(expected)
+		t.tryRecoverFailure(ArrayIndexOutOfBoundsException, RuntimeException, NullPointerException).with [
+			actualException = it
+		]
+		actualException.assertSame(expected)
+	}
+
+	@Test
+	def void testTryRecoverFailureClassArrayEmpty() {
+		val t = Try.completedEmpty
+		val result = t.tryRecoverFailure(ArrayIndexOutOfBoundsException, RuntimeException, NullPointerException).with ["bar"]
+		result.assertSame(t)
+	}
+
+
+	@Test
+	def void testTryRecoverFailureClassArraySuccessThrowException() {
+		val t = Try.completedSuccessfully("bar")
+		val expected = new NoSuchElementException
+		val result = t.tryRecoverFailure(Throwable, NoSuchElementException, NullPointerException).with [throw expected]
+		result.assertSame(t)
+	}
+
+	@Test
+	def void testTryRecoverFailureClassArrayFailureThrowException() {
+		val wrapped = new IllegalArgumentException
+		val t = Try.completedFailed(wrapped)
+		val expected = new NoSuchElementException
+		val result = t.tryRecoverFailure(RuntimeException, IllegalArgumentException, NullPointerException).with [throw expected]
+		val fail = result.assertIsInstanceOf(Try.Failure);
+		val ex = fail.get()
+		ex.assertSame(expected)
+		ex.suppressed.assertArrayEquals(#[wrapped])
+	}
+
+	@Test
+	def void testTryRecoverFailureClassArrayFailureThrowExceptionClassNotMatching() {
+		val t = Try.completedFailed(new IllegalArgumentException)
+		val result = t.tryRecoverFailure(IllegalStateException, NoSuchElementException, NullPointerException).with [new NoSuchElementException]
+		result.assertSame(t)
+	}
+
+	@Test
+	def void testTryRecoverFailureClassArrayEmptyThrowException() {
+		val t = Try.completedEmpty
+		val result = t.tryRecoverFailure(Exception, Throwable, NullPointerException).with [new NoSuchElementException]
+		result.assertSame(t)
+	}
+
+	@Test
+	def void testTryRecoverFailureClassArraySuccessNullRecovery() {
+		val t = Try.completedSuccessfully("foo")
+		val result = t.tryRecoverFailure(NoSuchElementException, Throwable, NullPointerException).with [null]
+		result.assertSame(t)
+	}
+
+	@Test
+	def void testTryRecoverFailureClassArrayEmptyNullRecovery() {
+		val t = Try.completedEmpty
+		val result = t.tryRecoverFailure(NoSuchElementException, Exception, NullPointerException).with [null]
+		result.assertSame(t)
+	}
+
+	@Test
+	def void testTryRecoverFailureClassArrayFailureNullRecovery() {
+		val t = Try.completedFailed(new IllegalStateException)
+		val result = t.tryRecoverFailure(RuntimeException, IllegalStateException, NullPointerException).with [null]
+		result.assertIsInstanceOf(Try.Empty)
+	}
+
+	/////////////
+	// thenTry //
+	/////////////
+
+	@Test
+	def void testThenTrySuccessActionNull() {
+		val t = Try.completedSuccessfully("bla")
+		val result = t.thenTry(null)
+		result.assertFailedWithNPE
+	}
+
+	@Test
+	def void testThenTryEmptyActionNull() {
+		val t = Try.completedEmpty
+		val result = t.thenTry(null)
+		result.assertFailedWithNPE
+	}
+
+	@Test
+	def void testThenTryFailedActionNull() {
+		val expectedSuppressed = new NoSuchElementException
+		val t = Try.completedFailed(expectedSuppressed)
+		val result = t.thenTry(null)
+		val ex = result.assertFailedWithNPE
+		ex.suppressed.assertArrayEquals(#[expectedSuppressed])
+	}
+
+	@Test
+	def void testThenTrySuccessSuccess() {
+		val Integer expected = 42
+		val t = Try.completedSuccessfully("bla")
+		val result = t.thenTry [
+			expected
+		]
+		val succ = result.assertIsInstanceOf(Try.Success)
+		succ.get.assertSame(expected)
+	}
+
+	@Test
+	def void testThenTrySuccessTestInput() {
+		val expectedMapped = "bla"
+		val t = Try.completedSuccessfully(expectedMapped)
+		extension val context = new Object() {
+			var actualMapped = null
+		}
+		t.thenTry [
+			actualMapped = it
+			42
+		]
+		actualMapped.assertSame(expectedMapped)
+	}
+
+	@Test
+	def void testThenTryFailureSuccess() {
+		val t = Try.completedFailed(new NoSuchElementException)
+		val result = t.thenTry [
+			42
+		]
+		result.assertSame(t)
+	}
+
+	@Test
+	def void testThenTryEmptySuccess() {
+		val t = Try.completedEmpty
+		val result = t.thenTry [
+			42
+		]
+		result.assertSame(t)
+	}
+
+
+	@Test
+	def void testThenTrySuccessEmpty() {
+		val t = Try.completedSuccessfully("bla")
+		val result = t.thenTry [
+			null
+		]
+		result.assertIsInstanceOf(Try.Empty)
+	}
+
+	@Test
+	def void testThenTryFailureEmpty() {
+		val t = Try.completedFailed(new NoSuchElementException)
+		val result = t.thenTry [
+			null
+		]
+		result.assertSame(t)
+	}
+
+	@Test
+	def void testThenTryEmptyEmpty() {
+		val t = Try.completedEmpty
+		val result = t.thenTry [
+			null
+		]
+		result.assertSame(t)
+	}
+
+
+	@Test
+	def void testThenTrySuccessThrowing() {
+		val t = Try.completedSuccessfully("bla")
+		val expectedException = new IllegalArgumentException
+		val result = t.thenTry [
+			throw expectedException
+		]
+		val fail = result.assertIsInstanceOf(Try.Failure)
+		fail.get.assertSame(expectedException)
+	}
+
+	@Test
+	def void testThenTryFailureThrowing() {
+		val t = Try.completedFailed(new NoSuchElementException)
+		val result = t.thenTry [
+			throw new IllegalArgumentException
+		]
+		result.assertSame(t)
+	}
+
+	@Test
+	def void testThenTryEmptyThrowing() {
+		val t = Try.completedEmpty
+		val result = t.thenTry [
+			throw new IllegalArgumentException
+		]
+		result.assertSame(t)
+	}
+
+	/////////////////////
+	// thenTryOptional //
+	/////////////////////
+
+	@Test
+	def void testThenTryOptionalSuccessActionNull() {
+		val t = Try.completedSuccessfully("bla")
+		val result = t.thenTryOptional(null)
+		result.assertFailedWithNPE
+	}
+
+	@Test
+	def void testThenTryOptionalEmptyActionNull() {
+		val t = Try.completedEmpty
+		val result = t.thenTryOptional(null)
+		result.assertFailedWithNPE
+	}
+
+	@Test
+	def void testThenTryOptionalFailedActionNull() {
+		val expectedSuppressed = new NoSuchElementException
+		val t = Try.completedFailed(expectedSuppressed)
+		val result = t.thenTryOptional(null)
+		val ex = result.assertFailedWithNPE
+		ex.suppressed.assertArrayEquals(#[expectedSuppressed])
+	}
+
+	@Test
+	def void testThenTryOptionalSuccessSuccessPresent() {
+		val Integer expected = 42
+		val t = Try.completedSuccessfully("bla")
+		val result = t.thenTryOptional [
+			Optional.of(expected)
+		]
+		val succ = result.assertIsInstanceOf(Try.Success)
+		succ.get.assertSame(expected)
+	}
+
+	@Test
+	def void testThenTryOptionalSuccessSuccessEmpty() {
+		val t = Try.completedSuccessfully("bla")
+		val result = t.thenTryOptional [
+			Optional.empty
+		]
+		result.assertIsInstanceOf(Try.Empty)
+	}
+
+	@Test
+	def void testThenTryOptionalSuccessTestInput() {
+		val expectedMapped = "bla"
+		val t = Try.completedSuccessfully(expectedMapped)
+		extension val context = new Object() {
+			var actualMapped = null
+		}
+		t.thenTryOptional [
+			actualMapped = it
+			Optional.empty
+		]
+		actualMapped.assertSame(expectedMapped)
+	}
+
+	@Test
+	def void testThenTryOptionalFailureSuccess() {
+		val t = Try.completedFailed(new NoSuchElementException)
+		val result = t.thenTryOptional [
+			Optional.of(42)
+		]
+		result.assertSame(t)
+	}
+
+	@Test
+	def void testThenTryOptionalEmptySuccess() {
+		val t = Try.completedEmpty
+		val result = t.thenTryOptional [
+			Optional.of(42)
+		]
+		result.assertSame(t)
+	}
+
+
+	@Test
+	def void testThenTryOptionalSuccessNull() {
+		val t = Try.completedSuccessfully("bla")
+		val result = t.thenTryOptional [
+			null
+		]
+		result.assertFailedWithNPE
+	}
+
+	@Test
+	def void testThenTryOptionalFailureNull() {
+		val t = Try.completedFailed(new NoSuchElementException)
+		val result = t.thenTryOptional [
+			null
+		]
+		result.assertSame(t)
+	}
+
+	@Test
+	def void testThenTryOptionalEmptyNill() {
+		val t = Try.completedEmpty
+		val result = t.thenTryOptional [
+			null
+		]
+		result.assertSame(t)
+	}
+
+
+	@Test
+	def void testThenTryOptionalSuccessThrowing() {
+		val t = Try.completedSuccessfully("bla")
+		val expectedException = new IllegalArgumentException
+		val result = t.thenTryOptional [
+			throw expectedException
+		]
+		val fail = result.assertIsInstanceOf(Try.Failure)
+		fail.get.assertSame(expectedException)
+	}
+
+	@Test
+	def void testThenTryOptionalFailureThrowing() {
+		val t = Try.completedFailed(new NoSuchElementException)
+		val result = t.thenTryOptional [
+			throw new IllegalArgumentException
+		]
+		result.assertSame(t)
+	}
+
+	@Test
+	def void testThenTryOptionalEmptyThrowing() {
+		val t = Try.completedEmpty
+		val result = t.thenTryOptional [
+			throw new IllegalArgumentException
+		]
+		result.assertSame(t)
+	}
+
+	private def NullPointerException assertFailedWithNPE(Try<?> result) {
+		val fail = result.assertIsInstanceOf(Try.Failure)
+		fail.get.assertIsInstanceOf(NullPointerException)
+	}
+
 	//TODO: thenTryWith
 	//TODO: thenTryFlat
+	//TODO: tryTransform
 	//TODO: Success#is
 	//TODO: Failure#is
+	
+	// TODO: make all static try* methods not throw but return failed
 	
 }

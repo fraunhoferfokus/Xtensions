@@ -1,0 +1,32 @@
+
+== Try
+
+The class `de.fhg.fokus.xtensions.exceptions.Try<R>` represents the result of a computation
+that may have failed. It wraps around either a success (holding a result), a failure (wrapping an exception),
+or empty. The class is only generic over the success type, the types of exceptions that may be 
+wrapped in a failed `Try` should be documented, but are not formally defined via the type system.
+
+Since Xtend has no checked exceptions, there is no rigorous compiler support to make callers of a method aware 
+that something can go wrong. Methods can only document exceptions to be thrown. So instead, the `Try`
+class can now be used as a return type to make it very clear to the caller that an exception has to be 
+handled.
+
+The class has lots of functionality on it, the description here covers only the basics.
+The reader is encouraged to have a look at the 
+
+Combinator methods starting with `try*` will not throw an exception, instead they will return
+a failed `Try` if 
+
+=== The Try States
+
+The three states of the `Try` class are represented by the three subclasses `Try.Success`,
+`Try.Failure` and `Try.Empty`. Instances of `Try` can be checked for being instance of
+one of these classes and casted to these to get to methods specific to the state (e.g. to extract
+a successful result). Alternatively many combinator methods can be used to check for the state
+and work with the result or exception values.
+
+=== Creation
+
+=== Happy Path Progression
+
+=== Recovery

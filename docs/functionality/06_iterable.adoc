@@ -150,10 +150,13 @@ Note that the https://docs.oracle.com/javase/8/docs/api/java/util/stream/Collect
 
 [source,xtend]
 ----
+import static java.util.stream.Collectors.*
+import java.util.Set
+// ...
 val list = #["foo", "bla", "foo", "hui", "fun"]
-val partition = list.partitionBy([startsWith("f")], Collectors::toSet, Collectors::toList)
-val Set<String> selected = partition.selected
-val List<String> rejected = partition.rejected
+val partition = list.stream.collect(partitioningBy([startsWith("f")], toSet))
+val Set<String> selected = partition.get(true)
+val Set<String> rejected = partition.get(false)
 println("Unique words starting with 'f' : " + selected.join(", "))
 println("Other words: " + rejected.join(", "))
 ---- 
