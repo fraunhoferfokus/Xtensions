@@ -8,6 +8,7 @@ import java.util.NoSuchElementException
 import java.util.function.Predicate
 import java.util.Optional
 import de.fhg.fokus.xtensions.incubation.exceptions.TryIterator.FailureStrategy
+import de.fhg.fokus.xtensions.exceptions.Try
 import static extension java.util.Objects.*
 
 /**

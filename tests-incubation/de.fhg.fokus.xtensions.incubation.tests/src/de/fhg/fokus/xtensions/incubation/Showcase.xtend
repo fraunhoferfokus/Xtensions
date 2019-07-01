@@ -1,15 +1,11 @@
 package de.fhg.fokus.xtensions.incubation
 
-import de.fhg.fokus.xtensions.incubation.exceptions.Try.Empty
-import de.fhg.fokus.xtensions.incubation.exceptions.Try.Failure
-import de.fhg.fokus.xtensions.incubation.exceptions.Try.Success
 import de.fhg.fokus.xtensions.incubation.function.Bounce
 import de.fhg.fokus.xtensions.incubation.function.Trampoline
 import de.fhg.fokus.xtensions.incubation.showcase.Person
 import java.math.BigInteger
 import org.junit.Test
 
-import static de.fhg.fokus.xtensions.incubation.exceptions.Try.*
 import static de.fhg.fokus.xtensions.incubation.function.Recursion.*
 import static de.fhg.fokus.xtensions.incubation.iteration.Loop.*
 
@@ -170,41 +166,7 @@ class Showcase {
 				filter
 		].forEach [println(it)]
 	}
-	
-	@Test def void demoTry() {
-		val s = "123L"
-		val l = tryCall [
-			Long.valueOf(s)
-		].tryRecoverFailure(ArrayIndexOutOfBoundsException, IllegalStateException) [
-			it.printStackTrace;
-			-1L
-		].recover(0L)
-		println(l)
-		
-		tryCall [
-			Long.valueOf(s)
-		].tryRecoverFailure(ArrayIndexOutOfBoundsException, IllegalStateException, IllegalArgumentException).with [
-			println(it);
-			null
-		]
-		
-		val String foo = System.getenv("Foo")
-		val t = tryCall [
-			if(foo === null) {
-				null
-			} else {
-				foo.charAt(5)
-			}
-		]
-		val result = switch(t) {
-			Success<Character>: "Character 6 is " + t.get
-			Empty<Character>: "No input string"
-			Failure<Character> case t.is(IndexOutOfBoundsException): "Too few characters"
-			Failure<Character>: "Problem occurred: " + t.get.message
-		}
-		println(result)
-	}
-	
+
 	@Test
 	def void demoEither() {
 		val either = Either.<String,Integer>left("hello")

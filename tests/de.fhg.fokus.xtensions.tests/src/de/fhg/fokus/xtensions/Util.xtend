@@ -10,12 +10,13 @@
  *******************************************************************************/
 package de.fhg.fokus.xtensions
 
-import static org.junit.Assert.*
+import static extension org.junit.Assert.*
 import java.util.NoSuchElementException
 import java.util.PrimitiveIterator.OfInt
 import java.util.PrimitiveIterator.OfLong
 import java.util.PrimitiveIterator.OfDouble
 import java.util.Iterator
+import org.hamcrest.core.IsInstanceOf
 
 class Util {
 	
@@ -64,5 +65,10 @@ class Util {
 		expectException(NoSuchElementException) [
 			iterator.nextDouble
 		]
+	}
+
+	static def <T> T assertIsInstanceOf(Object o, Class<T> type) {
+		o.assertThat(new IsInstanceOf(type))
+		type.cast(o)
 	}
 }

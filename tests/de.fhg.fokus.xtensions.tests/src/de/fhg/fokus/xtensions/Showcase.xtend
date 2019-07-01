@@ -67,6 +67,12 @@ import de.fhg.fokus.xtensions.optional.OptionalBoolean
 import java.util.stream.Collectors
 import static extension de.fhg.fokus.xtensions.objects.Objects.*
 
+
+import de.fhg.fokus.xtensions.exceptions.Try.Empty
+import de.fhg.fokus.xtensions.exceptions.Try.Failure
+import de.fhg.fokus.xtensions.exceptions.Try.Success
+import static de.fhg.fokus.xtensions.exceptions.Try.*
+
 @Ignore
 class Showcase {
 	
@@ -883,4 +889,40 @@ class Showcase {
 		
 		
 	}
+
+
+	@Test def void demoTry() {
+		val s = "123L"
+		val l = tryCall [
+			Long.valueOf(s)
+		].tryRecoverFailure(ArrayIndexOutOfBoundsException, IllegalStateException) [
+			it.printStackTrace;
+			-1L
+		].recover(0L)
+		println(l)
+		
+		tryCall [
+			Long.valueOf(s)
+		].tryRecoverFailure(ArrayIndexOutOfBoundsException, IllegalStateException, IllegalArgumentException).with [
+			println(it);
+			null
+		]
+		
+		val String foo = System.getenv("Foo")
+		val t = tryCall [
+			if(foo === null) {
+				null
+			} else {
+				foo.charAt(5)
+			}
+		]
+		val result = switch(t) {
+			Success<Character>: "Character 6 is " + t.get
+			Empty<Character>: "No input string"
+			Failure<Character> case t.is(IndexOutOfBoundsException): "Too few characters"
+			Failure<Character>: "Problem occurred: " + t.get.message
+		}
+		println(result)
+	}
+	
 }

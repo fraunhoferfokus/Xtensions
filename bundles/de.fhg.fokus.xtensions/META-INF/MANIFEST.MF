@@ -5,6 +5,7 @@ Bundle-SymbolicName: de.fhg.fokus.xtensions
 Bundle-Version: 1.3.0.qualifier
 Export-Package: de.fhg.fokus.xtensions.concurrent,
  de.fhg.fokus.xtensions.datetime,
+ de.fhg.fokus.xtensions.exceptions,
  de.fhg.fokus.xtensions.function,
  de.fhg.fokus.xtensions.iteration,
  de.fhg.fokus.xtensions.optional,

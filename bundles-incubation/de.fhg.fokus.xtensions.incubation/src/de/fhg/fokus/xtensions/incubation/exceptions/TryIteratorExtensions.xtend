@@ -5,6 +5,7 @@ import java.util.List
 import java.util.Set
 import java.util.stream.Collector
 import de.fhg.fokus.xtensions.incubation.exceptions.TryIterator.FailureStrategy
+import de.fhg.fokus.xtensions.exceptions.Try
 
 /**
  * This class allows incubation of new methods to be introduced later directly into the {@code TryIterator}.

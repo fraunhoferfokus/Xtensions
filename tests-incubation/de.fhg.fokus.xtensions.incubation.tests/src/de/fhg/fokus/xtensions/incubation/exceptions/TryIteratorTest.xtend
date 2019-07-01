@@ -4,6 +4,7 @@ import org.junit.Test
 import static extension org.junit.Assert.*
 import static extension de.fhg.fokus.xtensions.incubation.exceptions.TryIterator.*
 import static extension de.fhg.fokus.xtensions.incubation.Util.*
+import de.fhg.fokus.xtensions.exceptions.Try
 
 class TryIteratorTest {
 	
