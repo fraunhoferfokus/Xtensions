@@ -3,8 +3,9 @@
 
 The class `de.fhg.fokus.xtensions.exceptions.Try<R>` represents the result of a computation
 that may have failed. It wraps around either a success (holding a result), a failure (wrapping an exception),
-or empty. The class is only generic over the success type, the types of exceptions that may be 
-wrapped in a failed `Try` should be documented, but are not formally defined via the type system.
+or an empty result (`null`). The class is only generic over the success type, the types of exceptions that may be 
+wrapped in a failed `Try` should be documented, but are not formally defined via the type system. The
+`Try` type is only generic over the success value.
 
 Since Xtend has no checked exceptions, there is no rigorous compiler support to make callers of a method aware 
 that something can go wrong. Methods can only document exceptions to be thrown. So instead, the `Try`
@@ -13,20 +14,139 @@ handled.
 
 The class has lots of functionality on it, the description here covers only the basics.
 The reader is encouraged to have a look at the 
+https://javadoc.io/page/com.github.fraunhoferfokus.xtensions/de.fhg.fokus.xtensions/latest/de/fhg/fokus/xtensions/exceptions/Try.html[JavaDoc entry] 
+for all possible combinator
+methods available on the `Try` type.
 
-Combinator methods starting with `try*` will not throw an exception, instead they will return
-a failed `Try` if 
+The following paragraphs will show the most important category of methods ond sub-types available. 
+A general rule for combinator methods starting is that methods starting with the prefix `try*` will not throw an exception, 
+instead they will return failed `Try` if a failure occurs during the computation of the method.
 
 === The Try States
 
-The three states of the `Try` class are represented by the three subclasses `Try.Success`,
-`Try.Failure` and `Try.Empty`. Instances of `Try` can be checked for being instance of
-one of these classes and casted to these to get to methods specific to the state (e.g. to extract
-a successful result). Alternatively many combinator methods can be used to check for the state
-and work with the result or exception values.
+The three states of the `Try` class are represented by the three subclasses 
+* `Try.Success<R>`,
+* `Try.Failure<R>` and 
+* `Try.Empty<R>`
+
+`Try.Success` is wrapping a successful result value of the type `R`;
+`Try.Failure` is wrapping around an exception that occurred,
+while `Try.Empty` means a computation did not yield a value (mostly this means a `null` result).
+
+Instances of `Try` can be checked for being instance of one of these classes and casted to these to get 
+to methods specific to the state (e.g. to extract a successful result). 
+Alternatively many combinator methods can be used to check for the state and work with the result or exception values.
 
 === Creation
 
+`Try` instances can directly be created using one of the static factory methods with the `create*` name prefix:
+* `Try::createSuccess(R)`
+* `Try::cretaeFailure(Exception)`
+* `Try::createEmpty()`
+
+However most likely a computation should be wrapped, so exceptions will be caught automatically.
+Static factory methods on the `Try` type with the `try*` name prefix allow just that:
+* `Try::tryCall(=>R)`
+* `Try::tryCall(I, (I)=>R)`
+* `Try::tryOptional(=>Optional<R>)`
+* `Try::tryFlat(=>Try<R>)`
+* `Try::tryWith(=>I,(I)=>R)`
+
+The usage of these methods is similar to try-blocks. 
+
+Example:
+
+[source,xtend]
+----
+//TODO: example
+----
+
 === Happy Path Progression
 
+`Try` instance methods with the name prefix `thenTry*` only have an effect on instances of `Try.Success`.
+They pass the value of the successful computation on to a given closure computing a new result value:
+
+* `thenTry((R)=>U)`
+* `thenTryWith(=>I, (I, R)=>U)`
+* `thenTryFlat((R)=>Try<U>)`
+* `thenTryOptional((R)=>Optional<U>)`
+
+These methods allow a chain of computation that only handles the "happy path" not caring about exceptions to be
+thrown along the way. Error handling or reporting can then be pushed to the end of a call chain.
+
+Example:
+
+[source,xtend]
+----
+//TODO: example
+----
+
 === Recovery
+
+In some cases it may be possible to recover from a failure or an empty result and still compute
+a successful result. To recover a failed or empty `Try` to a successful value, several instance 
+methods are available on the `Try` type:
+
+* `recover(R)`
+* `recoverEmpty(R)`
+* `tryRecover(=>R)`
+* `tryRecoverEmpty(=>R)`
+* `tryRecoverFailure((Throwable)=>R)`
+* `tryRecoverFailure(Class<E>, (E)=>R)`
+* `tryRecoverFailure(Class<? extends E>, Class<? extends E>, (E)=>R)`
+* `tryRecoverFailure(Class<? extends E>...)`
+
+The method `recover(R)` is the only method that will return a unwrapped result value of type `R`.
+All other methods either don't recover all non-success cases or may fail themselves during recovery,
+which is why they return a `Try<R>`.
+
+Example:
+
+[source,xtend]
+----
+//TODO: example
+----
+
+=== Extracting Result Values
+
+At some point it is needed to unwrap the actual successful result or exception from a failed `Try`.
+The following methods 
+
+* `ifSuccess((R)=>void)`
+* `ifEmpty(=>void)`
+* `ifFailure((Throwable)=>void)`
+* `ifFailure(Class<E>, (E)=>void)`
+* `ifFailure(Class<? extends E>, Class<? extends E>,(E)=>void)`
+* `ifFailure(Class<? extends E>...)`
+* `Optional<R> getResult()`
+* `R getOrNull()`
+* `R getOrThrow()`
+* `R getOrThrow(=>E)`
+
+Example:
+
+[source,xtend]
+----
+//TODO: example
+----
+
+When casting to the actual sub-type, instance methods on the types can be used to extract the result values:
+* `Throwable Try.Failure#get()`
+* `R Try.Success#get()`
+
+Example:
+
+[source,xtend]
+----
+//TODO: example
+----
+
+Note that `Try.Success` and `Try.Failure` have even more instance methods worthy to check out.
+
+
+[TIP]
+====
+Related JavaDocs:
+
+* https://javadoc.io/page/com.github.fraunhoferfokus.xtensions/de.fhg.fokus.xtensions/latest/de/fhg/fokus/xtensions/exceptions/Try.html[Try]
+====

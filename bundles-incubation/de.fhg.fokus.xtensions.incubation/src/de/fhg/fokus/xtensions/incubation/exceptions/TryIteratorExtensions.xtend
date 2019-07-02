@@ -41,6 +41,11 @@ class TryIteratorExtensions {
 		throw new UnsupportedOperationException("TODO: auto-generated method stub")
 	}
 
+	static final def <T> TryIterator<T> tryRecoverEmpty(TryIterator<T> context, ()=>T onEmpty) {
+		//TODO: implement
+		throw new UnsupportedOperationException("TODO: auto-generated method stub")
+	}
+
 	static final def <T> TryIterator<T> tryRecover(TryIterator<T> context, ()=>T onEmpty, (Throwable)=>T onFailure) {
 		//TODO: implement
 		throw new UnsupportedOperationException("TODO: auto-generated method stub")
@@ -145,6 +150,15 @@ class TryIteratorExtensions {
 	}
 
 	static final def <T> void forEachSkipFailure(TryIterator<T> context, ()=>void onEmpty, (T)=>void onSuccess) {
+		//TODO: implement
+		throw new UnsupportedOperationException("TODO: auto-generated method stub")
+	}
+	
+	
+	/**
+	 * Skips empty and failure entries
+	 */
+	static final def <T> void forEachSuccess(TryIterator<T> context, FailureStrategy failureStrategy, (T)=>void consumer) {
 		//TODO: implement
 		throw new UnsupportedOperationException("TODO: auto-generated method stub")
 	}

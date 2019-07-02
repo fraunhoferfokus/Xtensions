@@ -3539,6 +3539,106 @@ class TryTest {
 		val result = t.tryTransform(["foo"],["bar"],[throw expectedException])
 		result.assertFailedWith(expectedException)
 	}
+	
+	///////////////////////
+	// equals & hashCode //
+	///////////////////////
+	
+	@Test
+	def void testEqualsSameSuccess() {
+		val succ = completedSuccessfully("foo")
+		succ.assertEquals(succ)
+	}
+
+	@Test
+	def void testEqualsAndHashCodeEqualSuccess() {
+		val succ = completedSuccessfully("foo")
+		val str = new StringBuilder().append('f').append('o').append('o').toString
+		val succ2 = completedSuccessfully(str)
+		succ.assertEquals(succ2)
+		succ.hashCode.assertEquals(succ2.hashCode)
+		succ.toString.assertEquals(succ2.toString)
+	}
+
+	@Test
+	def void testEqualsAndHashCodeNotEqualSuccess() {
+		val succ = completedSuccessfully("foo")
+		val succ2 = completedSuccessfully("bar")
+		succ.assertNotEquals(succ2)
+		succ.hashCode.assertNotEquals(succ2.hashCode)
+		succ.toString.assertNotEquals(succ2.toString)
+	}
+
+	@Test
+	def void testEqualsNullSuccess() {
+		val succ = completedSuccessfully("foo")
+		succ.assertNotEquals(null)
+	}
+
+	@Test
+	def void testEqualsOtherTypeSuccess() {
+		val ex = new NullPointerException
+		val succ = completedSuccessfully(ex)
+		val fail = completedFailed(ex)
+		succ.assertNotEquals(fail)
+		succ.hashCode.assertNotEquals(fail.hashCode)
+		succ.toString.assertNotEquals(fail.toString)
+	}
+
+
+
+	@Test
+	def void testEqualsSameFailure() {
+		val fail = completedFailed(new NullPointerException)
+		fail.assertEquals(fail)
+		
+	}
+
+	@Test
+	def void testEqualsAndHashCodeEqualFailure() {
+		val ex = new NullPointerException
+		val fail = completedFailed(ex)
+		val fail2 = completedFailed(ex)
+		fail.assertEquals(fail2)
+		fail.hashCode.assertEquals(fail2.hashCode)
+		fail.toString.assertEquals(fail2.toString)
+	}
+
+	@Test
+	def void testEqualsAndHashCodeNotEqualFailure() {
+		val fail = completedFailed(new NullPointerException)
+		val fail2 = completedFailed(new IllegalStateException)
+		fail.assertNotEquals(fail2)
+		fail.hashCode.assertNotEquals(fail2.hashCode)
+		fail.toString.assertNotEquals(fail2.toString)
+		
+	}
+
+	@Test
+	def void testEqualsNullFailure() {
+		val fail = completedFailed(new NullPointerException)
+		fail.assertNotEquals(null)
+	}
+
+	@Test
+	def void testEqualsOtherTypeFailure() {
+		val ex = new NullPointerException
+		val succ = completedSuccessfully(ex)
+		val empty = completedEmpty
+		succ.assertNotEquals(empty)
+		succ.hashCode.assertNotEquals(empty.hashCode)
+		succ.toString.assertNotEquals(empty.toString)
+		
+	}
+
+
+	@Test
+	def void testEqualsSameEmpty() {
+		val e1 = completedEmpty
+		val e2 = completedEmpty
+		e1.assertEquals(e2)
+	}
+
 
 	///////////
 	// utils //

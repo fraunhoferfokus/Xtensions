@@ -20,6 +20,7 @@
 .. link:./docs/functionality/15_scheduling_util.adoc[Scheduling Util]
 .. link:./docs/functionality/16_primitives.adoc[Primitives]
 .. link:./docs/functionality/17_objects.adoc[Objects]
+.. link:./docs/functionality/18_try.adoc[Try]
 . link:./docs/development.adoc[Development on Xtensions]
 .. link:CONTRIBUTING.adoc[Contributing]
 .. link:CODE_OF_CONDUCT.md[Code of Conduct]

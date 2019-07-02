@@ -10,6 +10,7 @@ import com.google.common.collect.Iterators
 import java.util.Collections
 import java.util.Iterator
 import static extension de.fhg.fokus.xtensions.iteration.ArrayExtensions.*
+import de.fhg.fokus.xtensions.exceptions.Try.Success
 
 /**
  * Try is a result type of a computation that may either hold a result value (from a successful computation),
@@ -35,7 +36,12 @@ import static extension de.fhg.fokus.xtensions.iteration.ArrayExtensions.*
  * throw an exception, they well be thrown from the {@code if*} method that was called.<br>
  * <br>
  * The methods starting with {@code then} execute the given handler when the Try represents
- * a successful computation.
+ * a successful computation.<br><br>
+ * Note that equality of {@code Try} instances is defined via the equality of the wrapped result.
+ * This means two {@code Try.Success} instances wrapping elements that are equal are equals as well.
+ * Two {@code Try.Failure} instances wrapping exceptions that are equals are equal as well. But different
+ * subclasses of {@code Try} even if they wrap the exact same object (e.g. an Exception) are never
+ * equal.
  */
 abstract class Try<R> implements Iterable<R> {
 
@@ -125,7 +131,10 @@ abstract class Try<R> implements Iterable<R> {
 	 * performance, avoiding capturing lambdas. But it can also be used similar to the 
 	 * {@code =&gt;} operator to group calls to a single context object.
 	 * If {@code provider} is {@code null} this method will return a {@code Try.Failure} holding a
-	 * {@code NullPointerException}.
+	 * {@code NullPointerException}.<br><br>
+	 * Note that this method does <em>not</em> have the semantics of
+	 * {@link #tryWith(Functions.Function0,Functions.Function1) tryWith(=>I,(I)=>R)}.
+	 * It will <em>not</em> close an {@code AutoCloseable} resource passed as {@code input}. 
 	 * 
 	 * @param input element that will be passed to {@code provider}
 	 * @param provider function to be called with {@code input}, the result
@@ -212,7 +221,8 @@ abstract class Try<R> implements Iterable<R> {
 
 	/**
 	 * This method calls the provided {@code provider} with the {@code AutoCloseable} resource 
-	 * provided by {@code resourceProvider}.<br> 
+	 * provided by {@code resourceProvider}. The method will always close the resource (if it is not {@code null})
+	 * after calling {@code provider}, no matter if {@code provider} executes successfully or throws an exception.<br> 
 	 * If the {@code resourceProvider} throws an exception,
 	 * the returned {@code Try} will be a failure wrapping the exception. In case it provides a non-{@code null}
 	 * reference, the resource will be closed before this method ends. If the {@code provider}
@@ -425,7 +435,7 @@ abstract class Try<R> implements Iterable<R> {
 	 * @param recovery function providing a recovery value wrapped in the resulting {@code Try}.
 	 * @return If recovery succeeds a {@code Try.Success} with the recovered value. If the recovered 
 	 * value is {@code null} returns an {@code Try.Empty}. If recovery fails for some reason
-	 * a {@code Try.Failure} will be retured.
+	 * a {@code Try.Failure} will be returned.
 	 */
 	abstract def Try<R> tryRecover(=>R recovery)
 
@@ -440,7 +450,9 @@ abstract class Try<R> implements Iterable<R> {
 	/**
 	 * Provides exception to {@code handler} if this {@code Try} failed with
 	 * an exception. Returns this {@code Try} unchanged. This can e.g. be handy for
-	 * logging an exception.
+	 * logging an exception.<br>
+	 * If {@code handler} throws an exception it will be propagated to the caller of
+	 * this method.
 	 * @param handler the callback to be invoked with the wrapped exception if this {@code Try}
 	 *  is a {@link Try.Failure}.
 	 * @return same instance as {@code this}.
@@ -451,7 +463,9 @@ abstract class Try<R> implements Iterable<R> {
 	/**
 	 * Provides exception of type {@code E} to {@code handler} if this {@code Try} failed with
 	 * an exception of type {@code E} and the exception is instance of {@code exceptionType}. 
-	 * Returns this {@code Try} unchanged. This can e.g. be handy for logging an exception.
+	 * Returns this {@code Try} unchanged. This can e.g. be handy for logging an exception.<br>
+	 * If {@code handler} throws an exception it will be propagated to the caller of
+	 * this method.
 	 * @param exceptionType type the wrapped exception is tested to be instance of
 	 * @param handler the callback to be invoked with the wrapped exception if this {@code Try}
 	 *  is a {@link Try.Failure} and the exception is instance of {@code exceptionType}
@@ -464,7 +478,11 @@ abstract class Try<R> implements Iterable<R> {
 	/**
 	 * Provides exception of type {@code E} to {@code handler} if this {@code Try} failed with
 	 * an exception of type {@code E} and the exception is instance of {@code exceptionType} or {@code exceptionType2}.
-	 * Returns this {@code Try} unchanged. This can e.g. be handy for logging an exception.
+	 * Returns this {@code Try} unchanged. This can e.g. be handy for logging an exception.<br>
+	 * If {@code handler} throws an exception it will be propagated to the caller of
+	 * this method.<br>
+	 * If {@code handler} throws an exception it will be propagated to the caller of
+	 * this method.
 	 * @param exceptionType type the wrapped exception is tested to be instance of
 	 * @param exceptionType2 type the wrapped exception is tested to be instance of
 	 * @param handler the callback to be invoked with the wrapped exception if this {@code Try}
@@ -490,7 +508,9 @@ abstract class Try<R> implements Iterable<R> {
 
 	/**
 	 * Calls the given {@code handler} with the result value if the Try 
-	 * completed with a non {@code null} result value.
+	 * completed with a non {@code null} result value.<br>
+	 * If {@code handler} throws an exception it will be propagated to the caller of
+	 * this method.
 	 * @param handler the callback to be called if this is an instance of {@code Try.Success}
 	 *  with the wrapped successful value as the parameter
 	 * @return same instance as {@code this}
@@ -500,7 +520,9 @@ abstract class Try<R> implements Iterable<R> {
 
 	/**
 	 * If operation was successful but returned {@code null} value, the given 
-	 * {@code handler} will be called, otherwise the {@code handler} will not be called.
+	 * {@code handler} will be called, otherwise the {@code handler} will not be called.<br>
+	 * If {@code handler} throws an exception it will be propagated to the caller of
+	 * this method.
 	 * @param handler the callback to be called if this is an instance of {@code Try.Empty}
 	 * @return same instance as {@code this}
 	 * @throws NullPointerException if {@code handler} is {@code null}
@@ -759,7 +781,7 @@ abstract class Try<R> implements Iterable<R> {
 	 * not {@code null}. If the the operation failed with an exception, this exception
 	 * will be re-thrown. If the result was {@code null} a the exception provided
 	 * by {@code exceptionProvider} will be thrown.
-	 * @param exceptionProvider provides the exception to be thrown if this element is no {@link Try.Success}.
+	 * @param exceptionProvider provides the exception to be thrown if this element is a {@link Try.Empty}.
 	 * @param <E> Type of exception to be thrown if this is a {@link Try.Empty}
 	 * @return the value wrapped in the {@link Try.Success}.
 	 * @throws E if this Try is empty
@@ -849,6 +871,25 @@ abstract class Try<R> implements Iterable<R> {
 
 		private new(R result) {
 			this.result = result
+		}
+
+		override int hashCode() {
+			val int prime = 31
+			var int result = 13
+			// note that result must not be null
+			result = prime * result + this.result.hashCode()
+			result
+		}
+
+		override boolean equals(Object obj) {
+			if (this === obj)
+				return true
+			if (obj === null || this.getClass() !== obj.getClass())
+				return false
+	
+			val other = obj as Success<?>
+			// no null-check needed, result must not be null
+			result.equals(other.result)
 		}
 
 		/**
@@ -1132,7 +1173,7 @@ abstract class Try<R> implements Iterable<R> {
 		static val Empty<?> INSTANCE = new Empty
 
 		private def <U> Empty<U> cast() {
-			this as Empty as Empty<U>
+			this as Empty<?> as Empty<U>
 		}
 
 		override <E extends Throwable> Try<R> tryRecoverFailure(Class<E> exceptionType, (E)=>R recovery) {
@@ -1369,6 +1410,25 @@ abstract class Try<R> implements Iterable<R> {
 
 	final static class Failure<R> extends Try<R> {
 		val Throwable e
+		
+		override int hashCode() {
+			val int prime = 31
+			var int result = 19
+			// note that e must not be null
+			result = prime * result + this.e.hashCode()
+			result
+		}
+
+		override boolean equals(Object obj) {
+			if (this === obj)
+				return true
+			if (obj === null || this.getClass() !== obj.getClass())
+				return false
+	
+			val other = obj as Failure<?>
+			// no null-check needed, e must not be null
+			e.equals(other.e)
+		}
 
 		private new(Throwable e) {
 			this.e = e
@@ -1736,7 +1796,9 @@ interface FailureHandlerStarter<E extends Throwable, T> {
 	/**
 	 * Triggers a handler via this method if the {@code FailureHandlerStarter} was 
 	 * returned from a {@code Try.Failure} and the wrapped exception is of type {@code E}.
-	 * Will return the {@code Try} that was used to produce this {@code FailureHandlerStarter}
+	 * Will return the {@code Try} that was used to produce this {@code FailureHandlerStarter}.<br>
+	 * If {@code handler} throws an exception it will be propagated to the caller of
+	 * this method.
 	 * @param handler callback to be invoked if wrapped exception is of type {@code E}
 	 * @return the {@code Try} object that was used to create this {@code FailureHandlerStarter}
 	 */
@@ -1752,7 +1814,9 @@ interface FailureHandlerStarter<E extends Throwable, T> {
 interface RecoveryStarter<E extends Throwable, R> {
 
 	/**
-	 * Starts the recovery of a failed {link Try}
+	 * Starts the recovery of a failed {link Try}, if the exception class is matching 
+	 * one of the classes passed to {@link Try#tryRecoverFailure(Class[]) tryRecoverFailure(Class<? extends E>...)}. 
+	 * The wrapped exception will be passed to 
 	 * @param recovery method providing the recovery value based on the exception
 	 *  that let the originating {@code Try} fail.
 	 * @return If recovery is {@code null} this method returns a {@code Try.Failure} completed with

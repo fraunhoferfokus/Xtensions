@@ -71,5 +71,5 @@ used as a car, methods of that type, such as `getMake` can be accessed.
 ====
 Related JavaDocs:
 
-* https://javadoc.io/page/com.github.fraunhoferfokus.xtensions/de.fhg.fokus.xtensions/latest/de/fhg/fokus/xtensions/objects/Objects.html[Primitives]
+* https://javadoc.io/page/com.github.fraunhoferfokus.xtensions/de.fhg.fokus.xtensions/latest/de/fhg/fokus/xtensions/objects/Objects.html[Objects]
 ====
