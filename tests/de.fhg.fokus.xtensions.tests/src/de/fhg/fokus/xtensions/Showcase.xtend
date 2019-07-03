@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017-2018a Max Bureck (Fraunhofer FOKUS) and others.
+ * Copyright (c) 2017-2018 Max Bureck (Fraunhofer FOKUS) and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v2.0
  * which accompanies this distribution, and is available at
@@ -72,8 +72,10 @@ import de.fhg.fokus.xtensions.exceptions.Try.Empty
 import de.fhg.fokus.xtensions.exceptions.Try.Failure
 import de.fhg.fokus.xtensions.exceptions.Try.Success
 import static de.fhg.fokus.xtensions.exceptions.Try.*
+import java.nio.file.Path
+import java.nio.file.Files
 
-@Ignore
+//@Ignore
 class Showcase {
 	
 	@Test def rangeDemo() {
@@ -892,12 +894,23 @@ class Showcase {
 
 
 	@Test def void demoTry() {
+		
+		val lines = tryCall [
+			val path = Paths.get("C:\temp.txt")
+			Files.lines(path)
+		]
+		
 		val s = "123L"
 		val l = tryCall [
 			Long.valueOf(s)
-		].tryRecoverFailure(ArrayIndexOutOfBoundsException, IllegalStateException) [
-			it.printStackTrace;
+		].thenTry [
+			Math.addExact(it,it)
+		].tryRecoverFailure(ArithmeticException, NumberFormatException) [
 			-1L
+		].ifFailure [
+			it.printStackTrace;
+		].ifSuccess [
+			println('''Yay, result: «it»''')
 		].recover(0L)
 		println(l)
 		

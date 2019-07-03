@@ -40,7 +40,7 @@ Alternatively many combinator methods can be used to check for the state and wor
 === Creation
 
 `Try` instances can directly be created using one of the static factory methods with the `create*` name prefix:
-* `Try::createSuccess(R)`
+* `Try::createSuccess\(R)`
 * `Try::cretaeFailure(Exception)`
 * `Try::createEmpty()`
 
@@ -58,18 +58,22 @@ Example:
 
 [source,xtend]
 ----
-//TODO: example
+val s = "123L"
+val result = tryCall [
+	Long.valueOf(s)
+]
 ----
+
 
 === Happy Path Progression
 
 `Try` instance methods with the name prefix `thenTry*` only have an effect on instances of `Try.Success`.
 They pass the value of the successful computation on to a given closure computing a new result value:
 
-* `thenTry((R)=>U)`
+* `thenTry(\(R)=>U)`
 * `thenTryWith(=>I, (I, R)=>U)`
-* `thenTryFlat((R)=>Try<U>)`
-* `thenTryOptional((R)=>Optional<U>)`
+* `thenTryFlat(\(R)=>Try<U>)`
+* `thenTryOptional(\(R)=>Optional<U>)`
 
 These methods allow a chain of computation that only handles the "happy path" not caring about exceptions to be
 thrown along the way. Error handling or reporting can then be pushed to the end of a call chain.
@@ -78,8 +82,21 @@ Example:
 
 [source,xtend]
 ----
-//TODO: example
+val s = "123L"
+val result = tryCall [
+	Long.valueOf(s)
+].thenTry [
+	Math.addExact(it,it)
+]
 ----
+
+[NOTE]
+====
+It is usually not advised to call a progression directly after creating a `Try`.
+In the example above the content of the progression could be written directly
+in the first block. However, progressions come handy when be called on a 
+`Try` received from a method call.
+====
 
 === Recovery
 
@@ -87,8 +104,8 @@ In some cases it may be possible to recover from a failure or an empty result an
 a successful result. To recover a failed or empty `Try` to a successful value, several instance 
 methods are available on the `Try` type:
 
-* `recover(R)`
-* `recoverEmpty(R)`
+* `recover\(R)`
+* `recoverEmpty\(R)`
 * `tryRecover(=>R)`
 * `tryRecoverEmpty(=>R)`
 * `tryRecoverFailure((Throwable)=>R)`
@@ -96,7 +113,7 @@ methods are available on the `Try` type:
 * `tryRecoverFailure(Class<? extends E>, Class<? extends E>, (E)=>R)`
 * `tryRecoverFailure(Class<? extends E>...)`
 
-The method `recover(R)` is the only method that will return a unwrapped result value of type `R`.
+The method `recover\(R)` is the only method that will return a unwrapped result value of type `R`.
 All other methods either don't recover all non-success cases or may fail themselves during recovery,
 which is why they return a `Try<R>`.
 
@@ -104,7 +121,13 @@ Example:
 
 [source,xtend]
 ----
-//TODO: example
+val s = "123L"
+val Try<Long> result = tryCall [
+	val parsed = Long.valueOf(s)
+	Math.addExact(parsed, parsed)
+].tryRecoverFailure(NumberFormatException, ArithmeticException) [
+	-1L
+]
 ----
 
 === Extracting Result Values
@@ -112,7 +135,7 @@ Example:
 At some point it is needed to unwrap the actual successful result or exception from a failed `Try`.
 The following methods 
 
-* `ifSuccess((R)=>void)`
+* `ifSuccess(\(R)=>void)`
 * `ifEmpty(=>void)`
 * `ifFailure((Throwable)=>void)`
 * `ifFailure(Class<E>, (E)=>void)`
@@ -127,10 +150,18 @@ Example:
 
 [source,xtend]
 ----
-//TODO: example
+val s = "123L"
+tryCall [
+	Long.valueOf(s)
+].ifFailure [
+	it.printStackTrace;
+].ifSuccess [
+	println(it)
+]
 ----
 
 When casting to the actual sub-type, instance methods on the types can be used to extract the result values:
+
 * `Throwable Try.Failure#get()`
 * `R Try.Success#get()`
 
@@ -138,7 +169,19 @@ Example:
 
 [source,xtend]
 ----
-//TODO: example
+val String foo = System.getenv("Foo")
+val t = tryCall [
+	if(foo === null) {
+		null
+	} else {
+		foo.charAt(5)
+	}
+]
+val result = switch(t) {
+	Success<Character>: "Character 6 is " + t.get
+	Empty<Character>: "No input string"
+	Failure<Character>: "Problem occurred: " + t.get.message
+}
 ----
 
 Note that `Try.Success` and `Try.Failure` have even more instance methods worthy to check out.
