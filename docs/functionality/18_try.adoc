@@ -25,6 +25,7 @@ instead they will return failed `Try` if a failure occurs during the computation
 === The Try States
 
 The three states of the `Try` class are represented by the three subclasses 
+
 * `Try.Success<R>`,
 * `Try.Failure<R>` and 
 * `Try.Empty<R>`
@@ -40,12 +41,14 @@ Alternatively many combinator methods can be used to check for the state and wor
 === Creation
 
 `Try` instances can directly be created using one of the static factory methods with the `create*` name prefix:
+
 * `Try::createSuccess\(R)`
 * `Try::cretaeFailure(Exception)`
 * `Try::createEmpty()`
 
 However most likely a computation should be wrapped, so exceptions will be caught automatically.
 Static factory methods on the `Try` type with the `try*` name prefix allow just that:
+
 * `Try::tryCall(=>R)`
 * `Try::tryCall(I, (I)=>R)`
 * `Try::tryOptional(=>Optional<R>)`
@@ -82,6 +85,7 @@ Example:
 
 [source,xtend]
 ----
+
 val s = "123L"
 val result = tryCall [
 	Long.valueOf(s)
@@ -154,7 +158,7 @@ val s = "123L"
 tryCall [
 	Long.valueOf(s)
 ].ifFailure [
-	it.printStackTrace;
+	it.printStackTrace
 ].ifSuccess [
 	println(it)
 ]

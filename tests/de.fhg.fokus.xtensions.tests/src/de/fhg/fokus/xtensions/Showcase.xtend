@@ -74,8 +74,9 @@ import de.fhg.fokus.xtensions.exceptions.Try.Success
 import static de.fhg.fokus.xtensions.exceptions.Try.*
 import java.nio.file.Path
 import java.nio.file.Files
+import de.fhg.fokus.xtensions.exceptions.Try
 
-//@Ignore
+@Ignore
 class Showcase {
 	
 	@Test def rangeDemo() {
@@ -895,30 +896,26 @@ class Showcase {
 
 	@Test def void demoTry() {
 		
-		val lines = tryCall [
-			val path = Paths.get("C:\temp.txt")
-			Files.lines(path)
-		]
-		
 		val s = "123L"
 		val l = tryCall [
 			Long.valueOf(s)
 		].thenTry [
 			Math.addExact(it,it)
-		].tryRecoverFailure(ArithmeticException, NumberFormatException) [
-			-1L
 		].ifFailure [
-			it.printStackTrace;
+			it.printStackTrace
 		].ifSuccess [
 			println('''Yay, result: «it»''')
+		].tryRecoverFailure(NumberFormatException, ArithmeticException) [
+			-1L
 		].recover(0L)
 		println(l)
 		
 		tryCall [
 			Long.valueOf(s)
-		].tryRecoverFailure(ArrayIndexOutOfBoundsException, IllegalStateException, IllegalArgumentException).with [
-			println(it);
+		].tryRecoverFailure(ArrayIndexOutOfBoundsException, IllegalStateException, NumberFormatException).with [
 			null
+		].ifEmpty [
+			println("Sorry, no result for you")
 		]
 		
 		val String foo = System.getenv("Foo")
