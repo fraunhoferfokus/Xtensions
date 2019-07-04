@@ -145,7 +145,7 @@ class TryIteratorTest {
 	def void testTryMapNullableContextNull() {
 		null.tryMapNullable[it]
 	}
-	
+
 	@Test
 	def void testTryMapNullableEmptyIterator() {
 		extension val verdict = new Object() {
@@ -380,9 +380,9 @@ class TryIteratorTest {
 		result.assertTrue
 	}
 
-	///////////////////
-	// tryFilterNull //
-	///////////////////
+	///////////////////////
+	// tryFilterNullable //
+	///////////////////////
 
 	@Test(expected = NullPointerException)
 	def void testTryFilterIteratorNullable() {
@@ -513,22 +513,23 @@ class TryIteratorTest {
 		result.assertTrue
 	}
 
-	//TODO: findFirstSuccess
+	//TODO: findFirstSuccess()
 	//TODO: findFirstSuccess(FailureStrategy)
-	//TODO: filterOutFailure
-	//TODO: filterOutEmpty
+	//TODO: findFirstSuccess(Predicate)
+	//TODO: filterOutFailure()
+	//TODO: filterOutEmpty()
 	//TODO: tryRecoverFailure((Throwable)=>T)
 	//TODO: tryRecoverFailure(Class<X>,(X)=>T)
 	//TODO: filterSuccess(Class<X>)
 	//TODO: tryFilterSuccess(Predicate<X>)
 	//TODO: tryMapSuccess((T)=>Y)
-	//TODO: tryFlatMapSuccess
-	//TODO: tryMapNullable
-	//TODO: toListSkipEmpty
-	//TODO: toSetSkipEmpty
-	//TODO: collectSuccess
-	//TODO: forEachSuccess
-	//TODO: forEach
+	//TODO: tryFlatMapSuccess((T)=>Iterator<Y>)
+	//TODO: tryMapNullable((T)=>Y)
+	//TODO: toListSkipEmpty(FailureStrategy)
+	//TODO: toSetSkipEmpty(FailureStrategy)
+	//TODO: collectSuccess(FailureStrategy, Collector<? super T, A, R>)
+	//TODO: forEachSuccess((T)=>void)
+	//TODO: forEach((Throwable)=>void, (T)=>void, ()=>void)
 	
 
 	//////////

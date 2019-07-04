@@ -62,6 +62,21 @@ class TryIteratorExtensions {
 		throw new UnsupportedOperationException("TODO: auto-generated method stub")
 	}
 	
+	static final def <T,Y> TryIterator<Y> tryFlatMapSuccess(TryIterator<T> context, (T)=>TryIterator<Y> mapper) {
+		//TODO: implement
+		throw new UnsupportedOperationException("TODO: auto-generated method stub")
+	}
+	
+	static final def <T,E extends Throwable,EY extends Throwable> TryIterator<T> tryMapFailure(TryIterator<T> context, Class<E> exceptionClass, (E)=>EY mapper) {
+		//TODO: implement
+		throw new UnsupportedOperationException("TODO: auto-generated method stub")
+	}
+	
+	static final def <T,EY> TryIterator<T> tryMapFailure(TryIterator<T> context, (Throwable)=>EY mapper) {
+		//TODO: implement
+		throw new UnsupportedOperationException("TODO: auto-generated method stub")
+	}
+	
 	static final def <T> TryIterator<T> peekFailure(TryIterator<T> context, (Throwable)=>void failureConsumer) {
 		//TODO: implement
 		throw new UnsupportedOperationException("TODO: auto-generated method stub")

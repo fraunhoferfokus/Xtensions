@@ -108,6 +108,17 @@ abstract class TryIterator<T> implements Iterator<Try<T>> {
 	}
 
 	final def TryIterator<T> filterOutEmpty() {
+//		new FilteringTryIterator<T>(this) {
+//			
+//			override tryFilter(Throwable prevFailureResult, T prevSuccessfullResult) {
+//				if(prevSuccessfullResult === null) {
+//					false
+//				} else {
+//					true
+//				}
+//			}
+//			
+//		}
 		//TODO: implement
 		throw new UnsupportedOperationException("TODO: auto-generated method stub")
 	}
@@ -123,19 +134,90 @@ abstract class TryIterator<T> implements Iterator<Try<T>> {
 	}
 
 	final def <Y> TryIterator<Y> filterSuccess(Class<Y> filterClass) {
-		//TODO: implement
+//		val FilteringTryIterator<?> result = new FilteringTryIterator(this) {
+//			
+//			override boolean tryFilter(Throwable prevFailureResult, Object prevSuccessfullResult) {
+//				// we do not filter empty results
+//				if(prevFailureResult !== null) {
+//					return true 
+//				}
+//				if(prevSuccessfullResult === null) {
+//					true
+//				} else {
+//					filterClass.isInstance(prevSuccessfullResult)
+//				}
+//			}
+//			
+//		} 
+//		result as FilteringTryIterator<Y>
+		//TODO: implement (including checks)
 		throw new UnsupportedOperationException("TODO: auto-generated method stub")
 	}
 
 
-	final def TryIterator<T> tryFilterSuccess(Predicate<T> mapper) {
+	final def TryIterator<T> tryFilterSuccess(Predicate<T> predicate) {
+//		 new FilteringTryIterator<T>(this) {
+//				
+//				override tryFilter(Throwable prevFailureResult, T prevSuccessfullResult) {
+//					if(prevFailureResult !== null) {
+//						return true
+//					}
+//					if(prevSuccessfullResult === null) {
+//						true
+//					} else {
+//						predicate.test(prevSuccessfullResult)
+//					}
+//				}
+//		 	
+//		 }
 		//TODO: implement
 		throw new UnsupportedOperationException("TODO: auto-generated method stub")
 	}
 
+	/**
+	 * This method will map successful results to new values via the {@code mapper}
+	 * method.
+	 * @param mapper
+	 * @return
+	 * @throws NullPointerException if {@code mapper} is {@code null}
+	 */
 	final def <Y> TryIterator<Y> tryMapSuccess((T)=>Y mapper) {
-		//TODO: implement
-		throw new UnsupportedOperationException("TODO: auto-generated method stub")
+		mapper.requireNonNull("mapper must not be null")
+		val outer = this
+		new TryIterator<Y> {
+			
+			override protected computeNext() throws NoSuchElementException {
+				val upstreamSuccess = outer.computeNext
+				if(!upstreamSuccess) {
+					// If previous failed
+					failureResult = outer.failureResult
+					successfulResult = null
+					return false
+				}
+				val upstreamResult = outer.successfulResult
+				// if upstream is empty, we don't map
+				if(upstreamResult === null) {
+					successfulResult = null
+					failureResult = null
+					return true
+				}
+				// upstream was success, we try to map
+				try {
+					successfulResult = mapper.apply(upstreamResult)
+					failureResult = null
+					true
+				}catch(Throwable t) {
+					failureResult = t
+					successfulResult = null
+					false
+				}
+			}
+			
+			override hasNext() {
+				outer.hasNext
+			}
+			
+		}
 	}
 
 	final def <Y> TryIterator<Y> tryFlatMapSuccess((T)=>Iterator<Y> mapper) {
@@ -401,9 +483,9 @@ package abstract class LazyTryIterator<T> extends TryIterator<T> {
 
 package abstract class FilteringTryIterator<T> extends LazyTryIterator<T> {
 
-	val FilteringTryIterator<T> source 
+	val TryIterator<T> source 
 
-	new(FilteringTryIterator<T> source) {
+	new(TryIterator<T> source) {
 		this.source = source
 	}
 

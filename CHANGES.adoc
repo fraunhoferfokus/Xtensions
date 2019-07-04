@@ -11,7 +11,8 @@ link:https://github.com/fraunhoferfokus/Xtensions/milestone/4?closed=1[Related G
 
 - Extension methods `ifTrue`, `ifNullOrTrue`, `ifFalse` and `ifNullOrFalse` for the `Boolean` wrapper type (see book chapter <<./docs/functionality/16_primitives.adoc#testing-conditions-on-primitives,Testing Conditions on Primitive Values>>)
 - General extension methods `asType`, `ifNotNull`, `recoverNull`/`requireNonNullElse`, and `recoverNull`/`requireNonNullElseGet` for objects (see book chapter <<./docs/functionality/17_objects.adoc#,Objects>>)
-
+- Introduced `Try` type, which represents a computation result that may have failed. (book chapter <<./docs/functionality/18_try.adoc#,Try>>)
+- Added the `OptionalBoolean` class, as a replacement for `Optional<Boolean>` (book chapter `<<./docs/functionality/01_optionals.adoc#_optionalboolean,OptionalBoolean>>)
 
 == Version 1.2.0 - 2019-04-10
 
